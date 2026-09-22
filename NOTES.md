@@ -153,3 +153,188 @@ The key idea is therefore straightforward: **`parse_archive.py` is the data-clea
 - McKinney, W. (2010). *Data structures for statistical computing in Python*. Proceedings of the 9th Python in Science Conference.
 - Wickham, H. (2014). *Tidy Data*. Journal of Statistical Software, 59(10).
 - PyYAML documentation and `libyaml` documentation for the safe C-backed YAML loader.
+
+## 3. dev/explore_overs.py
+
+`explore_overs.py` asks a simple question:
+
+> **What normally happens on a ball in each over of an IPL innings?**
+
+It does not train a model. It does not predict matches. It simply looks at real IPL data and counts how often each type of outcome happens in overs 1 through 20.
+
+This follows the basic idea of **exploratory data analysis** described by Tukey (1977): before building a statistical model, first look at the raw structure of the data and understand its patterns.
+
+The script loads the ball-by-ball table created by `parse_archive.py`:
+
+```python
+balls = pd.read_pickle("data/balls.pkl")
+```
+
+It then keeps seasons from **2019 onward** and only the first two innings:
+
+```python
+balls = balls[(balls.season >= 2019) & (balls.innings <= 2)].copy()
+```
+
+The reason for using recent seasons is that T20 cricket changes over time. Batting strategies, scoring rates, fielding rules and team tactics are not the same as they were in the early IPL seasons. Using recent data makes the simulator more representative of modern IPL cricket.
+
+The next step determines whether a delivery is a **legal ball**:
+
+```python
+balls["legal"] = ~balls.wide & ~balls.noball
+```
+
+A normal delivery counts toward the six balls of an over. A wide or no-ball does not. This follows the Laws of Cricket, where wides and no-balls do not count as one of the six legal deliveries of an over (MCC, Law 17.3, with related provisions in Laws 21 and 22).
+
+The most important line in the file is:
+
+```python
+balls["balls_before"] = (
+    balls.groupby(["match", "innings"], sort=False).legal.cumsum()
+    - balls.legal
+)
+```
+
+This calculates **how many legal deliveries had already been bowled before the current ball**.
+
+For example, at the beginning of an innings:
+
+```text
+First legal ball   -> 0 legal balls before it
+Second legal ball  -> 1 legal ball before it
+Third legal ball   -> 2 legal balls before it
+```
+
+`cumsum()` produces a running count, but it includes the current delivery. Subtracting `balls.legal` removes the current delivery from that count.
+
+That small subtraction is important. Without it, every delivery would count itself and the boundaries between overs would shift by one ball.
+
+Once `balls_before` is known, converting a delivery into its over number is straightforward:
+
+```python
+legal["over"] = (legal.balls_before // 6).astype(int) + 1
+```
+
+Balls `0–5` belong to over 1, balls `6–11` belong to over 2, and so on.
+
+The script keeps only the first 120 legal deliveries:
+
+```python
+legal = balls[
+    balls.legal & (balls.balls_before < 120)
+].copy()
+```
+
+A standard T20 innings contains at most 20 overs, or 120 legal deliveries. Cricket records can occasionally contain unusual situations such as an umpire allowing too many balls in an over. Under MCC Law 17.5, an over that has been miscounted still stands. Instead of creating an artificial 21st over, the script simply excludes deliveries beyond the first 120 legal balls.
+
+Each legal ball is then placed into one of **six outcome categories**:
+
+```text
+W   bowler wicket
+0   dot ball
+1   one run
+2   two or three runs
+4   four or five runs
+6   six or more runs
+```
+
+The code doing this is:
+
+```python
+legal["kind"] = np.select(
+    [
+        legal.bowler_wicket,
+        legal.runs_bat == 0,
+        legal.runs_bat == 1,
+        legal.runs_bat.isin([2, 3]),
+        legal.runs_bat.isin([4, 5]),
+    ],
+    ["W", "0", "1", "2", "4"],
+    "6",
+)
+```
+
+A three is grouped with a two, and a five is grouped with a four. These outcomes are rare, so giving them their own categories would create very small sample sizes without adding much useful information.
+
+This type of simplified ball-outcome representation is common in cricket simulation work. Swartz, Gill and Muthukumarana (2009) model cricket deliveries using a small set of scoring outcomes and dismissals, and Davis, Perera and Swartz (2015) use a similar idea when constructing a Twenty20 cricket simulator.
+
+A run out is not counted as `W` here because `W` specifically represents a wicket credited to the bowler. A run out still affects the innings, but it is caused by running or fielding rather than by the direct batter-versus-bowler interaction being measured here.
+
+Finally, the script calculates the proportion of each outcome within every over:
+
+```python
+shares = pd.crosstab(
+    legal.over,
+    legal.kind,
+    normalize="index"
+)[["W", "0", "1", "2", "4", "6"]]
+```
+
+`pd.crosstab()` counts how many times each outcome happens in each over. `normalize="index"` converts those counts into proportions.
+
+So if over 1 contains:
+
+```text
+51.7% dot balls
+24.0% singles
+14.2% fours
+2.3% sixes
+3.3% wickets
+```
+
+those values describe what a typical ball in the first over looks like in the historical data.
+
+The output clearly shows that different overs behave differently.
+
+For over 1:
+
+```text
+W      0      1      2      4      6
+0.033  0.517  0.240  0.044  0.142  0.023
+```
+
+Around **52% of balls are dots**, while only around **2% are sixes**.
+
+By over 10:
+
+```text
+W      0      1      2      4      6
+0.037  0.276  0.472  0.067  0.094  0.054
+```
+
+Singles dominate. Almost **47% of balls produce one run**.
+
+By over 20:
+
+```text
+W      0      1      2      4      6
+0.108  0.223  0.284  0.111  0.137  0.138
+```
+
+Both aggressive scoring and wickets become much more common. Sixes occur on roughly **14% of balls**, and bowler wickets occur on roughly **11%**.
+
+This pattern matches normal T20 strategy. During the early powerplay, fielding restrictions create opportunities for boundaries. During the middle overs, teams often rotate the strike with singles. At the death, batters take much larger risks, so both sixes and dismissals increase.
+
+The importance of overs and wickets also connects to the resource-based view of cricket developed by Duckworth and Lewis (1998). Their method treats **overs remaining and wickets remaining as the two main resources available to a batting side**. This script shows why over number matters so much: the probability distribution of what happens on a ball changes substantially depending on when that ball occurs.
+
+The final check:
+
+```text
+125465 legal balls
+```
+
+is particularly important. It confirms that the legal-ball calculation has reproduced the expected dataset size. A previous implementation accidentally allowed each ball to count itself when calculating `balls_before`, causing over boundaries to shift and dropping hundreds of deliveries. The total number of legal balls exposed the bug even though the resulting percentages still looked believable.
+
+The central idea is therefore simple:
+
+> **`explore_overs.py` measures the natural shape of a modern IPL innings.**
+
+It asks how likely a dot, single, two, four, six or bowler wicket is in each of the twenty overs. These empirical probabilities later provide the foundation for the simulator's over-level scoring model.
+
+### References
+
+- Duckworth, F. C., & Lewis, A. J. (1998). *A fair method for resetting the target in interrupted one-day cricket matches*. Journal of the Operational Research Society, 49.
+- Davis, J., Perera, H., & Swartz, T. B. (2015). *A simulator for Twenty20 cricket*. Australian & New Zealand Journal of Statistics, 57.
+- Marylebone Cricket Club. *Laws of Cricket*, 2017 Code. See Law 17 concerning overs and related provisions in Laws 21 and 22 for no-balls and wides.
+- Swartz, T. B., Gill, P. S., & Muthukumarana, S. (2009). *Modelling and simulation for one-day cricket*. Canadian Journal of Statistics, 37.
+- Tukey, J. W. (1977). *Exploratory Data Analysis*. Addison-Wesley.

@@ -2,8 +2,8 @@ import numpy as np
 
 class ExactScorer:
 	def __init__(self, truth, floor = 0.002):
-		self.truth = np.asarray(truth, floor)
-		self.floor = floor
+		self.truth = np.asarray(truth, float)
+        	self.floor = floor
 		self.coin = self.regret(np.full(len(self.truth), 0.5))
 	
 	def regret(self, forecast):

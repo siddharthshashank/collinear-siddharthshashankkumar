@@ -12604,3 +12604,1525 @@ Makridakis, S., Spiliotis, E., & Assimakopoulos, V. (2020). *The M4 Competition:
 Murphy, A. H. (1988). *Skill scores based on the mean square error and their relationships to the correlation coefficient*. **Monthly Weather Review, 116**(12), 2417–2424.
 
 Cox, D. R. (1958). *Two further applications of a model for binary regression*. **Biometrika, 45**, 562–565.
+
+## 16. dev/make_task_data.py
+
+### What I am trying to do
+
+`dev/make_task_data.py` is the script that turns the simulator into the actual benchmark.
+
+By this point I already know how to generate one synthetic league, expose its public history, hide its latent state, compute future fixture probabilities and run a reference forecaster. What I still need is a reproducible collection of worlds that can actually be used for grading.
+
+This script builds those worlds.
+
+I use eight league seeds:
+
+```text
+visible    -> 101
+heldout_a  -> 202
+heldout_b  -> 303
+heldout_c  -> 404
+heldout_d  -> 505
+heldout_e  -> 606
+heldout_f  -> 707
+heldout_g  -> 808
+```
+
+The important idea is that only one of those worlds is visible during development.
+
+The remaining seven are held out for grading.
+
+For each world I create the public task folder that an agent is allowed to inspect, the high-precision true probabilities used by the grader, the reference forecaster's regret, the careless baseline regrets and the per-fixture forecasts produced by those tiers.
+
+So this file is where the pieces from the earlier files finally become one complete task.
+
+---
+
+### The graded worlds
+
+I define the graded worlds explicitly:
+
+```python
+LEAGUES = {
+    "visible": 101,
+    "heldout_a": 202,
+    "heldout_b": 303,
+    "heldout_c": 404,
+    "heldout_d": 505,
+    "heldout_e": 606,
+    "heldout_f": 707,
+    "heldout_g": 808,
+}
+```
+
+I deliberately use named worlds rather than relying on an implicit sequence of seeds.
+
+That makes the benchmark easier to inspect.
+
+If the grader reports a problem on:
+
+```text
+heldout_e
+```
+
+I immediately know which generated world it refers to and which seed reproduces it.
+
+The names also make the information boundary explicit.
+
+`visible` is the world that may be inspected during development.
+
+The `heldout_*` worlds are grading worlds.
+
+---
+
+### What one build produces
+
+For every league I generate two broad classes of artifact.
+
+The first is the public league folder produced by `save_league()`.
+
+That folder contains the eight files from File 12:
+
+```text
+balls.csv
+matches.csv
+lineups.csv
+players.csv
+venues.csv
+fixtures.csv
+fixture_lineups.csv
+meta.json
+```
+
+These are the files a solver is allowed to use.
+
+The second class contains private grading information.
+
+That lives under:
+
+```text
+task_data/private/<world>/
+```
+
+and includes:
+
+```text
+truth.csv
+tiers.csv
+reference.json
+```
+
+The separation is intentional.
+
+The public folder contains evidence.
+
+The private folder contains the quantities needed to judge forecasts against hidden truth.
+
+---
+
+### Generating the world
+
+For each seed I create:
+
+```python
+league = League(seed)
+```
+
+then generate the full historical record:
+
+```python
+history = league.play_history()
+```
+
+and draw the future fixtures:
+
+```python
+fixtures = league.draw_fixtures(args.fixtures)
+```
+
+The default number of fixtures is:
+
+```text
+24
+```
+
+so each world contributes 24 graded probability forecasts.
+
+Across eight worlds, that gives:
+
+$$
+8\times24=192
+$$
+
+graded fixtures.
+
+This is the 192-fixture evaluation set that appears in the scoring discussion.
+
+---
+
+### Writing the public world first
+
+I immediately call:
+
+```python
+save_league(
+    out / "leagues" / name,
+    history,
+    fixtures
+)
+```
+
+This freezes the public representation of the world.
+
+From that point onward I want the reference models to behave as if they were ordinary task solvers.
+
+I therefore do something deliberately important later in the script: I load the world back from those public files instead of continuing to use the original in-memory `History`.
+
+That avoids accidentally giving my own benchmark models information that the agent would never receive.
+
+---
+
+### Computing the truth
+
+The private truth is calculated with:
+
+```python
+TruthEngine(
+    league,
+    copies=args.copies
+).probabilities(fixtures)
+```
+
+The default is:
+
+```text
+100,000 copies per fixture
+```
+
+This means each future fixture is simulated many times using the true hidden `SkillBook`.
+
+The resulting value is my estimate of:
+
+$$
+P(\text{home side wins}\mid\text{true hidden world}).
+$$
+
+I then write those probabilities to:
+
+```text
+truth.csv
+```
+
+with one row per fixture.
+
+Conceptually the file contains:
+
+```text
+fixture      p_home
+10000        ...
+10001        ...
+10002        ...
+...
+```
+
+This file is private because it contains the answer the forecaster is trying to approximate.
+
+---
+
+### Why I use 100,000 Monte Carlo copies
+
+The truth itself is produced by Monte Carlo simulation.
+
+For a probability estimate based on $N$ independent draws, the standard error is:
+
+$$
+\sqrt{
+\frac{p(1-p)}{N}
+}.
+$$
+
+The maximum occurs at:
+
+$$
+p=0.5,
+$$
+
+so at:
+
+$$
+N=100000
+$$
+
+the worst-case standard error is:
+
+$$
+\sqrt{
+\frac{0.25}{100000}
+}
+\approx
+0.00158.
+$$
+
+So even in the hardest case, the uncertainty in a fixture probability is only around:
+
+```text
+0.0016
+```
+
+or sixteen basis points.
+
+That is much smaller than the typical forecasting errors I am trying to distinguish.
+
+---
+
+### Why that amount of truth error is acceptable for regret
+
+The regret for a fixture depends on the true probability $p$ and forecast $q$.
+
+Its sensitivity to a small error in $p$ is related to:
+
+$$
+\operatorname{logit}(p)
+-
+\operatorname{logit}(q).
+$$
+
+For a reasonably good forecast this difference might be on the order of:
+
+```text
+0.3
+```
+
+so a truth-probability error around:
+
+```text
+0.0016
+```
+
+moves fixture regret by only around:
+
+```text
+0.0005
+```
+
+in a random direction.
+
+Then I average across 192 fixtures.
+
+Because the individual truth-simulation errors fluctuate rather than all pushing regret in the same direction, their effect on the final total is much smaller still.
+
+The design estimate is that this contributes only around a few tenths of a percent of the reference's total regret.
+
+That is why I call these probabilities "exact truth" for grading purposes even though they are technically high-precision Monte Carlo estimates.
+
+The Monte Carlo principle itself goes back to Metropolis and Ulam (1949).
+
+---
+
+### Reloading the public data before fitting anything
+
+After writing the public folder and the private truth, I intentionally do:
+
+```python
+history, fixtures = load_league(
+    out / "leagues" / name
+)
+```
+
+This line is one of the most important fairness checks in the script.
+
+The world generator has access to hidden player values, venue values and current form.
+
+The reference forecaster must not.
+
+By discarding the original public objects and loading the files exactly as a solver would, I guarantee that the reference and baseline tiers are fitted on the serialized public representation.
+
+They therefore see:
+
+```text
+the same balls
+the same matches
+the same players
+the same venues
+the same line-ups
+the same fixtures
+```
+
+as an external solution.
+
+They do not see the original league's private arrays.
+
+---
+
+### Building the reference
+
+The reference tier is:
+
+```python
+BallModelForecaster(
+    "reference",
+    model,
+    copies=REFERENCE_COPIES
+)
+```
+
+with:
+
+```text
+REFERENCE_COPIES = 4000
+```
+
+The truth uses 100,000 copies because it establishes the grading target.
+
+The reference only uses 4,000 because it is itself a practical forecasting method.
+
+That distinction matters.
+
+The grader should have much less Monte Carlo uncertainty than the model being benchmarked against it.
+
+The reference is therefore deliberately computationally cheaper and noisier than the stored truth.
+
+---
+
+### Building the careless tiers
+
+Unless I run the script with:
+
+```text
+--no-tiers
+```
+
+I also build several baseline forecasters.
+
+These include the coin flip, team ratings, the unshrunk player model, the last-season-only player model and the raw head-to-head model.
+
+These are the same conceptual tiers I examined in Files 13 and 15.
+
+Their purpose here is different from the experimental ladder run.
+
+At task-build time I want their forecasts stored permanently alongside the reference.
+
+That lets the grader later compare an external submission not only with the pass threshold but with recognizable failure modes.
+
+---
+
+### `tiers.csv`
+
+For every fixture I store the probability forecast from every tier in:
+
+```text
+tiers.csv
+```
+
+Conceptually it looks like:
+
+```text
+fixture   reference   coin flip   team ratings   no shrinkage   ...
+10000       ...          0.5          ...             ...
+10001       ...          0.5          ...             ...
+...
+```
+
+This file is private.
+
+It is not needed to calculate the candidate's regret.
+
+Its purpose is diagnostic.
+
+If a submission behaves very similarly to the raw head-to-head tier, the grader can potentially report that resemblance.
+
+Likewise, if its forecasts look like team ratings or the no-shrinkage model, that can make a failure much easier to interpret.
+
+So `tiers.csv` turns the benchmark from a single pass/fail number into something that can say more about *how* a method failed.
+
+---
+
+### `reference.json`
+
+I also write:
+
+```text
+reference.json
+```
+
+which contains the quantities the pass rule needs.
+
+It includes the reference regret, the coin-flip regret, the number of truth copies used and the regrets of all stored tiers.
+
+Conceptually:
+
+```json
+{
+  "regret": ...,
+  "coin_flip_regret": ...,
+  "truth_copies": 100000,
+  "tiers": {
+    "reference": ...,
+    "coin flip": ...,
+    "team ratings": ...,
+    "no shrinkage": ...,
+    "last season only": ...,
+    "raw head-to-head": ...
+  }
+}
+```
+
+This means the grader does not have to rerun the reference model every time a candidate submission is evaluated.
+
+The expensive baseline computation is performed once during task construction and committed as part of the private grading data.
+
+---
+
+### Why one visible world is not enough
+
+The agent can inspect the visible world.
+
+That creates a risk.
+
+A method could accidentally or deliberately become specialized to the particular players, venues, fixture structure or statistical quirks of seed 101.
+
+If I graded only on that same world, I would have difficulty separating a genuinely general forecasting method from one that had simply adapted itself to the visible instance.
+
+The held-out worlds protect against that.
+
+The same forecasting code must work when:
+
+```text
+the player skills are different
+the venue values are different
+the histories are different
+the future fixtures are different
+```
+
+but the generative recipe is unchanged.
+
+This is the ordinary logic of holdout evaluation.
+
+Dwork and colleagues' reusable-holdout work studies the more difficult situation where a holdout is repeatedly queried and therefore gradually leaks information.
+
+My setup is simpler.
+
+The hidden worlds are intended to be used by the grader rather than repeatedly exposed for development.
+
+The basic principle still applies: evaluation is more meaningful when it occurs on data that did not drive the solution.
+
+---
+
+### Why I use eight worlds
+
+The number eight is not arbitrary.
+
+The bar analysis in File 17 showed that grading one world at a time is noisy.
+
+Reference regret itself contains Monte Carlo variation because its predictions are based on match simulation.
+
+More importantly, the difficulty of individual generated worlds varies substantially.
+
+Some worlds contain more learnable signal than others.
+
+By summing regret across eight independent worlds, I average over both sources of instability.
+
+The empirical analysis showed that the relative simulation noise of the combined score falls to roughly:
+
+```text
+1.1%
+```
+
+which is small enough to support a meaningful tolerance.
+
+So the eight-world design is partly a statistical decision about grading stability.
+
+---
+
+### Idempotent task construction
+
+The complete build is not cheap.
+
+Before rebuilding a world I therefore look for:
+
+```text
+private/<world>/reference.json
+```
+
+and check whether it was already created using the requested truth precision.
+
+If:
+
+```python
+truth_copies == args.copies
+```
+
+and the requested tier information is already available, I keep the existing world.
+
+The script prints:
+
+```text
+already built ... kept
+```
+
+and continues to the next seed.
+
+This makes the build idempotent in practical use.
+
+If the first three worlds have already been generated and I later add five more, I do not have to spend time rebuilding the first three.
+
+This is exactly how the later worlds could be added without recreating the earlier outputs.
+
+---
+
+### Why idempotence also helps reproducibility
+
+Avoiding unnecessary rebuilds is not only an optimization.
+
+Generated stochastic artifacts can be sensitive to code and numerical changes.
+
+Once I have intentionally built and checked one benchmark world, preserving that artifact prevents an unrelated rerun from silently replacing it.
+
+The seed makes regeneration possible, but keeping an already validated artifact is even safer when I want a fixed benchmark.
+
+So the build script behaves more like a dataset builder than a temporary simulation command.
+
+---
+
+### Small-scale build check
+
+For development I can run the script with a much smaller truth budget and fixture count.
+
+For example:
+
+```text
+2,000 truth copies
+5 fixtures
+--no-tiers
+```
+
+This is not intended to produce grading-quality probabilities.
+
+It is a smoke test for the complete build pipeline.
+
+The check verifies that all eight public folders are created, the private directories exist, `truth.csv` and `reference.json` are written and the script can finish from beginning to end.
+
+The small build completes in under a minute.
+
+That means I can test changes to the pipeline without waiting for the full benchmark generation.
+
+---
+
+### Full build cost
+
+The full configuration uses approximately:
+
+```text
+8 worlds
+24 fixtures per world
+100,000 truth copies per fixture
+4,000 reference copies per fixture
+plus the careless tiers
+```
+
+and takes roughly:
+
+```text
+25 minutes
+```
+
+in the recorded build environment.
+
+That cost is acceptable because it is an offline operation.
+
+I build the grading data once.
+
+A candidate does not have to regenerate it.
+
+---
+
+### Why this repository's generated worlds differ slightly from the pilot
+
+The calibration reconstructed in this repository differs from the original piloted calibration by up to approximately:
+
+```text
+0.0007
+```
+
+in some values.
+
+As I saw in `world.py`, a tiny probability difference can eventually cause one categorical random draw to flip.
+
+Once that happens, the match path can diverge.
+
+So rebuilding seed 101 using this repository's calibration does not necessarily recreate every historical delivery from the pilot.
+
+The worlds produced here are internally consistent with this repository's own calibration and truth.
+
+They therefore form a complete benchmark in their own right.
+
+But they are not automatically the exact same worlds on which the six original pilots ran.
+
+That distinction matters when I talk about reproducibility.
+
+---
+
+### Reproducing the original pilot
+
+The generator code itself can reproduce the piloted visible world when it is supplied the original calibration artifact.
+
+File 12 checked this at the public-file level.
+
+With the original constants, the seed-101 world serialized to files that were byte-identical to the visible pilot world.
+
+So there are two separate claims.
+
+This repository demonstrates that the generation pipeline can reproduce the original task when given the original constants.
+
+Its default rebuilt calibration creates a slightly different, but self-consistent, benchmark.
+
+I do not collapse those two claims into one.
+
+---
+
+### How I think about this file
+
+I think of `make_task_data.py` as the point where the project stops being a simulator repository and becomes an actual evaluation dataset.
+
+Before this file I have recipes.
+
+After this file I have fixed worlds, fixed public evidence, fixed hidden truth, fixed reference scores and fixed diagnostic baselines.
+
+The central idea is:
+
+> **I generate the entire graded dataset ahead of time, expose only the public side of each world, compute its hidden truth at much higher precision than any ordinary forecaster, and fit every internal benchmark through exactly the same public loading path available to an external solver.**
+
+### References
+
+Metropolis, N., & Ulam, S. (1949). *The Monte Carlo method*. **Journal of the American Statistical Association, 44**(247), 335–341.
+
+Dwork, C., Feldman, V., Hardt, M., Pitassi, T., Reingold, O., & Roth, A. (2015). *The reusable holdout: Preserving validity in adaptive data analysis*. **Science, 349**(6248), 636–638.
+
+## 17. dev/bar_analysis.py
+
+### What I am trying to do
+
+`dev/bar_analysis.py` is where I decide how much worse than the reference a submission is allowed to be before I call it a failure.
+
+I do not want to invent that tolerance after seeing external model results.
+
+I want to understand the sources of variation first, choose a rule using separate development worlds and then commit the rule before the pilots begin.
+
+There are two quantities I need to understand.
+
+The first is **noise**.
+
+Even if I fit exactly the same reference model twice, its final fixture probabilities can differ slightly because `MatchSimulator` is Monte Carlo.
+
+That means reference regret itself moves when I change only the simulation seed.
+
+Any grading tolerance must be large enough that this harmless Monte Carlo fluctuation cannot make the reference fail against itself.
+
+The second quantity is **separation**.
+
+The tolerance must remain small enough that deliberately careless forecasting methods still fail.
+
+If I make the threshold so generous that the no-shrinkage model passes, the task no longer tests the distinction I designed it to test.
+
+So the basic problem is:
+
+```text
+tolerance must be large enough for noise
+              but
+tolerance must be small enough to reject careless tiers
+```
+
+This script measures both sides before I choose the pass rule.
+
+---
+
+### Why I use different worlds for bar design
+
+The bar-analysis worlds begin at:
+
+```text
+1001
+```
+
+rather than using any of the graded seeds:
+
+```text
+101, 202, ..., 808
+```
+
+The default eight analysis worlds are therefore:
+
+```text
+1001
+1002
+1003
+1004
+1005
+1006
+1007
+1008
+```
+
+These worlds are never used for candidate grading.
+
+I want the tolerance to be chosen using development data that is separate from the eventual evaluation data.
+
+Otherwise I could unconsciously tune the bar to peculiarities of the exact worlds on which candidates will be judged.
+
+So even the benchmark threshold has its own holdout discipline.
+
+---
+
+### Generating one analysis world
+
+For each seed I build the league normally:
+
+```python
+league = League(seed)
+```
+
+play its public history:
+
+```python
+history = league.play_history()
+```
+
+and draw the future fixtures:
+
+```python
+fixtures = league.draw_fixtures(
+    args.fixtures
+)
+```
+
+I then calculate a relatively high-precision truth using:
+
+```python
+TruthEngine(
+    league,
+    copies=args.copies
+)
+```
+
+with a default of:
+
+```text
+40,000 truth copies
+```
+
+per fixture.
+
+The goal here is not to build the final dataset.
+
+It is to study the behaviour of the grading rule.
+
+---
+
+### Fitting the reference once
+
+For each world I fit one reference forecaster:
+
+```python
+ref = BallModelForecaster(
+    "reference",
+    model,
+    copies=4000
+).fit(history)
+```
+
+The fitted parameters remain fixed for the noise experiment.
+
+That is important.
+
+I do not want to mix optimization variability, training-data variability and simulation variability.
+
+I specifically want to ask:
+
+> **If the fitted model is identical, how much does its reported regret change only because I used a different Monte Carlo seed for the fixture simulations?**
+
+So I fit once and then predict repeatedly.
+
+---
+
+### Measuring simulation noise
+
+I run the fitted reference four times.
+
+Before each run I change:
+
+```python
+ref.seed
+```
+
+to:
+
+```text
+400000
+410000
+420000
+430000
+```
+
+through:
+
+```python
+400_000 + 10_000 * k
+```
+
+Everything else remains the same.
+
+The historical data are identical.
+
+The fitted hidden-parameter estimates are identical.
+
+The future fixtures are identical.
+
+The truth is identical.
+
+Only the Monte Carlo draws used by the reference predictor change.
+
+I collect the four regrets in:
+
+```python
+repeats
+```
+
+and calculate:
+
+```python
+np.std(repeats) / repeats[0]
+```
+
+as a relative noise measure.
+
+This tells me how large the ordinary prediction-simulation variation is compared with the reference's own regret.
+
+---
+
+### Why I express the noise relative to regret
+
+An absolute regret fluctuation such as:
+
+```text
+0.0002
+```
+
+does not mean the same thing in every world.
+
+If reference regret is:
+
+```text
+0.020
+```
+
+then that movement is tiny.
+
+If reference regret is:
+
+```text
+0.002
+```
+
+the same movement is much more important.
+
+So I divide the standard deviation of the repeated runs by the baseline reference regret.
+
+This produces a percentage such as:
+
+```text
+5.9%
+```
+
+which tells me directly how much the reference score can move relative to itself.
+
+That is the scale the tolerance also uses.
+
+---
+
+### Why I initially thought about three times the noise
+
+If the repeated reference score behaved approximately like a stable random measurement, a tolerance around three standard deviations would make self-failure rare.
+
+That is why the script prints:
+
+```text
+A tolerance should be at least three times that
+```
+
+after finding the largest observed relative noise across worlds.
+
+This is a conservative heuristic rather than a formal theorem about the complete grading distribution.
+
+Its purpose is practical.
+
+I do not want a pass rule sitting so close to Monte Carlo noise that merely rerunning the same competent solution could cross it.
+
+---
+
+### Measuring the careless tiers
+
+I next fit the two closest careless models.
+
+The first is:
+
+```python
+BallModelForecaster(
+    "x",
+    model,
+    shrink=False,
+    copies=4000
+)
+```
+
+which is the player model without proper regularization.
+
+The second is:
+
+```python
+BallModelForecaster(
+    "x",
+    model,
+    season_weights=[0, 0, 1],
+    copies=4000
+)
+```
+
+which keeps the shrinkage structure but uses only the final visible season.
+
+I calculate their regrets and divide each by the baseline reference regret.
+
+So if:
+
+```text
+no shrinkage ×1.30
+```
+
+that means:
+
+$$
+R_{\text{unshrunk}}
+=
+1.30R_{\text{reference}}.
+$$
+
+It has 30 percent more regret than the reference.
+
+I also calculate:
+
+```python
+scorer.coin / repeats[0]
+```
+
+to see where the coin flip lies relative to reference regret.
+
+---
+
+### Why ratios are useful
+
+The absolute regret scale differs from world to world.
+
+A highly predictable world may give both the coin flip and the reference substantial regret separation.
+
+A nearly flat world may give everyone very small absolute regret.
+
+Expressing the careless tiers as multiples of the reference makes the question directly relevant to the intended grading rule.
+
+I am asking:
+
+> **How much worse than the reference is this failure mode in this particular world?**
+
+That is exactly what a multiplicative tolerance needs to know.
+
+---
+
+### What I originally hoped to do
+
+The first grading idea was to apply the tolerance independently on every world.
+
+Conceptually the rule would have looked like:
+
+$$
+R_{\text{submission},w}
+\le
+(1+t)
+R_{\text{reference},w}
+$$
+
+for every world $w$.
+
+This initially seemed attractive.
+
+It would require a candidate to perform reasonably well everywhere rather than compensating for one weak world with another strong one.
+
+But the bar analysis showed that this rule was statistically unstable.
+
+---
+
+### The worst observed simulation noise
+
+On one of the eight analysis worlds, repeated predictions from the exact same fitted reference produced relative regret variation of approximately:
+
+```text
+5.9%
+```
+
+That means a conservative three-noise tolerance would be about:
+
+$$
+3\times5.9\%
+\approx
+17.7\%
+$$
+
+or roughly:
+
+```text
+18%
+```
+
+If I wanted the reference to pass reliably on that world, a per-world tolerance substantially below this would be uncomfortable.
+
+This is already larger than I originally expected.
+
+---
+
+### The problem with an 18 percent per-world tolerance
+
+The nearest careless tier was sometimes only:
+
+```text
+6 to 7 percent
+```
+
+worse than the reference on an individual world.
+
+That means the two requirements conflict.
+
+To safely absorb the observed reference noise I might need something like:
+
+```text
+18%
+```
+
+but to reject the unshrunk tier on that world I would need the tolerance below roughly:
+
+```text
+6–7%
+```
+
+No single number can do both.
+
+The problem is not solved by choosing a cleverer percentage.
+
+The per-world grading formulation itself is wrong.
+
+---
+
+### The second problem: sometimes the coin flip beats the reference
+
+The analysis exposed an even deeper issue.
+
+In one of the eight worlds, the coin flip had lower regret than the reference.
+
+This matches what I later observed in the larger ladder experiments.
+
+Some generated worlds contain so little useful predictive variation that fitting many player parameters can cost more through estimation noise than it earns through signal.
+
+So even a well-designed reference is not guaranteed to beat:
+
+```text
+q = 0.5
+```
+
+on every individual random world.
+
+That makes a rule requiring reference-like performance **on every world** fundamentally brittle.
+
+---
+
+### Why the per-world rule was abandoned
+
+At this point I had two independent arguments against grading world by world.
+
+The first was Monte Carlo prediction noise.
+
+The second was variation in intrinsic world predictability.
+
+Together they meant that a candidate could fail one world for reasons that had little to do with the quality distinction I wanted to test.
+
+So I changed the grading statistic.
+
+Instead of comparing each world's regret separately, I sum regret across the eight graded worlds and apply one tolerance to the total.
+
+---
+
+### The total-regret rule
+
+Conceptually I compare:
+
+$$
+\sum_{w=1}^{8}
+R_{\text{submission},w}
+$$
+
+with:
+
+$$
+\sum_{w=1}^{8}
+R_{\text{reference},w}.
+$$
+
+The pass rule can then take the form:
+
+$$
+\sum_wR_{\text{submission},w}
+\le
+1.10
+\sum_wR_{\text{reference},w}.
+$$
+
+Now an unusually difficult or weak-signal world is only one component of the evaluation.
+
+It cannot dominate the entire verdict.
+
+Likewise, Monte Carlo noise from one world is averaged with independent noise from the others.
+
+This is much closer to what I actually want to test:
+
+> **Does the method perform at approximately reference quality across a population of generated worlds?**
+
+rather than:
+
+> **Did it happen to beat a noisy threshold on every individual seed?**
+
+---
+
+### Why summing independent worlds reduces noise
+
+The graded worlds are generated independently.
+
+Their Monte Carlo prediction errors are therefore largely independent as well.
+
+When independent noisy quantities are summed, their variances add while the signal itself grows linearly with the number of worlds.
+
+So relative noise falls approximately like:
+
+$$
+\frac{1}{\sqrt{W}},
+$$
+
+where $W$ is the number of worlds.
+
+For:
+
+$$
+W=8,
+$$
+
+this gives a substantial reduction.
+
+The empirical analysis estimated the relative noise of the combined eight-world score at about:
+
+```text
+1.1%
+```
+
+rather than the almost six percent worst-case value seen on a single world.
+
+That changes the grading problem completely.
+
+---
+
+### Separation after summing the worlds
+
+When regret is aggregated across the eight analysis worlds, the careless tiers separate much more cleanly.
+
+The unshrunk tier has approximately:
+
+```text
+1.30 × reference regret
+```
+
+the last-season-only tier approximately:
+
+```text
+1.93 × reference regret
+```
+
+and the coin flip approximately:
+
+```text
+1.90 × reference regret.
+```
+
+Now I have a useful gap.
+
+The closest careless tier is around 30 percent worse than the reference in total.
+
+The stochastic noise of the sum is only around one percent.
+
+That leaves enough room to choose a tolerance that is both safe and discriminative.
+
+---
+
+### Why I choose a ten-percent tolerance
+
+The final design uses a tolerance of approximately:
+
+```text
+10%
+```
+
+on the total eight-world regret.
+
+Compared with the estimated:
+
+```text
+1.1%
+```
+
+simulation noise of the combined score, ten percent is roughly nine times larger.
+
+So ordinary Monte Carlo variation should not move a reference-quality method across the threshold.
+
+At the same time, the nearest deliberately careless tier sits around:
+
+```text
+30%
+```
+
+above the reference.
+
+So a ten-percent bar remains substantially below it.
+
+It falls roughly a third of the way from the reference to that nearest known bad tier.
+
+That gives the threshold both a noise justification and a behavioural justification.
+
+---
+
+### Why I do not tune the tolerance after model pilots
+
+The most important procedural decision is that this analysis happens **before** the external model pilots.
+
+If I ran several candidate models, saw that one scored 13 percent above the reference and then decided that the tolerance should be 15 percent, the benchmark would no longer be independently evaluating that model.
+
+The threshold would have been influenced by the answer I wanted to classify.
+
+That type of undisclosed analytical flexibility is exactly the problem discussed by Simmons, Nelson and Simonsohn (2011): when researchers can choose analyses, stopping rules or thresholds after seeing outcomes, apparently strong results can be manufactured surprisingly easily.
+
+I want the opposite.
+
+I want the grading rule fixed before the candidate results exist.
+
+---
+
+### Why I treat this like preregistration
+
+Nosek, Ebersole, DeHaven and Mellor (2018) describe preregistration as committing important analytical decisions before observing the results those decisions will be used to judge.
+
+That is the discipline I apply here.
+
+I write down:
+
+```text
+which worlds determine the tolerance
+how noise is measured
+which careless tiers must remain outside the bar
+whether grading is per-world or aggregated
+what tolerance is used
+```
+
+before the pilot model results are available.
+
+The goal is not bureaucratic documentation.
+
+The goal is to remove my own ability to move the goalposts after seeing an inconvenient score.
+
+---
+
+### The original timing record
+
+In the original repository, the final grading rule was committed at:
+
+```text
+16:39 on 19 September
+```
+
+and the first pilot began at:
+
+```text
+16:45
+```
+
+the same day.
+
+The commit hash is recorded separately in `DECISIONS.md`.
+
+The important point is chronological.
+
+The rule existed in version control before the first external pilot produced a result.
+
+That gives me evidence that the pass threshold was not retroactively chosen to make a particular pilot pass or fail.
+
+---
+
+### Why I preserve `DECISIONS.md`
+
+The code tells me what the benchmark currently does.
+
+It does not necessarily tell me why an earlier design was rejected.
+
+For the grading rule, that history matters.
+
+`DECISIONS.md` records that the initial per-world rule looked reasonable, that the bar analysis showed it was unsound, and that the rule was changed to total regret before the model pilots.
+
+That decision trail is useful because otherwise the final aggregated rule could look arbitrary.
+
+The analysis shows that it was a response to a concrete statistical problem discovered before evaluation.
+
+---
+
+### The command-line controls
+
+The script accepts:
+
+```text
+--leagues
+--copies
+--fixtures
+```
+
+with defaults:
+
+```text
+8 analysis leagues
+40,000 truth copies
+24 fixtures per league
+```
+
+This lets me run a cheap development version without changing the code.
+
+For example, I can use one world, fewer truth simulations and eight fixtures simply to check that the analysis executes correctly.
+
+The full numbers are only meaningful at the larger configuration.
+
+---
+
+### The smoke test
+
+A small one-world run at around:
+
+```text
+2,000 copies
+8 fixtures
+```
+
+should print the main summary lines describing reference regret, simulation noise and the careless-tier ratios.
+
+I do not expect those small-scale ratios to reproduce the final table.
+
+With so few fixtures and such a small truth budget, sampling variation dominates.
+
+The purpose of the smoke test is only to verify the analysis pipeline.
+
+The full run is what supports the actual grading decision.
+
+---
+
+### What this file taught me about benchmark design
+
+Initially I thought the main problem was choosing the right percentage tolerance.
+
+The analysis showed that the deeper question was choosing the right **aggregation unit**.
+
+No reasonable per-world tolerance could simultaneously absorb the reference's own noise and reject the nearest careless tier.
+
+The correct fix was not to adjust 10 percent to 12 percent or 18 percent.
+
+It was to stop grading each stochastic world independently.
+
+This is an important benchmark-design lesson.
+
+A threshold cannot repair a statistic whose variance is too high relative to the separation I care about.
+
+Sometimes the evaluation statistic itself has to change.
+
+---
+
+### Why eight graded worlds now make sense
+
+The eight-world design in `make_task_data.py` is therefore directly connected to this analysis.
+
+Multiple worlds protect against overfitting to the visible seed.
+
+They also average over random differences in how predictable individual worlds happen to be.
+
+And they reduce Monte Carlo scoring noise enough that a reference-relative tolerance becomes useful.
+
+So the number of worlds is not merely a security decision.
+
+It is also part of the statistical design of the grader.
+
+---
+
+### How Files 16 and 17 fit together
+
+`make_task_data.py` asks:
+
+> **What exact worlds, truths and reference outputs will the grader use?**
+
+`bar_analysis.py` asks:
+
+> **How should those outputs be combined into a stable pass rule?**
+
+The two files therefore sit on opposite sides of the same grading design.
+
+Conceptually:
+
+```text
+fresh non-graded worlds
+        |
+        v
+  bar_analysis.py
+        |
+        v
+choose + commit grading rule
+        |
+        v
+ make_task_data.py
+        |
+        v
+eight fixed graded worlds
+        |
+        v
+candidate evaluation
+```
+
+The tolerance is decided on worlds outside the graded set.
+
+The graded worlds are then built under the already chosen rule.
+
+That ordering is deliberate.
+
+---
+
+### How I think about this file
+
+I think of `bar_analysis.py` as the place where I validate the **grader itself**.
+
+`validate_world.py` validates the cricket world.
+
+`run_ladder.py` validates the forecasting task.
+
+`bar_analysis.py` validates the decision rule that turns forecasting performance into pass or fail.
+
+The central principle is:
+
+> **I choose the pass rule from independent synthetic worlds before seeing external model performance, and I aggregate enough worlds that Monte Carlo noise and random world difficulty are small compared with the performance gap between careful and deliberately careless forecasting methods.**
+
+### References
+
+Simmons, J. P., Nelson, L. D., & Simonsohn, U. (2011). *False-positive psychology: Undisclosed flexibility in data collection and analysis allows presenting anything as significant*. **Psychological Science, 22**(11), 1359–1366.
+
+Nosek, B. A., Ebersole, C. R., DeHaven, A. C., & Mellor, D. T. (2018). *The preregistration revolution*. **Proceedings of the National Academy of Sciences, 115**(11), 2600–2606.

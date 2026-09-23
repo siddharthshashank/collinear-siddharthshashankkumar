@@ -1,0 +1,13 @@
+{
+ "regret": 0.008709,
+ "coin_flip_regret": 0.020816,
+ "truth_copies": 100000,
+ "tiers": {
+  "reference": 0.008709,
+  "coin flip": 0.020816,
+  "team ratings": 0.039348,
+  "no shrinkage": 0.012017,
+  "last season only": 0.009598,
+  "raw head-to-head": 0.047846
+ }
+}

@@ -5688,3 +5688,1507 @@ Devroye, L. (1986). *Non-Uniform Random Variate Generation*. Springer-Verlag.
 Metropolis, N., & Ulam, S. (1949). *The Monte Carlo method*. **Journal of the American Statistical Association, 44**(247), 335–341.
 
 Marylebone Cricket Club. *Laws of Cricket*, 2017 Code, 3rd edition. Law 17.6 concerning bowlers changing ends and consecutive overs.
+
+## 11. league/world.py
+
+### What I am trying to do
+
+`league/world.py` is where I stop describing the rules of cricket and actually create an artificial league that I own completely.
+
+The earlier files gave me the calibrated structure of a ball, the hidden dimensions along which players and conditions vary, and the engine that turns those numbers into innings and matches. This file uses those pieces to generate one complete synthetic world: invented players, invented grounds, hidden player skills, hidden venue characteristics, three seasons of visible history and a set of future fixtures whose true win probabilities I can calculate.
+
+The most important boundary in this file is between **public history** and **hidden truth**.
+
+The forecasting agent is allowed to see things such as player identities, handedness, bowling style, team membership, venues, line-ups, match results and every historical delivery. Those facts eventually go into the `History` object.
+
+The agent is not allowed to see the actual hidden style, quality, form, venue level, dew, venue affinity or other latent values that generated those observations.
+
+Those values remain inside the `League`.
+
+The only controlled way to use them for grading is through `TruthEngine`.
+
+So the architecture I am trying to create is:
+
+```text
+hidden synthetic world
+        |
+        v
+league/world.py
+        |
+        +----------------------+
+        |                      |
+        v                      v
+visible History          hidden SkillBook
+        |                      |
+        v                      v
+forecasting agent          TruthEngine
+```
+
+The agent sees the consequences of the hidden world, not the hidden world itself.
+
+---
+
+### One random stream defines one world
+
+The constructor begins with:
+
+```python
+self.rng = np.random.default_rng(seed)
+```
+
+I deliberately use one NumPy random generator for the entire league.
+
+That same random stream drives the creation of players, player skills, handedness, bowling type, venue characteristics, form evolution, transfers, line-ups, fixture order, tosses, pitch conditions and every ball of historical cricket.
+
+The practical consequence is very important:
+
+> **A seed defines a complete world.**
+
+If I start with the same seed, the same calibration and the same design constants, the same sequence of random numbers is consumed in the same order and I regenerate the same synthetic universe.
+
+For example:
+
+```python
+League(101)
+```
+
+does not merely mean "create roughly the same kind of league."
+
+It identifies one particular stochastic realization of that league recipe.
+
+This makes exact regression testing possible. If I rebuild the same world with the same inputs and suddenly obtain a different historical ball table, I know that something in the generation pipeline has changed.
+
+It also lets me create several independent task worlds by changing only the seed. The statistical recipe remains fixed while the realized players, venues and match histories differ.
+
+---
+
+### Building the player population
+
+The first large step is `_build_players()`.
+
+Every team starts with the same squad structure defined in `Design`.
+
+The squad contains:
+
+```text
+7 batters
+4 all-rounders
+7 bowlers
+```
+
+which gives:
+
+```text
+18 players per team
+```
+
+and with ten teams:
+
+```text
+180 players
+```
+
+in the league.
+
+The code constructs those roles with:
+
+```python
+squad = np.repeat(
+    [BATTER, ALLROUNDER, BOWLER],
+    d.squad_roles
+)
+```
+
+and then repeats the same squad template for every team.
+
+This gives me a controlled league structure where all teams start with the same number of players in each role.
+
+The identities and abilities differ, but squad composition itself does not become another source of accidental imbalance.
+
+---
+
+### Public player characteristics
+
+Some player properties are public.
+
+I generate handedness with:
+
+```python
+rng.random(n) < d.left_handed
+```
+
+using the share defined in `Design`.
+
+I also generate whether a player bowls pace or spin.
+
+All-rounders are assigned a spin probability of approximately:
+
+```text
+0.5
+```
+
+while the other bowling-capable roles use approximately:
+
+```text
+0.4
+```
+
+in this implementation.
+
+These public attributes are stored in:
+
+```python
+PlayerTable
+```
+
+and eventually become visible to the forecasting agent.
+
+That distinction matters.
+
+The agent is allowed to know that a bowler is a spinner.
+
+It is not allowed to directly know the exact hidden coordinate describing where that bowler lies along the measured bowling-type direction.
+
+The public categorical label therefore gives useful information, but it does not reveal the full hidden state.
+
+---
+
+### Initial team membership
+
+I assign the initial squads with:
+
+```python
+self.team_of = np.repeat(
+    np.arange(d.teams),
+    len(squad)
+)
+```
+
+So the first eighteen players belong to team 0, the next eighteen to team 1 and so on.
+
+This is only the initial assignment.
+
+Later, the transfer process changes team membership between seasons while preserving the role structure of every squad.
+
+That distinction is useful because player identity and team identity do not remain permanently attached.
+
+---
+
+### Hidden batting style
+
+The first hidden player quantity I generate is batting style:
+
+```python
+self.style = rng.normal(
+    0,
+    sd["bat_style"],
+    n
+)
+```
+
+The standard deviation comes directly from the measured spread in the calibration.
+
+So I am not inventing how much batters differ in style at this stage.
+
+File 5 measured that spread from real player residuals, and File 7 converted it into simulator-ready units.
+
+Here I simply draw a synthetic population from that measured distribution.
+
+This hidden style value is permanent.
+
+Unlike form, it does not drift from week to week.
+
+Conceptually I am treating it as a persistent characteristic of how the batter plays rather than temporary performance.
+
+---
+
+### Hidden bowling type
+
+Bowling type is slightly more complicated because I want the public pace-versus-spin label to explain part, but not all, of the measured bowling-style variation.
+
+I first calculate the remaining within-group spread:
+
+```python
+within = np.sqrt(
+    max(
+        sd["bowl_type"] ** 2
+        - (d.type_gap / 2) ** 2,
+        1e-6
+    )
+)
+```
+
+Then I create:
+
+```python
+self.kind = (
+    public_style_component
+    + hidden_personal_component
+)
+```
+
+A spinner receives one side of the public gap and a pace bowler the other:
+
+```python
+np.where(
+    self.players.style == SPIN,
+    0.5,
+    -0.5
+) * d.type_gap
+```
+
+and I add a player-specific normal draw around that group mean.
+
+So two spinners are not identical.
+
+Likewise, pace and spin explain only part of the measured first bowling direction.
+
+This is deliberate.
+
+The archive gave me a continuous direction. My public pace-versus-spin category provides some information about it, but the agent still has to infer individual differences from history.
+
+---
+
+### Talent plus form
+
+The two quality variables are handled differently from style.
+
+For batting quality and bowling quality, I split the total measured population variance into:
+
+```text
+fixed talent
++
+temporary form
+```
+
+I first keep the measured total spreads:
+
+```python
+self.spread = {
+    "quality": sd["bat_quality"],
+    "bowl_quality": sd["bowl_quality"]
+}
+```
+
+Then I generate fixed talent with:
+
+```python
+v * np.sqrt(d.talent_share)
+```
+
+as its standard deviation, and temporary form with:
+
+```python
+v * np.sqrt(1 - d.talent_share)
+```
+
+as its standard deviation.
+
+This works because variances add.
+
+If the total desired variance is:
+
+$$
+\sigma^2
+$$
+
+and I allocate a fraction $a$ to talent, then:
+
+$$
+\sigma^2_{\text{talent}}
+=
+a\sigma^2
+$$
+
+and:
+
+$$
+\sigma^2_{\text{form}}
+=
+(1-a)\sigma^2
+$$
+
+so their standard deviations are:
+
+$$
+\sigma\sqrt{a}
+$$
+
+and:
+
+$$
+\sigma\sqrt{1-a}
+$$
+
+respectively.
+
+When I later add talent and form together, the total cross-sectional variance remains approximately the measured player variance.
+
+This lets a player have a persistent ability while still moving above and below that long-run level over time.
+
+---
+
+### Pace-versus-spin batting split
+
+I also give every batter a small hidden pace-versus-spin quality difference:
+
+```python
+self.split = rng.normal(
+    0,
+    d.split_sd,
+    n
+)
+```
+
+A positive value means the player's quality is shifted somewhat toward one bowling type, while a negative value shifts it toward the other.
+
+This does not create a unique parameter for every batter-bowler pair.
+
+That would contradict the weak head-to-head repeatability measured earlier.
+
+Instead I use one broad matchup dimension per batter.
+
+That creates real exploitable structure without introducing thousands of pair-specific hidden variables.
+
+---
+
+### Building grounds
+
+The `_build_venues()` method creates one venue per team.
+
+Each venue has a public pitch category:
+
+```python
+rng.integers(0, 3, d.teams)
+```
+
+which corresponds to the public categories used by the engine:
+
+```text
+neutral
+pace-friendly
+spin-friendly
+```
+
+The home team and pitch type are visible.
+
+The actual venue scoring level is hidden.
+
+That hidden level is drawn using the venue spread measured in File 6.
+
+The calibration expresses that spread in runs per ball, while the engine applies environment effects as movement along the `conditions` direction.
+
+So I convert using:
+
+```python
+self.cal.runs_per_condition_unit
+```
+
+and draw:
+
+```python
+self.venue_level = rng.normal(
+    0,
+    self.cal.venue_sd_runs / per,
+    d.teams
+)
+```
+
+This is an important unit conversion.
+
+The statistical analysis measured:
+
+```text
+runs per ball
+```
+
+while the engine wants:
+
+```text
+units along the conditions vector
+```
+
+`runs_per_condition_unit` is the bridge between them.
+
+---
+
+### Hidden dew
+
+Some venues also receive a hidden dew effect.
+
+I first decide whether the venue experiences the simulated dew condition:
+
+```python
+rng.random(d.teams) < d.dew_share
+```
+
+and, if it does, assign:
+
+```python
+d.dew_runs / per
+```
+
+in engine units.
+
+The agent can observe historical second-innings behaviour at that ground and potentially infer that something systematic is happening, but it is never directly told:
+
+```text
+venue 4 has dew = X
+```
+
+That is exactly the kind of hidden recurring structure the forecasting problem is intended to expose.
+
+---
+
+### Batter-venue affinity
+
+I also generate a hidden affinity between every batter and every venue:
+
+```python
+self.affinity = rng.normal(
+    0,
+    self.cal.batter_venue_sd_runs
+    * np.sqrt(d.affinity_share)
+    / per,
+    (len(self.team_of), d.teams)
+)
+```
+
+So each player has a small personal tendency to perform better or worse at each ground.
+
+Again, the scale comes from the measured batter-at-venue variation, while `affinity_share` determines how much of that measured spread I assign to genuine personal affinity.
+
+This produces a large hidden matrix, but each individual effect is intentionally small.
+
+The agent can only learn these values indirectly from repeated player-ground observations.
+
+---
+
+### Constructing the true `SkillBook`
+
+The `skillbook()` method packages the current hidden state into the object consumed by `engine.py`.
+
+For each drifting quality variable I calculate:
+
+```python
+now = {
+    k: self.talent[k] + self.form[k]
+    for k in self.spread
+}
+```
+
+So the current batting and bowling qualities are the sum of permanent talent and current form.
+
+The returned `SkillBook` contains the public player and venue tables, hidden batting style, current batting quality, the pace-spin split, hidden bowling type, current bowling quality, the small public-structure interaction tables, venue level, dew, venue affinity, home advantage, era, day variation and wear.
+
+This is the true hidden state of the league at that moment.
+
+The important thing is that the engine does not know how these values were created.
+
+It simply consumes the `SkillBook`.
+
+That keeps world generation and match mechanics separate.
+
+---
+
+### Converting cricket units into engine units
+
+Several `Design` values are written in runs per ball because that is the easiest scale for me to reason about.
+
+Examples include:
+
+```text
+home_runs
+day_sd_runs
+wear_runs
+dew_runs
+pitch interaction values
+handedness interaction values
+```
+
+But `BallModel` does not directly add runs per ball.
+
+It moves logits along the calibrated `conditions` direction.
+
+So inside `skillbook()` I divide those quantities by:
+
+```python
+self.cal.runs_per_condition_unit
+```
+
+before passing them to the engine.
+
+That lets me write the design in understandable cricket language while still keeping the internal model mathematically consistent.
+
+---
+
+### The era level
+
+The current season also contributes an environment shift.
+
+The code uses:
+
+```python
+self.cal.era_step
+* (
+    self.season
+    - (d.seasons - 1) / 2
+)
+```
+
+which centres the three simulated seasons around zero.
+
+With three seasons, the offsets are approximately:
+
+```text
+season 0 -> -1 era step
+season 1 ->  0
+season 2 -> +1 era step
+```
+
+I then add:
+
+```python
+d.level_runs / per
+```
+
+to recenter the overall scoring environment.
+
+So the synthetic league inherits the measured historical drift while remaining centred around the scoring level I calibrated.
+
+---
+
+### How form evolves
+
+The `_drift()` method updates temporary form.
+
+I use:
+
+```python
+keep = np.exp(
+    -weeks
+    / (
+        self.d.form_memory_years * 52
+    )
+)
+```
+
+This is the exact exponential decay associated with an Ornstein-Uhlenbeck-style mean-reverting process.
+
+If $F_t$ is current form, I conceptually update it as:
+
+$$
+F_{t+\Delta}
+=
+\kappa F_t
++
+\epsilon
+$$
+
+where:
+
+$$
+\kappa
+=
+e^{-\Delta/\tau}
+$$
+
+and $\tau$ is the memory timescale.
+
+A short gap gives $\kappa$ close to one, so most form survives.
+
+A long gap gives a smaller $\kappa$, so old form becomes less informative.
+
+Uhlenbeck and Ornstein (1930) introduced the mean-reverting stochastic process underlying this construction.
+
+---
+
+### Keeping the form variance stationary
+
+If I only multiplied old form by `keep`, form would gradually collapse toward zero.
+
+I therefore add fresh noise.
+
+The new noise has standard deviation:
+
+```python
+sd * np.sqrt(
+    (1 - talent_share)
+    * (1 - keep ** 2)
+)
+```
+
+so that:
+
+$$
+\operatorname{Var}(F_{t+\Delta})
+=
+\kappa^2\sigma_F^2
++
+(1-\kappa^2)\sigma_F^2
+=
+\sigma_F^2
+$$
+
+The total form variance therefore remains constant over time.
+
+This is what makes the process stationary.
+
+Players move around their permanent talent levels, but the population does not gradually become more or less variable simply because time has passed.
+
+---
+
+### Why I use a dynamic form model
+
+Without drifting form, a player's hidden quality would be completely fixed.
+
+Then historical performance from season 1 would remain just as informative for a season 4 forecast as performance from the previous week.
+
+That is not the world I want.
+
+I want old history to retain information because talent is persistent, but I also want recent history to matter more because temporary form changes.
+
+This is closely related to dynamic sports-rating models. Glickman (1999), for example, treats latent player strength as something that changes through time rather than as one permanently fixed parameter.
+
+The exact model here is my own simplified construction, but the statistical idea is the same: ability is latent, observed indirectly and allowed to evolve.
+
+---
+
+### Weekly drift during a season
+
+The league schedule is spread across eight weeks.
+
+I calculate:
+
+```python
+per_week = int(
+    np.ceil(
+        len(pairs)
+        / self.d.weeks_per_season
+    )
+)
+```
+
+and after each block of matches corresponding to roughly one week I call:
+
+```python
+self._drift(1)
+```
+
+So form does not remain frozen through the entire season.
+
+A player can begin the season in one form state and slowly move over the following weeks.
+
+That gives chronological history meaning.
+
+Performance in the most recent matches can carry more information about current form than performance many months earlier.
+
+---
+
+### Off-season drift
+
+Between seasons I call:
+
+```python
+self._drift(
+    52 - self.d.weeks_per_season
+)
+```
+
+before transfers occur.
+
+Since the playing season occupies eight weeks in this simplified league, the remaining forty-four weeks form the off-season.
+
+That long interval causes much more temporary form to decay.
+
+Persistent talent remains unchanged, but a substantial part of temporary form is replaced by new noise.
+
+This is important because the agent should not be able to carry the final observed performance of one season perfectly into the next.
+
+---
+
+### The final unseen off-season
+
+After the third historical season finishes, I drift form **one more time**:
+
+```python
+self._drift(
+    52 - self.d.weeks_per_season
+)
+```
+
+and then perform another transfer step.
+
+This is one of the most important pieces of uncertainty in the forecasting task.
+
+The history ends before this final off-season state is observed.
+
+So when the agent receives next-season fixtures, every player's current hidden quality contains a component that no historical record can reveal exactly.
+
+Even a perfect estimator of the previous season's state cannot know the fresh random form innovation.
+
+That means the true probabilities remain genuinely probabilistic rather than becoming deterministic if an agent reconstructs enough history.
+
+---
+
+### Transfers between seasons
+
+The `_transfers()` method changes team membership after each season.
+
+I do not move players arbitrarily across roles.
+
+For each role separately I create a pool and select:
+
+```python
+int(
+    len(pool)
+    * self.d.transfer_share
+)
+```
+
+players to move.
+
+I then permute the team assignments among those movers.
+
+Because swaps remain inside the same role, every team keeps the same squad shape.
+
+A team does not suddenly end up with fifteen bowlers and no batters.
+
+The statistical purpose of transfers is more important than the realism of the transfer mechanism itself.
+
+If players stayed with the same team forever, team identity would become a strong proxy for the hidden player strengths.
+
+A team-only forecasting model could then absorb a large amount of player information without actually learning players.
+
+Transfers deliberately weaken that shortcut.
+
+When a strong player changes teams, information about that player's ability should move with the player rather than remain attached to his old team.
+
+---
+
+### Choosing the playing eleven
+
+Every match receives a fresh line-up.
+
+For the current team I identify its full squad and then sample the required number of players from each role:
+
+```python
+self.d.xi_roles
+```
+
+which corresponds to:
+
+```text
+5 batters
+2 all-rounders
+4 bowlers
+```
+
+I concatenate those players to form the eleven.
+
+The five bowling options are:
+
+```text
+4 specialist bowlers
++
+1 all-rounder
+```
+
+The selected all-rounder is the first of the two chosen all-rounders.
+
+The line-up is therefore stochastic even when the squad is fixed.
+
+This creates another source of public variation that the agent must account for when forecasting a fixture.
+
+Two matches between the same teams need not involve exactly the same players.
+
+---
+
+### Fixtures
+
+The `_fixture()` method selects fresh elevens for the home and away side and returns a `Fixture`.
+
+The venue is simply the home team's ground:
+
+```python
+venue = home
+```
+
+because the world contains one home venue per team.
+
+This keeps the home/venue relationship straightforward.
+
+The fixture therefore bundles the public information needed to play the match while the hidden abilities remain inside the current `SkillBook`.
+
+---
+
+### Building the historical seasons
+
+`play_history()` creates the visible past that the forecasting agent will eventually receive.
+
+I generate three seasons.
+
+At the beginning of each later season, I first drift form through the off-season and apply transfers.
+
+Then I create a double round robin:
+
+```python
+pairs = [
+    (h, a)
+    for h in range(self.d.teams)
+    for a in range(self.d.teams)
+    if h != a
+]
+```
+
+With ten teams this produces:
+
+$$
+10\times9=90
+$$
+
+ordered home-away fixtures.
+
+Every pair of teams therefore meets twice overall: once with each side at home.
+
+I randomize the order of those ninety matches and spread them across the configured eight-week season.
+
+---
+
+### Why I use a double round robin
+
+The real IPL format is more complicated.
+
+The modern competition has ten teams but does not use a simple full home-and-away round robin for every pair before the playoffs.
+
+I deliberately use a double round robin because it creates a cleaner statistical environment.
+
+Every pairing receives two meetings per season.
+
+That gives the agent more balanced historical evidence and removes schedule asymmetry as a major modelling problem.
+
+It also gives more observations for player and venue inference while keeping the league small enough to simulate repeatedly.
+
+So the schedule is inspired by cricket but designed for this forecasting task.
+
+---
+
+### Playing one historical match
+
+For each scheduled pair I create a fixture and then freeze the current hidden world:
+
+```python
+book = self.skillbook()
+```
+
+That `SkillBook` represents the current player form, venue state and league conditions at that week.
+
+I then draw the toss:
+
+```python
+toss = (
+    fx.home
+    if self.rng.random() < 0.5
+    else fx.away
+)
+```
+
+The toss winner always chases, following the simplification already encoded in the engine.
+
+I therefore set the batting order from the toss result.
+
+---
+
+### One shared pitch for the match
+
+Before playing the innings I draw:
+
+```python
+day = self.rng.normal(
+    0.0,
+    book.day_sd
+)
+```
+
+This is the hidden pitch-on-the-day effect.
+
+The same value is used for both innings.
+
+That means a particularly good batting pitch benefits both teams in the same simulated match.
+
+I do not independently redraw the surface between innings.
+
+This is important for coherence: one match should happen in one environment.
+
+---
+
+### Playing history with one real copy
+
+For historical matches I call the innings simulator with:
+
+```text
+n = 1
+```
+
+I am not estimating probabilities here.
+
+I am creating one realized history.
+
+That means each historical match contains one toss, one pitch draw and one random sequence of ball outcomes, exactly as a real observed match gives us one realization of an underlying probability process.
+
+The true win probability may have been 70%, but history only shows whether the team happened to win this particular realization.
+
+This is the same distinction that motivated the `ExactScorer` at the beginning of the project.
+
+---
+
+### Logging every delivery
+
+For each innings I create:
+
+```python
+log = []
+```
+
+and pass it to the engine.
+
+The engine records each ball with information about the batter, bowler, outcome, extras, wickets and runs before the delivery.
+
+I then turn those logs into rows containing:
+
+```text
+season
+match
+innings
+over
+ball
+batting team
+bowling team
+venue
+batter
+bowler
+outcome
+extra
+batting position
+wickets before
+runs before
+target
+```
+
+This becomes the detailed history available to the agent.
+
+The hidden skill numbers do not appear in these rows.
+
+The agent sees only their consequences.
+
+---
+
+### Match-level history
+
+I also record one row per match containing:
+
+```text
+season
+match
+week
+home team
+away team
+venue
+toss winner
+team batting first
+first-innings total
+second-innings total
+winner
+```
+
+So the eventual `History` object contains both a granular ball table and a compact match table.
+
+This lets a forecasting system choose its own level of modelling.
+
+A simple approach could operate only on match results.
+
+A stronger one could reconstruct player-level and state-level information from the full ball history.
+
+---
+
+### Tied historical matches
+
+If the two innings totals are equal, I resolve the historical match with a coin flip:
+
+```python
+winner = (
+    first
+    if self.rng.random() < 0.5
+    else second
+)
+```
+
+I do not simulate a Super Over.
+
+Again, this is a deliberate simplification.
+
+The historical winner must be defined, but I do not want another miniature match mechanism solely for rare tied games.
+
+---
+
+### The final `History`
+
+After all three seasons are complete, I build the two pandas DataFrames and return:
+
+```python
+History(
+    balls,
+    matches,
+    players,
+    venues,
+    played,
+    seasons
+)
+```
+
+This is the public historical product of the synthetic world.
+
+It contains everything an agent is supposed to know about the past.
+
+The real hidden skills never appear inside it.
+
+That separation is one of the strongest invariants in the repository.
+
+---
+
+### Drawing the future fixtures
+
+After history has been played and the final unseen off-season has occurred, I can call:
+
+```python
+draw_fixtures(count)
+```
+
+to sample next-season matchups.
+
+The possible pairs are the same ordered home-away team combinations used during history.
+
+I randomize the list, take the requested number and assign match IDs beginning at:
+
+```text
+10000
+```
+
+This keeps forecast fixtures clearly separate from historical match IDs.
+
+Each future fixture also receives fresh elevens.
+
+So the forecasting agent knows the actual players selected for the upcoming match rather than having to predict team selection.
+
+The remaining problem is estimating how good those players and conditions currently are.
+
+---
+
+### `TruthEngine`
+
+`TruthEngine` is the only class intended to convert the hidden world into true fixture probabilities.
+
+Its constructor stores:
+
+```text
+league
+number of copies
+chunk size
+```
+
+and `probabilities()` first obtains:
+
+```python
+book = self.league.skillbook()
+```
+
+This is the true current hidden state after the final off-season drift and transfers.
+
+The forecasting agent never receives this object.
+
+`TruthEngine` does.
+
+That is the security boundary.
+
+---
+
+### Computing the true probability
+
+For every future fixture I repeatedly call the same public `MatchSimulator` used everywhere else, but I give it the **true SkillBook**.
+
+If the truth budget is:
+
+```text
+100000 copies
+```
+
+then conceptually I simulate that fixture one hundred thousand times under the true latent state and calculate how often the home team wins.
+
+This gives the simulator-defined true probability:
+
+$$
+p_{\text{true}}
+=
+P(\text{home wins}\mid\text{true hidden world})
+$$
+
+That is the probability used by `ExactScorer`.
+
+So the grading target is not the winner of one future simulated match.
+
+It is the Monte Carlo approximation to the actual win probability implied by the hidden world.
+
+---
+
+### Chunking the truth computation
+
+Large Monte Carlo batches use memory.
+
+`TruthEngine` therefore divides the requested number of copies into chunks.
+
+It calculates the number of parts:
+
+```python
+parts = max(
+    1,
+    int(
+        np.ceil(
+            self.copies / self.chunk
+        )
+    )
+)
+```
+
+and then chooses a chunk size.
+
+Each part independently estimates the fixture probability.
+
+I finally average those chunk estimates.
+
+This keeps memory bounded without changing the underlying Monte Carlo target.
+
+---
+
+### Deterministic truth seeds
+
+The truth simulation does not consume the league's main random generator.
+
+Instead, each fixture and chunk gets a deterministic generator:
+
+```python
+np.random.default_rng(
+    [900_000 + fx.match, part]
+)
+```
+
+This is a very useful separation.
+
+The truth probability for a fixture is determined by:
+
+```text
+fixture ID
++
+chunk number
++
+hidden SkillBook
+```
+
+rather than by whatever random operations happened to occur immediately before grading.
+
+That makes truth computation reproducible.
+
+If I compute the same fixture probability twice with the same hidden state and configuration, I obtain the same Monte Carlo estimate.
+
+It also means truth computation does not mutate the state of the league's historical random stream.
+
+---
+
+### Why `TruthEngine` is the only door to the hidden world
+
+I want the rest of the repository to interact with hidden truth through a very narrow interface.
+
+The agent can receive:
+
+```text
+History
+future Fixtures
+public engine
+public constants
+```
+
+but it should not be handed:
+
+```text
+talent arrays
+form arrays
+venue levels
+dew values
+venue affinities
+current true SkillBook
+```
+
+`TruthEngine` keeps those details behind one operation:
+
+```text
+fixtures
+    ->
+true win probabilities
+```
+
+That is exactly what the grader needs and nothing more.
+
+A narrow interface makes accidental information leakage easier to inspect.
+
+---
+
+### Why the final off-season matters for task difficulty
+
+The final off-season creates an important irreducible gap between history and truth.
+
+At the end of the visible third season, the agent can estimate player talent and the form that existed at that time.
+
+Then I apply another long form drift before the forecast fixtures.
+
+Part of old form survives.
+
+Part disappears.
+
+Fresh form noise is introduced.
+
+The agent knows the statistical process but not the fresh random innovation.
+
+So even an ideal forecaster cannot know the current SkillBook exactly from history.
+
+It can only form a posterior estimate.
+
+That is useful because otherwise enough historical data could eventually reveal the entire hidden world and turn the forecasting problem into near-deterministic parameter recovery.
+
+---
+
+### Reproducibility check
+
+One of the strongest checks for this file uses:
+
+```python
+League(101)
+```
+
+with the original calibration and design constants.
+
+The expected historical world contains:
+
+```text
+270 matches
+62,972 logged balls
+```
+
+with a first-innings mean around:
+
+```text
+192.11
+```
+
+and, most importantly, the resulting visible ball table matches the previously piloted world row for row.
+
+That is a much stronger check than saying the averages are similar.
+
+It means the sequence of realized events is identical.
+
+The same players are created, the same matches are scheduled, the same tosses occur and the same ball outcomes are drawn.
+
+That verifies the entire random-consumption path.
+
+---
+
+### Why the rebuilt calibration changes a few outcomes
+
+With the calibration rebuilt by this repository rather than the exact original calibration file, seed `101` still produces approximately:
+
+```text
+62,972 balls
+```
+
+and a first-innings mean around:
+
+```text
+192.12
+```
+
+but a few outcomes can differ.
+
+The reason is that simulation is path dependent.
+
+Suppose one probability differs only in the fourth decimal:
+
+```text
+old P(six) = 0.0812
+new P(six) = 0.0816
+```
+
+Most random draws will produce exactly the same outcome under both distributions.
+
+But eventually a uniform random number may land inside the tiny interval where the two cumulative distributions disagree.
+
+At that ball, one world may produce a six while the other produces something else.
+
+Once the score changes, chase pressure can change.
+
+The striker may change.
+
+A wicket may occur at a different time.
+
+The two innings can then follow different trajectories even though the original numerical difference was microscopic.
+
+This is a useful demonstration of an important property of stochastic simulation:
+
+> **Fixed seeds give exact reproducibility only when the entire model and random-consumption path are also fixed.**
+
+---
+
+### Why the piloted task keeps its original constants
+
+Because of that sensitivity, reproducing calibration values to four decimal places is not sufficient if I want the exact historical world used in an earlier pilot.
+
+A tiny parameter difference can eventually flip one random categorical draw and cause the future trajectory to diverge.
+
+So if the objective is to reproduce the piloted task byte for byte, the task needs the exact calibration artifact used when that world was generated.
+
+The rebuilt calibration is useful for demonstrating that the statistical pipeline reproduces the same model.
+
+It is not automatically interchangeable with the original artifact for exact seeded replay.
+
+That is why I separate **reproducibility of the method** from **identity of a particular generated world**.
+
+---
+
+### Scale of the historical world
+
+With ten teams and a double round robin, every season contains:
+
+$$
+10\times9=90
+$$
+
+matches.
+
+Across three seasons:
+
+$$
+90\times3=270
+$$
+
+matches are visible.
+
+Those matches produce roughly:
+
+```text
+63,000 ball records
+```
+
+depending on how often innings finish early.
+
+That is large enough to contain substantial evidence about players, teams and venues, but still small enough that noise remains important.
+
+This balance is deliberate.
+
+If I generated millions of matches, the hidden parameters would become too easy to estimate.
+
+If I generated only a handful, almost no player signal would be learnable.
+
+---
+
+### How I think about the full information flow
+
+At this point the architecture becomes:
+
+```text
+Calibration + Design + Seed
+            |
+            v
+       league/world.py
+            |
+            v
+    hidden synthetic world
+            |
+      +-----+------+
+      |            |
+      v            v
+ visible past    hidden state
+   History       SkillBook
+      |            |
+      v            v
+ forecaster     TruthEngine
+      |            |
+      v            v
+ estimated p     true p
+      \            /
+       \          /
+        v        v
+        ExactScorer
+```
+
+The same world creates both sides of the evaluation.
+
+Historical observations come from the hidden state.
+
+Future truth comes from the same hidden state after time has moved forward.
+
+The forecaster sees the first and tries to infer the second.
+
+---
+
+### What I deliberately simplify
+
+This synthetic league does not include playoffs.
+
+It does not include rain interruptions or revised targets.
+
+There are no injuries.
+
+There is no economic transfer market.
+
+Transfers are random.
+
+Captaincy is not modelled.
+
+The toss winner always chases.
+
+Bowling rotations are fixed by the engine.
+
+I make these simplifications deliberately.
+
+The objective is not to reproduce every institution of the IPL.
+
+The objective is to create a statistically grounded forecasting world in which the hidden truth is controllable, the public evidence is rich and the resulting probabilities can be calculated exactly enough for grading.
+
+These simplifications therefore limit what the simulator can claim about real cricket, but they do not undermine the internal forecasting task.
+
+The forecaster and the truth engine operate under exactly the same rules.
+
+---
+
+### The main idea
+
+I think of `world.py` as the **world generator and keeper of truth**.
+
+`engine.py` defines how cricket works.
+
+`calibration.py` defines the measured constants and the chosen design.
+
+`world.py` samples one concrete universe from those rules.
+
+It creates the players, decides their hidden abilities, moves form through time, creates venues, schedules matches, generates the public history and then keeps the final hidden state private.
+
+The agent gets the evidence.
+
+`TruthEngine` gets the truth.
+
+The central principle is:
+
+> **I generate one fully specified hidden cricket world, reveal only its historical consequences, and grade forecasts against future probabilities computed from that same hidden world.**
+
+### References
+
+Uhlenbeck, G. E., & Ornstein, L. S. (1930). *On the theory of the Brownian motion*. **Physical Review, 36**(5), 823–841.
+
+Glickman, M. E. (1999). *Parameter estimation in large dynamic paired comparison experiments*. **Journal of the Royal Statistical Society: Series C (Applied Statistics), 48**(3), 377–394.

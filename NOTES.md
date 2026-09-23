@@ -522,3 +522,694 @@ A season contains both repeatable skill and random variation. `explore_reliabili
 - Lord, F. M., & Novick, M. R. (1968). *Statistical Theories of Mental Test Scores*. Addison-Wesley.
 - Spearman, C. (1904). *The proof and measurement of association between two things*. **American Journal of Psychology, 15**.
 - Spearman, C. (1910). *Correlation calculated from faulty data*. **British Journal of Psychology, 3**, 271–295.
+
+## 5. dev/fit_state.py
+
+`de/fit_state.py` does two related jobs.
+
+First, it learns **how the situation of a cricket match changes what is likely to happen on the next ball**. Second, after accounting for that situation, it asks **how real batters and bowlers systematically differ from an average player**.
+
+This separation is important. A batter hitting more sixes may genuinely be a power hitter, or he may simply have faced more balls at the death when everybody hits more sixes. The model first learns the effect of the situation and only then looks for player differences.
+
+### Reconstructing the state before every ball
+
+The script begins with the same recent IPL ball-by-ball data used in the earlier analysis:
+
+```python
+balls = balls[(balls.season >= 2019) & (balls.innings <= 2)].copy()
+```
+
+It determines which deliveries are legal and then reconstructs the scoreboard **immediately before each delivery**.
+
+```python
+balls["balls_before"] = innings.legal.cumsum() - balls.legal
+balls["wk_before"] = innings.wicket_any.cumsum() - balls.wicket_any
+balls["runs_before"] = innings.runs_total.cumsum() - balls.runs_total
+```
+
+The subtraction matters because `cumsum()` already includes the current delivery. The model needs to know what the batter saw **before the bowler delivered the ball**, not what the scoreboard looked like afterward.
+
+So a state might look like:
+
+```text
+63 legal balls bowled
+2 wickets lost
+87 runs scored
+```
+
+These variables describe how many resources the batting team has already spent. This connects naturally to the resource interpretation of cricket developed by Duckworth and Lewis (1998), where overs and wickets remaining are the two central resources of an innings. Similar state-dependent ideas are used in cricket simulation work by Swartz, Gill and Muthukumarana (2009) and Davis, Perera and Swartz (2015).
+
+For the second innings, the script also calculates the target:
+
+```python
+balls["target"] = balls.match.map(first_total) + 1
+```
+
+If the first team scored 180, the chasing team needs 181.
+
+### Wickets relative to what is normal
+
+Simply saying that a team has lost three wickets is not enough. Three wickets after four overs is disastrous; three wickets after eighteen overs is normal.
+
+The script therefore measures wickets relative to what teams usually have lost at that stage:
+
+```python
+L["wk_excess"] = L.wk_before - L.over.map(typical_wk)
+```
+
+Suppose teams normally have lost about two wickets at a particular stage.
+
+Then:
+
+```text
+actual wickets = 2  -> wk_excess = 0
+actual wickets = 4  -> wk_excess = +2
+actual wickets = 1  -> wk_excess = -1
+```
+
+This gives the model a single variable describing whether the batting side is unusually healthy or unusually damaged for that point in the innings.
+
+### Measuring chase pressure
+
+The script also measures how difficult a chase has become.
+
+It first estimates the scoring rate that IPL teams normally achieve from each point of an innings to the end. Then, during a chase, it calculates the rate currently required to reach the target.
+
+The pressure variable is approximately:
+
+$$
+\text{pressure}
+=
+\log
+\left(
+\frac{\text{required scoring rate}}
+{\text{normal scoring rate from here}}
+\right)
+$$
+
+If the required rate is normal, pressure is around zero.
+
+If the chasing team needs to score faster than normal:
+
+```text
+pressure > 0
+```
+
+If the required rate is comfortable:
+
+```text
+pressure < 0
+```
+
+The logarithm is useful because ratios become symmetric. Needing twice the normal rate and needing half the normal rate have equal-sized effects in opposite directions on a logarithmic scale.
+
+The value is clipped between `-1.0` and `1.2` so that bizarre situations such as needing forty runs from one ball do not dominate the statistical fit.
+
+### Batting position
+
+The model also records approximately where a player bats.
+
+The order in which players first appear as batter or non-striker is used to construct batting position. Positions 1–3 form the baseline, while the model adds separate effects for:
+
+```text
+positions 4–5
+positions 6–7
+positions 8+
+```
+
+This matters because a number-eight batter does not have the same scoring profile as a top-order batter even when they face a similar match situation.
+
+---
+
+### The six possible outcomes
+
+Every legal ball is placed into one of six categories:
+
+```text
+W = bowler wicket
+0 = dot ball
+1 = one run
+2 = two or three runs
+4 = four or five runs
+6 = six or more runs
+```
+
+The purpose of the model is therefore to estimate six probabilities for every ball.
+
+For example:
+
+```text
+P(W) = 0.05
+P(0) = 0.28
+P(1) = 0.41
+P(2) = 0.07
+P(4) = 0.12
+P(6) = 0.07
+```
+
+These probabilities change depending on the over, season, innings, wickets lost, chase pressure and batting position.
+
+---
+
+### The multinomial logistic model
+
+The script builds a matrix called `X`.
+
+Each row represents one ball.
+
+Each column represents one feature of the situation, such as:
+
+```text
+Over 1
+Over 2
+...
+Over 20
+
+Season 2020
+Season 2021
+...
+
+Second innings
+Extra wickets lost
+Chase pressure
+Batting position 4–5
+Batting position 6–7
+Batting position 8+
+```
+
+There are **33 situation variables** in total.
+
+The model gives each outcome a numerical score:
+
+$$
+z_k = \sum_j x_j B_{jk}
+$$
+
+and then converts the six scores into probabilities using the **softmax function**:
+
+$$
+p_k =
+\frac{e^{z_k}}
+{\sum_m e^{z_m}}
+$$
+
+This is multinomial logistic regression: the multi-category extension of ordinary logistic regression. McFadden (1974) developed the conditional-logit framework for modelling choices between multiple alternatives.
+
+The intuition is simple:
+
+> Every feature pushes some outcomes upward and others downward, and softmax turns all those pushes into six probabilities that add to one.
+
+---
+
+### Why one outcome has to be fixed at zero
+
+There is a mathematical ambiguity in softmax.
+
+Suppose the six scores are:
+
+```text
+1, 2, 3, 4, 5, 6
+```
+
+Adding ten to every score gives:
+
+```text
+11, 12, 13, 14, 15, 16
+```
+
+but the resulting probabilities are exactly the same.
+
+Therefore the model needs a reference point.
+
+This code chooses **one run** as the reference outcome:
+
+```python
+FREE = [0, 1, 3, 4, 5]
+```
+
+The coefficient for outcome index `2`, corresponding to one run, is fixed at zero.
+
+Everything else is therefore learned relative to a single.
+
+For display, the code later centres each six-number row around zero. This changes the appearance of the coefficients but not their meaning or probabilities.
+
+---
+
+### How the model learns the coefficients
+
+The model asks:
+
+> Given the match situation, how much probability did I assign to what actually happened?
+
+Its loss is the negative log-likelihood:
+
+$$
+-\sum_i \log p_{i,y_i}
+$$
+
+If the model gives high probability to what happened, the penalty is small. If it gives very low probability to what happened, the penalty is large.
+
+This is the same logarithmic-loss principle used in the earlier `ExactScorer`.
+
+The gradient of the loss is particularly clean:
+
+$$
+X^\top(P-Y)
+$$
+
+where `P` contains the predicted probabilities and `Y` contains the outcomes that actually occurred. Bishop (2006) derives this form for multinomial logistic models.
+
+The script provides this gradient directly to SciPy instead of making the optimizer approximate it numerically:
+
+```python
+gradient = (X.T @ (p - Y))[:, FREE].ravel() + 1e-2 * theta
+```
+
+That makes optimization substantially faster.
+
+---
+
+### Why there is a ridge penalty
+
+The loss also contains a tiny penalty:
+
+$$
+\frac{1}{2}\lambda \|\theta\|^2
+$$
+
+with:
+
+```text
+lambda = 0.01
+```
+
+This is **ridge regularization**, associated with Hoerl and Kennard (1970).
+
+Its practical purpose here is to discourage unnecessarily large coefficients and help give the optimization problem a well-defined solution.
+
+Because the penalty is very small relative to the amount of data, it acts mainly as numerical stabilization rather than strong shrinkage.
+
+---
+
+### Why the optimization is well behaved
+
+The multinomial-logit negative log-likelihood is convex in its coefficients. Adding the positive quadratic ridge term makes the problem strictly convex.
+
+Boyd and Vandenberghe (2004) give the general convex-optimization theory behind this.
+
+In practical terms:
+
+> There is one best solution rather than many unrelated local minima.
+
+The script finds it using **L-BFGS-B**, a limited-memory quasi-Newton optimizer described by Liu and Nocedal (1989) and Byrd et al. (1995).
+
+The expected fit converges in roughly:
+
+```text
+145 iterations
+```
+
+---
+
+### Why the code subtracts the largest score
+
+Before calculating exponentials, the code does:
+
+```python
+z -= z.max(1, keepdims=True)
+```
+
+This looks like it changes the model, but it does not.
+
+Softmax has the property:
+
+$$
+\operatorname{softmax}(z)
+=
+\operatorname{softmax}(z-c)
+$$
+
+for any constant `c` added or removed from all six scores.
+
+The subtraction simply prevents huge values such as:
+
+```text
+exp(1000)
+```
+
+from overflowing the computer's floating-point representation.
+
+This shifted calculation is the numerically stable way to compute softmax and log-sum-exp, discussed in detail by Blanchard, Higham and Higham (2021).
+
+---
+
+### What the fitted situation effects say
+
+Once the model has been fitted, its coefficients show how match situations change behavior.
+
+For example, one additional wicket lost relative to normal produces approximately:
+
+```text
+dots    +0.128
+sixes   -0.095
+```
+
+on the model's log-odds scale.
+
+The interpretation is intuitive:
+
+> A team that has lost more wickets than usual becomes more defensive.
+
+Chase pressure produces the opposite behavior:
+
+```text
+sixes    +0.351
+dots     -0.392
+wickets  +0.191
+```
+
+When the required rate becomes difficult, batters attack more aggressively. That reduces dots and increases sixes, but it also increases dismissals.
+
+Players batting at number eight or lower show another distinctive pattern: more dots and dismissals and fewer boundaries.
+
+---
+
+### Separating player ability from match situation
+
+This is the second major job of the file.
+
+Suppose a batter hit unusually many sixes.
+
+That does **not automatically mean he has a special six-hitting ability**. Perhaps he happened to face far more balls in overs 18–20 than most players.
+
+The fitted situation model lets the script ask a fairer question:
+
+> Given the exact situations this batter faced, how many sixes would an average IPL batter have been expected to hit?
+
+For each player, the code therefore calculates:
+
+```text
+observed outcomes
+versus
+expected outcomes from the situation model
+```
+
+For example:
+
+```text
+                     Observed    Expected
+
+Wickets                  15         14
+Dots                    120        130
+Singles                  95        110
+Twos                     25         30
+Fours                    50         48
+Sixes                    45         18
+```
+
+This player hit far more sixes than an average player would have been expected to hit in the same situations.
+
+That is evidence of an individual player characteristic rather than simply match context.
+
+---
+
+### Player "tilts"
+
+The code summarizes this difference using:
+
+```python
+tilt = np.log((observed + 0.5) / (expected + 0.5))
+```
+
+In simple terms:
+
+```text
+observed > expected -> positive tilt
+observed < expected -> negative tilt
+```
+
+Taking a logarithm makes proportional differences easier to combine.
+
+The `0.5` added to each count prevents problems when an outcome was never observed. This is a traditional continuity correction associated with Anscombe (1956).
+
+The six values are then centred so that their average is zero:
+
+```python
+tilt -= tilt.mean(1, keepdims=True)
+```
+
+The result describes **how the player's outcome distribution differs from average**.
+
+---
+
+### Removing differences caused by sampling noise
+
+There is still another problem.
+
+Imagine two completely identical batters.
+
+If each faced only 300 balls, they would not produce exactly the same number of fours, singles and sixes simply because cricket is random.
+
+Therefore the raw differences between players exaggerate the amount of real player variation.
+
+The script estimates this sampling noise and subtracts it from the observed covariance:
+
+$$
+\hat{\Sigma}_{\text{true}}
+=
+\hat{\Sigma}_{\text{observed}}
+-
+\hat{\Sigma}_{\text{noise}}
+$$
+
+This is the multivariable version of the same idea used in `explore_reliability.py`:
+
+> **Observed variation = real variation + measurement noise.**
+
+Measurement-error models such as Fuller (1987) formalize this distinction, while Tipping and Bishop's probabilistic PCA framework (1999) similarly separates structured latent variation from noise.
+
+---
+
+### Finding the main ways players differ
+
+After noise is removed, the code performs an eigenvalue decomposition:
+
+```python
+values, vectors = np.linalg.eigh(covariance)
+```
+
+This is conceptually similar to **principal component analysis**.
+
+Instead of giving every player six unrelated numbers, it asks:
+
+> What combinations of those six outcomes explain most of the genuine differences between players?
+
+The eigenvectors give those directions.
+
+The eigenvalues say how much real player variation lies along each one.
+
+So instead of inventing player attributes such as:
+
+```text
+power = 8
+aggression = 6
+control = 7
+```
+
+the script lets the real IPL data determine which player dimensions actually exist.
+
+---
+
+### What it discovers about batters
+
+Among **103 batters with at least 300 balls**, roughly:
+
+```text
+71% of real player variation -> first direction
+13%                          -> second
+10%                          -> third
+```
+
+The first direction looks approximately like:
+
+```text
+more sixes
+fewer singles
+fewer twos
+more wickets
+little change in dots
+little change in fours
+```
+
+That is naturally interpreted as something like:
+
+```text
+power hitter <-----> accumulator
+```
+
+Importantly, this is mostly a **style axis**, not simply a good-player versus bad-player axis.
+
+One end takes more risks, hits more sixes and gets dismissed more often. The other accumulates more singles and twos.
+
+The data produced this direction first; the human label `"style"` was applied afterward.
+
+The second major batting direction is much more closely related to dismissal probability and therefore behaves more like a **quality dimension**.
+
+---
+
+### What it discovers about bowlers
+
+The same procedure is applied to bowlers with at least 300 deliveries.
+
+Among approximately **110 bowlers**, the first direction explains around:
+
+```text
+43% of real variation
+```
+
+and the second around:
+
+```text
+36%
+```
+
+The strongest direction largely trades the probability of conceding fours against the probability of conceding sixes.
+
+That pattern can plausibly separate different bowling styles, such as pace and spin, although the interpretation is applied after seeing the data rather than imposed beforehand.
+
+---
+
+### Why the eigenvector sign is fixed
+
+There is a small mathematical detail in:
+
+```python
+first = vectors[:, 0] * np.sign(vectors[5, 0])
+```
+
+An eigenvector has no natural direction.
+
+These two vectors describe exactly the same axis:
+
+```text
+[ 0.2, -0.5, 0.7]
+[-0.2,  0.5,-0.7]
+```
+
+So the code simply adopts a convention:
+
+> The first player direction always points toward more sixes.
+
+That makes results reproducible and easier to interpret.
+
+---
+
+### The gradient bug this analysis exposed
+
+One particularly important lesson from this file is that numerical bugs do not always crash a program.
+
+The incorrect gradient was once written as:
+
+```python
++ 1e-2 + theta
+```
+
+instead of:
+
+```python
++ 1e-2 * theta
+```
+
+The program still ran.
+
+The optimizer even reported success.
+
+But the fitted coefficients were subtly wrong.
+
+That is dangerous because the numbers still looked believable.
+
+A standard defensive check is `scipy.optimize.check_grad`, which compares the analytic gradient with a finite-difference approximation. A production version of this calibration should include such a test.
+
+---
+
+### Expected checks
+
+The fitted dataset contains:
+
+```text
+125,465 legal balls
+33 model columns
+165 free coefficients
+```
+
+because five outcome coefficients are learned for each of the 33 predictors while the single-run outcome is fixed as the reference:
+
+$$
+33 \times 5 = 165
+$$
+
+The optimizer should converge in approximately:
+
+```text
+145 iterations
+```
+
+The main player-direction results are approximately:
+
+```text
+Batters
+103 regular players
+first-direction spread = 0.347
+variation shares = [0.71, 0.13, 0.10]
+
+Bowlers
+110 regular players
+first-direction spread = 0.203
+variation shares = [0.43, 0.36, 0.16]
+```
+
+Tiny differences in the final decimals can occur because numerical optimizers stop once they fall within a tolerance.
+
+Finally, the fitted coefficients and player directions are written to:
+
+```text
+data/state_fit.json
+```
+
+This file becomes part of the calibrated simulator.
+
+---
+
+### The main idea
+
+The easiest way to understand `fit_state.py` is as a two-stage question.
+
+First:
+
+> **Given the over, wickets, score, chase pressure and batting position, what would an average IPL player probably do on this ball?**
+
+Then:
+
+> **After accounting for all of that context, how do real players consistently behave differently from that average?**
+
+The first part learns the **state of the game**.
+
+The second part learns the **hidden dimensions of player style and ability**.
+
+Together they stop the simulator from confusing circumstances with talent. A batter is not labelled a power hitter merely because he happened to bat at the death; he has to hit more sixes than an average batter would have hit **in those same situations**.
+
+### References
+
+- Anscombe, F. J. (1956). *On estimating binomial response relations*. **Biometrika, 43**.
+- Bishop, C. M. (2006). *Pattern Recognition and Machine Learning*. Springer, Section 4.3.
+- Blanchard, P., Higham, D. J., & Higham, N. J. (2021). *Accurately computing the log-sum-exp and softmax functions*. **IMA Journal of Numerical Analysis, 41**, 2311–2330.
+- Boyd, S., & Vandenberghe, L. (2004). *Convex Optimization*. Cambridge University Press.
+- Byrd, R. H., Lu, P., Nocedal, J., & Zhu, C. (1995). *A limited memory algorithm for bound constrained optimization*. **SIAM Journal on Scientific Computing, 16**.
+- Davis, J., Perera, H., & Swartz, T. B. (2015). *A simulator for Twenty20 cricket*. **Australian & New Zealand Journal of Statistics, 57**.
+- Duckworth, F. C., & Lewis, A. J. (1998). *A fair method for resetting the target in interrupted one-day cricket matches*. **Journal of the Operational Research Society, 49**.
+- Fuller, W. A. (1987). *Measurement Error Models*. Wiley.
+- Hoerl, A. E., & Kennard, R. W. (1970). *Ridge regression: biased estimation for nonorthogonal problems*. **Technometrics, 12**.
+- Liu, D. C., & Nocedal, J. (1989). *On the limited memory BFGS method for large scale optimization*. **Mathematical Programming, 45**.
+- McFadden, D. (1974). *Conditional logit analysis of qualitative choice behavior*. In P. Zarembka (Ed.), *Frontiers in Econometrics*. Academic Press.
+- Swartz, T. B., Gill, P. S., & Muthukumarana, S. (2009). *Modelling and simulation for one-day cricket*. **Canadian Journal of Statistics, 37**.
+- Tipping, M. E., & Bishop, C. M. (1999). *Probabilistic principal component analysis*. **Journal of the Royal Statistical Society: Series B, 61**.

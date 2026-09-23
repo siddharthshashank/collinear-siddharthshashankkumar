@@ -79,7 +79,7 @@ def objective(theta):
     # Find whether the model is surprised by what happened, plus a light penalty on large numbers
     loss = -np.log(p[np.arange(len(y)), y]).sum() + 0.5 * 1e-2 * (theta ** 2).sum()
     # Slope of the loss w.r.t. every number in B
-    gradient = (X.T @ (p - Y))[:, FREE].ravel() + 1e-2 + theta
+    gradient = (X.T @ (p - Y))[:, FREE].ravel() + 1e-2 * theta
     return loss, gradient
 
 fit = minimize(objective, np.zeros(X.shape[1] * 5), jac=True, method="L-BFGS-B", options={"maxiter": 400})

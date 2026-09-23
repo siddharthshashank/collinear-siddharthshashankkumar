@@ -27,3 +27,14 @@ def season_reliability(who, floor):
     halves = halves[(halves[("n", 0)] >= floor / 2) & (halves[("n", 1)] >= floor / 2)]
     r = halves[("rate", 0)].corr(halves[("rate", 1)])
     return round(float(2 * r / (1 + r)), 2)
+
+def residuals():
+    # The starting point for the venue and interaction tests: every ball's runs off the bat relative to
+    # that season's average. Subtracting the season mean removes the rise in scoring over the years, so a
+    # ground that hosted more recent matches does not look high-scoring just because scoring rose.
+    # Every match is also assigned to one of two halves (odd or even in the archive's order), so that any
+    # effect can be tested for whether it repeats across independent sets of matches.
+    faced = balls[~balls.wide].copy()
+    faced["res"] = faced.runs_bat - faced.groupby("season").runs_bat.transform("mean")
+    faced["half"] = pd.factorize(faced.match)[0] % 2
+    return faced

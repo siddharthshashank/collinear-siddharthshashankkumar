@@ -10924,13 +10924,836 @@ Bishop, C. M. (2006). *Pattern Recognition and Machine Learning*. Springer.
 
 ## 14. dev/validate_world.py
 
-**What we are trying to do.** Ask whether the simulated league looks like the real one before trusting anything built on it. The script plays three independent leagues, pools their matches and balls, and compares six summaries with the real targets measured in file 6: the mean and spread of first-innings totals, wickets to bowlers per first innings, how often the chasing side wins, the run rate in each of the twenty overs, and chase success by size of target. This is operational validation in Sargent's sense, comparing model output with the behaviour of the system it imitates (*Verification and validation of simulation models*, Journal of Simulation, vol. 7, no. 1, 2013, pp. 12–24), and it is how Davis, Perera and Swartz validated their Twenty20 simulator (Australian and New Zealand Journal of Statistics, vol. 57, no. 1, 2015, pp. 55–71).
+### What I am trying to do
 
-**What the script found this time.** Mean total 189.2 against 188.5 real; spread 35.0 against 37.4; wickets 5.83 against 5.9; chasers win 0.510 against 0.509; the run rate by over correlates 0.977 with the real profile across the twenty overs; chase success falls from 0.85 for targets under 160 to 0.24 for 220 and over, against 0.81 to 0.21 real. The design document's table had carried 190.6, 35.5 and 0.531 from a run made before the wear constant was raised, with a sentence saying the change had not been re-validated. This run is that re-validation, done here first and then confirmed with the original constants (189.1, 35.0, 0.509). The chase rate now matches the archive; the spread of totals remains a little low and stays in the limitations. The document and the run report were corrected the same day.
+`dev/validate_world.py` is where I stop asking whether the simulator is internally consistent and start asking a harder question:
 
-**Why three leagues.** One league of 270 matches gives a first-innings mean with a standard error of about 2 runs and a chase rate with a standard error of about 0.03; three leagues halve those. The seeds 1 to 3 are fixed so the check is reproducible.
+> **Does the synthetic league actually behave like the real cricket data I calibrated it from?**
 
-**Citations.** Sargent (2013) and Davis, Perera and Swartz (2015) were checked against library records on 23 September 2026.
+Up to this point, I have checked individual pieces separately. I checked that the over profiles look sensible, that the player spreads are measured correctly, that the engine responds to wickets and chase pressure in the expected direction, and that the world generator is reproducible.
 
-**My notes.**
+Those checks are necessary, but they are not enough.
 
+A simulator can contain individually reasonable components and still produce unrealistic league-level behaviour once all of those components interact.
+
+This file therefore performs an **operational validation** of the finished world.
+
+I generate several complete synthetic leagues, pool their visible match and ball histories, and compare the resulting distributions with the real targets measured earlier in `fit_constants.py`.
+
+The question is no longer:
+
+```text
+Does this function work?
+```
+
+or:
+
+```text
+Does this coefficient have the right sign?
+```
+
+The question is:
+
+> **When all the mechanisms run together, does the world produce something recognizably like the cricket system I intended to imitate?**
+
+This is the kind of validation Sargent (2013) describes as operational validity: comparing the output behaviour of the simulation with the behaviour of the real system.
+
+Davis, Perera and Swartz (2015) follow the same broad philosophy when validating their Twenty20 cricket simulator against real match characteristics.
+
+---
+
+### What I compare
+
+I do not try to compare every possible statistic in the archive.
+
+Instead, I focus on six summaries that cover different parts of the generated game.
+
+I compare the mean first-innings total, the standard deviation of first-innings totals, the average number of bowler wickets in the first innings, the probability that the chasing side wins, the scoring profile across the twenty overs, and chase success as a function of the target.
+
+Together these tell me whether the simulator gets both the centre and shape of the game approximately right.
+
+A simulator could match the mean score while having completely unrealistic variance.
+
+It could match the average score and still produce the wrong death-over pattern.
+
+It could reproduce first-innings scoring while making chasing far too easy.
+
+So I deliberately check several different aspects of the generated world rather than one headline average.
+
+---
+
+### Why I simulate three complete leagues
+
+The validation function begins with:
+
+```python
+def summary(design, seeds=(1, 2, 3)):
+```
+
+I generate three independent leagues rather than validating on one synthetic history.
+
+Each league contains:
+
+```text
+270 matches
+```
+
+across three seasons.
+
+One league is already fairly large, but the summaries still contain Monte Carlo variation.
+
+For example, if the first-innings standard deviation is around:
+
+```text
+35 to 37 runs
+```
+
+then a single league of 270 first innings gives the estimated mean a standard error on the order of:
+
+```text
+2 runs
+```
+
+Similarly, a chase probability around `0.5` estimated from only a few hundred matches can easily move by several percentage points simply because of sampling noise.
+
+Pooling three leagues gives me:
+
+```text
+810 matches
+```
+
+and substantially more ball-level observations.
+
+That makes the comparison more stable.
+
+I use fixed seeds:
+
+```text
+1, 2, 3
+```
+
+so the validation itself is reproducible.
+
+If I rerun this script without changing the design or calibration, I should obtain the same synthetic validation sample.
+
+---
+
+### Generating the validation worlds
+
+For every seed I create:
+
+```python
+League(seed, design=design)
+```
+
+and call:
+
+```python
+play_history()
+```
+
+This means the validation does not use a special simplified simulator.
+
+It runs exactly the same league-generation pipeline that produces the forecasting task.
+
+Each validation league contains invented players, hidden player abilities, form drift, transfers, venues, pitch effects, tosses, line-ups, match-day conditions and individual ball outcomes.
+
+I collect the match tables into:
+
+```python
+M
+```
+
+and the ball tables into:
+
+```python
+B
+```
+
+and add the league seed to each row.
+
+I then concatenate all three worlds.
+
+The resulting validation sample is therefore just a larger pooled version of the same world an agent would eventually observe.
+
+---
+
+### First-innings data
+
+Most of my validation summaries use the first innings.
+
+I isolate those balls with:
+
+```python
+first = B[B.innings == 1]
+```
+
+First innings are particularly useful for checking the basic scoring model because they are not influenced by a target.
+
+That lets me examine the scoring distribution without the extra behavioural response created by chase pressure.
+
+The chase-specific behaviour is validated separately.
+
+---
+
+### Mean first-innings total
+
+The simplest target is:
+
+```python
+M.first_total.mean()
+```
+
+This asks whether the overall scoring level of the simulated league is correct.
+
+The real target measured from the archive is approximately:
+
+```text
+188.5 runs
+```
+
+In the current re-validation run, the simulator produces approximately:
+
+```text
+189.2 runs
+```
+
+That difference is small.
+
+It tells me that the global scoring level, player variation, venue effects, era adjustment and other mechanisms combine to produce roughly the intended average.
+
+This is particularly important because introducing player heterogeneity changes the league mean through nonlinear softmax effects.
+
+That is why `level_runs` existed in the `Design` object.
+
+This validation checks whether that recentering actually worked in the full league.
+
+---
+
+### Spread of first-innings totals
+
+I also calculate:
+
+```python
+M.first_total.std()
+```
+
+The real archive has a first-innings standard deviation around:
+
+```text
+37.4 runs
+```
+
+while the current simulator produces approximately:
+
+```text
+35.0 runs
+```
+
+This is one of the remaining mismatches.
+
+The mean is close, but the simulated league is still slightly too concentrated around that mean.
+
+In plain language, real IPL innings contain somewhat more extreme low and high totals than my synthetic world generates.
+
+That difference is not enormous, but I keep it visible as a limitation.
+
+I do not want to keep adding hidden noise terms only to force every validation statistic to match exactly.
+
+The world needs to be credible, not mechanically overfitted to every aggregate number.
+
+---
+
+### Bowler wickets
+
+The first-innings wicket calculation uses:
+
+```python
+first[first.outcome == 0]
+```
+
+because outcome code zero corresponds to:
+
+```text
+W
+```
+
+in the ball model.
+
+I group those dismissals by league and match.
+
+Some innings contain no bowler wickets, so after grouping I reindex against all matches and fill missing values with zero.
+
+This detail matters.
+
+Without the reindexing, an innings with no wickets would disappear from the grouped table entirely and the average would be biased upward.
+
+The final statistic is therefore:
+
+```python
+wk.mean()
+```
+
+across all first innings.
+
+The real archive target is approximately:
+
+```text
+5.9 wickets
+```
+
+and the simulated world currently produces approximately:
+
+```text
+5.83
+```
+
+which is very close.
+
+This tells me that the dismissal process is behaving plausibly at the innings level, not only ball by ball.
+
+---
+
+### Reconstructing runs from the ball history
+
+For the over profile I rebuild scoring from the historical balls.
+
+The ball outcome codes correspond to:
+
+```text
+W, 0, 1, 2, 4, 6
+```
+
+with representative run values:
+
+```python
+np.array([0, 0, 1, 2, 4, 6])
+```
+
+I then add the independently generated extras:
+
+```python
+runs = (
+    np.array([0, 0, 1, 2, 4, 6])[first.outcome]
+    + first.extra
+)
+```
+
+This reconstructs the scoring process in the same coarse representation used by the simulator.
+
+I then calculate the average scoring rate for every over.
+
+---
+
+### Runs per over
+
+For each over I calculate:
+
+```python
+runs.groupby(first.over).sum()
+/
+first.groupby("over").size()
+*
+6
+```
+
+The numerator is the total number of modeled runs scored in that over across the validation leagues.
+
+The denominator is the number of legal deliveries observed in that over.
+
+Multiplying by six expresses the result as approximately:
+
+```text
+runs per six-ball over
+```
+
+rather than runs per ball.
+
+This produces a twenty-number simulated over profile.
+
+I compare it against:
+
+```python
+real["runs_per_over_first_innings"]
+```
+
+from the archive calibration.
+
+---
+
+### Why I use the correlation across overs
+
+I do not only ask whether every individual over has exactly the same run rate.
+
+I also calculate:
+
+```python
+np.corrcoef(
+    real_over,
+    per_over
+)[0, 1]
+```
+
+This asks whether the **shape** of the scoring profile is reproduced.
+
+The current correlation is approximately:
+
+```text
+0.977
+```
+
+across all twenty overs.
+
+That is strong.
+
+It means the simulator reproduces the major temporal structure of a T20 innings.
+
+The early overs, middle overs and death overs rise and fall in approximately the same pattern as the archive.
+
+A correlation of `0.977` does not mean the simulated values are numerically identical in every over.
+
+It means the overall shape is very close.
+
+That is exactly what I care about here.
+
+---
+
+### Inspecting representative overs
+
+For readability I print only selected overs:
+
+```text
+1, 4, 7, 11, 15, 18, 20
+```
+
+rather than dumping all twenty values into the terminal.
+
+These points give me a quick view across the powerplay, middle overs and death overs.
+
+I still calculate the correlation using all twenty.
+
+So the abbreviated printout is only for human inspection.
+
+The validation itself uses the complete profile.
+
+---
+
+### Chase success
+
+At the match level I identify a successful chase with:
+
+```python
+chase_won = M.winner != M.batted_first
+```
+
+Because there are only two teams in a match, this means the side batting second won.
+
+The overall chase-success rate is then:
+
+```python
+chase_won.mean()
+```
+
+The real target is approximately:
+
+```text
+0.509
+```
+
+and the current simulator produces approximately:
+
+```text
+0.510
+```
+
+This is one of the strongest matches in the current validation.
+
+The second-innings wear and dew mechanisms, together with the fitted chase-pressure response, now combine to produce almost exactly the archive-level chase rate.
+
+---
+
+### Chase success by target
+
+A single chase-success number can hide a bad model.
+
+A simulator could get:
+
+```text
+51%
+```
+
+overall simply because easy and hard targets happen to balance incorrectly.
+
+I therefore split targets into bands.
+
+The bands are approximately:
+
+```text
+below 160
+160–179
+180–199
+200–219
+220 and above
+```
+
+For each band I calculate the fraction of chases won.
+
+This checks that the simulator gets the **difficulty gradient of chasing** approximately right.
+
+A target of 150 should not behave like a target of 230.
+
+---
+
+### What the target bands currently look like
+
+In the current simulation, chase success falls from roughly:
+
+```text
+0.85
+```
+
+for targets below 160 to approximately:
+
+```text
+0.24
+```
+
+for targets of 220 or more.
+
+The corresponding archive values are approximately:
+
+```text
+0.81
+```
+
+and:
+
+```text
+0.21
+```
+
+at those extremes.
+
+So the synthetic league is slightly more chase-friendly at both ends, but the overall shape is very similar.
+
+The important behaviour is present:
+
+> **As the target rises, successful chases become progressively less likely.**
+
+This tells me that chase pressure is not merely shifting the global second-innings average. It is interacting with the target in a plausible way.
+
+---
+
+### What changed from the earlier validation
+
+An earlier design document contained validation numbers around:
+
+```text
+mean total     190.6
+score spread    35.5
+chase rate       0.531
+```
+
+Those values came from a run performed before I increased the second-innings wear constant.
+
+The document explicitly noted that the change had not yet been revalidated.
+
+This script is the re-validation.
+
+With the current design I now get approximately:
+
+```text
+mean total     189.2
+score spread    35.0
+chase rate       0.510
+```
+
+The major improvement is the chase rate.
+
+The old world allowed chasing too easily.
+
+After increasing the wear effect, the simulated chase rate now sits essentially on top of the real target:
+
+```text
+simulated  0.510
+real       0.509
+```
+
+The first-innings spread remains somewhat too small.
+
+I keep that discrepancy in the documented limitations rather than pretending it disappeared.
+
+---
+
+### Confirming the change against the original constants
+
+I also repeated the validation using the original calibration constants.
+
+That run produced approximately:
+
+```text
+mean total     189.1
+score spread    35.0
+chase rate       0.509
+```
+
+This is important because it tells me the improved chase behaviour is not an artefact of the slightly rebuilt calibration.
+
+The current wear design works similarly under the original constants.
+
+The design document and run report were therefore corrected to reflect the new validated numbers.
+
+---
+
+### Why I keep validation separate from calibration
+
+There is an important methodological distinction here.
+
+Files 2 through 8 measure parameters from real data.
+
+Files 9 through 11 use those measurements and design assumptions to construct a synthetic world.
+
+File 14 now asks whether the **consequences** of that constructed world resemble the real system.
+
+Those are different operations.
+
+If I used the same summary statistic both to directly force a parameter and then claimed the resulting match as independent validation, the validation would be weak.
+
+Some design constants are intentionally chosen with aggregate targets in mind, so this validation is not a completely untouched test set in the machine-learning sense.
+
+Its role is different.
+
+It checks whether the complete interacting simulator remains close to all of the major cricket summaries simultaneously.
+
+That is why I think of it as operational validation rather than predictive out-of-sample evaluation.
+
+---
+
+### Optional wear experiments
+
+The script also contains a small tuning mode.
+
+Normally:
+
+```python
+grid = [Design()]
+```
+
+so I validate the default design.
+
+If I call the script with an extra command-line argument, it instead constructs alternative designs using:
+
+```python
+replace(
+    Design(),
+    wear_runs=w
+)
+```
+
+for different values of `wear_runs`.
+
+This is how I explored the effect of second-innings wear.
+
+I can change one design constant while leaving every other mechanism fixed and see how the resulting league-level chase behaviour moves.
+
+That is much more informative than changing several constants simultaneously and guessing which one caused the improvement.
+
+---
+
+### Why `dataclasses.replace()` is useful here
+
+`Design` is a frozen dataclass.
+
+I do not want to mutate it in place.
+
+So:
+
+```python
+replace(
+    Design(),
+    wear_runs=w
+)
+```
+
+creates a new design object that is identical to the default except for one chosen field.
+
+This is useful for controlled experiments.
+
+Conceptually I can compare:
+
+```text
+same simulator
+same calibration
+same seeds
+same design
+except one constant
+```
+
+That makes the effect of the changed parameter much easier to interpret.
+
+---
+
+### Why fixed seeds matter during design tuning
+
+When I compare two wear settings, I use the same league seeds.
+
+That creates a form of common-random-number comparison.
+
+The two designs experience corresponding random worlds rather than entirely unrelated Monte Carlo samples.
+
+I am not claiming that every ball remains identical after the parameter change, because altered probabilities eventually cause paths to diverge.
+
+But using the same initial seeds still reduces unnecessary differences in how the comparison is constructed.
+
+More importantly, it makes every reported design run reproducible.
+
+---
+
+### The current validation summary
+
+The current validated world therefore looks roughly like:
+
+```text
+                     simulated      real
+
+first-innings mean       189.2      188.5
+
+first-innings SD          35.0       37.4
+
+bowler wickets             5.83       5.9
+
+chasing-side wins          0.510      0.509
+
+over-profile correlation   0.977      1.000 reference
+
+chase <160                 0.85       0.81
+
+chase >=220                0.24       0.21
+```
+
+I do not expect every entry to be identical.
+
+What I want is a world that reproduces the main statistical structure closely enough that forecasting inside it resembles forecasting cricket rather than forecasting an arbitrary toy process.
+
+The current world does that reasonably well.
+
+---
+
+### What this validation tells me
+
+The first-innings mean tells me the overall level is right.
+
+The innings standard deviation tells me the synthetic world is still slightly too stable.
+
+The wicket count tells me the dismissal process is close.
+
+The overall chase rate tells me second-innings balance is now calibrated well.
+
+The over-profile correlation tells me the timing of scoring across an innings is realistic.
+
+The target-band analysis tells me chase difficulty changes in the correct way as the target rises.
+
+No one summary proves the simulator is realistic.
+
+Together they give a much stronger picture.
+
+---
+
+### What this validation does not prove
+
+A good match on these six quantities does not mean the simulator reproduces every property of real T20 cricket.
+
+I am not validating fielding patterns, individual player distributions, partnership lengths, innings momentum, over-specific wicket correlations, captaincy, injuries, toss strategy, playoff behaviour or many other real phenomena.
+
+A simulator can agree on several aggregate summaries while still differing in untested dimensions.
+
+So this file supports a limited claim:
+
+> **The synthetic league reproduces the major aggregate scoring and chasing behaviours I deliberately chose to validate.**
+
+It does not prove that the world is a complete model of real IPL cricket.
+
+---
+
+### Why the remaining score-spread mismatch is acceptable
+
+The largest visible miss is:
+
+```text
+simulated first-innings SD ≈ 35.0
+real first-innings SD      ≈ 37.4
+```
+
+The simulator therefore produces slightly less total-score variation than the archive.
+
+I could increase day-to-day pitch variation or introduce another hidden effect to close that difference further.
+
+I deliberately do not keep adding complexity merely to erase every residual.
+
+Every new latent mechanism would also make the forecasting task more complicated and create another hidden quantity that needs justification.
+
+At some point the gain in aggregate fit is not worth the loss in model simplicity and identifiability.
+
+I therefore leave this difference documented.
+
+---
+
+### How this file fits into the pipeline
+
+At this point the model-building path is:
+
+```text
+real IPL archive
+      |
+      v
+measure statistical structure
+      |
+      v
+build calibration
+      |
+      v
+choose documented design assumptions
+      |
+      v
+construct engine
+      |
+      v
+generate synthetic league
+      |
+      v
+dev/validate_world.py
+      |
+      +----------------------+
+      |                      |
+      v                      v
+synthetic summaries      real targets
+      |                      |
+      +----------+-----------+
+                 |
+                 v
+       operational validation
+```
+
+Only after this comparison looks reasonable do I trust the synthetic world enough to use it for the forecasting benchmark.
+
+---
+
+### How I think about this file
+
+I think of `validate_world.py` as the point where I ask whether all the individually defensible pieces actually add up to a believable whole.
+
+Calibration tells me what went into the simulator.
+
+Validation tells me what came out.
+
+Those are not the same question.
+
+The central principle is:
+
+> **I do not trust the world simply because every component has a rationale. I generate complete leagues and check whether their observable behaviour reproduces the major statistics of the real cricket system I intended to imitate.**
+
+### References
+
+Sargent, R. G. (2013). *Verification and validation of simulation models*. **Journal of Simulation, 7**(1), 12–24.
+
+Davis, J., Perera, H., & Swartz, T. B. (2015). *A simulator for Twenty20 cricket*. **Australian & New Zealand Journal of Statistics, 57**(1), 55–71.

@@ -38,3 +38,12 @@ class League:
         self.form = {k: rng.normal(0, v * np.sqrt(1 - d.talent_share), n) for k, v in self.spread.items()}
         # a batter's pace-versus-spin gap in quality, small
         self.split = rng.normal(0, d.split_sd, n)
+
+    def _build_venues(self):
+        d, rng, per = self.d, self.rng, self.cal.runs_per_condition_unit
+        # one ground per team; the pitch type is public, the level, the dew and each batter's liking for it are hidden
+        # `per` converts runs per ball into units along the conditions direction
+        self.venues = VenueTable(np.arange(d.teams), rng.integers(0, 3, d.teams))
+        self.venue_level = rng.normal(0, self.cal.venue_sd_runs / per, d.teams)
+        self.venue_dew = np.where(rng.random(d.teams) < d.dew_share, d.dew_runs / per, 0.0)
+        self.affinity = rng.normal(0, self.cal.batter_venue_sd_runs * np.sqrt(d.affinity_share) / per, (len(self.team_of), d.teams))

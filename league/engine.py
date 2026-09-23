@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 
 # runs scored by each of the six outcomes, in the order W, 0, 1, 2, 4, 6; a wicket scores nothing
-RUN = np.array([0, 0, 1, 2, 4, 6])
+RUNS = np.array([0, 0, 1, 2, 4, 6])
 # the two bowling styles, as integers so they can index tables
 PACE, SPIN = 0, 1
 
@@ -46,6 +46,13 @@ class History:
     seasons: int = 0
 
 @dataclass
+class BattingCard:
+    # what the innings simulator needs about the eleven batters of one side in one match; built by SkillBook.cards
+    style: np.ndarray        
+    quality: np.ndarray      
+    conditions: np.ndarray   # (11, 5): venue affinity, home lift, hand-by-style and pitch effects for each batter-bowler meeting
+
+@dataclass
 class BowlingCard:
     # the same for the five bowlers of the other side
     kind: np.ndarray
@@ -84,3 +91,57 @@ class BallModel:
         # six scores become six probabilities; subtracting the row maximum changes nothing and stops exp() overflowing
         p = np.exp(z - z.max(axis=1, keepdims=True))
         return p / p.sum(axis=1, keepdims=True)
+
+# Innings Simulator
+class InningsSimulator:
+    # Plays many copies of one innings at once. Every array below would have one entry per copy, so a ball is one vectorized step.
+    def __init__(self, model):
+        self.model = model
+
+    def play(self, batting, bowling, conditions, n, gen, target = None, log = None):
+        """
+        Plays n copies of one innings and returns the n totals.
+        `conditions` is a number of one value per copy.
+        """
+        m, rows = self.model, np.arange(n)
+        # who is on strike, who is at the other end, and who comes in next, as positions 0 to 10 in batting order
+        striker, partner, next_in = np.zeros(n, int), np.ones(n, int), np.full(n, 2)
+        # wickets lost, runs scored, and whether this copy's innings is still going
+        wickets = np.zeros(n, int)
+        runs = np.zeros(n, int)
+        live = np.ones(n, bool)
+        chasing = 0.0 if target is None else 1.0
+        for ball in range(120):
+            over = ball // 6
+            # five bowlers rotate over by over; a bowler never bowls two overs in a row
+            who = over % 5
+            pressure = 0.0 if target is None else m.pressure(target, runs, ball)
+            # the public part of the six scores, then the hidden numbers of the striker, the bowler and the conditions, each along its direction
+            z = m.situation(over, striker, wickets, np.full(n, chasing), pressure)
+            z = z + np.outer(batting.style[striker], m.bs) + np.outer(batting.quality[striker, who], m.bq)
+            z = z + bowling.kind[who] * m.wt + bowling.quality[who] * m.wq + np.outer(conditions + batting.conditions[striker, who], m.c)
+            p = m.shares(z)
+            # one uniform draw per copy picks the outcome from the cumulative probabilities; the minimum guards against rounding
+            kind = np.minimum((gen.random(n)[:, None] > p.cumsum(axis=1)).sum(axis=1), 5)
+            # an extra run with the measured probability, independent of the bat outcome
+            extra = (gen.random(n) < m.cal.extras_per_ball) & live
+            # optional ball-by-ball record of copy 0, used by the league to write the history files
+            if log is not None and live[0]:
+                log.append((ball, int(striker[0]), who, int(kind[0]), int(extra[0]), int(wickets[0]), int(runs[0])))
+            out = (kind == 0) & live
+            scored = np.where(live & ~out, RUNS[kind], 0)
+            runs += scored + extra
+            wickets += out
+            # the next batter replaces a dismissed striker
+            striker = np.where(out, next_in, striker)
+            next_in = next_in + out
+            # the batters cross on an odd number of runs and at the end of an over, but not both
+            swap = (scored % 2 == 1) ^ (ball % 6 == 5)
+            striker, partner = np.where(swap, partner, striker), np.where(swap, striker, partner)
+            # after the tenth wicket the indices would run past the eleven; clamp them, the innings is over anyway
+            striker, partner = np.minimum(striker, 10), np.minimum(partner, 10)
+            # an innings ends at ten wickets, or when a chase reaches its target
+            live &= wickets < 10
+            if target is not None:
+                live &= runs < target
+        return runs

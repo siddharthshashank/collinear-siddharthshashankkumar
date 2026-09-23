@@ -11757,3 +11757,850 @@ The central principle is:
 Sargent, R. G. (2013). *Verification and validation of simulation models*. **Journal of Simulation, 7**(1), 12–24.
 
 Davis, J., Perera, H., & Swartz, T. B. (2015). *A simulator for Twenty20 cricket*. **Australian & New Zealand Journal of Statistics, 57**(1), 55–71.
+
+## 15. dev/run_ladder.py
+
+### What I am trying to do
+
+`dev/run_ladder.py` is where I stop looking at individual forecasting models in isolation and run the entire ladder on freshly generated worlds.
+
+The purpose is to answer two questions before I evaluate any external model.
+
+First, I want to know whether the task can actually be solved for the right statistical reasons.
+
+Second, I want to know whether careless approaches fail by a large enough margin that the benchmark can distinguish good modelling from bad modelling.
+
+A benchmark is not useful just because one strong reference model performs well. It needs a meaningful spread between approaches of different quality.
+
+If the coin flip, team ratings, unregularized player model and careful reference all obtain almost the same score, then the task has very little discriminative power.
+
+So I use the ladder as an experiment on the benchmark itself.
+
+The world is the exam.
+
+The forecasting tiers are the students I send through it before anyone else takes it.
+
+---
+
+### Why I need baselines
+
+Forecasting research has repeatedly shown that sophisticated methods should not be judged in isolation.
+
+Simple baselines are often surprisingly difficult to beat.
+
+The Makridakis forecasting competitions are an important example of this discipline. The M4 competition compared 61 forecasting methods across 100,000 time series and again showed why new forecasting methods need to be evaluated against strong, understandable benchmarks rather than only against one another (Makridakis, Spiliotis & Assimakopoulos, 2020).
+
+I apply the same idea on a smaller scale.
+
+My ladder contains forecasters that fail in different ways.
+
+The coin flip ignores everything.
+
+The team model uses only team-level results.
+
+The unshrunk player model uses the right player structure but trusts small samples too much.
+
+The last-season-only model throws away older evidence.
+
+The head-to-head model fits a large number of pair-specific effects that the earlier repeatability analysis says mostly do not exist.
+
+The careful player model uses the full history with regularization.
+
+The richer tiers then add the smaller matchup and venue-affinity structures.
+
+This gives me a controlled spectrum from naive to careful.
+
+---
+
+### Reading the output
+
+For each model I report the regret from `ExactScorer`, the skill relative to the coin flip, and the spread slope from `report()`.
+
+The skill value is:
+
+$$
+1-\frac{R_{\text{model}}}{R_{\text{coin}}},
+$$
+
+so a positive value means the model removed some of the coin flip's regret.
+
+A skill of:
+
+$$
+0
+$$
+
+means the model is exactly at the coin-flip baseline.
+
+A negative value means it was worse.
+
+A value around:
+
+$$
+0.6
+$$
+
+means it removed about 60 percent of the coin flip's avoidable regret.
+
+I use the skill number mainly because it makes results across different worlds easier to read.
+
+The actual proper quantity remains regret.
+
+This is the same reference-forecast style of skill normalization discussed by Murphy (1988).
+
+The slope is the spread diagnostic from `ExactScorer`.
+
+A slope near one means the forecasts vary about as much as the true probabilities.
+
+A slope below one indicates overconfidence because the forecasts spread too widely.
+
+A slope above one indicates underconfidence because the forecasts remain too compressed toward `0.5`.
+
+That interpretation follows the spread measure discussed by Cox (1958).
+
+---
+
+### Command-line configuration
+
+The script can take both the world seeds and the number of future fixtures from the command line.
+
+The seeds are parsed with:
+
+```python
+seeds = (
+    [int(s) for s in sys.argv[1].split(",")]
+    if len(sys.argv) > 1
+    else [1]
+)
+```
+
+So I can run something like:
+
+```text
+1,2,3
+```
+
+to evaluate three independently generated worlds.
+
+The number of forecast fixtures is:
+
+```python
+fixtures_n = (
+    int(sys.argv[2])
+    if len(sys.argv) > 2
+    else 30
+)
+```
+
+This is useful because I can run a cheap smoke test with only a few fixtures or a larger experiment with many more.
+
+---
+
+### Building a fresh world
+
+For every seed I create:
+
+```python
+league = League(seed)
+```
+
+This generates a new synthetic world using the same calibrated recipe but a different random realization.
+
+I then generate the complete visible history:
+
+```python
+history = league.play_history()
+```
+
+and sample the future fixtures to be forecast:
+
+```python
+fixtures = league.draw_fixtures(fixtures_n)
+```
+
+At this point the forecasting models receive exactly the same type of information an external agent would receive.
+
+The true hidden `SkillBook` remains inside the league.
+
+---
+
+### Computing the truth for the experiment
+
+I calculate the future fixture probabilities using:
+
+```python
+truth = TruthEngine(
+    league,
+    copies=10_000
+).probabilities(fixtures)
+```
+
+For the final benchmark truth I can afford a much larger Monte Carlo budget.
+
+For this ladder experiment I use 10,000 copies because I need to evaluate many models across several worlds and want the experiment to remain practical.
+
+The intention here is not to establish the final stored truth to maximum precision.
+
+It is to obtain truth estimates accurate enough to rank the forecasting tiers and understand the broad separation between them.
+
+I then construct:
+
+```python
+scorer = ExactScorer(truth)
+```
+
+so all tiers are evaluated against the same probability vector.
+
+---
+
+### Looking at how predictable the world is
+
+Before fitting the models I print:
+
+```python
+truth.std()
+truth.min()
+truth.max()
+```
+
+This is useful because not every generated world has the same amount of predictive signal.
+
+A world where almost every fixture has truth near:
+
+```text
+0.5
+```
+
+is fundamentally different from a world containing probabilities such as:
+
+```text
+0.25
+0.40
+0.65
+0.78
+```
+
+In the first case there is little useful separation among teams and players.
+
+In the second case there is much more structure for a forecaster to exploit.
+
+Printing the standard deviation and range of the truth gives me a quick description of how much fixture-level signal exists in that particular seed.
+
+This later becomes important when I discover that reference performance varies much more across worlds than the first three seeds suggested.
+
+---
+
+### Building the ladder
+
+The ladder contains eight tiers in this script.
+
+I begin with:
+
+```python
+CoinFlip()
+```
+
+and:
+
+```python
+TeamRatings()
+```
+
+as the two simplest baselines.
+
+Then I create an unshrunk player model:
+
+```python
+BallModelForecaster(
+    "players, no shrinkage",
+    engine,
+    shrink=False
+)
+```
+
+This uses the public ball model but trusts noisy player estimates too strongly.
+
+I also include:
+
+```python
+BallModelForecaster(
+    "players, shrunk, last season only",
+    engine,
+    season_weights=[0, 0, 1]
+)
+```
+
+which uses regularization but discards the first two seasons.
+
+The main reference tier is:
+
+```python
+BallModelForecaster(
+    "players, shrunk",
+    engine
+)
+```
+
+which uses the full visible history with the calibrated shrinkage procedure.
+
+I then add the raw head-to-head tier:
+
+```python
+BallModelForecaster(
+    "players, shrunk, raw head-to-head table",
+    engine,
+    head_to_head=True
+)
+```
+
+and finally the two richer versions that include the lower-dimensional matchup structure and venue affinity.
+
+All of them use the same public engine.
+
+Only their statistical assumptions differ.
+
+---
+
+### Fitting and forecasting each tier
+
+For every forecaster I call:
+
+```python
+f.fit(history)
+```
+
+and then:
+
+```python
+predict(fixtures)
+```
+
+The resulting probability vector is passed to:
+
+```python
+scorer.report(...)
+```
+
+which returns regret, skill, mean absolute probability error and slope.
+
+The script mainly records and prints:
+
+```text
+skill
+regret
+slope
+```
+
+because these tell me how much useful information the model recovered and whether its probabilities were systematically too wide or too narrow.
+
+For the `BallModelForecaster` tiers I also print the selected shrinkage scale when one exists.
+
+That lets me see whether chronological validation preferred:
+
+```text
+0.3
+1.0
+3.0
+```
+
+for that particular world.
+
+---
+
+### Why I append results instead of overwriting them
+
+After each forecaster finishes, I write one JSON line to:
+
+```text
+results/ladder_v2.jsonl
+```
+
+using append mode:
+
+```python
+with open(..., "a") as out:
+```
+
+This means experiments accumulate over time.
+
+A result looks conceptually like:
+
+```json
+{
+  "seed": 1,
+  "name": "players, shrunk",
+  "skill": 0.63,
+  "regret": 0.0087
+}
+```
+
+I prefer a JSON-lines file because each experiment is one independent record.
+
+I do not have to rewrite one large JSON structure whenever I add another seed.
+
+It also gives later analysis scripts a simple chronological experiment log.
+
+This becomes important once I move from the first three worlds to the larger eleven-world analysis.
+
+---
+
+### Reporting performance across seeds
+
+While the script runs, I keep a dictionary:
+
+```python
+table = {}
+```
+
+where every model name accumulates its skill values across worlds.
+
+At the end I print the mean skill together with the minimum and maximum:
+
+```text
+mean skill over seeds (min to max)
+```
+
+This gives me an immediate view of both average performance and between-world variation.
+
+A model whose average skill is strong but whose range is enormous is behaving differently from one whose performance is consistently moderate.
+
+That distinction turned out to matter much more than I initially expected.
+
+---
+
+### What the first three worlds showed
+
+The first serious experiment used three independent worlds.
+
+The careful reference obtained skill values around:
+
+```text
+0.63
+0.57
+0.61
+```
+
+These were encouragingly consistent.
+
+The unshrunk tier had roughly:
+
+```text
+1.16 to 1.88
+```
+
+times the reference regret.
+
+The last-season-only tier was around:
+
+```text
+1.14 to 2.56
+```
+
+times reference regret.
+
+The raw head-to-head model was dramatically worse, at approximately:
+
+```text
+2.7 to 7.6
+```
+
+times the reference regret.
+
+The richer matchup and affinity models remained within roughly two percent of the ordinary reference.
+
+At first glance, this was almost exactly the ladder shape I wanted.
+
+---
+
+### What those results told me about the task
+
+The reference's success told me that the task is solvable.
+
+A model using the public engine, all available history and sensible regularization can recover enough of the hidden world to forecast better than the naive baselines.
+
+The unshrunk model told me that using the correct model family is not sufficient. A forecaster also has to treat noisy player estimates carefully.
+
+The last-season-only tier showed that recent evidence matters, but throwing away older history loses useful information about persistent talent.
+
+The head-to-head failure showed that adding large numbers of intuitive but weakly supported interactions can be disastrous.
+
+The richer matchup models showed that there is no single hidden trick required to solve the task. The small matchup and venue structures help only marginally compared with simply doing the main regularized player estimation correctly.
+
+That is exactly the sort of separation I wanted the benchmark to produce.
+
+---
+
+### My first conclusion about stability
+
+From those first three seeds, I made an additional conclusion.
+
+Because the reference skills were:
+
+```text
+0.63
+0.57
+0.61
+```
+
+I concluded that reference performance was fairly stable at around:
+
+```text
+0.6
+```
+
+That conclusion turned out to be wrong.
+
+The error was not in the code.
+
+The error was in how much I inferred from three worlds.
+
+---
+
+### What happened when I ran more worlds
+
+Later, I accumulated eleven world seeds.
+
+Across those worlds the reference skill ranged approximately from:
+
+```text
+-0.21
+```
+
+to:
+
+```text
+0.73
+```
+
+That is dramatically wider than the original three-world range.
+
+Some synthetic worlds contain strong player and fixture differences that can be learned well from history.
+
+Other worlds happen, by random construction, to contain much less useful predictive signal.
+
+In those weak-signal worlds, estimating hundreds of latent parameters introduces estimation noise while there is relatively little real signal available to reward the effort.
+
+A plug-in player model can therefore lose more from estimation error than it gains from the small underlying differences among fixtures.
+
+In an extreme case it can perform worse than simply saying:
+
+```text
+0.5
+```
+
+for everything.
+
+That is why the reference can have negative skill in some seeds.
+
+---
+
+### Why this was an important discovery
+
+The benchmark generator is stochastic.
+
+That means difficulty is not only determined by the code and design constants.
+
+It is also determined by the realized hidden world.
+
+One seed might happen to generate a league with several clearly different players, useful venue patterns and strongly separated future fixtures.
+
+Another can generate a much flatter world.
+
+Both follow exactly the same recipe.
+
+The first three seeds happened to make the reference look much more stable than it really was across the population of possible worlds.
+
+This matters enormously for grading.
+
+If I set a universal pass threshold based on those three worlds, I could accidentally make some future worlds unfairly hard or easy.
+
+The later bar analysis in File 17 is what finally exposes this problem systematically.
+
+---
+
+### The lesson from the three-world mistake
+
+The lesson is simple:
+
+> **A few successful pilot seeds are not enough to characterize a stochastic benchmark.**
+
+I need to evaluate both models **and worlds**.
+
+The forecasting algorithm is random only through its data.
+
+The benchmark itself is also random because the hidden player and venue population changes with the seed.
+
+So there are two sources of variation in observed benchmark performance:
+
+```text
+method quality
+```
+
+and:
+
+```text
+world difficulty.
+```
+
+The initial ladder experiment measured the first reasonably well but severely underestimated the second.
+
+I keep this mistake documented because it directly changed the later grading design.
+
+---
+
+### Why a low-signal world can punish a good forecaster
+
+Suppose almost every future fixture has true probability around:
+
+```text
+0.48 to 0.52
+```
+
+Then there is very little regret available for any model to remove relative to the coin flip.
+
+A player-level forecaster still has to estimate batting style, quality, bowling ability, venue effects and other latent quantities from noisy historical outcomes.
+
+Those estimates are imperfect.
+
+If the true effects happen to cancel strongly in the future fixtures, the model can produce probabilities such as:
+
+```text
+0.42
+0.58
+```
+
+when truth is actually much closer to:
+
+```text
+0.49
+0.51.
+```
+
+The coin flip makes almost no error in that world.
+
+The sophisticated model incurs regret because its estimated signal is larger than the real fixture-level signal.
+
+So a negative reference skill is not automatically evidence that the forecaster implementation is broken.
+
+It can be a genuine consequence of a weakly predictable realized world.
+
+---
+
+### Why this affects the pass bar
+
+Originally I wanted the careful reference to provide a fairly stable performance landmark.
+
+The wider seed experiment shows that a fixed absolute skill threshold is much harder to justify.
+
+The same underlying forecasting method can have very different skill depending on how much signal the generated world happens to contain.
+
+That means grading needs to account for world difficulty more carefully.
+
+This is why the later files analyze the pass bar using many worlds rather than simply taking:
+
+```text
+reference skill ≈ 0.6
+```
+
+as a universal constant.
+
+`run_ladder.py` is therefore not only a baseline runner.
+
+It is also the experiment that reveals that **benchmark difficulty itself is a random variable**.
+
+---
+
+### Why I still keep the first three-world result
+
+The fact that my stability conclusion was wrong does not make the first experiment useless.
+
+The relative ordering of the careless tiers was still very informative.
+
+The regularized full-history player model was consistently much stronger than the intended bad approaches.
+
+The head-to-head tier was consistently poor.
+
+The richer interaction models remained close to the reference.
+
+So the initial experiment correctly characterized the **shape of the ladder**.
+
+What it failed to characterize was the **population-level variability of the reference across world seeds**.
+
+Those are different questions.
+
+I keep both conclusions separate.
+
+---
+
+### The short-run check
+
+I also use this script as a smoke test.
+
+A small run with one world and around twelve fixtures should complete successfully.
+
+It should print all eight tiers.
+
+The careful reference should generally appear above the deliberately careless tiers.
+
+I do not expect the exact numbers from such a tiny run to be stable.
+
+With only twelve fixtures, the Monte Carlo truth itself is noisier as a summary of overall performance, and individual fixture composition matters a lot.
+
+So the short run is checking:
+
+```text
+Does the experiment pipeline work?
+```
+
+rather than:
+
+```text
+Did I reproduce a particular benchmark score exactly?
+```
+
+That distinction prevents me from writing brittle tests around noisy small-sample numbers.
+
+---
+
+### Runtime is part of the experiment
+
+For each world I record:
+
+```python
+began = time.time()
+```
+
+and print elapsed time after truth generation and again after the complete ladder.
+
+This is useful because the reference models are computationally much heavier than the coin flip or team ratings.
+
+The ball-model tiers repeatedly optimize many latent parameters and then perform Monte Carlo match simulation.
+
+A benchmark can be statistically elegant and still be impractical if the baseline experiments require unreasonable resources.
+
+So I keep runtime visible during development.
+
+---
+
+### Why the script uses the world's own engine
+
+The script sets:
+
+```python
+engine = league.simulator.innings.model
+```
+
+and passes this same model into each `BallModelForecaster`.
+
+This reinforces the fairness architecture from the earlier files.
+
+The true league and reference models share the same public ball mechanics.
+
+The forecaster is not given a separately reimplemented approximation of the simulator.
+
+It uses the actual public `BallModel`.
+
+The unknown part remains the hidden values that multiply the public directions.
+
+That makes benchmark performance about inference rather than reverse engineering.
+
+---
+
+### How this file fits into the experiment pipeline
+
+At this point the benchmark-development process looks like:
+
+```text
+League(seed)
+    |
+    v
+generate public history
+    |
+    +-------------------+
+    |                   |
+    v                   v
+future fixtures      hidden world
+    |                   |
+    |                   v
+    |              TruthEngine
+    |                   |
+    |                   v
+    |                true p
+    |                   |
+    v                   |
+forecaster ladder       |
+    |                   |
+    v                   |
+forecast q              |
+    |                   |
+    +---------+---------+
+              |
+              v
+         ExactScorer
+              |
+              v
+     regret / skill / slope
+              |
+              v
+ results/ladder_v2.jsonl
+```
+
+This is the first place where the whole benchmark runs end to end repeatedly across independent worlds.
+
+---
+
+### What this script validates
+
+`validate_world.py` asked:
+
+> **Does the simulator look like cricket?**
+
+`run_ladder.py` asks a different question:
+
+> **Does the forecasting task behave like a useful benchmark?**
+
+A realistic synthetic world is not automatically a good benchmark.
+
+The world also needs enough learnable structure to reward careful modelling and enough statistical traps to punish careless modelling.
+
+The ladder experiment checks exactly that.
+
+---
+
+### The main limitation
+
+The largest limitation of the original ladder experiment was the number of world seeds.
+
+Three seeds were enough to see large differences among forecasting strategies.
+
+They were not enough to characterize the distribution of benchmark difficulty.
+
+That became clear only after eleven worlds had been accumulated.
+
+I therefore no longer treat the first three-world average as a stable estimate of reference performance.
+
+The later bar analysis is the correct place to reason about pass thresholds across worlds.
+
+---
+
+### How I think about this file
+
+I think of `run_ladder.py` as the **benchmark's pre-exam experiment**.
+
+I generate fresh exams, send several known students through them and inspect both their scores and how those scores change from exam to exam.
+
+Initially, this script convinced me that the task had the right ordering of methods.
+
+Later, the accumulated runs taught me something more important: the difficulty of the exam itself changes materially with the generated world.
+
+The central principle is:
+
+> **Before judging an external model, I first verify that the benchmark rewards the modelling choices I intend it to reward, punishes the shortcuts I intend it to punish, and remains understandable across the random worlds produced by the generator.**
+
+### References
+
+Makridakis, S., Spiliotis, E., & Assimakopoulos, V. (2020). *The M4 Competition: 100,000 time series and 61 forecasting methods*. **International Journal of Forecasting, 36**(1), 54–74.
+
+Murphy, A. H. (1988). *Skill scores based on the mean square error and their relationships to the correlation coefficient*. **Monthly Weather Review, 116**(12), 2417–2424.
+
+Cox, D. R. (1958). *Two further applications of a model for binary regression*. **Biometrika, 45**, 562–565.

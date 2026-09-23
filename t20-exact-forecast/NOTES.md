@@ -7192,3 +7192,1077 @@ The central principle is:
 Uhlenbeck, G. E., & Ornstein, L. S. (1930). *On the theory of the Brownian motion*. **Physical Review, 36**(5), 823–841.
 
 Glickman, M. E. (1999). *Parameter estimation in large dynamic paired comparison experiments*. **Journal of the Royal Statistical Society: Series C (Applied Statistics), 48**(3), 377–394.
+
+## 12. league/league_io.py
+
+### What I am trying to do
+
+`league/league_io.py` defines the one public representation through which every part of the task sees a generated world.
+
+By the time I reach this file, `world.py` already knows how to generate players, venues, match history and future fixtures. The problem now is how to package that information so that the task builder, reference forecasters, grader and forecasting agent all read exactly the same representation.
+
+I do not want one part of the repository reading Python objects directly while another reconstructs its own interpretation of CSV files. That would create unnecessary opportunities for mismatches.
+
+Instead, I define one explicit serialization boundary.
+
+`save_league()` takes the generated `History` and future `Fixture` objects and writes the public task files.
+
+`load_league()` reads those files back and reconstructs the same types of objects that the engine and reference forecasters expect.
+
+So conceptually I want:
+
+```text
+generated world
+      |
+      v
+ save_league()
+      |
+      v
+public task files
+      |
+      v
+ load_league()
+      |
+      v
+History + Fixtures
+```
+
+Every consumer of the task therefore sees the world through the same interface.
+
+Most importantly, nothing hidden crosses this boundary.
+
+I write player roles, handedness, bowling style, venue type, historical balls, historical matches, line-ups and future fixtures.
+
+I do **not** write hidden batting quality, hidden form, hidden bowling quality, venue level, dew, player-ground affinity or true fixture probabilities.
+
+So this file is also an information-security boundary between:
+
+```text
+public evidence
+```
+
+and:
+
+```text
+hidden simulation truth
+```
+
+---
+
+### Why I need a serialization layer at all
+
+Inside Python, the league is represented using objects such as:
+
+```text
+History
+Fixture
+PlayerTable
+VenueTable
+```
+
+Those are convenient for the simulator, but they are not a good distribution format for a task.
+
+The agent needs files that are easy to inspect, easy to parse and independent of the internal state of a particular Python process.
+
+I therefore convert the public world into seven CSV files and one JSON metadata file.
+
+When the task is later loaded, I reconstruct the Python objects from those files.
+
+That means the files are not merely an export for human inspection.
+
+They are the actual public API of a generated league.
+
+---
+
+### Supporting two package layouts
+
+At the top of the file I use:
+
+```python
+try:
+    from league.engine import Fixture, History, PlayerTable, VenueTable
+except ImportError:
+    from engine.model import Fixture, History, PlayerTable, VenueTable
+```
+
+This is deliberate.
+
+Inside the development repository, these classes live under:
+
+```text
+league.engine
+```
+
+but when the task is packaged for the agent, the same I/O file can live under a different package layout where those types are imported from:
+
+```text
+engine.model
+```
+
+I want the same source file to work in both places.
+
+The fallback keeps the serialization logic identical between the development environment and the packaged task instead of maintaining two slightly different copies.
+
+That matters because even a small difference between the builder's loader and the agent's loader could create a fairness problem.
+
+---
+
+### Turning line-ups into rows
+
+The helper:
+
+```python
+_lineup_rows()
+```
+
+converts fixture line-ups into a flat table.
+
+A `Fixture` contains arrays such as:
+
+```text
+home_xi
+home_bowlers
+away_xi
+away_bowlers
+```
+
+which are convenient in Python but awkward to store directly in CSV.
+
+I instead write one row per player per match.
+
+Each row records:
+
+```text
+match or fixture ID
+team
+batting slot
+player ID
+bowling slot
+```
+
+The batting slot runs from:
+
+```text
+0 to 10
+```
+
+because there are eleven players in the batting order.
+
+The bowling slot runs from:
+
+```text
+0 to 4
+```
+
+for the five players who bowl.
+
+Players who do not bowl receive:
+
+```text
+-1
+```
+
+as their bowling slot.
+
+The code first builds a mapping from player ID to bowling position:
+
+```python
+slot = {
+    int(p): i
+    for i, p in enumerate(five)
+}
+```
+
+Then, as I enumerate the batting eleven, I can write both the player's batting position and whether that same player belongs to the five-person bowling rotation.
+
+This representation lets me reconstruct both arrays later without storing complicated nested structures inside the CSV.
+
+---
+
+### `save_league()`
+
+The main write function is:
+
+```python
+save_league(folder, history, fixtures)
+```
+
+Its job is to take the public products created by `world.py` and turn them into the files delivered with the task.
+
+I first create the destination directory:
+
+```python
+folder = Path(folder)
+folder.mkdir(
+    parents=True,
+    exist_ok=True
+)
+```
+
+Then I write each component separately.
+
+---
+
+### `balls.csv`
+
+The largest file is:
+
+```text
+balls.csv
+```
+
+It contains one row for every historical delivery recorded in `History.balls`.
+
+This is the most detailed view of the visible league.
+
+Each row contains information such as the season, match, innings, over, ball, batting team, bowling team, venue, batter, bowler, outcome, extra, batting position, wickets before the ball, runs before the ball and chase target.
+
+This follows the same tidy-data principle I used when converting the original Cricsheet archive.
+
+Each observation is one row and each variable has its own column, following Wickham's tidy-data formulation (2014).
+
+That structure is useful because an agent can answer questions with ordinary filters and grouped calculations rather than parsing nested match objects.
+
+---
+
+### Writing outcomes as cricket labels
+
+Internally, the engine uses integer outcome codes:
+
+```text
+0, 1, 2, 3, 4, 5
+```
+
+corresponding to:
+
+```text
+W, 0, 1, 2, 4, 6
+```
+
+I do not want the public CSV to contain unexplained integer codes.
+
+Before writing `balls.csv`, I therefore convert:
+
+```python
+balls["outcome"] = np.array(
+    ["W", "0", "1", "2", "4", "6"]
+)[balls.outcome]
+```
+
+So a human opening the file sees:
+
+```text
+W
+0
+1
+2
+4
+6
+```
+
+rather than:
+
+```text
+0
+1
+2
+3
+4
+5
+```
+
+This does not change the information.
+
+It simply makes the public artifact readable without requiring someone to look up an encoding table.
+
+---
+
+### `matches.csv`
+
+I write:
+
+```text
+matches.csv
+```
+
+directly from:
+
+```python
+history.matches
+```
+
+This contains one row per historical match.
+
+The ball file answers questions about individual deliveries.
+
+The match file answers higher-level questions such as:
+
+```text
+Who played?
+Who won the toss?
+Who batted first?
+What were the innings totals?
+Who won?
+```
+
+A simple forecaster could therefore operate entirely from `matches.csv` without touching the detailed ball history.
+
+A stronger forecaster can use both.
+
+I deliberately expose multiple resolutions of the same public history so that the task does not force one particular modelling approach.
+
+---
+
+### `lineups.csv`
+
+I write historical line-ups using:
+
+```python
+_lineup_rows(
+    "match",
+    history.played
+)
+```
+
+to produce:
+
+```text
+lineups.csv
+```
+
+This file connects each historical match with the exact players who appeared.
+
+That matters because team identity alone is not enough in this world.
+
+Players transfer between teams, and a fresh eleven is selected for every match.
+
+A forecaster therefore needs to know which players generated each historical observation.
+
+The batting slot also tells the agent where the player appeared in the order, while the bowling slot identifies the five players who were actually used as bowlers.
+
+Without this file, much of the player-level information built into the synthetic world would be inaccessible.
+
+---
+
+### `players.csv`
+
+The `PlayerTable` uses numeric arrays internally.
+
+I convert those into a human-readable table.
+
+Instead of role codes such as:
+
+```text
+0
+1
+2
+```
+
+I write:
+
+```text
+batter
+allrounder
+bowler
+```
+
+Instead of handedness:
+
+```text
+0
+1
+```
+
+I write:
+
+```text
+right
+left
+```
+
+and instead of bowling-style codes I write:
+
+```text
+pace
+spin
+```
+
+The resulting:
+
+```text
+players.csv
+```
+
+therefore contains the public attributes of all synthetic players.
+
+These are facts the forecasting agent is explicitly allowed to use.
+
+What does not appear in the file are the hidden latent coordinates generated in `world.py`.
+
+So the player table might tell the agent:
+
+```text
+player 47 is left-handed and bowls spin
+```
+
+but it does not tell the agent:
+
+```text
+player 47 batting quality = 0.183
+player 47 current form = -0.041
+player 47 bowling quality = 0.097
+```
+
+Those remain hidden.
+
+---
+
+### `venues.csv`
+
+I perform the same conversion for grounds.
+
+The internal `VenueTable` contains the home-team ID and a numeric pitch code.
+
+I write:
+
+```text
+neutral
+pace
+spin
+```
+
+rather than:
+
+```text
+0
+1
+2
+```
+
+into:
+
+```text
+venues.csv
+```
+
+So the agent knows the public pitch type associated with every ground and which team has that ground as its home venue.
+
+Again, the hidden venue level, dew and batter-specific affinities are deliberately absent.
+
+---
+
+### `fixtures.csv`
+
+The next-season matches to be forecast are written to:
+
+```text
+fixtures.csv
+```
+
+Each row contains:
+
+```text
+fixture ID
+season
+home team
+away team
+venue
+```
+
+These are the future matches whose probabilities the forecasting agent must estimate.
+
+Their IDs are distinct from historical match IDs because `world.py` numbers future fixtures from `10000`.
+
+That makes it difficult to accidentally confuse a past match with a forecast target.
+
+---
+
+### `fixture_lineups.csv`
+
+The future fixtures also have their exact line-ups written to:
+
+```text
+fixture_lineups.csv
+```
+
+I use the same `_lineup_rows()` representation as for historical matches.
+
+This is important because the agent is not being asked to predict team selection.
+
+By the time it receives an upcoming fixture, it knows exactly:
+
+```text
+which eleven players will play
+where they bat
+which five players will bowl
+```
+
+The forecasting problem can therefore focus on estimating the hidden strengths of those players and conditions.
+
+If line-ups were also uncertain, the task would mix two separate prediction problems.
+
+I deliberately remove that ambiguity.
+
+---
+
+### `meta.json`
+
+The final public file is:
+
+```text
+meta.json
+```
+
+At the moment it contains:
+
+```json
+{"seasons": ...}
+```
+
+This tells the loader how many historical seasons are present.
+
+The file is small, but I prefer keeping global metadata separate from the tabular observations rather than encoding it awkwardly inside one of the CSV files.
+
+---
+
+### Why I use CSV
+
+I use CSV because I want the public data format to be boring.
+
+Almost every programming language can read it.
+
+A reviewer can inspect it in a text editor.
+
+A non-programmer can open it in a spreadsheet.
+
+A forecasting agent can read it with pandas, R, Julia, JavaScript or almost any other data stack.
+
+There is no custom binary serialization and no Python-specific object format required to understand the visible world.
+
+RFC 4180 documents a common format and MIME type for CSV files (Shafranovich, 2005), although it also notes that CSV historically has multiple dialects rather than one universally enforced specification.
+
+In this repository the ambiguity is much smaller because the same pandas library writes and reads the files.
+
+I write headers and do not rely on unusual quoting or nested structures.
+
+So the public representation stays simple.
+
+---
+
+### Why `"0"` must remain a string
+
+One small line in `load_league()` is unusually important:
+
+```python
+balls = pd.read_csv(
+    folder / "balls.csv",
+    dtype={"outcome": str}
+)
+```
+
+The outcome column contains labels such as:
+
+```text
+W
+0
+1
+2
+4
+6
+```
+
+The `"0"` here is a cricket outcome label.
+
+It does not mean the internal outcome code zero.
+
+If I let pandas infer the type freely, the mixture of numeric-looking strings and `"W"` can lead to inconvenient parsing behaviour.
+
+I therefore force the entire column to remain text.
+
+Only after reading it do I deliberately map the labels back into engine codes:
+
+```python
+{
+    "W": 0,
+    "0": 1,
+    "1": 2,
+    "2": 3,
+    "4": 4,
+    "6": 5
+}
+```
+
+This preserves the distinction between:
+
+```text
+public label "0"
+```
+
+and:
+
+```text
+internal code 0 = wicket
+```
+
+That is exactly the kind of small serialization detail that can create very confusing bugs if it is left implicit.
+
+---
+
+### Reconstructing the player table
+
+When loading the league, I read:
+
+```text
+players.csv
+```
+
+and convert the human-readable labels back into the numeric representation expected by the engine.
+
+Roles become:
+
+```text
+batter      -> 0
+allrounder  -> 1
+bowler      -> 2
+```
+
+Handedness becomes:
+
+```text
+right -> 0
+left  -> 1
+```
+
+and bowling style becomes:
+
+```text
+pace -> 0
+spin -> 1
+```
+
+I then construct:
+
+```python
+PlayerTable(...)
+```
+
+using those arrays.
+
+The public CSV representation is therefore optimized for readability, while the engine representation is optimized for numerical indexing.
+
+The loader is the explicit conversion boundary between them.
+
+---
+
+### Reconstructing the venue table
+
+I do the same for:
+
+```text
+venues.csv
+```
+
+The pitch labels are mapped back as:
+
+```text
+neutral -> 0
+pace    -> 1
+spin    -> 2
+```
+
+and I rebuild:
+
+```python
+VenueTable(...)
+```
+
+with the home-team and pitch arrays.
+
+So after loading, the engine sees exactly the same type of venue object that `world.py` originally created.
+
+---
+
+### Reconstructing fixtures
+
+The helper:
+
+```python
+_fixtures()
+```
+
+rebuilds `Fixture` objects from two public tables.
+
+The first table tells me the high-level fixture information:
+
+```text
+home
+away
+venue
+season
+fixture ID
+```
+
+The second table contains the player rows.
+
+For each fixture I select all rows belonging to that ID:
+
+```python
+mine = lineups[
+    lineups[key] == ident
+]
+```
+
+Then I separate the home and away teams.
+
+For each side I sort by:
+
+```text
+batting_slot
+```
+
+to reconstruct the eleven in batting order.
+
+I separately select players with:
+
+```text
+bowling_slot >= 0
+```
+
+sort those rows by bowling slot and reconstruct the five-person bowling order.
+
+The result is then passed back into:
+
+```python
+Fixture(...)
+```
+
+So the transformation is reversible:
+
+```text
+Fixture object
+      |
+      v
+line-up CSV rows
+      |
+      v
+Fixture object
+```
+
+That reversibility is one of the reasons I prefer an explicit normalized table over putting Python list representations directly into a CSV cell.
+
+---
+
+### Why I use batting and bowling slots
+
+Player IDs alone are not sufficient to reconstruct the match.
+
+The innings simulator needs the batting order because batting position affects the state model.
+
+It also needs the five bowlers in their defined rotation order.
+
+So I preserve both types of ordering explicitly.
+
+`batting_slot` tells me where the player appears in the eleven.
+
+`bowling_slot` tells me where that player appears among the five bowlers.
+
+This avoids relying on accidental CSV row order.
+
+The semantic order is stored as data rather than inferred from how the file happened to be written.
+
+---
+
+### Loading the `History`
+
+After reading the balls, matches, players, venues and metadata, I reconstruct:
+
+```python
+History(
+    balls,
+    matches,
+    table,
+    grounds,
+    [],
+    seasons
+)
+```
+
+The `played` list is empty in the loaded public object because the forecasting code does not need the original internal historical `Fixture` objects once the corresponding public tables have been written.
+
+The historical line-up information already exists in:
+
+```text
+lineups.csv
+```
+
+and the next-season `Fixture` objects are reconstructed separately from:
+
+```text
+fixtures.csv
+fixture_lineups.csv
+```
+
+The loader therefore returns:
+
+```python
+history, fixtures
+```
+
+which is exactly the interface expected by the reference forecasters.
+
+---
+
+### The public task folder
+
+At this stage the visible world consists of eight files:
+
+```text
+balls.csv
+matches.csv
+lineups.csv
+players.csv
+venues.csv
+fixtures.csv
+fixture_lineups.csv
+meta.json
+```
+
+Together they contain the historical evidence and future forecasting targets.
+
+They do not contain the answer.
+
+There is no:
+
+```text
+skills.csv
+```
+
+no:
+
+```text
+venue_levels.csv
+```
+
+no:
+
+```text
+true_probabilities.csv
+```
+
+and no serialized `SkillBook`.
+
+This is the boundary I want.
+
+---
+
+### Why this matters for fairness
+
+The task builder, reference forecasters and forecasting agent should not silently see different versions of the same league.
+
+If the builder used Python objects containing extra information while the agent used CSV files with less information, I could accidentally build a reference model that has an unfair advantage.
+
+By making `load_league()` the standard public loading path, I can make the reference forecasters consume exactly what the agent consumes.
+
+Conceptually:
+
+```text
+                 public task folder
+                        |
+                        v
+                  load_league()
+                        |
+             +----------+----------+
+             |                     |
+             v                     v
+      reference model           agent model
+```
+
+Both begin from the same public representation.
+
+That makes differences in performance much easier to attribute to modelling ability rather than data access.
+
+---
+
+### Save-load symmetry
+
+Another property I care about is that the public world survives a round trip.
+
+Conceptually:
+
+```text
+History + Fixtures
+       |
+       v
+  save_league()
+       |
+       v
+   eight files
+       |
+       v
+  load_league()
+       |
+       v
+History + Fixtures
+```
+
+The objects on the far side should contain the same public information as the objects I started with.
+
+That means serialization is not supposed to alter the task.
+
+It is merely a representation change.
+
+---
+
+### Byte-level reproducibility check
+
+The strongest test I run is with the known seed-101 world and the original constants.
+
+I generate that world, save it into a scratch folder and compare the resulting task files against the visible world used in the pilot.
+
+The expected command:
+
+```text
+diff -rq ...
+```
+
+produces no output.
+
+That means all eight public files are byte-identical.
+
+This is stronger than checking that they contain approximately the same number of rows or the same means.
+
+It means the serialization stage recreated exactly the same public task artifact.
+
+At that point I have tested the complete chain from the calibrated world through history generation and into the files delivered to the agent.
+
+---
+
+### Load-back check
+
+I then load those files again with:
+
+```python
+load_league(...)
+```
+
+and expect:
+
+```text
+62,972 historical balls
+24 future fixtures
+```
+
+The first forecast fixture should have:
+
+```text
+fixture = 10000
+home/away teams = 5 and 2
+```
+
+for the known reference world.
+
+This check tells me that both halves of the I/O layer agree.
+
+`save_league()` did not merely produce the correct-looking files.
+
+`load_league()` can also reconstruct the data structures needed by the forecasting code.
+
+---
+
+### The bug this file caught
+
+One simple bug occurred when `load_league()` was first typed.
+
+The function constructed the `History` object and reconstructed the fixtures correctly, but the final:
+
+```python
+return history, fixtures
+```
+
+was missing.
+
+So all the internal work happened and then Python implicitly returned:
+
+```text
+None
+```
+
+The first attempt to use the loader exposed the mistake immediately.
+
+This is a simple coding bug, but it is also why I want end-to-end tests that actually use the public loading interface rather than only inspecting intermediate variables.
+
+---
+
+### Why this file is the end of the world-building chain
+
+At this point I have moved through the entire pipeline:
+
+```text
+real IPL archive
+      |
+      v
+parse the deliveries
+      |
+      v
+measure innings structure
+      |
+      v
+measure signal and noise
+      |
+      v
+fit the state model
+      |
+      v
+measure player and venue variation
+      |
+      v
+build calibration
+      |
+      v
+define simulation design
+      |
+      v
+build match engine
+      |
+      v
+generate hidden synthetic world
+      |
+      v
+generate visible history
+      |
+      v
+league_io.py
+      |
+      v
+public task folder
+```
+
+The output of this file is the first representation that no longer needs to know anything about how the world was created.
+
+A forecasting agent can begin from these files alone.
+
+That is exactly where I want the private world-building pipeline to stop and the public forecasting task to begin.
+
+---
+
+### How I think about this file
+
+I think of `league_io.py` as the **airlock between the private simulator and the public task**.
+
+On one side I have a rich Python world containing hidden state, simulation objects and internal data structures.
+
+On the other side I have a small set of plain files containing exactly what a forecaster is allowed to observe.
+
+`save_league()` controls what passes through the airlock.
+
+`load_league()` guarantees that everyone who enters through the public side reconstructs the same view.
+
+The central idea is:
+
+> **I serialize the synthetic league once, in one explicit public format, and make both the reference forecasters and the agent reconstruct their world from that same representation. Hidden simulation state never crosses this boundary.**
+
+### References
+
+Wickham, H. (2014). *Tidy Data*. **Journal of Statistical Software, 59**(10), 1–23.
+
+Shafranovich, Y. (2005). *Common Format and MIME Type for Comma-Separated Values (CSV) Files*. RFC 4180, Internet Engineering Task Force.

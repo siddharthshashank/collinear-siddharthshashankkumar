@@ -1769,3 +1769,1524 @@ That turns the simulator from a collection of plausible cricket assumptions into
 - Sargent, R. G. (2013). *Verification and validation of simulation models*. **Journal of Simulation, 7**.
 - Spearman, C. (1910). *Correlation calculated from faulty data*. **British Journal of Psychology, 3**, 271–295.
 - Tango, T., Lichtman, M., & Dolphin, A. (2007). *The Book: Playing the Percentages in Baseball*. Potomac Books.
+
+## 7. dev/build_calibration.py
+
+`build_calibration.py` is the point where I stop doing new statistical measurement and start turning everything I already measured into the actual language of the simulator.
+
+Up to this point, the calibration pipeline has produced two major files:
+
+```text
+data/state_fit.json
+data/constants_fit.json
+```
+
+`state_fit.json` contains the fitted ball-state model from `fit_state.py`: over effects, season effects, batting-position effects, chase-pressure effects, wicket-state effects, and the directions along which real batters and bowlers differ.
+
+`constants_fit.json` contains the other measurements that do not naturally belong inside the multinomial ball model: extras, venue variation, player reliability, interaction tests and the real-cricket statistics that the simulated league should eventually reproduce.
+
+These files contain the information I need, but they are still expressed in the units that were convenient for the statistical analysis. Some values are logits, some are eigenvectors, some are correlations, some are standard deviations, and some are real cricket quantities such as runs per ball.
+
+What I want from `build_calibration.py` is therefore:
+
+> **Take everything I measured in Files 5 and 6, standardize it, convert it into interpretable simulator units, and package it into one coherent calibration.**
+
+There is no new measurement happening here. I am not going back to the ball archive and estimating another effect. Every value in this file is derived from something I already measured.
+
+---
+
+### Loading the Previous Fits
+
+I start by loading:
+
+```python
+fit = json.loads(Path("data/state_fit.json").read_text())
+con = json.loads(Path("data/constants_fit.json").read_text())
+```
+
+I think of these two inputs as describing different layers of the cricket world.
+
+`fit` tells me how the six ball outcomes change with:
+
+```text
+over
+season
+innings
+wickets
+chase pressure
+batting position
+player style
+player quality
+bowling type
+bowling quality
+```
+
+`con` tells me things such as:
+
+```text
+extras rate
+venue spread
+batter reliability
+bowler reliability
+batter-bowler repeatability
+batter-venue repeatability
+real scoring targets
+```
+
+The job of this script is to make these different measurements speak the same language.
+
+---
+
+### The Six Ball Outcomes
+
+The six outcomes remain:
+
+```text
+W   wicket credited to bowler
+0   dot ball
+1   one run
+2   two or three runs
+4   four or five runs
+6   six or more runs
+```
+
+For translating probability changes into runs, I use:
+
+```python
+RUNS = np.array([0, 0, 1, 2, 4, 6])
+```
+
+A wicket and a dot both score zero runs off the bat, while the other entries represent the run value associated with each outcome class.
+
+---
+
+### Standardizing Every Direction
+
+The player analysis in `fit_state.py` produced several six-dimensional directions.
+
+For example, one batter direction looked broadly like:
+
+```text
+more sixes
+fewer singles
+fewer twos
+more dismissals
+```
+
+I interpreted that as a batter style direction.
+
+But the raw eigenvectors coming from the previous fit are not yet suitable for direct use. I therefore define:
+
+```python
+def unit(v, positive=None, negative=None):
+    v = np.array(v, float)
+    v = v - v.mean()
+    v = v / np.linalg.norm(v)
+
+    if positive is not None and v[positive] < 0:
+        v = -v
+
+    if negative is not None and v[negative] > 0:
+        v = -v
+
+    return v
+```
+
+This function does three things:
+
+```text
+centre the direction
+normalize its length
+fix its sign
+```
+
+Each one has a different reason.
+
+---
+
+### Why I Centre the Directions
+
+The simulator ultimately converts six scores into probabilities using softmax.
+
+Suppose the scores are:
+
+```text
+1, 2, 3, 4, 5, 6
+```
+
+and I add ten to every value:
+
+```text
+11, 12, 13, 14, 15, 16
+```
+
+The resulting probabilities are unchanged.
+
+That is because:
+
+$$
+\operatorname{softmax}(z)
+=
+\operatorname{softmax}(z+c)
+$$
+
+when the same constant $c$ is added to every outcome.
+
+So a common offset across all six numbers carries no information.
+
+I remove that meaningless part with:
+
+```python
+v = v - v.mean()
+```
+
+After centering, the six values sum to zero.
+
+Now the vector represents only the relative movement between outcomes.
+
+That makes it easier for me to read the direction as:
+
+```text
+this outcome becomes more likely
+this outcome becomes less likely
+this one barely moves
+```
+
+rather than carrying around an arbitrary shared offset.
+
+---
+
+### Why I Normalize the Directions
+
+Next I calculate:
+
+```python
+v = v / np.linalg.norm(v)
+```
+
+so that:
+
+$$
+\|v\|_2 = 1
+$$
+
+for every direction.
+
+This lets me cleanly separate two ideas.
+
+The **direction** tells me how the six outcomes change together.
+
+The **spread** tells me how much real players differ along that direction.
+
+Without normalization, those two ideas would be mixed together.
+
+One vector could simply contain larger numbers than another because of how the eigendecomposition returned it.
+
+After normalization, I can say:
+
+```text
+one unit of batter style
+one unit of batter quality
+one unit of bowling type
+```
+
+and know that "one unit" means the same mathematical distance in all three cases.
+
+This is the standard interpretation of eigenvectors and principal-component directions described by Jolliffe (2002).
+
+---
+
+### Why I Fix the Sign
+
+Eigenvectors also have an arbitrary sign.
+
+If:
+
+```text
+[ 0.3, -0.4, 0.8 ]
+```
+
+is an eigenvector, then:
+
+```text
+[-0.3,  0.4,-0.8 ]
+```
+
+is mathematically the same axis.
+
+That is fine for linear algebra, but it is confusing for a simulator and for anyone reading the calibration.
+
+I therefore choose fixed conventions:
+
+```text
+bat_style
+    positive means more sixes
+
+bat_quality
+    positive means fewer dismissals
+
+bowl_type
+    positive means more sixes conceded
+
+bowl_quality
+    positive means fewer fours conceded
+```
+
+The sign choice does not alter the statistical result. It simply makes the coordinates stable and readable.
+
+If I did not fix the signs, a rerun could theoretically flip an eigenvector and suddenly make:
+
+```text
++1 bat_style
+```
+
+mean the opposite cricket behaviour even though nothing substantive had changed.
+
+---
+
+### Measuring the Era Trend
+
+The situation model from `fit_state.py` gave every season its own six-number effect.
+
+Conceptually I have:
+
+```text
+2019 -> six outcome effects
+2020 -> six outcome effects
+2021 -> six outcome effects
+...
+2026 -> six outcome effects
+```
+
+with 2019 acting as the baseline.
+
+Now I want to compress that sequence into a simpler description of how the game is moving over time.
+
+For each outcome I fit a straight line:
+
+```python
+trend = np.array([
+    np.polyfit(years, effects[:, k], 1)[0]
+    for k in range(6)
+])
+```
+
+`np.polyfit(..., 1)` is fitting:
+
+$$
+y = a + bx
+$$
+
+using ordinary least squares.
+
+The slope $b$ tells me how that outcome's logit changes per season.
+
+Doing this separately for all six outcomes produces a six-dimensional trend vector.
+
+Ordinary least squares is the standard linear fitting method discussed in Hastie, Tibshirani and Friedman (2009).
+
+---
+
+### Era Direction Versus Era Speed
+
+I then centre the trend:
+
+```python
+trend -= trend.mean()
+```
+
+because the common offset still carries no softmax information.
+
+Then I calculate:
+
+```python
+era_step = float(np.linalg.norm(trend))
+```
+
+The value is approximately:
+
+```text
+0.0934 per season
+```
+
+I interpret the result as two separate pieces.
+
+The normalized trend tells me:
+
+> **In what direction is the game's outcome distribution moving?**
+
+The magnitude tells me:
+
+> **How fast is it moving in that direction each season?**
+
+So conceptually:
+
+```text
+conditions direction = shape of the change
+
+era_step = speed of the change
+```
+
+If later seasons contain relatively fewer dots and more boundaries, that pattern appears in the direction.
+
+`era_step` tells me how strongly the simulator should move along that direction from one season to the next.
+
+---
+
+### Why I Reuse the Era Trend as the Conditions Axis
+
+I call the normalized era trend:
+
+```text
+conditions
+```
+
+and I use it as the common direction for several environmental effects.
+
+These can include:
+
+```text
+season era
+venue scoring level
+pitch conditions
+dew
+day-specific batting conditions
+```
+
+My reasoning is that these factors can all make batting broadly easier or harder.
+
+A better batting environment generally means something like:
+
+```text
+fewer dots
+more boundaries
+more runs
+```
+
+Rather than creating an independent six-dimensional direction for every environmental cause, I let them move the ball probabilities along one measured axis.
+
+This is a modelling simplification.
+
+The data directly supports the historical season trend.
+
+The stronger assumption is that venue conditions, pitch, dew and era all change outcomes in roughly the same shape.
+
+I make that choice because it keeps the simulator compact and identifiable. The archive does not contain enough clean information to estimate several separate condition axes with the same confidence.
+
+---
+
+### Moving the Over Profiles Into the Modern Era
+
+The twenty over effects from `fit_state.py` are relative to the model's baseline season.
+
+I do not want the simulator's default game to look like the IPL in 2019.
+
+I want it to look like the recent IPL.
+
+So I calculate the average season effect across:
+
+```text
+2023
+2024
+2025
+2026
+```
+
+with:
+
+```python
+recent = np.mean([
+    fit["season_effects"][s]
+    for s in ("2023", "2024", "2025", "2026")
+], axis=0)
+```
+
+and add that to every over:
+
+```python
+overs = np.array(fit["overs"]) + recent
+```
+
+The result is a:
+
+```text
+20 × 6
+```
+
+matrix.
+
+Each row is an over.
+
+Each column is one of:
+
+```text
+W, 0, 1, 2, 4, 6
+```
+
+These become the simulator's `over_logits`.
+
+This is the starting distribution for a ball before any batter, bowler, venue or match-state adjustments are applied.
+
+The question at this stage is:
+
+> **What would an average ball in this over look like in the modern IPL?**
+
+Everything else modifies that baseline.
+
+---
+
+### Creating a Typical Ball
+
+The hidden directions are mathematically meaningful, but a six-number vector is still difficult to interpret.
+
+I want to translate them into cricket language.
+
+To do that, I create a representative "typical ball."
+
+I convert each over's logits to probabilities:
+
+```python
+p = np.exp(overs)
+p /= p.sum(1, keepdims=True)
+```
+
+and then average over the twenty overs:
+
+```python
+p = p.mean(0)
+```
+
+Now `p` contains approximately:
+
+```text
+P(W)
+P(0)
+P(1)
+P(2)
+P(4)
+P(6)
+```
+
+for a representative IPL ball.
+
+I do not use this averaged distribution to simulate matches.
+
+It exists only so that every direction can be interpreted at the same reference point.
+
+---
+
+### Translating a Direction Into Runs Per Ball
+
+Suppose I move a small amount $s$ along a direction $d$.
+
+The logits become:
+
+$$
+z_k(s)=z_k+s d_k
+$$
+
+The softmax derivative in that direction is:
+
+$$
+\frac{\partial p_k}{\partial s}
+=
+p_k
+\left(
+d_k-\sum_j p_jd_j
+\right)
+$$
+
+This is the usual derivative of the multinomial softmax model described by Bishop (2006).
+
+Expected runs are:
+
+$$
+\mathbb E[R]
+=
+\sum_k p_kR_k
+$$
+
+with:
+
+$$
+R=(0,0,1,2,4,6)
+$$
+
+Therefore:
+
+$$
+\frac{\partial\mathbb E[R]}{\partial s}
+=
+\sum_k p_kd_kR_k
+-
+\left(\sum_k p_kd_k\right)
+\left(\sum_k p_kR_k\right)
+$$
+
+I compute that with:
+
+```python
+value = lambda d: float(
+    (p * d * RUNS).sum()
+    - (p * d).sum() * (p * RUNS).sum()
+)
+```
+
+This answers a very useful question:
+
+> **If I move one unit along this hidden direction, approximately how much does expected scoring change in runs per ball?**
+
+That converts an abstract vector into a cricket quantity.
+
+---
+
+### Translating a Direction Into Wicket Risk
+
+I do the same for wicket probability.
+
+Since the wicket outcome is index zero, I use:
+
+```python
+risk = lambda d: float(
+    p[0] * (d[0] - (p * d).sum())
+)
+```
+
+Now every direction has two readable summaries:
+
+```text
+runs_per_unit
+wicket_risk_per_unit
+```
+
+This lets me explain what the hidden axis actually means.
+
+---
+
+### Batter Style Versus Batter Quality
+
+This translation is particularly helpful for the two batter directions.
+
+The first direction, `bat_style`, is worth approximately:
+
+```text
++0.258 runs per ball
++0.021 wicket probability per ball
+```
+
+for one unit.
+
+So moving toward the positive end means:
+
+```text
+score much faster
+but
+accept more dismissal risk
+```
+
+That is why I interpret it as:
+
+```text
+accumulator <----> power hitter
+```
+
+rather than:
+
+```text
+bad <----> good
+```
+
+The second direction, `bat_quality`, is different.
+
+One unit is worth roughly:
+
+```text
++0.054 runs per ball
+-0.047 wicket probability per ball
+```
+
+So the batter scores somewhat faster while also becoming much harder to dismiss.
+
+That looks much more like a genuine quality axis.
+
+The separation matters because I do not want the simulator to confuse aggression with skill.
+
+---
+
+### The Five Directions I Keep
+
+The final standardized directions are:
+
+```python
+directions = {
+    "bat_style": ...,
+    "bat_quality": ...,
+    "bowl_type": ...,
+    "bowl_quality": ...,
+    "conditions": ...
+}
+```
+
+I can think about the hidden structure as:
+
+```text
+Batter
+    style
+    quality
+
+Bowler
+    type
+    quality
+
+Environment
+    conditions
+```
+
+The important point is that I did not simply invent variables called "style" and "quality" because they sounded plausible.
+
+The first four directions came from real between-player covariance after correcting for match state and sampling noise.
+
+The fifth came from the fitted historical season trend.
+
+The labels came after the directions were measured.
+
+---
+
+### Measuring How Widely Players Vary
+
+A direction only tells me **how** players differ.
+
+I also need to know **how much** they differ.
+
+From `fit_state.py`, the first-axis standard deviations are already available:
+
+```text
+batter first direction = 0.347
+bowler first direction = 0.203
+```
+
+These were calculated after subtracting estimated sampling noise from the player covariance.
+
+So I treat them as estimates of real population spread, rather than the raw spread of noisy observed statistics.
+
+---
+
+### Recovering the Second-Direction Spread
+
+The JSON contains the first-axis standard deviation and the shares of variation associated with the main eigen-directions.
+
+In principal-component analysis:
+
+$$
+\operatorname{Var}_j = \lambda_j
+$$
+
+and therefore:
+
+$$
+\sigma_j = \sqrt{\lambda_j}
+$$
+
+So:
+
+$$
+\frac{\sigma_2}{\sigma_1}
+=
+\sqrt{
+\frac{\lambda_2}{\lambda_1}
+}
+$$
+
+and because the stored variance shares are proportional to the eigenvalues:
+
+$$
+\sigma_2
+=
+\sigma_1
+\sqrt{
+\frac{\text{share}_2}
+{\text{share}_1}
+}
+$$
+
+The code therefore calculates:
+
+```python
+bat_quality_sd = (
+    bat_style_sd
+    * np.sqrt(bat[1] / bat[0])
+)
+```
+
+and the equivalent quantity for bowlers.
+
+This gives approximately:
+
+```text
+bat_style       0.347
+bat_quality     0.150
+
+bowl_type       0.203
+bowl_quality    0.187
+```
+
+Jolliffe (2002) gives the standard PCA interpretation of eigenvalues as variances along principal directions.
+
+---
+
+### Why the Spreads Matter
+
+These numbers eventually control how different the invented players are from one another.
+
+Conceptually, a generated batter can have hidden values on scales such as:
+
+```text
+style   ~ population with SD 0.347
+quality ~ population with SD 0.150
+```
+
+and a bowler:
+
+```text
+type    ~ population with SD 0.203
+quality ~ population with SD 0.187
+```
+
+If I made these spreads too large, the simulated league would contain unrealistically extreme players and forecasting would become too easy.
+
+If I made them too small, every player would behave almost the same and most apparent player differences would be noise.
+
+These spreads therefore control both realism and task difficulty.
+
+That is why I want them measured from the archive rather than guessed.
+
+---
+
+### Reproducibility Check
+
+`build_calibration.py` also has an optional comparison mode.
+
+If I give it another calibration file:
+
+```text
+python dev/build_calibration.py old_calibration.json
+```
+
+it compares every major block against the newly rebuilt version.
+
+For each block I flatten the values into one long vector and calculate:
+
+$$
+\max_i
+\left|
+x_i^{\text{new}}
+-
+x_i^{\text{old}}
+\right|
+$$
+
+In plain English:
+
+> **What is the single largest numerical disagreement anywhere in this block?**
+
+I compare blocks such as:
+
+```text
+over_logits
+position_vectors
+wickets_in_hand_vector
+chase_pressure_vector
+second_innings_vector
+typical_wickets_by_over
+par_rate_from_over
+directions
+spreads
+era_step
+runs_per_unit
+wicket_risk_per_unit
+extras_per_legal_ball
+venue_level_sd_runs
+batter_venue_sd_runs
+```
+
+This is my end-to-end check that the calibration can actually be reproduced from the source data and code.
+
+Peng (2011) describes this broader idea of reproducible computational research: the analysis should be sufficiently specified that the reported numerical results can be recreated.
+
+---
+
+### Why Tiny Differences Remain
+
+The expected largest difference is approximately:
+
+```text
+0.0007
+```
+
+Most blocks differ by:
+
+```text
+0.0000
+```
+
+or:
+
+```text
+0.0001
+```
+
+The small remaining discrepancy comes mainly from `fit_state.py`.
+
+L-BFGS-B stops when its numerical convergence criteria are satisfied. It does not produce an infinitely precise symbolic optimum.
+
+Tiny floating-point and optimization differences can therefore survive into:
+
+```text
+coefficients
+eigenvectors
+normalized directions
+derived cricket-unit values
+```
+
+and eventually appear in the fourth decimal of the final calibration.
+
+A maximum difference around `0.0007` is therefore consistent with reproducing the same calibration to the precision the simulator actually uses.
+
+---
+
+### Limits
+
+The first important limitation is that I compress the fitted season effects into a straight-line trend.
+
+That assumes the era evolves approximately steadily.
+
+A sudden structural change caused by a major rule change or tactical shift would not be represented well by one constant `era_step`.
+
+The second limitation is the single `conditions` axis.
+
+I assume venue level, pitch, dew and era all move outcome probabilities in broadly the same direction.
+
+That keeps the model identifiable, but reality may contain several distinct environmental directions.
+
+I deliberately prefer one well-measured direction over several weakly identified ones.
+
+---
+
+### References
+
+- Bishop, C. M. (2006). *Pattern Recognition and Machine Learning*. Springer. Section 4.3 discusses multinomial logistic regression and the softmax derivative.
+- Hastie, T., Tibshirani, R., & Friedman, J. (2009). *The Elements of Statistical Learning* (2nd ed.). Springer.
+- Jolliffe, I. T. (2002). *Principal Component Analysis* (2nd ed.). Springer.
+- Peng, R. D. (2011). *Reproducible research in computational science*. **Science, 334**, 1226–1227.
+
+---
+
+## 8. league/calibration.json
+
+`league/calibration.json` is the final artifact produced by the calibration pipeline.
+
+If `build_calibration.py` is the compiler, I think of `calibration.json` as the compiled statistical description of the cricket world.
+
+The earlier files worked directly with raw historical data, fitted models, residuals, correlations and eigenvectors.
+
+The simulator should not have to know how any of that was estimated.
+
+It should be able to open one file and find everything it needs.
+
+That is the purpose of:
+
+```text
+league/calibration.json
+```
+
+---
+
+### What the File Contains
+
+The JSON contains the simulator-ready ball model:
+
+```text
+over_logits
+position_vectors
+wickets_in_hand_vector
+chase_pressure_vector
+second_innings_vector
+typical_wickets_by_over
+par_rate_from_over
+```
+
+It also contains the hidden directions:
+
+```text
+bat_style
+bat_quality
+bowl_type
+bowl_quality
+conditions
+```
+
+and their population spreads:
+
+```text
+bat_style       0.347
+bat_quality     0.150
+bowl_type       0.203
+bowl_quality    0.187
+```
+
+It includes the human-readable interpretation of those directions through:
+
+```text
+runs_per_unit
+wicket_risk_per_unit
+```
+
+and it includes the other calibrated quantities from `fit_constants.py`:
+
+```text
+extras_per_legal_ball
+venue_level_sd_runs
+batter_venue_sd_runs
+measured interaction results
+real_targets
+```
+
+So the file contains both the mechanisms that generate the world and the measurements that later tell me whether that world looks realistic.
+
+---
+
+### `over_logits`
+
+The `over_logits` block contains twenty rows of six values.
+
+Conceptually:
+
+```text
+over 1  -> W, 0, 1, 2, 4, 6 scores
+over 2  -> W, 0, 1, 2, 4, 6 scores
+...
+over 20 -> W, 0, 1, 2, 4, 6 scores
+```
+
+These profiles have already been moved from the 2019 baseline to the average recent-era level.
+
+They are therefore the simulator's default view of modern IPL scoring.
+
+Every simulated delivery begins with the appropriate over profile.
+
+Then the rest of the model modifies it.
+
+---
+
+### Situation Vectors
+
+The JSON also contains effects such as:
+
+```text
+wickets_in_hand_vector
+chase_pressure_vector
+second_innings_vector
+position_vectors
+```
+
+These come directly from the fitted multinomial state model.
+
+For example, `wickets_in_hand_vector` tells the simulator how the six ball-outcome probabilities should move when a batting side has lost more wickets than usual.
+
+`chase_pressure_vector` tells it how behavior changes when a chasing side needs to score faster than the normal rate from that point onward.
+
+`position_vectors` account for the difference between top-order, middle-order and tail-end batting.
+
+The important point is that these are not hand-written cricket rules.
+
+They are fitted from the ball archive.
+
+---
+
+### Player Directions
+
+The `directions` section contains:
+
+```text
+bat_style
+bat_quality
+bowl_type
+bowl_quality
+conditions
+```
+
+Each is a centered, unit-length six-number vector.
+
+These vectors describe the shape of the hidden variation.
+
+For a batter, I do not need six unrelated ability parameters.
+
+I can represent much of the real variation with:
+
+```text
+style
+quality
+```
+
+Similarly, a bowler receives:
+
+```text
+type
+quality
+```
+
+This gives the generator a compact latent representation of player differences.
+
+---
+
+### Player Spreads
+
+The `spreads` section tells me how widely the player population should be distributed along those directions.
+
+For example:
+
+```text
+bat_style = 0.347
+```
+
+means that the real population contains considerably more variation in batting style than:
+
+```text
+bat_quality = 0.150
+```
+
+The generator uses these scales when creating fictional players.
+
+The numbers are important because they determine how distinguishable real player skill is from random match variation.
+
+If I overstate them, players become too obviously different.
+
+If I understate them, everyone becomes nearly interchangeable.
+
+---
+
+### Conditions and Era Drift
+
+The JSON also stores:
+
+```text
+conditions
+era_step
+```
+
+The `conditions` vector describes the shape of movement toward a more batting-friendly or more bowling-friendly environment.
+
+`era_step` controls how much the league moves along that direction each season.
+
+The measured value is approximately:
+
+```text
+0.0934
+```
+
+per season.
+
+So I can let the simulated league evolve through time rather than treating every season as identical.
+
+---
+
+### Cricket-Unit Interpretations
+
+The blocks:
+
+```text
+runs_per_unit
+wicket_risk_per_unit
+```
+
+are mainly there to make the latent variables understandable.
+
+For example, instead of only seeing a vector for `bat_style`, I can read its approximate consequence in cricket terms:
+
+```text
+more runs per ball
+but also more dismissal risk
+```
+
+Likewise, `bat_quality` can be understood as a direction that improves scoring while substantially reducing wicket probability.
+
+These values do not create a separate model.
+
+They are interpretations of the same directions already stored in the JSON.
+
+---
+
+### Venue Effects
+
+The calibration contains:
+
+```text
+venue_level_sd_runs
+```
+
+because `fit_constants.py` found that venue scoring differences repeat strongly across independent halves of the data.
+
+The approximate venue repeat correlation was:
+
+```text
+0.71
+```
+
+which was strong enough for me to conclude that a genuine venue-level effect belongs in the world.
+
+The calibration therefore gives the world generator a measured scale for venue variation.
+
+It also contains:
+
+```text
+batter_venue_sd_runs
+```
+
+because batter-at-venue effects showed a small positive repeat signal.
+
+By contrast, I do not create an equivalent bowler-at-venue hidden effect because that interaction did not repeat.
+
+---
+
+### Why There Is No Large Batter-Bowler Pair Parameter
+
+The calibration also preserves the measured interaction result for:
+
+```text
+batter_vs_bowler
+```
+
+but it does not turn every historical batter-bowler pair into a hidden simulator parameter.
+
+That is deliberate.
+
+The repeat correlation was weak.
+
+So although head-to-head history can look convincing when viewed retrospectively, the independent-half test suggested that most of it is noise.
+
+The simulator therefore represents broader style interactions rather than thousands of bespoke player-pair rivalries.
+
+---
+
+### Extras
+
+The JSON stores:
+
+```text
+extras_per_legal_ball
+```
+
+which is approximately:
+
+```text
+0.0764
+```
+
+runs per legal delivery.
+
+This lets the simulator produce realistic team totals without trying to absorb wides, no-balls, byes and leg byes into the six batter outcomes.
+
+The value is treated as a league-level property because the analysis did not find enough stable individual variation to justify another hidden bowler dimension.
+
+---
+
+### Real Validation Targets
+
+The `real_targets` block contains the real-world statistics that the simulated league should later reproduce.
+
+Examples include:
+
+```text
+first-innings mean
+first-innings standard deviation
+first-innings wickets
+chasing-side win rate
+runs per over
+chase success by target band
+```
+
+These values do not directly force the simulation.
+
+They are validation targets.
+
+For example, if real first innings average approximately:
+
+```text
+188.5 runs
+```
+
+I do not hard-code:
+
+```text
+make simulated mean = 188.5
+```
+
+into the engine.
+
+Instead, I generate matches using the lower-level mechanics and then check whether the resulting league naturally produces approximately the right score distribution.
+
+That distinction is fundamental.
+
+A simulation should be validated on the consequences of its mechanisms, not by directly inserting the final quantities it is supposed to reproduce.
+
+---
+
+### Why the Source Attribution Is Stored in the JSON
+
+The first field preserves the provenance of the calibration:
+
+```text
+Calibration constants derived from data sourced from Cricsheet
+(cricsheet.org), licensed under the Open Data Commons Attribution
+License (ODC-BY 1.0). Aggregates only.
+```
+
+The calibration contains no individual historical player records, match diaries or raw deliveries.
+
+It contains fitted and aggregated quantities.
+
+But those quantities are derived from Cricsheet data, so I keep the source attribution directly with the derived artifact.
+
+This means someone can copy or inspect the calibration without losing track of where its measurements came from.
+
+---
+
+### Why I Round the File to Four Decimal Places
+
+The calibration is mostly rounded to:
+
+```text
+4 decimal places
+```
+
+This is intentional.
+
+Values such as:
+
+```text
+0.3471
+```
+
+already contain more numerical precision than the underlying cricket measurements really justify.
+
+Writing:
+
+```text
+0.347129847162
+```
+
+would suggest that the sixth or tenth decimal means something.
+
+It does not.
+
+There is sampling uncertainty in the archive, modelling approximation, numerical optimization tolerance and the simplifications of the simulator itself.
+
+Four decimal places are more than enough for downstream simulation while keeping the file readable and reproducible.
+
+---
+
+### Why This File Is the Boundary Between Calibration and Simulation
+
+Up to `league/calibration.json`, I am still reconstructing the statistical world from real cricket.
+
+After this file, the simulator can operate without the original historical archive.
+
+That creates a clean boundary:
+
+```text
+REAL CRICKET
+     |
+     v
+raw archive
+     |
+     v
+statistical measurement
+     |
+     v
+noise correction
+     |
+     v
+state fitting
+     |
+     v
+calibration
+     |
+     v
+league/calibration.json
+-----------------------------
+     |
+     v
+SIMULATED CRICKET
+```
+
+Everything above the line is about estimating the world.
+
+Everything below the line can be about generating a new one.
+
+---
+
+### Why I Do Not Claim This Is the Exact Original Task World
+
+This repository's `league/calibration.json` is rebuilt by this pipeline.
+
+It is not manually copied from the calibration file used by the original piloted task.
+
+The difference matters.
+
+Even a change of:
+
+```text
+0.0007
+```
+
+in one calibration value could eventually lead to different:
+
+```text
+invented players
+venue values
+match outcomes
+league histories
+forecast probabilities
+```
+
+because simulation compounds small changes through many random draws.
+
+So reproducing the calibration procedure is not the same thing as reproducing the exact original generated world.
+
+A task generated from this rebuilt calibration should therefore have its own:
+
+```text
+world generation
+validation
+gates
+pilot runs
+```
+
+That is why this reconstruction stops at the calibration stage rather than claiming that it has recreated the previously piloted task bit-for-bit.
+
+---
+
+### How I Think About `calibration.json`
+
+The easiest mental model for me is:
+
+> **`league/calibration.json` is the physics sheet for the artificial cricket universe.**
+
+The original archive contained hundreds of thousands of deliveries.
+
+The final JSON compresses that historical evidence into statements such as:
+
+```text
+how over 1 differs from over 20
+
+how extra wickets change batting behaviour
+
+how chase pressure changes risk-taking
+
+how top-order and tail-end batting differ
+
+what a power-hitter direction looks like
+
+what a batter-quality direction looks like
+
+what bowling-style variation looks like
+
+how much players really differ
+
+how much venues really differ
+
+how many extras occur
+
+how quickly the era is changing
+```
+
+The ball archive is huge.
+
+The calibration is compact.
+
+That compression is the whole point.
+
+---
+
+### Pipeline Up to This Point
+
+At this stage my pipeline is:
+
+```text
+Cricsheet IPL archive
+        |
+        v
+dev/parse_archive.py
+        |
+        v
+data/balls.pkl
+        |
+        +-------------------------------+
+        |                               |
+        v                               v
+dev/explore_overs.py        dev/explore_reliability.py
+        |                               |
+        +---------------+---------------+
+                        |
+                        v
+               dev/fit_state.py
+                        |
+                        v
+              data/state_fit.json
+
+
+data/balls.pkl
+        |
+        v
+dev/fit_constants.py
+        |
+        v
+data/constants_fit.json
+
+
+data/state_fit.json
+        +
+data/constants_fit.json
+        |
+        v
+dev/build_calibration.py
+        |
+        v
+league/calibration.json
+        |
+        v
+calibrated simulator
+```
+
+The transformation can be summarized as:
+
+```text
+raw historical cricket
+        ↓
+clean ball-level data
+        ↓
+exploratory structure
+        ↓
+reliability measurement
+        ↓
+state model
+        ↓
+player directions
+        ↓
+venue and interaction constants
+        ↓
+standardized simulator parameters
+        ↓
+league/calibration.json
+```
+
+The central idea for this file is:
+
+> **`league/calibration.json` is the compact statistical blueprint of the cricket world I measured. The simulator can now use that blueprint without needing the historical archive or the fitting code.**
+
+### References
+
+- Bishop, C. M. (2006). *Pattern Recognition and Machine Learning*. Springer.
+- Jolliffe, I. T. (2002). *Principal Component Analysis* (2nd ed.). Springer.
+- Open Data Commons. *Open Data Commons Attribution License (ODC-BY) v1.0*.
+- Peng, R. D. (2011). *Reproducible research in computational science*. **Science, 334**, 1226–1227.

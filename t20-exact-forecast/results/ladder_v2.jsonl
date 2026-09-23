@@ -1,0 +1,8 @@
+{"seed": 1, "name": "coin flip", "skill": 0.0, "regret": 0.0153}
+{"seed": 1, "name": "team ratings from results", "skill": 0.3269, "regret": 0.0103}
+{"seed": 1, "name": "players, no shrinkage", "skill": 0.328, "regret": 0.01028}
+{"seed": 1, "name": "players, shrunk, last season only", "skill": -0.3334, "regret": 0.0204}
+{"seed": 1, "name": "players, shrunk", "skill": 0.4869, "regret": 0.00785}
+{"seed": 1, "name": "players, shrunk, raw head-to-head table", "skill": -2.6485, "regret": 0.05581}
+{"seed": 1, "name": "players, shrunk, type-level matchups", "skill": 0.4758, "regret": 0.00802}
+{"seed": 1, "name": "players, shrunk, matchups and venue affinity", "skill": 0.4683, "regret": 0.00813}

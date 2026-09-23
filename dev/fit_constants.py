@@ -75,3 +75,24 @@ def interaction(first, second, floor):
     true_var = max(r, 0.0) / max(1 - r, 1e-9) * float(faced.res.var()) / n_mean
     return {"pairs": int(len(g)), "repeat": round(r, 3), "balls_per_half": round(n_mean, 1), "true_sd_runs_per_ball": round(float(np.sqrt(true_var)), 4)}
 
+def targets():
+    # The real-cricket numbers a simulated league has to reproduce before anyone trusts it. From the four
+    # most recent seasons: the mean and spread of first-innings totals, wickets taken by bowlers in a first
+    # innings, how often the chasing side wins, and the run rate in each over of a first innings. From 2019
+    # onward (more matches, so the bands are better filled): how often a chase succeeds by size of target.
+    # None of these enters the simulator directly. They are the checks in validate_world.py.
+    inn = recent.groupby(["match", "innings"]).agg(total = ("runs_total", "sum"), wickets = ("bowler_wicket", "sum")).reset_index()
+    first = inn[inn.innings == 1]
+    second = inn[inn.innings == 2].set_index("match").total
+    chase = float((second.reindex(first.match).to_numpy() > first.total.to_numpy()).mean())
+    legal = recent[~recent.wide & ~recent.noball & (recent.innings == 1)].copy()
+    legal["over"] = legal.over_ball.astype(int)
+    per_over = (legal.groupby("over").runs_total.sum() / legal.groupby("over").size() * 6).round(2).tolist()
+    totals = balls[balls.season >= 2019].groupby(["match", "innings"]).runs_total.sum().unstack().dropna()
+    bands = {}
+    for lo, hi in ((0, 160), (160, 180), (180, 200), (200, 220), (220, 400)):
+        m = totals[(totals[1] + 1 >= lo) & (totals[1] + 1 < hi)]
+        bands[f"{lo}-{hi}"] = [int(len(m)), round(float((m[2] > m[1]).mean()), 3)]
+    return {"first_innings_mean": round(float(first.total.mean()), 1), "first_innings_sd": round(float(first.total.std()), 1),
+            "first_innings_wickets": round(float(first.wickets.mean()), 2), "chasing_side_wins": round(chase, 3),
+            "runs_per_over_first_innings": per_over, "chase_success_by_target": bands}

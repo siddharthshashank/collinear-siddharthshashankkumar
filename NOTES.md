@@ -513,7 +513,7 @@ The central lesson is simple:
 
 A season contains both repeatable skill and random variation. `explore_reliability.py` measures how much of each appears in batting scoring rate so that later forecasting models can shrink uncertain estimates toward the league average instead of becoming overconfident.
 
-## References
+### References
 
 - Brown, W. (1910). *Some experimental results in the correlation of mental abilities*. **British Journal of Psychology, 3**, 296–322.
 - Efron, B., & Morris, C. (1977). *Stein's paradox in statistics*. **Scientific American, 236**(5), 119–127.
@@ -639,7 +639,7 @@ positions 8+
 
 This matters because a number-eight batter does not have the same scoring profile as a top-order batter even when they face a similar match situation.
 
----
+
 
 ### The six possible outcomes
 
@@ -668,8 +668,6 @@ P(6) = 0.07
 ```
 
 These probabilities change depending on the over, season, innings, wickets lost, chase pressure and batting position.
-
----
 
 ### The multinomial logistic model
 
@@ -719,7 +717,7 @@ The intuition is simple:
 
 > Every feature pushes some outcomes upward and others downward, and softmax turns all those pushes into six probabilities that add to one.
 
----
+
 
 ### Why one outcome has to be fixed at zero
 
@@ -753,7 +751,7 @@ Everything else is therefore learned relative to a single.
 
 For display, the code later centres each six-number row around zero. This changes the appearance of the coefficients but not their meaning or probabilities.
 
----
+
 
 ### How the model learns the coefficients
 
@@ -787,7 +785,7 @@ gradient = (X.T @ (p - Y))[:, FREE].ravel() + 1e-2 * theta
 
 That makes optimization substantially faster.
 
----
+
 
 ### Why there is a ridge penalty
 
@@ -809,7 +807,7 @@ Its practical purpose here is to discourage unnecessarily large coefficients and
 
 Because the penalty is very small relative to the amount of data, it acts mainly as numerical stabilization rather than strong shrinkage.
 
----
+
 
 ### Why the optimization is well behaved
 
@@ -829,7 +827,7 @@ The expected fit converges in roughly:
 145 iterations
 ```
 
----
+
 
 ### Why the code subtracts the largest score
 
@@ -861,7 +859,7 @@ from overflowing the computer's floating-point representation.
 
 This shifted calculation is the numerically stable way to compute softmax and log-sum-exp, discussed in detail by Blanchard, Higham and Higham (2021).
 
----
+
 
 ### What the fitted situation effects say
 
@@ -892,7 +890,7 @@ When the required rate becomes difficult, batters attack more aggressively. That
 
 Players batting at number eight or lower show another distinctive pattern: more dots and dismissals and fewer boundaries.
 
----
+
 
 ### Separating player ability from match situation
 
@@ -931,7 +929,7 @@ This player hit far more sixes than an average player would have been expected t
 
 That is evidence of an individual player characteristic rather than simply match context.
 
----
+
 
 ### Player "tilts"
 
@@ -960,7 +958,7 @@ tilt -= tilt.mean(1, keepdims=True)
 
 The result describes **how the player's outcome distribution differs from average**.
 
----
+
 
 ### Removing differences caused by sampling noise
 
@@ -988,7 +986,7 @@ This is the multivariable version of the same idea used in `explore_reliability.
 
 Measurement-error models such as Fuller (1987) formalize this distinction, while Tipping and Bishop's probabilistic PCA framework (1999) similarly separates structured latent variation from noise.
 
----
+
 
 ### Finding the main ways players differ
 
@@ -1018,7 +1016,7 @@ control = 7
 
 the script lets the real IPL data determine which player dimensions actually exist.
 
----
+
 
 ### What it discovers about batters
 
@@ -1044,7 +1042,7 @@ little change in fours
 That is naturally interpreted as something like:
 
 ```text
-power hitter <-----> accumulator
+power hitter <--> accumulator
 ```
 
 Importantly, this is mostly a **style axis**, not simply a good-player versus bad-player axis.
@@ -1055,7 +1053,7 @@ The data produced this direction first; the human label `"style"` was applied af
 
 The second major batting direction is much more closely related to dismissal probability and therefore behaves more like a **quality dimension**.
 
----
+
 
 ### What it discovers about bowlers
 
@@ -1077,7 +1075,7 @@ The strongest direction largely trades the probability of conceding fours agains
 
 That pattern can plausibly separate different bowling styles, such as pace and spin, although the interpretation is applied after seeing the data rather than imposed beforehand.
 
----
+
 
 ### Why the eigenvector sign is fixed
 
@@ -1102,7 +1100,7 @@ So the code simply adopts a convention:
 
 That makes results reproducible and easier to interpret.
 
----
+
 
 ### The gradient bug this analysis exposed
 
@@ -1130,7 +1128,7 @@ That is dangerous because the numbers still looked believable.
 
 A standard defensive check is `scipy.optimize.check_grad`, which compares the analytic gradient with a finite-difference approximation. A production version of this calibration should include such a test.
 
----
+
 
 ### Expected checks
 
@@ -1178,7 +1176,7 @@ data/state_fit.json
 
 This file becomes part of the calibrated simulator.
 
----
+
 
 ### The main idea
 
@@ -1213,3 +1211,561 @@ Together they stop the simulator from confusing circumstances with talent. A bat
 - McFadden, D. (1974). *Conditional logit analysis of qualitative choice behavior*. In P. Zarembka (Ed.), *Frontiers in Econometrics*. Academic Press.
 - Swartz, T. B., Gill, P. S., & Muthukumarana, S. (2009). *Modelling and simulation for one-day cricket*. **Canadian Journal of Statistics, 37**.
 - Tipping, M. E., & Bishop, C. M. (1999). *Probabilistic principal component analysis*. **Journal of the Royal Statistical Society: Series B, 61**.
+
+## 6. dev/fit_constants.py
+
+`dev/fit_constants.py` answers the design questions that the main ball-by-ball model cannot answer by itself.
+
+It asks things like:
+
+> **Do grounds genuinely behave differently? Are batter-versus-bowler matchups real or mostly noise? How much should we trust a bowler's season? How many extra runs occur outside the batter's scoring? And what real IPL statistics should the simulator reproduce before we trust it?**
+
+The general rule throughout this file is simple:
+
+> **An effect is treated as real only if it repeats in independent data.**
+
+This is the same idea used in `explore_reliability.py`. If something appears in one half of the data but disappears in another, it is probably noise. If it consistently appears in both halves, it is evidence of a real underlying effect.
+
+
+
+### Extras per Legal Ball
+
+The first calculation measures how many team runs come from **extras rather than the batter**.
+
+```python
+recent.runs_total - recent.runs_bat
+```
+
+This includes wides, no-balls, byes and leg byes.
+
+Under the Laws of Cricket, these runs are recorded separately from runs credited to the striker (MCC Laws 21–23).
+
+The code divides total extras by the number of legal balls:
+
+```python
+legal = (~recent.wide & ~recent.noball).sum()
+```
+
+and obtains approximately:
+
+```text
+extras_per_legal_ball = 0.0764
+```
+
+That corresponds to roughly:
+
+```text
+0.0764 × 120 ≈ 9 runs per full innings
+```
+
+The simulator therefore adds a small amount of extra scoring on top of the six batter outcomes learned earlier.
+
+This is deliberately treated as a **league-level constant** rather than a hidden skill for every bowler. Although wides and no-balls can reflect bowling control, their repeatability is too weak here to justify another player parameter.
+
+
+
+### Batter and Bowler Season Reliability
+
+The next function repeats the split-half experiment from `explore_reliability.py`, but now it can be applied to either batters or bowlers.
+
+```python
+season_reliability(who, floor)
+```
+
+For a batter, the measured rate is:
+
+```text
+runs off the bat / balls faced
+```
+
+For a bowler, it is:
+
+```text
+runs off the bat conceded / balls bowled
+```
+
+Each player's season is split into alternating matches, the rates in the two halves are correlated, and the **Spearman-Brown correction** converts half-season reliability into full-season reliability (Spearman, 1910; Brown, 1910).
+
+The approximate results are:
+
+```text
+Batter season reliability ≈ 0.46
+Bowler season reliability ≈ 0.27
+```
+
+The important lesson is that bowling season statistics are even noisier than batting statistics.
+
+A reliability of `0.27` means only about 27% of the observed variation in this bowling measure behaves like persistent signal across the sampled seasons.
+
+It does **not** mean exactly 73% of every bowler's season was luck. It means the observed differences between bowlers contain a large amount of unstable variation.
+
+This is why the later forecaster should shrink bowling estimates toward the league average more strongly than batting estimates.
+
+
+
+### Removing the Change in Scoring Across Seasons
+
+Before testing venues or player interactions, the script removes the league-wide scoring level for each season:
+
+```python
+faced["res"] = (
+    faced.runs_bat
+    - faced.groupby("season").runs_bat.transform("mean")
+)
+```
+
+This creates a **residual**.
+
+A residual simply means:
+
+> How much higher or lower was this ball's batting score compared with the normal scoring level of that season?
+
+This is necessary because IPL scoring has changed over time.
+
+Suppose one ground hosted many matches in a high-scoring modern season while another hosted more matches in an older, lower-scoring period. Comparing their raw scoring rates would make the first venue look better for batting even if the grounds themselves were identical.
+
+Subtracting the season mean removes much of this time trend before venue and matchup effects are measured.
+
+
+
+### Do Grounds Really Differ?
+
+The `venue_spread()` function tests whether grounds have persistent scoring characteristics.
+
+Each ground's matches are divided into two halves. The average residual scoring level is calculated separately in each half.
+
+Then the script asks:
+
+> If a ground was unusually high-scoring in one half of the data, was it also unusually high-scoring in the other half?
+
+For the 18 grounds with enough data, the repeat correlation is approximately:
+
+```text
+r = 0.71
+```
+
+That is strong repeatability.
+
+It suggests that venue differences are not merely random.
+
+The estimated true standard deviation is about:
+
+```text
+0.045 runs per ball
+```
+
+Across a 120-ball innings:
+
+```text
+0.045 × 120 ≈ 5.4 runs
+```
+
+So moving from a typical venue to a roughly one-standard-deviation high-scoring venue corresponds to about five runs per innings.
+
+That is large enough to matter.
+
+Therefore:
+
+> **The simulator should contain a genuine venue effect.**
+
+The conversion from observed spread to true spread uses the same reliability logic as the batter analysis in File 4.
+
+
+
+### Testing Specific Matchups
+
+The `interaction()` function answers a harder question:
+
+> Does a particular combination behave differently from what we would expect based on its individual parts?
+
+Examples include:
+
+```text
+specific batter × specific bowler
+specific batter × venue
+specific bowler × venue
+```
+
+Suppose Virat-like Batter A is generally excellent and Bowler B generally concedes many runs.
+
+If Batter A scores heavily against Bowler B, that alone is not evidence of a special matchup.
+
+We first need to remove:
+
+```text
+Batter A's normal level
+Bowler B's normal level
+```
+
+and ask whether there is anything left that belongs specifically to the pair.
+
+That is what this section does.
+
+
+
+### Why Player Levels Are Removed Separately Inside Each Half
+
+The code removes each participant's average within the same:
+
+```text
+season
++
+half of the data
+```
+
+For example:
+
+```python
+faced.groupby([key, "season", "half"]).res.transform("mean")
+```
+
+This detail is important.
+
+If the average were calculated using both halves together, information from half 1 would leak into the correction applied to half 2 and vice versa.
+
+That would make the two supposedly independent measurements statistically dependent and could artificially push the repeat correlation downward.
+
+So each half is cleaned independently before the two halves are compared.
+
+
+
+### Turning Repeatability Into a True Effect Size
+
+Suppose the measured interaction in each half follows the classical model:
+
+$$
+X = T + E
+$$
+
+where:
+
+- `T` is the real persistent interaction,
+- `E` is sampling noise.
+
+If the repeat correlation between halves is `r`, then:
+
+$$
+\frac{r}{1-r}
+$$
+
+gives the ratio of real variance to noise variance under this model (Lord & Novick, 1968).
+
+The code then estimates:
+
+$$
+\sigma^2_{\text{true}}
+=
+\frac{r}{1-r}
+\cdot
+\frac{\operatorname{Var}(\text{residuals})}{n}
+$$
+
+where `n` is approximately the number of balls observed for each pair.
+
+The more balls available, the smaller the sampling noise of the pair average.
+
+
+
+### Batter vs Bowler
+
+For batter-bowler pairs with at least 30 balls in each half, the repeat correlation is only about:
+
+```text
+0.178
+```
+
+across roughly:
+
+```text
+113 well-sampled pairs
+```
+
+That is weak.
+
+So even among pairs that have met many times, head-to-head performance does not repeat strongly.
+
+The conclusion is:
+
+> **There is little evidence that a large hidden parameter should exist for every individual batter-bowler pair.**
+
+The simulator can still model broad matchup properties, such as a batter performing differently against pace and spin, but it does not need thousands of pair-specific hidden values.
+
+This resembles findings in baseball where historical batter-pitcher matchup records contain much less predictive information than fans often assume. Tango, Lichtman and Dolphin discuss this problem in *The Book: Playing the Percentages in Baseball* (2007).
+
+
+
+### Batter at Venue
+
+The batter-venue interaction repeats at approximately:
+
+```text
+0.188
+```
+
+across around:
+
+```text
+309 sufficiently sampled pairs
+```
+
+This is still weak, but it is positive.
+
+It suggests that some batters may genuinely perform slightly better or worse at particular grounds even after accounting for their overall batting level and the general venue effect.
+
+The simulator therefore keeps a **small batter-at-venue effect**, rather than a large one.
+
+
+
+### Bowler at Venue
+
+The bowler-venue repeat correlation is approximately:
+
+```text
+-0.026
+```
+
+which is effectively zero.
+
+A negative number this close to zero provides no useful evidence of repeatability.
+
+So:
+
+> **The simulator does not need a bowler-specific venue preference.**
+
+The venue itself matters, but individual bowlers do not show a stable additional venue effect in this analysis.
+
+
+
+### Real-Cricket Targets
+
+The final major part of the file calculates statistics that the simulator must reproduce.
+
+These are **validation targets**, not model parameters.
+
+That distinction matters.
+
+The simulator is not directly told:
+
+```text
+"Make the mean first-innings score 188.5."
+```
+
+Instead, it is built from the lower-level ball model, player effects, venue effects and other mechanisms.
+
+Then a simulated league is run and checked against real cricket.
+
+This follows standard simulation validation practice: compare the distributions generated by the simulation with the distributions observed in the system being imitated (Sargent, 2013).
+
+Davis, Perera and Swartz (2015) use the same general philosophy in validating a Twenty20 cricket simulator.
+
+
+
+### First-Innings Score
+
+For recent seasons, the mean first-innings total is approximately:
+
+```text
+188.5 runs
+```
+
+with a standard deviation of approximately:
+
+```text
+37.4 runs
+```
+
+So the simulator should not merely reproduce the average score. It should also reproduce the amount of variation between innings.
+
+A simulator producing every first innings between 185 and 192 would have the right mean but would still be unrealistic.
+
+
+
+### Wickets
+
+The first innings averages approximately:
+
+```text
+5.9 bowler wickets
+```
+
+This checks whether the simulator has the correct balance between scoring and dismissals.
+
+
+
+### Chase Success
+
+The chasing side wins approximately:
+
+```text
+50.9%
+```
+
+of the relevant matches in the calibration data.
+
+But overall chase percentage is not enough.
+
+The script also calculates chase success by target size.
+
+Conceptually:
+
+```text
+Target below 160     -> chasing side often succeeds
+160–179              -> harder
+180–199              -> harder again
+200–219              -> difficult
+220+                 -> very difficult
+```
+
+The observed success rate falls from roughly:
+
+```text
+81% for small targets
+```
+
+to approximately:
+
+```text
+21% for targets of 220+
+```
+
+A believable simulator must reproduce this relationship.
+
+If every target had roughly the same chase probability, the simulated game would be structurally wrong even if its overall win rate happened to be correct.
+
+
+
+### Scoring by Over
+
+The script also records the average scoring rate for each first-innings over.
+
+This lets `validate_world.py` later check whether the simulator recreates the familiar structure of a T20 innings:
+
+```text
+powerplay
+middle overs
+death overs
+```
+
+A simulator could have the correct final score while producing it in the wrong way.
+
+For example:
+
+```text
+Real cricket:
+moderate middle overs + explosive death
+
+Bad simulator:
+same scoring rate in all 20 overs
+```
+
+Both could average 188 runs, but only one resembles actual cricket.
+
+That is why per-over scoring is part of validation.
+
+
+
+### What Gets Saved
+
+All fitted constants and validation targets are written to:
+
+```text
+data/constants_fit.json
+```
+
+The output contains quantities such as:
+
+```text
+extras_per_legal_ball
+batter season reliability
+bowler season reliability
+
+venue:
+    number of qualifying venues
+    repeatability
+    true scoring spread
+
+batter_vs_bowler:
+    number of pairs
+    repeatability
+    estimated true spread
+
+batter_at_venue
+bowler_at_venue
+
+real_targets:
+    first innings mean
+    first innings spread
+    wickets
+    chase rate
+    scoring by over
+    chase success by target
+```
+
+This file therefore becomes another major calibration artifact used by the simulator.
+
+
+
+### The Main Design Decisions Produced by This File
+
+The statistical calculations translate directly into simulator architecture.
+
+```text
+Finding                               Simulator decision
+
+Ground repeatability = 0.71      ->   Give venues a hidden scoring level
+
+Batter reliability ≈ 0.46       ->   Moderate shrinkage of batter estimates
+
+Bowler reliability ≈ 0.27       ->   Stronger shrinkage of bowler estimates
+
+Batter × bowler repeat ≈ 0.18   ->   No large pair-specific matchup effect
+
+Batter × venue repeat ≈ 0.19    ->   Allow a small batter-ground effect
+
+Bowler × venue repeat ≈ 0       ->   No bowler-ground interaction
+
+Extras ≈ 0.0764 / legal ball    ->   Add league-level extras process
+```
+
+This is the most important role of `fit_constants.py`.
+
+It does not merely calculate descriptive cricket statistics.
+
+It decides **which hidden variables deserve to exist in the simulated world**.
+
+If an effect repeats, the simulator may represent it.
+
+If it does not repeat, the simulator should resist the temptation to model noise as if it were skill.
+
+
+
+### Why This Matters
+
+Without this file, it would be easy to build an overly complicated simulator containing:
+
+```text
+special batter-bowler rivalries
+large player-ground bonuses
+stable wicket-taking ability
+large venue-specific bowling effects
+```
+
+because all of those can appear convincing when looking at historical averages.
+
+But historical averages mix signal with sampling noise.
+
+`fit_constants.py` asks a stronger question:
+
+> **Does the effect appear again when we look at independent data?**
+
+That turns the simulator from a collection of plausible cricket assumptions into something much closer to a statistically calibrated model.
+
+### References
+
+- Brown, W. (1910). *Some experimental results in the correlation of mental abilities*. **British Journal of Psychology, 3**, 296–322.
+- Davis, J., Perera, H., & Swartz, T. B. (2015). *A simulator for Twenty20 cricket*. **Australian & New Zealand Journal of Statistics, 57**.
+- Lord, F. M., & Novick, M. R. (1968). *Statistical Theories of Mental Test Scores*. Addison-Wesley.
+- Marylebone Cricket Club. *Laws of Cricket*, 2017 Code. Laws 21–23 concerning no-balls, wides, byes and leg byes.
+- Sargent, R. G. (2013). *Verification and validation of simulation models*. **Journal of Simulation, 7**.
+- Spearman, C. (1910). *Correlation calculated from faulty data*. **British Journal of Psychology, 3**, 271–295.
+- Tango, T., Lichtman, M., & Dolphin, A. (2007). *The Book: Playing the Percentages in Baseball*. Potomac Books.

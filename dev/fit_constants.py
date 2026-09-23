@@ -96,3 +96,13 @@ def targets():
     return {"first_innings_mean": round(float(first.total.mean()), 1), "first_innings_sd": round(float(first.total.std()), 1),
             "first_innings_wickets": round(float(first.wickets.mean()), 2), "chasing_side_wins": round(chase, 3),
             "runs_per_over_first_innings": per_over, "chase_success_by_target": bands}
+
+# runs every measurement, save the lot to data/ (git ignores it), and print the headline numbers
+out = {"extras_per_legal_ball": round(extras_per_legal_ball(), 4), "venue": venue_spread(),
+       "batter_season_reliability": season_reliability("batter", 120), "bowler_season_reliability": season_reliability("bowler", 150),
+       "batter_vs_bowler": interaction("batter", "bowler", 30), "batter_at_venue": interaction("batter", "venue", 60),
+       "bowler_at_venue": interaction("bowler", "venue", 60), "real_targets": targets()}
+json.dump(out, open("data/constants_fit.json", "w"), indent = 1)
+for key, value in out.items():
+    print(key, "->", value if key != "real_targets" else {k: v for k, v in value.items() if k not in ("runs_per_over_first_innings", "chase_success_by_target")})
+print("chase success by target:", out["real_targets"]["chase_success_by_target"])

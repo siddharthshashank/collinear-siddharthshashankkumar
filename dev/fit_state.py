@@ -42,3 +42,53 @@ print("usual wickets lost by over 10 and over 20:", round(typical_wk[9], 2), rou
 print("usual run rate from over 1 to the end, and in over 20 alone:", round(par_from[0], 2), round(par_from[19], 2))
 print("mean chase pressure in second innings:", round(L[L.innings == 2].pressure.mean(), 3))
 print("share of balls faced by positions 8 and lower:", round((L.pos >= 8).mean(), 3))
+
+# The model: one score per outcome, built by adding effects
+seasons = sorted(L.season.unique())
+columns = [f"over{o}" for o in range(20)] + [f"season{s}" for s in seasons[1:]] + ["inn2", "wk_excess", "pressure", "pos45", "pos67", "pos8plus"]
+# X has one row per ball and one column per effect
+X = np.zeros((len(L), len(columns)))
+# which over the ball was in: a 1 in exactly one of the first twenty columns
+X[np.arange(len(L)), L.over.to_numpy()] = 1
+# which season, with the first season as the baseline
+for j, s in enumerate(seasons[1:]):
+    X[:, 20 + j] = (L.season == s)
+base = 20 + len(seasons) - 1
+X[:, base] = (L.innings == 2)
+X[:, base + 1] = L.wk_excess
+X[:, base + 2] = L.pressure
+X[:, base + 3] = L.pos.between(4, 5)
+X[:, base + 4] = L.pos.between(6, 7)
+X[:, base + 5] = L.pos >= 8
+y = L.kind.to_numpy()
+# Y has a 1 in the column of the outcome that happened
+Y = np.eye(6)[y]
+# the outcome "1 run" (index 2) is the reference, its scores are fixed at zero
+FREE = [0, 1, 3, 4, 5]
+
+def objective(theta):
+    # B would hold one score per effect per outcome
+    B = np.zeros((X.shape[1], 6))
+    B[:, FREE] = theta.reshape(X.shape[1], 5)
+    # each ball's six scores are the sum of the effects that apply to it
+    z = X @ B
+    # subtracting the row maximum changes nothing mathematically and stops exp() overflowing
+    z -= z.max(1, keepdims = True)
+    p = np.exp(z)
+    p /= p.sum(1, keepdims = True)
+    # Find whether the model is surprised by what happened, plus a light penalty on large numbers
+    loss = -np.log(p[np.arange(len(y)), y]).sum() + 0.5 * 1e-2 * (theta ** 2).sum()
+    # Slope of the loss w.r.t. every number in B
+    gradient = (X.T @ (p - Y))[:, FREE].ravel() + 1e-2 + theta
+    return loss, gradient
+
+fit = minimize(objective, np.zeros(X.shape[1] * 5), jac=True, method="L-BFGS-B", options={"maxiter": 400})
+B = np.zeros((X.shape[1], 6))
+B[:, FREE] = fit.x.reshape(X.shape[1], 5)
+names = ["W", "0", "1", "2", "4", "6"]
+show = lambda v: "  ".join(f"{n}:{x:+.3f}" for n, x in zip(names, v - v.mean()))
+print(X.shape[1], "columns,", X.shape[1] * 5, "free numbers | converged:", fit.success, "| iterations:", fit.nit)
+print("one more wicket lost than usual  ", show(B[base + 1]))
+print("one unit of chase pressure       ", show(B[base + 2]))
+print("second innings, on average       ", show(B[base]))
+print("batting at 8 or lower            ", show(B[base + 5]))

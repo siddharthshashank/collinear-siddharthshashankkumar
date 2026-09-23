@@ -13,7 +13,7 @@ class League:
         self.rng = np.random.default_rng(seed)
         self.simulator = MatchSimulator(BallModel(self.cal))
         self.season = 0
-        self._build_player()
+        self._build_players()
         self._build_venues()
 
     # League Construction
@@ -47,3 +47,38 @@ class League:
         self.venue_level = rng.normal(0, self.cal.venue_sd_runs / per, d.teams)
         self.venue_dew = np.where(rng.random(d.teams) < d.dew_share, d.dew_runs / per, 0.0)
         self.affinity = rng.normal(0, self.cal.batter_venue_sd_runs * np.sqrt(d.affinity_share) / per, (len(self.team_of), d.teams))
+
+    # Hidden State
+    def skillbook(self):
+        # the true skill book at this moment: talent plus current form, plus every hidden condition, in engine units
+        d, per = self.d, self.cal.runs_per_condition_unit
+        now = {k: self.talent[k] + self.form[k] for k in self.spread}
+        return SkillBook(self.players, self.venues, self.style, now["quality"], self.split, self.kind, now["bowl_quality"],
+                         np.array(d.type_table_runs) / per, np.array(d.pitch_table_runs) / per, self.venue_level, self.venue_dew, self.affinity,
+                         d.home_runs / per, self.cal.era_step * (self.season - (d.seasons - 1) / 2) + d.level_runs / per, d.day_sd_runs / per, d.wear_runs / per)
+
+    def _drift(self, weeks):
+        # form decays toward zero with the measured memory and picks up fresh noise, so its spread stays constant over time
+        keep = np.exp(-weeks / (self.d.form_memory_years * 52))
+        for k, sd in self.spread.items():
+            fresh = self.rng.normal(0, sd * np.sqrt((1 - self.d.talent_share) * (1 - keep ** 2)), len(self.team_of))
+            self.form[k] = keep * self.form[k] + fresh
+
+    def _transfers(self):
+        # between seasons a share of players change teams; swaps happen within a role so every squad keeps its shape
+        for r in (BATTER, ALLROUNDER, BOWLER):                  # swaps stay inside a role, so every squad keeps its shape
+            pool = np.flatnonzero(self.players.role == r)
+            movers = self.rng.choice(pool, int(len(pool) * self.d.transfer_share), replace=False)
+            self.team_of[movers] = self.team_of[self.rng.permutation(movers)]
+
+    def pick_xi(self, team):
+        # a fresh eleven every match: 5 batters, 2 allrounders, 4 bowlers drawn from the squad; the bowlers plus one allrounder bowl
+        squad = np.flatnonzero(self.team_of == team)
+        role = self.players.role[squad]
+        chosen = [self.rng.choice(squad[role == r], k, replace=False) for r, k in zip((BATTER, ALLROUNDER, BOWLER), self.d.xi_roles)]
+        xi = np.concatenate(chosen)
+        return xi, np.concatenate([chosen[2], chosen[1][:1]])  # four bowlers and one allrounder bowl four overs each
+
+    def _fixture(self, match, home, away):
+        (hx, hb), (ax, ab) = self.pick_xi(home), self.pick_xi(away)
+        return Fixture(match, self.season, home, away, home, hx, hb, ax, ab)

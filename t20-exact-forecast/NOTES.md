@@ -8266,3 +8266,1366 @@ The central idea is:
 Wickham, H. (2014). *Tidy Data*. **Journal of Statistical Software, 59**(10), 1–23.
 
 Shafranovich, Y. (2005). *Common Format and MIME Type for Comma-Separated Values (CSV) Files*. RFC 4180, Internet Engineering Task Force.
+
+## 13. forecasters/ladder.py
+
+### What I am trying to do
+
+`forecasters/ladder.py` is where I build the models that take the task before I give it to another model.
+
+Up to this point I have built the world, exposed the public history, hidden the true latent variables and created an engine that both the truth and any forecaster can use. I now need to know whether the resulting forecasting problem actually has a meaningful difficulty gradient.
+
+A hard task is not useful if every reasonable method gets essentially the same score. It is also not useful if even a careful model cannot beat a coin flip.
+
+So I build a ladder of forecasters ranging from deliberately naive to fairly careful.
+
+The lower tiers make recognisable mistakes. One ignores everything and predicts `0.5`. Another models teams but not players. Another fits the correct player-level structure but without enough shrinkage. Another throws away old seasons. Another believes too strongly in head-to-head records.
+
+The strongest tier uses essentially the correct public statistical structure while still having to infer all hidden values from the same public history available to the agent.
+
+This gives me empirical landmarks for the task.
+
+I can see what careless forecasting looks like, what competent forecasting looks like and whether the gap between them is large enough to support a meaningful pass threshold.
+
+The careful ball-model forecaster becomes the reference point against which I set that threshold.
+
+---
+
+### One interface for every forecaster
+
+Every tier inherits from:
+
+```python
+class Forecaster:
+    name = "forecaster"
+
+    def fit(self, history):
+        return self
+
+    def predict(self, fixtures):
+        raise NotImplementedError
+```
+
+I deliberately keep the interface small.
+
+Every model receives the same public `History`.
+
+Every model later receives the same future `Fixture` objects.
+
+Every model must return one home-win probability per fixture.
+
+That means the packager, evaluation scripts and grader do not need special logic for different models.
+
+Conceptually every tier has the same shape:
+
+```text
+public history
+      |
+      v
+    fit()
+      |
+      v
+future fixtures
+      |
+      v
+  predict()
+      |
+      v
+home-win probabilities
+```
+
+Only the statistical assumptions inside the forecaster change.
+
+That makes comparisons much cleaner.
+
+---
+
+### The coin-flip forecaster
+
+The simplest tier is:
+
+```python
+class CoinFlip(Forecaster):
+```
+
+Its prediction method is simply:
+
+```python
+return np.full(len(fixtures), 0.5)
+```
+
+It ignores the teams, players, venues, history and engine.
+
+Every match receives:
+
+```text
+P(home wins) = 0.5
+```
+
+This is intentionally unsophisticated.
+
+It is also important because it gives me the natural baseline for the exact scoring system.
+
+The task's starter solution behaves this way, so the agent begins from a valid forecast rather than from broken code.
+
+A model that cannot beat this baseline has extracted essentially no useful predictive information from the history.
+
+---
+
+### Team ratings from match results
+
+The next forecaster uses only historical winners and losers.
+
+I implement a simple Bradley-Terry-style paired-comparison model in which every team has a latent strength and the league has one shared home advantage.
+
+The model is:
+
+$$
+P(\text{home wins})
+=
+\sigma
+\left(
+s_{\text{home}}
+-
+s_{\text{away}}
++
+h
+\right)
+$$
+
+where $\sigma$ is the logistic function.
+
+This follows the paired-comparison idea introduced by Bradley and Terry (1952).
+
+I initialize every team strength and the home effect at zero:
+
+```python
+self.s = np.zeros(teams)
+self.h = 0.0
+```
+
+Then I repeatedly calculate the current probabilities and move the parameters in the direction of the result residual:
+
+```python
+g = won - p
+```
+
+If the home side won more often than the current model expected, its strength tends to move upward and the away side's strength tends to move downward.
+
+I also apply a small pull toward zero:
+
+```python
+-0.5 * self.s
+```
+
+so team ratings do not drift unnecessarily far when the evidence is weak.
+
+This is deliberately a fairly simple implementation rather than a sophisticated rating system.
+
+---
+
+### Why the team model is an important baseline
+
+This is roughly the sort of model someone might build from a league table.
+
+It asks:
+
+> Which teams have been good?
+
+rather than:
+
+> Which players made those teams good, and which of those players are appearing in the upcoming fixture?
+
+That distinction is particularly important in my synthetic world.
+
+Squads rotate.
+
+Playing elevens change.
+
+Players transfer between teams.
+
+So the label:
+
+```text
+team 4
+```
+
+is only an imperfect summary of the hidden ability that will actually appear in the next match.
+
+The team-rating model therefore tests whether the task can be solved simply by learning persistent team reputation.
+
+On the piloted world it performs badly, with regret around:
+
+```text
+0.0393
+```
+
+compared with approximately:
+
+```text
+0.0208
+```
+
+for the coin flip.
+
+So in this particular world, fitting team identity too confidently can actually be worse than admitting complete uncertainty.
+
+That is useful evidence that the transfer and squad-rotation design is doing what I intended.
+
+---
+
+### `EstimatedBook`: a forecaster's version of the hidden world
+
+The more serious forecasters eventually need to call the same match engine used by the true league.
+
+To do that, they need their own estimated `SkillBook`.
+
+I therefore define:
+
+```python
+class EstimatedBook(SkillBook):
+```
+
+This object has the same overall structure as the league's hidden `SkillBook`, but its values are estimates learned from public history.
+
+The engine does not care whether it receives:
+
+```text
+true SkillBook
+```
+
+or:
+
+```text
+EstimatedBook
+```
+
+It simply plays cricket using the supplied numbers.
+
+This preserves the symmetry established in `engine.py`.
+
+The forecasting problem is therefore largely reduced to:
+
+> **Estimate the hidden book well enough that the public engine produces the right match probability.**
+
+---
+
+### The optional head-to-head hook
+
+`EstimatedBook` also contains:
+
+```python
+def pair_effect(self, xi, bowlers):
+```
+
+which normally returns zero.
+
+If a forecaster has fitted specific batter-bowler effects, it can store them in:
+
+```text
+self.pairs
+```
+
+and this method constructs the corresponding batter-by-bowler interaction matrix.
+
+This uses exactly the hook I deliberately left in `SkillBook`.
+
+The true league has no specific pair effect.
+
+The head-to-head forecaster is allowed to believe otherwise.
+
+That lets me test the statistical cost of fitting a plausible but mostly nonexistent structure without changing the public engine.
+
+---
+
+### The main ball-model forecaster
+
+The serious model is:
+
+```python
+class BallModelForecaster(Forecaster):
+```
+
+The key idea is that I do **not** ask it to relearn how cricket works.
+
+The public engine already tells it the over profiles, batting-position effects, wicket response, chase-pressure response, latent directions and extras process.
+
+So when I fit this model, I treat the public part of every historical ball as known.
+
+I only estimate the hidden values that were added to that public part.
+
+This is almost the inverse problem of `world.py`.
+
+`world.py` begins with hidden values and generates balls.
+
+The forecaster begins with balls and estimates the hidden values.
+
+---
+
+### Building the fitting table
+
+The `_design()` method converts the entire historical ball table into flat NumPy arrays.
+
+For every ball I extract quantities such as:
+
+```text
+batter
+bowler
+venue
+season
+match
+outcome
+```
+
+I also calculate whether the innings is a chase:
+
+```python
+d["chasing"] = (
+    b.innings.to_numpy() == 2
+).astype(float)
+```
+
+and reconstruct the legal-ball index:
+
+```python
+ball = (
+    b.over * 6 + b.ball
+).to_numpy()
+```
+
+This lets me calculate exactly the same chase-pressure feature used by the engine.
+
+---
+
+### Reconstructing chase pressure exactly
+
+For second innings balls I call:
+
+```python
+m.pressure(
+    b.target.to_numpy(),
+    b.runs_before.to_numpy(),
+    ball
+)
+```
+
+and use zero for first-innings balls.
+
+This matters because I want the estimator to be structurally aligned with the simulator.
+
+If the generator defines pressure one way and the forecaster defines it another way, poor performance could come from a feature mismatch rather than from genuinely difficult inference.
+
+Instead, I reuse the public engine's own pressure function.
+
+---
+
+### Computing the public offset once
+
+The most important part of `_design()` is:
+
+```python
+d["offset"] = m.situation(
+    b.over.to_numpy(),
+    b.position.to_numpy(),
+    b.wickets_before.to_numpy(),
+    d["chasing"],
+    pressure
+)
+```
+
+This computes the public six-logit contribution for every historical ball.
+
+Once that is done, I do not need to estimate:
+
+```text
+over effects
+position effects
+wicket effects
+second-innings response
+chase-pressure response
+```
+
+because the agent already knows them.
+
+They are fixed offsets.
+
+The fit only has to explain what remains.
+
+That is exactly the intended forecasting problem.
+
+---
+
+### The hidden quantities I try to recover
+
+The estimator can fit families corresponding to the hidden world.
+
+These include the league scoring level, batter style, batter quality, bowling-type mean, individual bowler type, bowling quality, venue level, dew, second-innings wear, era, home advantage and, for the shrunk model, per-match day effects.
+
+Richer tiers can additionally fit the batter's pace-versus-spin quality split, handedness-by-bowling-style effects, pitch-by-bowling-style effects, batter-venue affinity and specific batter-bowler pair effects.
+
+The important thing is that all of these enter through the public directions already exposed by the engine.
+
+I am estimating **how much** to move along a direction, not inventing new six-dimensional effects.
+
+---
+
+### Representing the model as parameter blocks
+
+The `_blocks()` method is the centre of the implementation.
+
+Each block describes one family of unknown parameters.
+
+A block tells me which parameter index applies to a ball, what coefficient multiplies that parameter, which public six-dimensional direction it acts along, which ridge penalty family it belongs to and how many parameters exist in the family.
+
+For example, batter style uses:
+
+```text
+index     = batter ID
+coefficient = 1
+direction = bat_style
+count     = number of players
+```
+
+so every historical ball faced by the same batter points back to the same latent batter-style parameter.
+
+Venue effects work the same way using venue ID.
+
+Dew uses venue ID but is multiplied only on chasing balls.
+
+Wear is a league-wide value multiplied by negative chase status.
+
+Home advantage is a single number multiplied by whether the batting team is at home.
+
+This block representation lets me express a fairly large hierarchical model with one generic optimizer.
+
+---
+
+### Why the model is linear before softmax
+
+For every ball, the logits take the form:
+
+$$
+z_i
+=
+z_{i,\text{public}}
++
+\sum_j x_{ij}\theta_jd_j
+$$
+
+where the public offset is fixed and the unknown parameters enter linearly before softmax.
+
+That structure matters statistically.
+
+The multinomial negative log-likelihood is convex in these linear parameters.
+
+I then add positive quadratic ridge penalties.
+
+For the blocks without an explicit prior key, I still use a very small penalty:
+
+```text
+0.001
+```
+
+so the objective remains regularized.
+
+This gives me a well-behaved optimization problem rather than the non-convex neural-network-style optimization that would arise if I tried to relearn arbitrary nonlinear features.
+
+---
+
+### The prior table
+
+I encode the default ridge strengths in:
+
+```python
+PRIOR = {
+    ...
+}
+```
+
+For a Gaussian prior:
+
+$$
+\theta
+\sim
+\mathcal N(0,\sigma^2)
+$$
+
+the negative log-prior contributes a quadratic penalty proportional to:
+
+$$
+\frac{\theta^2}{2\sigma^2}
+$$
+
+so the corresponding ridge precision is:
+
+$$
+\lambda
+=
+\frac{1}{\sigma^2}
+$$
+
+For example:
+
+```text
+bat_quality ridge ≈ 44
+```
+
+corresponds to:
+
+$$
+\sigma
+\approx
+\frac{1}{\sqrt{44}}
+\approx
+0.151
+$$
+
+which is essentially the true batter-quality spread used in the synthetic world.
+
+That gives the reference forecaster a real advantage.
+
+I designed these starting prior scales with knowledge of the world-generation process.
+
+An external agent knows the public engine and sees the data, but it is not handed the true latent population spreads.
+
+I therefore treat the reference as a strong benchmark rather than as the minimum strategy a contestant could reasonably be expected to reproduce exactly.
+
+---
+
+### Shrinkage
+
+Shrinkage is essential because many of the hidden parameters have very different amounts of evidence.
+
+A batter with hundreds of historical deliveries can support a fairly precise estimate.
+
+A player who appeared rarely cannot.
+
+A batter-venue interaction may have only a tiny number of observations.
+
+Without regularization, the optimizer can interpret random variation in those small samples as enormous hidden effects.
+
+The ridge penalty pulls weakly supported parameters back toward zero.
+
+This is closely related to the broader shrinkage principle associated with James and Stein (1961) and to ridge regression as developed by Hoerl and Kennard (1970).
+
+The key practical idea for this task is simple:
+
+> **Small samples should not be allowed to claim huge hidden skill differences without strong evidence.**
+
+---
+
+### Choosing how much to shrink
+
+I do not use one arbitrary global amount of shrinkage and assume it is optimal.
+
+For shrunk tiers I consider three scale multipliers:
+
+```text
+0.3
+1.0
+3.0
+```
+
+These multiply the family-specific ridge strengths in `PRIOR`.
+
+I then choose among them using held-out predictive likelihood.
+
+The first seasons are used for fitting.
+
+The last historical season is held out.
+
+For each scale I fit on the earlier seasons and calculate mean ball-level log-likelihood on the last season.
+
+I then retain whichever scale predicts the held-out future season best.
+
+This is a small form of cross-validation in the sense of Stone (1974).
+
+---
+
+### Why the validation split is chronological
+
+I deliberately do not randomly shuffle balls into train and validation sets.
+
+This is a forecasting problem.
+
+The real question is:
+
+> **Can information from earlier seasons predict a later season?**
+
+So I use:
+
+```python
+train = d["season"] < seasons - 1
+```
+
+and score on the final season.
+
+That prevents future-season observations from leaking into earlier parameter estimates.
+
+It also tests shrinkage under the same kind of temporal shift the final forecaster will face.
+
+---
+
+### Extrapolating the held-out era
+
+There is one complication.
+
+If I train only on the earlier seasons, the held-out season's era parameter has never been fitted.
+
+I therefore extrapolate it from the previous season trend:
+
+```python
+t["era"][-1] = (
+    t["era"][-2]
+    + (
+        t["era"][-2] - t["era"][0]
+    ) / max(seasons - 2, 1)
+)
+```
+
+This prevents the validation score from cheating by fitting the held-out season's global scoring level directly.
+
+The model has to predict that shift from the earlier trend.
+
+---
+
+### Why I remove match-day effects during validation
+
+The shrunk model fits one latent day effect per historical match.
+
+That is useful while fitting because some historical matches happened on unusually good or poor batting surfaces.
+
+But a future match does not come with its true hidden day effect.
+
+So when I calculate held-out predictive likelihood, I deliberately remove the `day` block.
+
+The `_held_out()` method temporarily constructs the model without those match-specific values.
+
+This asks the correct predictive question:
+
+> **How well does the fitted persistent structure predict a genuinely new match whose day condition is unknown?**
+
+Keeping the fitted day value would make held-out likelihood unrealistically optimistic.
+
+---
+
+### The penalized likelihood
+
+Inside `_fit()` I compute the probability of the observed outcome for every historical ball.
+
+The objective is:
+
+$$
+-\sum_i w_i\log p_i(y_i)
++
+\frac{1}{2}
+\sum_j\lambda_j\theta_j^2
+$$
+
+The first term rewards models that assign high probability to what actually happened.
+
+The second term penalizes unnecessarily large hidden parameters.
+
+The optional weights allow some tiers to ignore or downweight particular seasons.
+
+The result is penalized maximum likelihood, or equivalently a Gaussian-prior posterior mode under the prior interpretation above.
+
+---
+
+### Exact gradient
+
+I do not ask SciPy to numerically approximate the gradient.
+
+I derive it from the multinomial model.
+
+For each ball I calculate:
+
+```python
+R = (Y - p) * w[:, None]
+```
+
+which is the observed one-hot outcome minus the predicted probability vector, weighted by whether the ball is included.
+
+For each block I project that residual onto the block's public direction:
+
+```python
+R @ direction
+```
+
+apply the block coefficient and aggregate it by parameter index using:
+
+```python
+np.bincount(...)
+```
+
+I then add:
+
+```python
+ridge * theta
+```
+
+for the derivative of the quadratic penalty.
+
+That gives L-BFGS-B the objective and its analytical gradient together.
+
+This is both faster and safer than repeatedly estimating derivatives by finite differences across thousands of parameters.
+
+---
+
+### Fitting with L-BFGS-B
+
+I optimize using:
+
+```python
+scipy.optimize.minimize(
+    ...,
+    method="L-BFGS-B"
+)
+```
+
+The model may contain hundreds or thousands of latent parameters, especially once player-venue or batter-bowler interactions are enabled.
+
+L-BFGS is appropriate for this kind of large smooth optimization problem because it avoids storing a full dense Hessian.
+
+The important point for the task is not the particular optimizer name.
+
+It is that the underlying likelihood is structured enough for a conventional convex optimization method rather than requiring unstable black-box search.
+
+---
+
+### The unshrunk tier
+
+When I construct a forecaster with:
+
+```text
+shrink = False
+```
+
+I remove the meaningful prior shrinkage and leave only a very small penalty.
+
+This tier therefore trusts historical maximum-likelihood estimates much more aggressively.
+
+Its characteristic mistake is believing small samples.
+
+A batter who happened to hit several sixes in a small number of deliveries can be estimated as much more extreme than the evidence warrants.
+
+On the piloted world this increases regret from roughly:
+
+```text
+0.0087
+```
+
+for the reference to:
+
+```text
+0.0122
+```
+
+for the unshrunk tier.
+
+That difference is a direct demonstration that estimating player effects is not enough. I also need to estimate them conservatively.
+
+---
+
+### The last-season-only tier
+
+Another tier uses:
+
+```text
+season_weights = [0, 0, 1]
+```
+
+so only the most recent historical season contributes to the final fit.
+
+The motivation is understandable.
+
+Because form changes over time, newer information should often be more relevant.
+
+But this tier takes that logic too far.
+
+It discards two-thirds of the available evidence, including valuable information about persistent talent.
+
+On the piloted world it reaches regret around:
+
+```text
+0.0094
+```
+
+with its selected shrinkage scale around:
+
+```text
+0.3
+```
+
+It is fairly competitive, but still weaker than the full-history reference.
+
+That result supports the world design: history is neither perfectly permanent nor instantly obsolete.
+
+Old matches retain value because talent persists, while recent matches gain extra relevance because form drifts.
+
+---
+
+### The raw head-to-head tier
+
+The head-to-head tier activates:
+
+```text
+head_to_head = True
+```
+
+and creates one parameter for every batter-bowler pair that ever appeared in the historical data.
+
+The pair parameter acts along the common conditions direction through the `pair_effect()` hook.
+
+I barely shrink this table:
+
+```text
+pair ridge = 0.05
+```
+
+which means it is intentionally allowed to believe observed pair differences quite strongly.
+
+This is the model version of a fan saying:
+
+> This batter owns this bowler.
+
+File 6 already told me why that is dangerous.
+
+Specific batter-bowler interaction residuals barely repeated across independent samples.
+
+The true synthetic league therefore contains no such pair effect.
+
+The head-to-head model spends a huge number of parameters fitting noise.
+
+On the piloted world its regret is approximately:
+
+```text
+0.0493
+```
+
+which makes it the worst tier in the reported ladder.
+
+That is a useful negative control.
+
+The task punishes an intuitive but statistically unsupported modelling choice.
+
+---
+
+### Richer matchup structure
+
+A more defensible richer tier uses:
+
+```text
+matchups = True
+```
+
+This adds the broad structures that actually exist in the simulated world.
+
+The model fits each batter's pace-versus-spin quality split, the handedness-by-bowling-style table and the bowling-style-by-pitch table.
+
+These are low-dimensional structured interactions rather than one parameter for every specific pair.
+
+That is exactly the distinction I wanted the simulation to teach.
+
+Broad repeatable structure can be useful.
+
+Raw memorization of sparse head-to-head records is not.
+
+---
+
+### Venue affinity
+
+With:
+
+```text
+affinity = True
+```
+
+the model also fits one batter-venue parameter for every player-ground combination.
+
+This is a much larger table, so it is strongly regularized.
+
+The true world does contain a small personal batter-venue effect, but File 6 showed that it is weak.
+
+Accordingly, adding this richer structure changes the reference score only slightly.
+
+That is useful.
+
+It means the task is not secretly won by discovering one obscure interaction.
+
+Most of the available performance comes from getting the basic regularized player model right.
+
+---
+
+### How little the richer interactions matter
+
+The matchup and venue-affinity additions move the reference score by only about one percent in the piloted comparisons.
+
+I like that result because it means the task does not depend on a hidden trick.
+
+An agent does not have to reverse engineer every minor mechanism in `world.py` to become competitive.
+
+The dominant gains come from understandable modelling decisions: use the public ball model, estimate players rather than only teams, pool information across seasons and regularize noisy parameters.
+
+The smaller interactions are refinements rather than secret keys.
+
+---
+
+### Estimating uncertainty from curvature
+
+After fitting the point estimates, I also calculate an approximate uncertainty for each fitted parameter.
+
+For a parameter acting along direction $d$, the curvature contribution of one ball is based on:
+
+$$
+\mathbb E[d^2]
+-
+\mathbb E[d]^2
+$$
+
+under the model's predicted outcome distribution.
+
+The code calculates:
+
+```python
+curvature = (
+    (p @ direction ** 2)
+    - (p @ direction) ** 2
+) * w
+```
+
+and then aggregates the curvature for every parameter.
+
+After adding the ridge precision, I use:
+
+```python
+1 / np.sqrt(curvature + ridge)
+```
+
+as an approximate posterior standard deviation.
+
+This is a diagonal Laplace approximation.
+
+I approximate the posterior around the optimum as Gaussian using the local curvature of the negative log-posterior, following the general Laplace-approximation idea described by Bishop (2006).
+
+I keep only the diagonal uncertainty and ignore cross-parameter covariance, so this is intentionally approximate.
+
+---
+
+### Posterior-predictive forecasting
+
+If:
+
+```text
+uncertainty > 0
+```
+
+I do not use only the fitted point estimates.
+
+Instead I repeatedly draw plausible parameter sets:
+
+```python
+value
++
+Normal(0, 1) * estimated_sd
+```
+
+construct an `EstimatedBook` for each draw, simulate the fixtures and average the resulting probabilities.
+
+Conceptually I am approximating:
+
+$$
+P(\text{home wins}\mid\text{history})
+=
+\int
+P(\text{home wins}\mid\theta)
+P(\theta\mid\text{history})
+\,d\theta
+$$
+
+rather than simply evaluating:
+
+$$
+P(\text{home wins}\mid\hat\theta)
+$$
+
+at the posterior mode.
+
+That is the distinction between a plug-in forecast and a posterior-predictive forecast.
+
+---
+
+### Why posterior uncertainty did not help here
+
+In the piloted task I tried this with sixteen draws.
+
+It did not improve the score.
+
+That does not mean parameter uncertainty is theoretically irrelevant.
+
+The approximation itself is crude. I keep only diagonal curvature, ignore posterior correlations and treat the local Gaussian approximation as if it describes the full posterior.
+
+There is also Monte Carlo noise because the fixed simulation budget has to be divided across posterior draws.
+
+So this remains a useful modelling experiment, but it is not part of the strongest practical reference configuration.
+
+---
+
+### Converting fitted parameters into an estimated world
+
+The `_book()` method is the bridge between statistical fitting and match simulation.
+
+The optimizer gives me arrays of estimated latent parameters.
+
+The engine wants a `SkillBook`.
+
+`_book()` translates between them.
+
+It reconstructs estimated batter style, batter quality, bowling type, bowling quality, venue level, dew, affinity, home effect, wear and the public matchup tables.
+
+It then packages them as:
+
+```text
+EstimatedBook
+```
+
+which can be handed directly to `MatchSimulator`.
+
+This completes the inverse relationship with the true world:
+
+```text
+world.py:
+hidden SkillBook -> historical balls
+
+ladder.py:
+historical balls -> EstimatedBook
+```
+
+---
+
+### Extrapolating next season's level
+
+The forecast fixtures occur after the observed historical seasons.
+
+I therefore need an estimate of the next season's general scoring environment.
+
+I calculate:
+
+```python
+era_next = (
+    fitted level
+    + latest era value
+    + extrapolated trend
+)
+```
+
+rather than pretending the final historical season's level will remain unchanged forever.
+
+This mirrors the synthetic world's own era drift.
+
+The forecaster does not know the true future level, but it knows from the public history that the scoring environment has been changing.
+
+So it extrapolates one step forward.
+
+---
+
+### Estimating match-day variation
+
+The shrunk model also fits one hidden day effect per historical match.
+
+Because those fitted effects are themselves shrunk toward zero, their observed fitted standard deviation understates the true latent day spread.
+
+I therefore calculate:
+
+```python
+day_sd = np.std(self.t["day"]) * 1.25
+```
+
+for the shrunk reference.
+
+The factor:
+
+```text
+1.25
+```
+
+is a practical correction for that shrinkage.
+
+This is one of the more heuristic pieces of the reference forecaster.
+
+It is not another archive-estimated constant.
+
+Its purpose is to make future Monte Carlo matches contain a plausible amount of unobserved day-level variability rather than treating the fitted, shrunken historical day effects as the true population spread.
+
+---
+
+### Deterministic prediction
+
+For the ordinary plug-in forecast I construct one `EstimatedBook` from the fitted values.
+
+Then, for each future fixture, I call:
+
+```python
+sim.win_probability(...)
+```
+
+using a random generator seeded from:
+
+```python
+self.seed + fx.match
+```
+
+So a particular forecaster and fixture always use the same simulation stream.
+
+This matters because the prediction itself is Monte Carlo.
+
+Without a fixed seed, running the exact same fitted forecaster twice would produce slightly different probabilities.
+
+That would make verification unnecessarily difficult.
+
+The deterministic seeding means:
+
+> **Same history + same code + same fixture = same forecast.**
+
+This is the property the verifier later checks.
+
+---
+
+### Monte Carlo budget
+
+The reference does not need the enormous simulation budget used for hidden truth.
+
+Its purpose is to produce a strong practical forecast.
+
+The piloted reference used:
+
+```text
+4,000 match copies
+```
+
+for the reported ladder score.
+
+That leaves some Monte Carlo noise, but the noise is small enough for benchmarking and the deterministic seed makes it reproducible.
+
+The hidden truth can use many more copies because truth is generated offline and only needs to be computed once.
+
+---
+
+### What each tier is testing
+
+I think of the ladder as a set of controlled statistical mistakes rather than simply a list of different algorithms.
+
+The coin flip tests what happens when I learn nothing.
+
+The team-rating model tests whether aggregate team reputation is enough.
+
+The unshrunk player model tests what happens when I fit the right structure but trust noisy estimates too strongly.
+
+The last-season-only model tests what happens when I overreact to recency and throw away persistent historical signal.
+
+The raw head-to-head model tests what happens when I add a large number of attractive but non-repeating interaction parameters.
+
+The matchup and affinity tiers test whether modelling the smaller real interactions materially improves forecasting.
+
+The uncertainty tier tests whether integrating over approximate parameter uncertainty improves over a plug-in estimate.
+
+The reference combines the strongest broadly justified decisions.
+
+That makes the ladder useful diagnostically.
+
+When one tier performs worse, I can usually explain **which statistical mistake caused the loss**.
+
+---
+
+### The piloted ladder
+
+On the piloted visible world, using the stored high-precision truth, the main results are approximately:
+
+```text
+reference              0.0087
+last season only       0.0094
+no shrinkage           0.0122
+coin flip              0.0208
+team ratings           0.0393
+raw head-to-head       0.0493
+```
+
+Lower regret is better.
+
+The ordering is more important to me than any individual fourth decimal.
+
+The careful player-level model clearly beats the naive baselines.
+
+Removing shrinkage hurts.
+
+Discarding older seasons hurts a smaller amount.
+
+Team-level modelling is poor because team identity is deliberately unstable.
+
+And fitting raw pair effects is disastrous because those interactions mostly capture noise.
+
+That is the kind of ladder I wanted.
+
+---
+
+### Why the reference score matters
+
+The reference forecaster is not supposed to represent the theoretical Bayes-optimal solution.
+
+It is a strong, transparent model I can reproduce.
+
+That makes it useful for setting the task's grading threshold.
+
+If the pass bar were based only on the coin flip, a weak solution could pass.
+
+If I somehow set it against inaccessible Bayes-optimal performance, the task could become unfair.
+
+The reference provides a practical middle ground.
+
+I know it uses only public information.
+
+I know exactly how it works.
+
+I know its numerical score.
+
+And I know which advantages it has because I designed it.
+
+---
+
+### The reference's unfair advantage over an external agent
+
+One limitation deserves to be explicit.
+
+The `PRIOR` table was chosen with knowledge of the true synthetic population scales.
+
+For example, the batting-quality prior spread is almost exactly the true generated spread.
+
+That means the reference begins with unusually good regularization scales.
+
+An external model is not handed those hidden spreads.
+
+It has to infer reasonable shrinkage from the public history.
+
+I partly mitigate this by selecting a global scale multiplier through chronological validation, but the relative prior strengths between parameter families still contain designer knowledge.
+
+So I use the reference as a benchmark, not as evidence that every competent agent should reproduce its exact methodology.
+
+---
+
+### Why I validate shrinkage rather than selecting it on the forecast fixtures
+
+The future fixtures are the test set.
+
+I never use their hidden truth to choose the shrinkage strength.
+
+All model selection happens inside the visible historical period.
+
+I fit on earlier seasons and validate on the last visible season.
+
+Then I refit on all public history using the selected scale.
+
+That preserves the separation between model development and evaluation.
+
+The reference therefore follows the same basic information restrictions that I expect from an agent.
+
+---
+
+### The first coding bug caught here
+
+One implementation error was simply indentation.
+
+The first version of:
+
+```python
+def _blocks(...)
+```
+
+was indented eight spaces rather than four.
+
+Python immediately reported the syntax/indentation problem on import.
+
+That bug was easy to catch because the program could not run.
+
+As with the other files, the much more dangerous mistakes are statistical ones that produce valid-looking numbers while fitting the wrong model.
+
+The ladder itself is partly designed to expose those mistakes.
+
+---
+
+### How this fits into the architecture
+
+At this point the forecasting side looks like:
+
+```text
+public task files
+        |
+        v
+   load_league()
+        |
+        v
+      History
+        |
+        v
+      fit()
+        |
+        v
+estimated hidden parameters
+        |
+        v
+   EstimatedBook
+        |
+        v
+same public MatchSimulator
+        |
+        v
+forecast probabilities
+```
+
+while the truth side remains:
+
+```text
+hidden League
+     |
+     v
+true SkillBook
+     |
+     v
+same public MatchSimulator
+     |
+     v
+true probabilities
+```
+
+The two branches therefore converge on the same engine.
+
+That is the architectural property I care about most.
+
+---
+
+### How I think about this file
+
+I think of `forecasters/ladder.py` as the **exam calibration before the exam is given**.
+
+The synthetic league defines the questions.
+
+`TruthEngine` defines the correct probabilities.
+
+The ladder sends several students of different competence through the same public information.
+
+Their scores tell me whether the test distinguishes good statistical reasoning from bad statistical reasoning.
+
+The central idea is:
+
+> **I build a sequence of increasingly careful forecasters that all use the same public data and engine, then use their exact-regret scores to measure the difficulty and discrimination of the forecasting task before any external model is evaluated.**
+
+### References
+
+Bradley, R. A., & Terry, M. E. (1952). *Rank analysis of incomplete block designs: I. The method of paired comparisons*. **Biometrika, 39**(3/4), 324–345.
+
+Hoerl, A. E., & Kennard, R. W. (1970). *Ridge regression: Biased estimation for nonorthogonal problems*. **Technometrics, 12**(1), 55–67.
+
+James, W., & Stein, C. (1961). *Estimation with quadratic loss*. In *Proceedings of the Fourth Berkeley Symposium on Mathematical Statistics and Probability*, Vol. 1, 361–379.
+
+Stone, M. (1974). *Cross-validatory choice and assessment of statistical predictions*. **Journal of the Royal Statistical Society: Series B, 36**(2), 111–147.
+
+Bishop, C. M. (2006). *Pattern Recognition and Machine Learning*. Springer.

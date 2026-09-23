@@ -10919,3 +10919,18 @@ James, W., & Stein, C. (1961). *Estimation with quadratic loss*. In *Proceedings
 Stone, M. (1974). *Cross-validatory choice and assessment of statistical predictions*. **Journal of the Royal Statistical Society: Series B, 36**(2), 111–147.
 
 Bishop, C. M. (2006). *Pattern Recognition and Machine Learning*. Springer.
+
+---
+
+## 14. dev/validate_world.py
+
+**What we are trying to do.** Ask whether the simulated league looks like the real one before trusting anything built on it. The script plays three independent leagues, pools their matches and balls, and compares six summaries with the real targets measured in file 6: the mean and spread of first-innings totals, wickets to bowlers per first innings, how often the chasing side wins, the run rate in each of the twenty overs, and chase success by size of target. This is operational validation in Sargent's sense, comparing model output with the behaviour of the system it imitates (*Verification and validation of simulation models*, Journal of Simulation, vol. 7, no. 1, 2013, pp. 12–24), and it is how Davis, Perera and Swartz validated their Twenty20 simulator (Australian and New Zealand Journal of Statistics, vol. 57, no. 1, 2015, pp. 55–71).
+
+**What the script found this time.** Mean total 189.2 against 188.5 real; spread 35.0 against 37.4; wickets 5.83 against 5.9; chasers win 0.510 against 0.509; the run rate by over correlates 0.977 with the real profile across the twenty overs; chase success falls from 0.85 for targets under 160 to 0.24 for 220 and over, against 0.81 to 0.21 real. The design document's table had carried 190.6, 35.5 and 0.531 from a run made before the wear constant was raised, with a sentence saying the change had not been re-validated. This run is that re-validation, done here first and then confirmed with the original constants (189.1, 35.0, 0.509). The chase rate now matches the archive; the spread of totals remains a little low and stays in the limitations. The document and the run report were corrected the same day.
+
+**Why three leagues.** One league of 270 matches gives a first-innings mean with a standard error of about 2 runs and a chase rate with a standard error of about 0.03; three leagues halve those. The seeds 1 to 3 are fixed so the check is reproducible.
+
+**Citations.** Sargent (2013) and Davis, Perera and Swartz (2015) were checked against library records on 23 September 2026.
+
+**My notes.**
+

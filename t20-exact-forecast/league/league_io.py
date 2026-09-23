@@ -62,3 +62,4 @@ def load_league(folder):
     grounds = VenueTable(venues.home_team.to_numpy(), venues.pitch.map({"neutral": 0, "pace": 1, "spin": 2}).to_numpy())
     seasons = json.loads((folder / "meta.json").read_text())["seasons"]
     history = History(balls, pd.read_csv(folder / "matches.csv"), table, grounds, [], seasons)
+    return history, _fixtures(pd.read_csv(folder / "fixtures.csv"), pd.read_csv(folder / "fixture_lineups.csv"), "fixture")

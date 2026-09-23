@@ -92,3 +92,49 @@ print("one more wicket lost than usual  ", show(B[base + 1]))
 print("one unit of chase pressure       ", show(B[base + 2]))
 print("second innings, on average       ", show(B[base]))
 print("batting at 8 or lower            ", show(B[base + 5]))
+
+# Directions in which players differ
+# the model's probabilities for every ball, given only the situation
+z = X @ B
+z -= z.max(1, keepdims = True)
+P = np.exp(z)
+P /= P.sum(1, keepdims = True)
+
+def directions(who, floor):
+    groups = L.groupby(who)
+    # observed: how many times each outcome happened to each player
+    observed = np.array([np.bincount(y[rows], minlength = 6) for rows in groups.indices.values()])
+    # expected: how often it would have happened to an average player in exactly the same situations
+    expected = np.vstack([P[rows].sum(0) for rows in groups.indices.values()])
+    keep = observed.sum(1) >= floor
+    observed, expected = observed[keep], expected[keep]
+    # each player's tilt: log of observed over expected, centred so the six numbers sum to zero
+    tilt = np.log((observed + 0.5) / (expected + 0.5))
+    tilt -= tilt.mean(1, keepdims = True)
+    weights = observed.sum(1) / observed.sum()
+    # how the tilts vary together across players, minus what sampling noise alone would produce
+    noise = np.diag((weights[:, None] / (expected + 0.5)).sum(0))
+    covariance = (tilt * weights[:, None]).T @ tilt - noise
+    values, vectors = np.linalg.eigh((covariance + covariance.T) / 2)
+    order = np.argsort(values)[::-1]
+    values, vectors = values[order], vectors[:, order]
+    # fix the sign so that the first direction points toward more sixes
+    first = vectors[:, 0] * np.sign(vectors[5, 0])
+    return int(keep.sum()), values, first, vectors[:, 1]
+
+
+centre = lambda rows: rows - rows.mean(1, keepdims=True)
+out = {"overs": centre(B[:20]).round(4).tolist(),
+       "season_effects": {str(s): (B[20 + j] - B[20 + j].mean()).round(4).tolist() for j, s in enumerate(seasons[1:])},
+       "wk_excess": (B[base + 1] - B[base + 1].mean()).round(4).tolist(), "pressure": (B[base + 2] - B[base + 2].mean()).round(4).tolist(),
+       "inn2": (B[base] - B[base].mean()).round(4).tolist(), "pos": centre(B[base + 3:base + 6]).round(4).tolist(),
+       "typical_wk": typical_wk.round(3).tolist(), "par_from": par_from.round(3).tolist()}
+for who, floor in (("batter", 300), ("bowler", 300)):
+    n, values, first, second = directions(who, floor)
+    share = np.clip(values, 0, None) / np.clip(values, 0, None).sum()
+    print(f"{who}s with {floor}+ balls: {n} | share of real variation on the first three directions: {np.round(share[:3], 2)} | spread along the first: {np.sqrt(max(values[0], 0)):.3f}")
+    print("   first direction  ", show(first))
+    print("   second direction ", show(second * np.sign(second[0])))
+    out[who] = {"direction": first.round(4).tolist(), "sd": round(float(np.sqrt(max(values[0], 0))), 4), "second": second.round(4).tolist(), "shares": share[:3].round(3).tolist()}
+json.dump(out, open("data/state_fit.json", "w"), indent=1)
+print("saved data/state_fit.json")

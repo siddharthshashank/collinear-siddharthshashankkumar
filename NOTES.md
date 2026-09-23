@@ -338,3 +338,187 @@ It asks how likely a dot, single, two, four, six or bowler wicket is in each of 
 - Marylebone Cricket Club. *Laws of Cricket*, 2017 Code. See Law 17 concerning overs and related provisions in Laws 21 and 22 for no-balls and wides.
 - Swartz, T. B., Gill, P. S., & Muthukumarana, S. (2009). *Modelling and simulation for one-day cricket*. Canadian Journal of Statistics, 37.
 - Tukey, J. W. (1977). *Exploratory Data Analysis*. Addison-Wesley.
+
+## 4. dev/explore_reliability.py
+
+`explore_reliability.py` asks one important question:
+
+> **When a batter has a good or bad season, how much of that performance represents real ability, and how much is random variation?**
+
+A batter's observed scoring rate is not pure skill. Even equally skilled players can produce different season numbers because of randomness, opponents, pitches and limited sample size. This script estimates how much we should trust a batter's observed scoring rate before using it to forecast future performance.
+
+The script starts with recent IPL data:
+
+```python
+faced = balls[(balls.season >= 2023) & ~balls.wide].copy()
+```
+
+Only seasons from 2023 onward are used so that the estimate represents the modern IPL. Wides are removed because a wide does not count as a ball faced by the batter.
+
+The main idea is a **split-half reliability test**. For every batter and season, matches are numbered in order and alternated between two groups:
+
+```python
+faced["half"] = faced.groupby(
+    ["batter", "season"]
+).match.transform(lambda s: pd.factorize(s)[0] % 2)
+```
+
+Conceptually:
+
+```text
+Match 1 -> half 0
+Match 2 -> half 1
+Match 3 -> half 0
+Match 4 -> half 1
+Match 5 -> half 0
+Match 6 -> half 1
+```
+
+If scoring rate mostly reflects **real batting skill**, players who score quickly in one half should also tend to score quickly in the other. If the numbers mostly reflect noise, performance in one half will tell us little about performance in the other.
+
+This comes from the classical test-theory model:
+
+$$
+X = T + E
+$$
+
+where `X` is the observed performance, `T` is the player's underlying ability and `E` is measurement noise or random variation. Lord and Novick (1968) give the standard treatment of this framework.
+
+The script calculates each batter's runs per ball separately in the two halves:
+
+```python
+halves = faced.groupby(
+    ["batter", "season", "half"]
+).runs_bat.agg(rate="mean", n="size").unstack()
+```
+
+It then keeps only batter-seasons with at least **60 balls in each half**:
+
+```python
+halves = halves[
+    (halves[("n", 0)] >= 60) &
+    (halves[("n", 1)] >= 60)
+]
+```
+
+This avoids treating very small samples as meaningful estimates of ability.
+
+The correlation between the two halves is then calculated:
+
+```python
+r = halves[("rate", 0)].corr(
+    halves[("rate", 1)]
+)
+```
+
+The result is approximately:
+
+```text
+r = 0.302
+```
+
+If batting rate were almost perfectly stable, this correlation would be close to `1`. If it were almost entirely noise, it would be close to `0`. A correlation of about `0.30` tells us that genuine batting skill is present, but that a half-season measurement still contains substantial noise.
+
+The `0.302` value describes a **half-season**. A full season contains roughly twice as much information, so it should be more reliable. The script therefore applies the **Spearman-Brown formula**, developed independently by Spearman (1910) and Brown (1910):
+
+$$
+\text{reliability}
+=
+\frac{2r}{1+r}
+$$
+
+With an odd-even correlation of `0.302`, this gives a full-season reliability of approximately:
+
+$$
+0.464
+$$
+
+In simple terms:
+
+> **About 46% of the variation in these season-level batting rates behaves like persistent signal, while the remainder behaves like measurement noise.**
+
+This does **not** mean that exactly 54% of every individual batter's season was caused by luck. Reliability describes the variance across a population of measurements, not a literal decomposition of every player's season.
+
+It is also not correct to give every batter exactly 46% weight. Reliability increases when more evidence is available. A batter observed for 400 balls should be trusted more than a batter observed for only 120 balls. A useful approximation is that reliability grows with sample size roughly like:
+
+$$
+\frac{n}{n+k}
+$$
+
+where `n` is the amount of data and `k` represents how much evidence is required before signal begins to dominate noise. The later reference forecaster handles this **player by player**, shrinking players with little data more strongly and players with large samples less strongly.
+
+This is the forecasting idea known as **regression toward the mean**, described by Galton (1886). If a player's observed number is extreme, some of that extremeness is likely to be noise. A good forecast therefore pulls the estimate toward the league average rather than accepting the raw number completely.
+
+The same general idea appears in statistical shrinkage. James and Stein (1961) showed that when many noisy quantities are estimated simultaneously, pulling individual estimates toward a common centre can improve overall estimation. Efron and Morris (1977) famously illustrated this idea using baseball batting averages.
+
+The script separately estimates the spread of observed batting performance:
+
+```python
+whole = faced.groupby(
+    ["batter", "season"]
+).runs_bat.agg(rate="mean", n="size")
+
+whole = whole[whole.n >= 120]
+```
+
+There is a small but important distinction between the two samples. The reliability correlation uses **185 batter-seasons with at least 60 balls in each half**, while the spread calculation uses **227 batter-seasons with at least 120 balls overall**. They are therefore related but not identical groups.
+
+The observed standard deviation is approximately:
+
+```text
+0.2047 runs per ball
+```
+
+But some of that observed spread is caused by noise.
+
+Reliability describes the fraction of **variance** attributable to stable differences. Because standard deviation is the square root of variance, the estimated spread of underlying skill is:
+
+$$
+\sigma_{\text{true}} = \sigma_{\text{observed}} \sqrt{\text{reliability}}
+$$
+
+which the code calculates as:
+
+```python
+whole.rate.std() * np.sqrt(reliability)
+```
+
+Using the observed spread of `0.2047` and reliability of `0.464` gives:
+
+```text
+true spread = 0.1394 runs per ball
+```
+
+So the raw season data makes qualifying IPL batters appear to differ by about `0.20` runs per ball, while the estimated spread of persistent batting ability is closer to `0.14`.
+
+This matters for forecasting because using the full observed spread would make the model too confident about differences between players. A batter who happened to have an unusually strong short period could be treated as permanently elite, while a batter who experienced a poor period could be treated as permanently weak.
+
+That overconfidence is particularly costly when forecasts are evaluated using logarithmic scoring, because confident mistakes receive much larger penalties.
+
+The reliability estimate here applies specifically to **batting scoring rate measured as runs off the bat per ball faced**. It should not be assumed to apply to every cricket statistic. Different measurements contain different amounts of signal and noise. For example, the same type of analysis later used for bowling produces substantially lower season reliability, around `0.27`, while wicket-taking is even less repeatable. Reliability therefore has to be estimated for the particular quantity being modelled.
+
+The script's expected output is:
+
+```text
+185 batter-seasons with 60+ balls in each half
+odd-even correlation r = 0.302
+reliability of a full season = 0.464
+observed spread of strike rate = 0.2047 runs per ball over 227 batter-seasons
+true spread = 0.1394 runs per ball
+```
+
+The central lesson is simple:
+
+> **Do not treat a batter's observed season statistics as his exact underlying ability.**
+
+A season contains both repeatable skill and random variation. `explore_reliability.py` measures how much of each appears in batting scoring rate so that later forecasting models can shrink uncertain estimates toward the league average instead of becoming overconfident.
+
+## References
+
+- Brown, W. (1910). *Some experimental results in the correlation of mental abilities*. **British Journal of Psychology, 3**, 296–322.
+- Efron, B., & Morris, C. (1977). *Stein's paradox in statistics*. **Scientific American, 236**(5), 119–127.
+- Galton, F. (1886). *Regression towards mediocrity in hereditary stature*. **Journal of the Anthropological Institute, 15**, 246–263.
+- James, W., & Stein, C. (1961). *Estimation with quadratic loss*. **Proceedings of the Fourth Berkeley Symposium on Mathematical Statistics and Probability, 1**, 361–379.
+- Lord, F. M., & Novick, M. R. (1968). *Statistical Theories of Mental Test Scores*. Addison-Wesley.
+- Spearman, C. (1904). *The proof and measurement of association between two things*. **American Journal of Psychology, 15**.
+- Spearman, C. (1910). *Correlation calculated from faulty data*. **British Journal of Psychology, 3**, 271–295.

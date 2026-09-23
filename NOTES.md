@@ -3290,3 +3290,2401 @@ The central idea for this file is:
 - Jolliffe, I. T. (2002). *Principal Component Analysis* (2nd ed.). Springer.
 - Open Data Commons. *Open Data Commons Attribution License (ODC-BY) v1.0*.
 - Peng, R. D. (2011). *Reproducible research in computational science*. **Science, 334**, 1226–1227.
+
+## 9. league/calibration.py
+
+### What I am trying to do
+
+`league/calibration.py` is where I draw a hard line between **numbers I measured from the cricket archive** and **numbers I chose when designing the simulated world**.
+
+I keep those two categories separate because they have completely different justifications.
+
+A measured number should answer a question like:
+
+> **What evidence in the archive produced this value?**
+
+A design number should answer a different question:
+
+> **Why did I choose this value, and what behaviour was I trying to create?**
+
+I represent those two categories with two classes:
+
+```text
+Calibration
+Design
+```
+
+`Calibration` contains the quantities reconstructed from real IPL data through the earlier pipeline.
+
+`Design` contains the assumptions I deliberately introduce when the archive cannot uniquely determine the answer.
+
+This distinction is important in simulation modelling. Law (2015) separates input modelling from the broader construction and validation of the simulation model for exactly this reason. Sargent (2013) similarly distinguishes the validity of the input data and assumptions from the validity of the conceptual model and the behaviour of the final simulation.
+
+If I mix measured quantities and design decisions into one anonymous collection of constants, it becomes very easy to forget which values have evidence behind them and which values exist because I made a modelling choice.
+
+I want the opposite. I want every important number in the world to have a clear provenance.
+
+---
+
+### `Calibration`: the measured world
+
+The first class is:
+
+```python
+@dataclass(frozen=True)
+class Calibration:
+```
+
+I use a Python dataclass because this object is mostly a structured collection of named values.
+
+The class holds quantities such as:
+
+```text
+over_logits
+position_vectors
+wickets_vector
+pressure_vector
+second_innings_vector
+typical_wickets
+par_rate
+directions
+spreads
+era_step
+runs_per_condition_unit
+extras_per_ball
+venue_sd_runs
+batter_venue_sd_runs
+real_targets
+```
+
+Every one of these comes from the calibration pipeline I built in the previous files.
+
+The point of this class is not to estimate anything. Its job is to load those measurements once and expose them to the simulation engine through one consistent object.
+
+---
+
+### Why I make `Calibration` frozen
+
+I declare the dataclass with:
+
+```python
+@dataclass(frozen=True)
+```
+
+The `frozen=True` part makes the dataclass immutable in normal use.
+
+Once I create a `Calibration` object, I cannot casually write:
+
+```python
+calibration.era_step = 0.5
+```
+
+and silently change the underlying world.
+
+That matters because calibration constants are supposed to represent measurements.
+
+If one piece of the engine accidentally mutates them midway through a simulation, I no longer have one coherent data-generating process. I have a world whose rules can change because of a programming mistake.
+
+Immutability therefore acts as a small defensive boundary.
+
+It also makes verification easier. If the engine is supposed to remain untouched during the task, having a frozen calibration object reduces the number of ways internal code can accidentally rewrite its own constants.
+
+Python's dataclass mechanism was introduced through PEP 557.
+
+---
+
+### Loading `calibration.json`
+
+The `Calibration` class has one loader:
+
+```python
+@classmethod
+def load(cls, path=None):
+```
+
+Its purpose is straightforward. It reads the JSON artifact built in File 8 and turns the numerical blocks into the arrays and dictionaries expected by the engine.
+
+The default path is:
+
+```python
+Path(__file__).with_name("calibration.json")
+```
+
+This means the loader looks for `calibration.json` beside `calibration.py`.
+
+I chose this deliberately.
+
+The engine should not require some external configuration such as:
+
+```text
+CALIBRATION_PATH=/some/machine/specific/location/file.json
+```
+
+to find its own constants.
+
+If the package contains:
+
+```text
+league/
+    calibration.py
+    calibration.json
+```
+
+then:
+
+```python
+Calibration.load()
+```
+
+is enough.
+
+That makes the engine portable and keeps the task environment simpler.
+
+I can still pass a different path explicitly when I want to test another calibration.
+
+---
+
+### Turning JSON lists into NumPy arrays
+
+JSON stores numerical vectors as ordinary lists.
+
+The engine performs vector arithmetic on these quantities, so I convert the relevant blocks into NumPy arrays while loading them:
+
+```python
+np.array(raw["over_logits"])
+```
+
+and similarly for the position vectors, wicket vector, pressure vector, second-innings vector, typical-wicket curve and par-rate curve.
+
+I also convert every latent direction:
+
+```python
+{k: np.array(v) for k, v in raw["directions"].items()}
+```
+
+This gives the simulation code one consistent numerical representation.
+
+Instead of repeatedly converting lists to arrays throughout the engine, I do the conversion once at the boundary where the JSON enters Python.
+
+---
+
+### Expanding batting-position groups
+
+The fitted model did not estimate eleven independent batting-position effects.
+
+That would waste information and make the later positions extremely noisy.
+
+Instead, File 5 used four groups:
+
+```text
+positions 1–3
+positions 4–5
+positions 6–7
+positions 8–11
+```
+
+The JSON therefore contains four fitted position vectors.
+
+The simulation engine, however, knows the actual batting position of each player and wants to index directly by position.
+
+I bridge those two representations with:
+
+```python
+groups = [0, 0, 0, 1, 1, 2, 2, 3, 3, 3, 3]
+```
+
+This says:
+
+```text
+position 1  -> group 0
+position 2  -> group 0
+position 3  -> group 0
+
+position 4  -> group 1
+position 5  -> group 1
+
+position 6  -> group 2
+position 7  -> group 2
+
+position 8  -> group 3
+position 9  -> group 3
+position 10 -> group 3
+position 11 -> group 3
+```
+
+I then expand the four fitted vectors into eleven directly indexable vectors:
+
+```python
+np.array(raw["position_vectors"])[groups]
+```
+
+So the final `Calibration` object has shape:
+
+```text
+(11, 6)
+```
+
+for batting-position effects even though only four distinct effects were estimated.
+
+This is useful because the statistical model and the simulation engine want slightly different representations.
+
+The fitting stage wants enough pooling to estimate reliable effects.
+
+The engine wants direct indexing.
+
+The loader is the right place to reconcile those two needs.
+
+---
+
+### What I expect the loader to produce
+
+When I load the calibration produced by the previous pipeline, I expect the main shapes and headline quantities to agree with the reconstructed world.
+
+The over logits should have shape:
+
+```text
+(20, 6)
+```
+
+because there are twenty overs and six outcome categories.
+
+The expanded position matrix should have shape:
+
+```text
+(11, 6)
+```
+
+because the engine can now address every batting position directly.
+
+I expect five latent directions:
+
+```text
+bat_style
+bat_quality
+bowl_type
+bowl_quality
+conditions
+```
+
+The batter-style spread should be around:
+
+```text
+0.3475
+```
+
+depending on the exact rounded calibration used.
+
+The era step should be:
+
+```text
+0.0934
+```
+
+and the extras rate should be approximately:
+
+```text
+0.0764
+```
+
+per legal ball.
+
+At this point `Calibration` gives the rest of the engine one object representing the measured statistical world.
+
+---
+
+### `Design`: the world I choose
+
+The second class is:
+
+```python
+@dataclass(frozen=True)
+class Design:
+```
+
+This is deliberately separate from `Calibration`.
+
+The values in `Design` are not all direct estimates from the archive.
+
+Some are derived from archive measurements but require another modelling step. Some are chosen specifically so that the simulator reproduces a validation target. Others are ordinary world-design choices for which the archive does not contain a unique correct answer.
+
+I still make this class frozen because I want the design of a generated world to remain fixed once simulation begins.
+
+But the epistemic meaning is different.
+
+For `Calibration`, I ask:
+
+> **Where was this number measured?**
+
+For `Design`, I ask:
+
+> **Why did I choose this number?**
+
+---
+
+### Talent and temporary form
+
+One important design problem is how I represent player ability through time.
+
+I do not want a player's skill to be completely permanent, because real form changes.
+
+I also do not want a player to become statistically unrelated to himself from one season to the next.
+
+I therefore think of current skill as containing two components:
+
+```text
+persistent talent
++
+temporary form
+```
+
+The design uses:
+
+```python
+talent_share = 0.7
+form_memory_years = 0.75
+```
+
+The fixed talent component contributes 70% of the long-run structure.
+
+The remaining component changes over time and mean-reverts.
+
+I model that temporary component using an Ornstein-Uhlenbeck process, the classical continuous-time mean-reverting stochastic process associated with Uhlenbeck and Ornstein (1930).
+
+If form has an exponential correlation decay, the correlation one year apart is approximately:
+
+$$
+0.7 + 0.3e^{-1/0.75}
+$$
+
+which is about:
+
+$$
+0.78
+$$
+
+That is close to the underlying year-to-year batting-skill stability implied by the reliability analysis.
+
+The raw season-to-season correlation was approximately:
+
+```text
+0.36
+```
+
+while season reliability was approximately:
+
+```text
+0.46
+```
+
+so correcting for attenuation gives roughly:
+
+$$
+\frac{0.36}{0.46}
+\approx 0.78
+$$
+
+under the equal-reliability interpretation used here.
+
+So `talent_share` and `form_memory_years` are design parameters, but they are not arbitrary. I chose them together so that the resulting hidden skill process has approximately the stability implied by the archive.
+
+---
+
+### Bowling type gap
+
+I use:
+
+```python
+type_gap = 0.28
+```
+
+to create a visible distinction between the two broad bowling types.
+
+The measured first bowling direction had a standard deviation of about:
+
+```text
+0.203
+```
+
+If I split bowlers into two equally sized groups separated by `0.28`, each group is centred roughly:
+
+```text
+0.14
+```
+
+away from the overall mean.
+
+The between-group variance is therefore around:
+
+$$
+0.14^2
+$$
+
+while the total measured variance on the bowling-type axis is approximately:
+
+$$
+0.203^2
+$$
+
+So the public pace-versus-spin distinction explains roughly half of the measured variation along that axis.
+
+The remaining variation stays hidden within the individual bowler values.
+
+I prefer this to making bowling type explain the entire axis, because the real eigenvector is not literally a binary pace-versus-spin label. It is a continuous measured direction that happens to resemble that distinction.
+
+---
+
+### Batter split against bowling type
+
+I use:
+
+```python
+split_sd = 0.10
+```
+
+to give individual batters a small difference between their quality against pace and their quality against spin.
+
+I deliberately keep this effect modest.
+
+File 6 showed that specific batter-bowler interactions repeated only weakly, with a correlation around:
+
+```text
+0.18
+```
+
+even among selected, well-sampled pairs.
+
+That result argues against giving every batter a huge hidden matchup profile.
+
+At the same time, broad stylistic differences between facing pace and spin are plausible and useful for the task.
+
+So I include a small batter-specific split rather than either extreme of no matchup structure or enormous pair-specific effects.
+
+---
+
+### Batter-venue affinity
+
+I use:
+
+```python
+affinity_share = 0.8
+```
+
+to decide how much of the measured batter-at-venue variation should be treated as genuinely personal.
+
+File 6 found a small but positive repeatable batter-venue effect.
+
+The total observed relationship can contain more than one mechanism. Some of it may be personal affinity for a ground, while some may arise because players repeatedly appear at home venues whose general conditions already suit them.
+
+The simulator already has a venue-level effect and a home effect.
+
+`affinity_share` tells me how much of the remaining measured batter-venue spread I assign to an individual batter's personal affinity.
+
+This is therefore a decomposition choice applied to a measured quantity rather than a new empirical measurement.
+
+---
+
+### Recentering the league scoring level
+
+I use:
+
+```python
+level_runs = -0.058
+```
+
+as a global scoring adjustment.
+
+This exists because introducing player heterogeneity changes the league mean.
+
+Even if player attributes are centred around zero, pushing probabilities through a nonlinear softmax does not guarantee that the average of many heterogeneous players equals the output of the zero-valued average player.
+
+In general:
+
+$$
+f(\mathbb E[X])
+\neq
+\mathbb E[f(X)]
+$$
+
+for a nonlinear function $f$.
+
+So once I introduce real variation in batter style, batter quality, bowling type, bowling quality and other effects, the average simulated score moves.
+
+I use `level_runs` to recenter the resulting world on the real recent first-innings mean of approximately:
+
+```text
+188.5
+```
+
+runs.
+
+The parameter itself is therefore a design adjustment chosen to hit a measured validation target.
+
+---
+
+### Day-to-day pitch variation
+
+I use:
+
+```python
+day_sd_runs = 0.17
+```
+
+to represent variation in the pitch and conditions on a particular day.
+
+The archive tells me that first-innings totals have a standard deviation around:
+
+```text
+37.4 runs
+```
+
+The simulator already produces substantial variation through player differences, stochastic ball outcomes, venue effects and match state.
+
+I then choose the day-level spread so that the overall simulated score distribution is reasonably close to the real one.
+
+With this value, the simulator's first-innings spread is around:
+
+```text
+35.5
+```
+
+runs.
+
+That is still slightly below the archive's `37.4`, and I keep that miss documented rather than hiding it.
+
+So `day_sd_runs` is not something I measured directly as "the real pitch SD." It is a design parameter chosen to make one important aggregate distribution realistic.
+
+---
+
+### Second-innings wear
+
+I use:
+
+```python
+wear_runs = 0.053
+```
+
+to make second innings slightly more difficult in the absence of compensating conditions such as dew.
+
+The real archive gives me a chase-success target of roughly:
+
+```text
+50.9%
+```
+
+for the recent period used in calibration.
+
+Without a second-innings adjustment, the simulator's chasing side can become too successful.
+
+I therefore introduce a small wear effect so that otherwise identical sides are closer to the empirical chase rate.
+
+The resulting simulator still produces a chase rate around:
+
+```text
+53.1%
+```
+
+rather than exactly `50.9%`.
+
+Again, I keep the discrepancy visible.
+
+The point is not to overfit every aggregate target perfectly. The point is to produce a coherent world that is close to the important distributions while retaining simple, interpretable mechanisms.
+
+---
+
+### Home advantage
+
+I use:
+
+```python
+home_runs = 0.025
+```
+
+as a small home-team scoring advantage.
+
+In rough innings terms this is on the order of a few runs across a full T20 innings.
+
+I treat this as a judgement parameter rather than claiming that `0.025` is an independently estimated causal home effect from the archive.
+
+Estimating a clean home effect would require separating team strength, venue effects, schedule structure and potentially several other confounders.
+
+For the task I only need a modest and plausible home advantage, so I document it as a design choice.
+
+---
+
+### Dew
+
+I use:
+
+```python
+dew_share = 0.4
+dew_runs = 0.044
+```
+
+to create a subset of evening environments where conditions become more favourable to the chasing side.
+
+I do not claim that these exact values were identified from Cricsheet.
+
+The ball archive does not directly contain a clean variable saying:
+
+```text
+dew severity = 0.044
+```
+
+The mechanism exists because dew is a plausible source of second-innings environmental variation, but both its frequency and magnitude are design choices in this world.
+
+Their purpose is to create realistic variation around the general second-innings wear effect rather than treating every chase as occurring under identical conditions.
+
+---
+
+### Handedness and bowling-style interactions
+
+I include:
+
+```python
+left_handed = 0.3
+```
+
+as the approximate share of generated batters who are left-handed.
+
+I then use the small:
+
+```text
+type_table_runs
+```
+
+interaction to represent the idea that batter handedness and bowling style can matter slightly.
+
+The table is:
+
+```python
+((0.0, -0.008),
+ (0.0,  0.019))
+```
+
+where the rows correspond to right- and left-handed batters and the columns correspond to pace and spin.
+
+These are deliberately small effects.
+
+I do not want a simple public category such as handedness to overwhelm the hidden player-quality structure measured from the archive.
+
+Instead it creates a modest, understandable matchup component that an agent could potentially learn and exploit.
+
+---
+
+### Pitch type and bowling style
+
+I also include:
+
+```python
+pitch_table_runs
+```
+
+to create a small interaction between bowling type and pitch type.
+
+The table is:
+
+```python
+((0.0,  0.019, -0.010),
+ (0.0, -0.010,  0.019))
+```
+
+The rows correspond to pace and spin.
+
+The columns correspond to:
+
+```text
+neutral
+pace-friendly
+turning
+```
+
+I use this to make pitch identity matter differently to different bowling styles.
+
+Again, these are small design effects rather than archive-fitted coefficients.
+
+The goal is not to claim that `0.019` is the exact real causal benefit of spin on a turning IPL pitch.
+
+The goal is to create a coherent latent world in which public categorical information interacts with hidden player characteristics in a controlled way.
+
+---
+
+### Transfers
+
+I set:
+
+```python
+transfer_share = 0.25
+```
+
+so that roughly a quarter of players change teams between seasons.
+
+This parameter exists primarily for the forecasting task.
+
+If every player stays on the same team forever, team identity becomes a very strong proxy for player quality.
+
+A forecaster that models only teams could then recover much of the useful information without understanding individual players.
+
+Transfers deliberately break that shortcut.
+
+When players move, some predictive information moves with the player rather than remaining attached to the team name.
+
+This makes a player-aware model meaningfully better than a pure team-history model.
+
+So this is not an attempt to reproduce an exact empirical IPL transfer rate. It is a deliberate task-design choice that creates the information structure I want the agent to reason about.
+
+---
+
+### League size and roster structure
+
+I use:
+
+```python
+teams = 10
+```
+
+with squad composition:
+
+```python
+squad_roles = (7, 4, 7)
+```
+
+meaning seven batters, four all-rounders and seven bowlers per squad.
+
+A playing eleven uses:
+
+```python
+xi_roles = (5, 2, 4)
+```
+
+meaning five batters, two all-rounders and four bowlers.
+
+The generated world contains:
+
+```python
+seasons = 3
+weeks_per_season = 8
+```
+
+These values define the size and horizon of the environment rather than being statistical measurements.
+
+They determine how much history the agent sees, how often players meet, how much transfer information can accumulate and how long the forecasting problem remains manageable.
+
+They are therefore part of the task design rather than the cricket calibration.
+
+---
+
+### Three kinds of design number
+
+The important thing for me is that not every number in `Design` has the same justification.
+
+Some values are **derived from measured quantities**. `talent_share`, `form_memory_years`, `type_gap`, `split_sd` and `affinity_share` are choices that I connect directly to measurements from Files 4–6.
+
+Some values are **chosen to reproduce a validation target**. `level_runs`, `day_sd_runs` and `wear_runs` exist because I need the final simulated league to have approximately the right mean score, score spread and chase behaviour.
+
+Other values are **plain modelling judgements**. Home advantage, dew, handedness, pitch interactions, transfer frequency, league size and roster structure are mechanisms I deliberately introduce because the archive cannot uniquely determine them.
+
+Keeping all three categories visible is important.
+
+A reviewer can disagree with one of my design choices without that disagreement undermining the measurements in `Calibration`.
+
+Likewise, a measured constant can be checked against its source data without pretending that the design decisions were statistically estimated.
+
+---
+
+### Why I put the reasons beside the numbers
+
+I deliberately keep comments such as:
+
+```python
+day_sd_runs = 0.17
+```
+
+next to an explanation of why `0.17` exists.
+
+I do not want a future reader to find a naked constant and have to reverse engineer its purpose.
+
+If someone asks:
+
+> **Where did `0.17` come from?**
+
+the answer should be visible at the point where the number lives.
+
+This is similar to the discipline of an architecture decision record. A design decision is much easier to review when the decision, its context and its consequence stay together.
+
+For this task, that documentation also matters because some quantities are public and some are deliberately hidden from the forecasting agent.
+
+I want to be able to state truthfully that every hidden mechanism has a recorded rationale rather than being an unexplained knob added until a pilot happened to fail.
+
+---
+
+### How the two classes fit together
+
+The distinction I want the engine to preserve is:
+
+```text
+calibration.json
+      |
+      v
+Calibration
+      |
+      |   measured from archive
+      |
+      +------------------------+
+                               |
+                               v
+                         simulation world
+                               ^
+                               |
+      +------------------------+
+      |
+      |   chosen mechanisms
+      |
+Design
+```
+
+`Calibration` defines the statistical structure I recovered from real cricket.
+
+`Design` determines how I turn that measured structure into one particular artificial world.
+
+The engine needs both.
+
+Without `Calibration`, the world would be mostly invented.
+
+Without `Design`, the archive would still leave many questions unanswered.
+
+The important thing is that I never pretend they are the same type of evidence.
+
+---
+
+### Checks
+
+When I load the rebuilt calibration I expect the over matrix to have shape:
+
+```text
+(20, 6)
+```
+
+and the expanded batting-position matrix to have shape:
+
+```text
+(11, 6)
+```
+
+I expect five latent directions, a batter-style spread around `0.3475`, an era step of `0.0934` and extras around `0.0764` per legal ball.
+
+For the design object I expect ten teams, squad roles:
+
+```text
+(7, 4, 7)
+```
+
+playing-XI roles:
+
+```text
+(5, 2, 4)
+```
+
+and three seasons.
+
+These checks are intentionally simple. This file is mostly plumbing and explicit design, not another statistical estimation stage.
+
+---
+
+### Limits
+
+The largest limitation is also the point of the `Design` class: these values are not uniquely implied by the IPL archive.
+
+Another competent simulator designer could choose a different form process, a different amount of dew, a smaller transfer rate or a different home advantage and still produce a defensible artificial world.
+
+That is acceptable for this task because the grader's true probabilities are generated under the same hidden design choices.
+
+The task does not require this artificial world to be the one uniquely true model of real IPL cricket.
+
+What I do require is that the choices are plausible, internally consistent and documented.
+
+The second limitation is that two important aggregate validation targets are still missed by a few percent. The simulated first-innings spread is about `35.5` rather than the archive's `37.4`, and the simulated chase rate is about `53.1%` rather than `50.9%`.
+
+I prefer documenting those misses to adding more arbitrary constants solely to make every validation number exact.
+
+The model is supposed to be a credible synthetic world, not an overfitted reproduction of every historical aggregate.
+
+---
+
+### The main idea
+
+I think of this file as the place where I make the provenance of every simulator constant explicit.
+
+`Calibration` answers:
+
+> **What did I measure from cricket?**
+
+`Design` answers:
+
+> **What did I choose when the data could not decide the world for me?**
+
+Keeping those two questions separate makes the simulation much easier to inspect, validate and defend.
+
+### References
+
+Law, A. M. (2015). *Simulation Modeling and Analysis* (5th ed.). McGraw-Hill Education.
+
+Sargent, R. G. (2013). *Verification and validation of simulation models*. **Journal of Simulation, 7**(1), 12–24.
+
+Uhlenbeck, G. E., & Ornstein, L. S. (1930). *On the theory of the Brownian motion*. **Physical Review, 36**(5), 823–841.
+
+Python Enhancement Proposal 557. *Data Classes*.
+
+## 10. league/engine.py
+
+### What I am trying to do
+
+`league/engine.py` is where I turn the calibrated ball model into actual innings and matches.
+
+The design goal is that the **true league and every forecaster use exactly the same match engine**.
+
+The engine knows the public rules of cricket and the public structure of the statistical ball model. It does not know whether the hidden player and venue values it receives are the true ones generated by the league or estimates produced by a forecasting model.
+
+That distinction is central to the fairness of the task.
+
+The true league can call the engine with the real hidden values. A forecaster can call the same engine with its own estimated values. The simulation code does not branch on whether those values came from the truth or from an agent.
+
+In other words, the engine sees:
+
+```text id="sua6wj"
+public model
++
+SkillBook
++
+fixture
+```
+
+and produces match probabilities.
+
+It does not see:
+
+```text id="pukjow"
+"this SkillBook is true"
+```
+
+or:
+
+```text id="dbx5e2"
+"this SkillBook came from a forecaster"
+```
+
+That symmetry is how I encode the fairness claim into the architecture.
+
+The agent should not have to reverse engineer how a delivery works. I give it the engine. Its job is to infer the hidden quantities that should be passed into that engine.
+
+---
+
+### The public data structures
+
+Before the simulation classes, I define a few small dataclasses describing the public world.
+
+`PlayerTable` stores public information about every player:
+
+```python id="lzxlrb"
+@dataclass
+class PlayerTable:
+    role: np.ndarray
+    hand: np.ndarray
+    style: np.ndarray
+```
+
+The arrays are indexed by player ID.
+
+`role` tells the engine what broad role a player has. `hand` records whether the batter is right- or left-handed. `style` records the bowling style, represented numerically as pace or spin for players who bowl.
+
+I define:
+
+```python id="syiyvv"
+PACE, SPIN = 0, 1
+```
+
+so these public categories can be used directly as table indices.
+
+`VenueTable` does the same for grounds:
+
+```python id="98h1f2"
+@dataclass
+class VenueTable:
+    home_team: np.ndarray
+    pitch: np.ndarray
+```
+
+Each venue therefore has a public home team and a public pitch category.
+
+The pitch is encoded as neutral, pace-friendly or spin-friendly.
+
+The important distinction is that these are **public facts about the world**. They are not hidden skills.
+
+---
+
+### Fixtures
+
+A `Fixture` contains everything needed to describe one upcoming match:
+
+```python id="79tmf5"
+@dataclass
+class Fixture:
+    match: int
+    season: int
+    home: int
+    away: int
+    venue: int
+    home_xi: np.ndarray
+    home_bowlers: np.ndarray
+    away_xi: np.ndarray
+    away_bowlers: np.ndarray
+```
+
+So the engine knows the two teams, the venue, the batting elevens and which five players will bowl for each side.
+
+I deliberately make the line-ups explicit.
+
+The engine does not decide who plays or who bowls. Those decisions are already part of the fixture.
+
+This removes another strategic decision from the simulation and keeps the forecasting problem focused on estimating the hidden cricket strengths rather than modelling captaincy.
+
+---
+
+### History
+
+The `History` dataclass represents everything the forecasting agent is allowed to learn from the past.
+
+It contains:
+
+```text id="gs8x0b"
+ball-by-ball history
+match-level history
+public player information
+public venue information
+past fixtures
+number of seasons observed
+```
+
+The important idea is that the agent sees historical outcomes and public structure, but not the hidden numbers that generated them.
+
+That means the forecasting problem is genuinely an inference problem.
+
+The historical league contains clues about player strength, venue effects, form and other hidden variables, but the agent has to reconstruct those quantities from observations.
+
+---
+
+### Batting and bowling cards
+
+The `BattingCard` and `BowlingCard` classes are small intermediate representations used by the innings simulator.
+
+The innings simulator does not want to understand the entire `SkillBook`.
+
+It only needs the hidden values relevant to one batting side facing one set of bowlers in one particular match.
+
+The `BattingCard` stores:
+
+```text id="jd1z98"
+style
+quality
+conditions
+```
+
+for the eleven batters.
+
+The `BowlingCard` stores:
+
+```text id="1twl2f"
+kind
+quality
+```
+
+for the five bowlers.
+
+The `SkillBook.cards()` method builds these cards before an innings begins.
+
+This keeps the inner ball loop small. The expensive conceptual work of combining player identity, venue, handedness and pitch effects is handled before those quantities are repeatedly used on every delivery.
+
+---
+
+### `BallModel`: the public part of a delivery
+
+`BallModel` contains the public statistical structure of a ball.
+
+Its constructor receives the calibration object and extracts the five public directions:
+
+```python id="eld3te"
+self.bs = d["bat_style"]
+self.bq = d["bat_quality"]
+self.wt = d["bowl_type"]
+self.wq = d["bowl_quality"]
+self.c  = d["conditions"]
+```
+
+I use short names because these vectors appear repeatedly inside the inner innings loop.
+
+The important point is that these directions themselves are public.
+
+The engine openly tells the agent:
+
+```text id="93h8v2"
+this is the direction for batting style
+this is the direction for batting quality
+this is the direction for bowling type
+this is the direction for bowling quality
+this is the conditions direction
+```
+
+What remains hidden are the scalar values multiplying those directions.
+
+So an agent is not asked to discover the mathematical form of the model. It only has to infer where players and venues sit inside that public model.
+
+---
+
+### Chase pressure
+
+The `pressure()` method recreates the same chase-pressure variable that I fitted in `fit_state.py`.
+
+It calculates the required scoring rate:
+
+```python id="ohjdhb"
+need = np.clip(
+    target - runs,
+    1,
+    None
+) / ((120 - ball) / 6)
+```
+
+and compares it with the par scoring rate expected from that over onward:
+
+```python id="pmf8l3"
+np.log(
+    need / self.cal.par_rate[ball // 6]
+)
+```
+
+The final pressure is clipped to:
+
+```text id="ccwdcw"
+[-1.0, 1.2]
+```
+
+just as it was during fitting.
+
+This consistency matters.
+
+I do not want to fit a model with one definition of pressure and then simulate matches with a slightly different definition.
+
+The simulator uses the same feature definition that created the fitted coefficient.
+
+So if the required rate becomes much harder than normal, pressure becomes positive and the public pressure vector pushes the outcome probabilities toward the aggressive pattern learned from real cricket.
+
+---
+
+### Building the public situation logits
+
+The `situation()` method constructs the public part of the six ball logits.
+
+It begins with the over profile:
+
+```python id="55l2n6"
+cal.over_logits[over]
+```
+
+then adds the batting-position effect:
+
+```python id="k2cn9j"
+cal.position_vectors[position]
+```
+
+then adds the wicket-state effect:
+
+```python id="71c5a9"
+np.multiply.outer(
+    wickets - cal.typical_wickets[over],
+    cal.wickets_vector
+)
+```
+
+This means the model cares about wickets lost **relative to what is normal at that point in the innings**, exactly as it did during fitting.
+
+It then adds the second-innings effect and chase-pressure effect:
+
+```python id="bb3w6q"
+np.multiply.outer(
+    chasing,
+    cal.second_innings_vector
+)
+
+np.multiply.outer(
+    pressure,
+    cal.pressure_vector
+)
+```
+
+So the public ball state is approximately:
+
+$$
+z_{\text{public}}
+=
+z_{\text{over}}
++
+z_{\text{position}}
++
+z_{\text{wickets}}
++
+z_{\text{innings}}
++
+z_{\text{pressure}}
+$$
+
+This is the same basic multinomial-logit structure I fitted in File 5.
+
+The simulation therefore uses the fitted model rather than replacing it with a separate hand-written scoring rule.
+
+---
+
+### Converting logits into probabilities
+
+Once I have the six logits, I convert them to probabilities using softmax:
+
+```python id="7kqyzp"
+p = np.exp(
+    z - z.max(axis=1, keepdims=True)
+)
+
+return p / p.sum(axis=1, keepdims=True)
+```
+
+I subtract the row maximum before exponentiating for numerical stability, just as I did during fitting.
+
+The result is one six-outcome probability distribution for every simulated copy of the innings.
+
+At this point I have:
+
+```text id="ncx17l"
+P(W)
+P(0)
+P(1)
+P(2)
+P(4)
+P(6)
+```
+
+for the current delivery.
+
+---
+
+### `InningsSimulator`: simulating many innings together
+
+`InningsSimulator` turns the ball model into an innings.
+
+The important implementation choice is that I do not simulate one innings at a time.
+
+I simulate many copies in parallel.
+
+If:
+
+```text id="iq17iz"
+n = 4000
+```
+
+then every state array has roughly 4,000 entries.
+
+For example:
+
+```python id="4xlmp7"
+wickets = np.zeros(n, int)
+runs = np.zeros(n, int)
+live = np.ones(n, bool)
+```
+
+Each entry represents one independent Monte Carlo copy of the same innings.
+
+This means one pass through the ball loop updates thousands of hypothetical innings at once using NumPy operations.
+
+That is much faster than running thousands of separate Python-level match loops.
+
+---
+
+### The innings state
+
+At the start of every simulated innings I track:
+
+```text id="xqt0fe"
+striker
+partner
+next batter
+wickets
+runs
+whether the innings is still live
+```
+
+The batting positions are represented as indices from `0` to `10`.
+
+Initially:
+
+```python id="b1f5yu"
+striker = 0
+partner = 1
+next_in = 2
+```
+
+So the first two batters begin at the crease and the third player is next in.
+
+Every simulated copy maintains its own striker, partner, wicket count and run total because different random outcomes cause the copies to diverge.
+
+---
+
+### One innings is at most 120 legal-ball steps
+
+The main loop is:
+
+```python id="yjwmue"
+for ball in range(120):
+```
+
+So I simulate a maximum of 120 legal balls.
+
+The current over is:
+
+```python id="h02fy9"
+over = ball // 6
+```
+
+The ball model therefore operates in legal-ball time.
+
+Wides and no-balls are handled separately as extras rather than increasing the loop length.
+
+This is a simplification of real cricket, but it lets the calibrated six-outcome model remain tied to legal deliveries.
+
+---
+
+### Bowler rotation
+
+I use five bowlers and rotate them by over:
+
+```python id="w81l9u"
+who = over % 5
+```
+
+So the pattern is:
+
+```text id="32qzo2"
+over 1  -> bowler 0
+over 2  -> bowler 1
+over 3  -> bowler 2
+over 4  -> bowler 3
+over 5  -> bowler 4
+over 6  -> bowler 0
+...
+```
+
+This guarantees that no bowler bowls consecutive overs.
+
+That is consistent with the Laws of Cricket, where the same bowler may not bowl two overs consecutively.
+
+I deliberately do not simulate captaincy decisions about bowling changes.
+
+The rotation is fixed because I want the match result to depend on player strengths and match randomness, not on a hidden tactical policy that the forecasting agent has no way to model exactly.
+
+---
+
+### Combining public state and hidden skill
+
+This is the core calculation in the innings simulator.
+
+I first compute the public situation:
+
+```python id="7h0yd7"
+z = m.situation(
+    over,
+    striker,
+    wickets,
+    np.full(n, chasing),
+    pressure
+)
+```
+
+Then I add the striker's hidden batting style:
+
+```python id="elc4d0"
+np.outer(
+    batting.style[striker],
+    m.bs
+)
+```
+
+and the striker's quality against the current bowler:
+
+```python id="iqr7uv"
+np.outer(
+    batting.quality[striker, who],
+    m.bq
+)
+```
+
+Then I add the bowler's hidden type:
+
+```python id="fuewjs"
+bowling.kind[who] * m.wt
+```
+
+and bowling quality:
+
+```python id="zcaxif"
+bowling.quality[who] * m.wq
+```
+
+Finally I add the shared and meeting-specific conditions:
+
+```python id="6oxgag"
+np.outer(
+    conditions + batting.conditions[striker, who],
+    m.c
+)
+```
+
+So conceptually my ball model is:
+
+$$
+z
+=
+z_{\text{situation}}
++
+s_{\text{bat}}d_{\text{bat-style}}
++
+q_{\text{bat}}d_{\text{bat-quality}}
++
+t_{\text{bowl}}d_{\text{bowl-type}}
++
+q_{\text{bowl}}d_{\text{bowl-quality}}
++
+c\,d_{\text{conditions}}
+$$
+
+This is the key architectural idea.
+
+The mathematical structure is public.
+
+The directions are public.
+
+The hidden values multiplying those directions are what the forecasting agent has to estimate.
+
+---
+
+### Why I call the innings a Markov process
+
+Once the hidden `SkillBook` is fixed, the next-ball probabilities depend on the current match state and the players involved.
+
+The state contains information such as:
+
+```text id="7msdgv"
+runs
+wickets
+ball number
+striker
+partner
+current bowler
+target
+```
+
+I do not explicitly carry the whole sequence of previous deliveries into the next prediction.
+
+The past matters only through the current scoreboard and current players.
+
+That gives the innings a Markov structure.
+
+Published cricket simulators use similar state-based constructions. Swartz, Gill and Muthukumarana (2009) model scoring probabilities using the current cricket state, and Davis, Perera and Swartz (2015) build a Twenty20 simulator in which delivery probabilities depend on batsman, bowler, innings resources and chase conditions.
+
+My model is not identical to theirs, but it follows the same general principle: construct the innings as a sequence of state-dependent random deliveries.
+
+---
+
+### Sampling the ball outcome
+
+Once I have the six probabilities, I need to draw one outcome.
+
+I use one uniform random number per simulation copy:
+
+```python id="6m7wza"
+gen.random(n)
+```
+
+and compare it against the cumulative probability distribution:
+
+```python id="v4u3yq"
+kind = np.minimum(
+    (
+        gen.random(n)[:, None]
+        > p.cumsum(axis=1)
+    ).sum(axis=1),
+    5
+)
+```
+
+Conceptually, if the cumulative probabilities are:
+
+```text id="qmb4jd"
+0.05
+0.33
+0.73
+0.80
+0.93
+1.00
+```
+
+and the random draw is:
+
+```text id="dc7tfg"
+0.76
+```
+
+then the outcome lands in the fourth interval.
+
+This is the standard inversion method for sampling from a discrete distribution, described in texts such as Devroye (1986).
+
+The `np.minimum(..., 5)` guard prevents a tiny floating-point rounding issue from ever creating an invalid seventh category.
+
+---
+
+### Extras
+
+After the batter outcome, I independently draw an extra run:
+
+```python id="z1kpgn"
+extra = (
+    gen.random(n) < m.cal.extras_per_ball
+) & live
+```
+
+The probability comes directly from the measured extras rate.
+
+This is deliberately simple.
+
+I do not separately simulate:
+
+```text id="3s18pz"
+wide
+no-ball
+bye
+leg bye
+```
+
+with different mechanisms.
+
+Instead I preserve their average contribution to team scoring through one independent extra-run process.
+
+That keeps the engine consistent with the calibration level at which extras were measured.
+
+---
+
+### Optional ball-by-ball logging
+
+The `log` argument lets the simulator record copy `0` ball by ball:
+
+```python id="yqv5hw"
+if log is not None and live[0]:
+    log.append(...)
+```
+
+I do not record every Monte Carlo copy.
+
+That would be enormous and unnecessary.
+
+The league only needs one realized historical world to expose to the forecasting agent.
+
+So copy `0` can be logged and written into the historical dataset while the other copies are used internally for probability estimation.
+
+This keeps the roles of simulation and history generation separate without needing two different engines.
+
+---
+
+### Updating runs and wickets
+
+I identify dismissals with:
+
+```python id="7s2b5b"
+out = (kind == 0) & live
+```
+
+If the batter is not dismissed, the run value comes from:
+
+```python id="99ly8m"
+RUNS[kind]
+```
+
+I then add the independently drawn extra:
+
+```python id="yf4u2k"
+runs += scored + extra
+```
+
+and update wickets:
+
+```python id="kht82y"
+wickets += out
+```
+
+A dismissed striker is replaced by the next batter:
+
+```python id="n3gtdw"
+striker = np.where(
+    out,
+    next_in,
+    striker
+)
+
+next_in = next_in + out
+```
+
+This vectorized logic means different Monte Carlo copies can have completely different batters at the crease by the same ball number.
+
+---
+
+### Changing strike
+
+I swap striker and non-striker when the number of batter runs is odd or when the over ends:
+
+```python id="1moddc"
+swap = (
+    scored % 2 == 1
+) ^ (
+    ball % 6 == 5
+)
+```
+
+The XOR is important.
+
+If one of those conditions occurs, the batters swap.
+
+If both occur, they effectively swap twice and the same batter remains on strike.
+
+That reproduces the normal strike logic for ordinary scored runs at the end of an over.
+
+I then update both positions with:
+
+```python id="3fq2gj"
+striker, partner = (
+    np.where(swap, partner, striker),
+    np.where(swap, striker, partner)
+)
+```
+
+The implementation is compact, but it encodes an actual cricket rule rather than just bookkeeping.
+
+---
+
+### Ending the innings
+
+An innings stops when ten wickets have fallen:
+
+```python id="rtyy8p"
+live &= wickets < 10
+```
+
+For a chase, it also stops when the target has been reached:
+
+```python id="ydv9op"
+live &= runs < target
+```
+
+Copies that have finished remain inside the arrays but are marked inactive.
+
+This is useful for vectorization because I do not need to dynamically remove finished simulations from the batch.
+
+They simply stop accumulating runs or wickets.
+
+---
+
+### `SkillBook`: everything hidden
+
+`SkillBook` is the container holding the quantities the forecasting agent does not directly observe.
+
+It contains hidden information about players, venues and the league environment.
+
+For players it includes batting style, batting quality, the batter's pace-versus-spin quality split, bowling type and bowling quality.
+
+For venues it includes the hidden venue level and dew state.
+
+It also contains batter-venue affinities.
+
+At the league level it carries the home lift, season era level, day-to-day pitch spread and second-innings wear effect.
+
+This is the core hidden state of the simulated world.
+
+The true league owns one `SkillBook`.
+
+A forecaster can construct another.
+
+The engine accepts either.
+
+That is the symmetry I want.
+
+---
+
+### Building match-specific cards
+
+The `cards()` method takes:
+
+```text id="zrf6lb"
+one batting eleven
+one team
+five opposing bowlers
+one venue
+```
+
+and turns the full `SkillBook` into the smaller objects required by the innings simulator.
+
+I first read the batter handedness:
+
+```python id="pn2r5i"
+hand = self.players.hand[xi]
+```
+
+and the public bowling styles of the five bowlers:
+
+```python id="cjg2re"
+how = self.players.style[bowlers]
+```
+
+I then construct each batter's quality against each bowling style.
+
+If the bowler is pace, I add half the batter's split. If the bowler is spin, I subtract half:
+
+```python id="tknxsa"
+sign = np.where(
+    how == PACE,
+    0.5,
+    -0.5
+)
+```
+
+so the quality matrix becomes:
+
+```python id="z8xomj"
+self.quality[xi][:, None]
++
+self.split[xi][:, None] * sign[None, :]
+```
+
+This means one batter can be slightly better against pace than spin while another can have the opposite profile.
+
+---
+
+### Matchup conditions
+
+The `meeting` matrix combines the condition-like effects that depend on the specific batter, bowler and venue.
+
+It contains the batter's affinity for the venue, the home-team lift, the public handedness-versus-bowling-style table and the public pitch-versus-bowling-style table.
+
+Conceptually:
+
+$$
+\text{meeting effect}
+=
+\text{venue affinity}
++
+\text{home lift}
++
+\text{hand/style effect}
+-
+\text{pitch help to bowler}
+$$
+
+All of these move along the common `conditions` direction inside the ball model.
+
+The important thing is that the structure of these interactions is public.
+
+The hidden quantities are things like the player's venue affinity or the true venue level.
+
+---
+
+### Why `pair_effect()` returns zero
+
+`SkillBook` contains:
+
+```python id="x7k2yb"
+def pair_effect(self, xi, bowlers):
+    return 0.0
+```
+
+This may look unnecessary, but I keep it deliberately.
+
+The true simulated world contains **no specific batter-bowler pair effect** because the repeatability analysis in File 6 did not justify one.
+
+But I want a forecaster that believes head-to-head records matter to have a clean place to implement that belief.
+
+A forecasting subclass can override:
+
+```text id="d94rgh"
+pair_effect()
+```
+
+without rewriting the engine.
+
+This is useful architecturally because alternative modelling hypotheses can differ in the `SkillBook` while sharing the same match simulation machinery.
+
+---
+
+### Shared innings conditions
+
+The `shift()` method returns the condition component shared by every delivery in an innings:
+
+```python id="g2evs2"
+return (
+    self.venue_level[venue]
+    + self.era
+    + (
+        self.venue_dew[venue] - self.wear
+        if chasing
+        else 0.0
+    )
+)
+```
+
+So first innings conditions contain the venue level and current era.
+
+Second innings conditions additionally contain dew minus wear.
+
+This creates the intended competition between two effects.
+
+The surface can become slightly harder later in the match because of wear, while dew can make batting easier at some venues.
+
+The innings therefore shares one environmental shift while individual batter-bowler meetings can still contribute their own smaller condition adjustments.
+
+---
+
+### `MatchSimulator`: turning innings into win probabilities
+
+`MatchSimulator` wraps the innings simulator and computes the probability that the home team wins.
+
+I do not simulate one toss outcome and call that the probability.
+
+I explicitly evaluate both batting orders:
+
+```python id="0v1obm"
+(home first, away second)
+(away first, home second)
+```
+
+and assign each one weight `0.5`.
+
+This corresponds to a fair toss where the toss winner always chooses to chase.
+
+That design choice removes toss strategy from the world.
+
+I know who bats first only through the coin flip, not through another hidden captain decision rule.
+
+---
+
+### Shared day conditions
+
+For every Monte Carlo copy I draw:
+
+```python id="fsdrs7"
+day = gen.normal(
+    0.0,
+    book.day_sd,
+    n
+)
+```
+
+This is the match-day pitch condition.
+
+The same `day` value is used for both innings of a given simulated copy.
+
+That is important.
+
+If one simulated match has an unusually good batting surface, both teams should play on that same surface.
+
+I do not want the first innings to draw one pitch and the second innings to draw another unrelated pitch.
+
+So each Monte Carlo copy represents one coherent match environment.
+
+---
+
+### Simulating the first innings
+
+For the team batting first, I call:
+
+```python id="5sspl7"
+self.innings.play(
+    *book.cards(...),
+    book.shift(
+        f.venue,
+        False
+    ) + day,
+    n,
+    gen
+)
+```
+
+The innings receives the batting card, bowling card and the shared first-innings conditions.
+
+The result is an array of `n` first-innings totals.
+
+If `n = 4000`, I now have four thousand possible first-innings scores for that fixture under the current `SkillBook`.
+
+---
+
+### Simulating the chase
+
+The second innings uses:
+
+```python id="pi6ft3"
+target = set_ + 1
+```
+
+for each Monte Carlo copy.
+
+This means every simulated chase has its own target because every first innings had its own randomly generated score.
+
+The chasing side is then simulated under:
+
+```text id="zp0ogj"
+venue level
++
+era
++
+dew
+-
+wear
++
+day condition
+```
+
+with chase pressure changing dynamically as the innings develops.
+
+This is important because I do not estimate win probability by simulating two independent innings totals and comparing them afterward.
+
+The second innings actually knows the target.
+
+Its batting behaviour changes because the required rate changes.
+
+That is exactly what the pressure term was built to represent.
+
+---
+
+### Ties
+
+I calculate:
+
+```python id="1je9ax"
+second_wins = (
+    (chase > set_).mean()
+    + 0.5 * (chase == set_).mean()
+)
+```
+
+A tie contributes half a win.
+
+I do not simulate a full Super Over process.
+
+For win-probability purposes, treating a tie as a fair 50/50 resolution is much simpler and keeps the probability well defined.
+
+---
+
+### Monte Carlo win probability
+
+For each batting order I estimate how often the second side wins, convert that into a home-team win probability and then average the two toss possibilities.
+
+The final result is:
+
+```text id="vmpzh9"
+P(home team wins)
+```
+
+under the supplied `SkillBook`.
+
+This is a Monte Carlo estimate.
+
+The principle goes back to the classical Monte Carlo framework described by Metropolis and Ulam (1949): when direct analytical evaluation is difficult, repeatedly simulate the stochastic system and estimate the desired probability from the fraction of successful outcomes.
+
+A cricket innings has too many interacting states for me to derive a useful closed-form match probability.
+
+Simulation is much simpler and matches the structure of the problem directly.
+
+---
+
+### Monte Carlo error
+
+If the true win probability is approximately `0.5`, the standard error of a simple Monte Carlo proportion is roughly:
+
+$$
+\sqrt{
+\frac{p(1-p)}{n}
+}
+$$
+
+At:
+
+```text id="3ndyd7"
+n = 4000
+```
+
+the worst-case standard error is approximately:
+
+$$
+\sqrt{
+\frac{0.25}{4000}
+}
+\approx 0.0079
+$$
+
+or about:
+
+```text id="ozhvzk"
+0.008
+```
+
+At:
+
+```text id="x2k3ek"
+n = 100000
+```
+
+it falls to roughly:
+
+$$
+\sqrt{
+\frac{0.25}{100000}
+}
+\approx 0.0016
+$$
+
+That is why a forecaster can use a few thousand copies for practical estimation while the hidden truth can be computed with a much larger simulation budget.
+
+---
+
+### `PublicConstants`
+
+`PublicConstants` is the boundary between the private calibration and what the forecasting agent is allowed to receive.
+
+It contains the public structure required to run the ball model:
+
+```text id="i8jwt8"
+over profiles
+position responses
+wicket response
+pressure response
+second-innings response
+typical wickets
+par rates
+five directions
+extras rate
+```
+
+It deliberately excludes quantities such as the player spreads, venue spread and real validation targets.
+
+Those quantities help generate the hidden world.
+
+Giving them directly to the agent would reveal information it is supposed to infer.
+
+So `PublicConstants` strips the calibration down to the structural rules of the game.
+
+---
+
+### Producing the public model
+
+`PublicConstants.from_calibration()` converts the full private calibration into the subset that can be written to:
+
+```text id="gkd13n"
+public.json
+```
+
+Then:
+
+```python id="pmzngm"
+load_public_model()
+```
+
+reads that file and constructs:
+
+```python id="d125tk"
+BallModel(
+    PublicConstants(raw)
+)
+```
+
+This is the copy of the engine that can ship with the forecasting task.
+
+The agent therefore receives the exact same ball mechanics used by the true league.
+
+What it does not receive are the hidden numbers plugged into those mechanics.
+
+---
+
+### Why the public/private boundary matters
+
+This separation is the central fairness property of the task.
+
+I do not want the challenge to be:
+
+> Guess my simulator implementation.
+
+I want the challenge to be:
+
+> Given the public simulator and historical observations, infer the hidden state well enough to forecast new matches.
+
+So I reveal the model structure and hide the latent quantities.
+
+This is closer to a real statistical inference problem.
+
+The agent knows the family of models that generated the data but does not know the parameter values.
+
+That also makes failures more meaningful.
+
+If a model performs badly, I can distinguish a failure to infer the hidden state from a failure caused by undocumented simulator mechanics.
+
+---
+
+### Why the toss winner always chases
+
+In this world the toss is a fair coin flip and the winner always chooses to chase.
+
+Real IPL captains do not literally make that decision one hundred percent of the time.
+
+I simplify it because I do not want another decision model inside the simulation.
+
+If toss winners sometimes bat and sometimes bowl, I need another policy describing when they choose each option.
+
+That policy could itself depend on venue, pitch, opponent and season.
+
+Then a forecasting agent would have to model that policy too.
+
+I remove the problem entirely.
+
+The toss determines batting order probabilistically, and the rule afterward is fixed.
+
+---
+
+### Why bowlers follow a fixed rotation
+
+I make a similar simplification for bowling.
+
+Real captains choose bowlers tactically.
+
+Those choices depend on matchups, current score, wickets, bowler form and tactical judgement.
+
+If I tried to reproduce that faithfully, captaincy would become another hidden agent inside the environment.
+
+Instead, five bowlers rotate over by over.
+
+This respects the important structural restriction that the same bowler cannot bowl consecutive overs while keeping the sequence deterministic once the line-up is known.
+
+The engine therefore models bowling ability without also requiring a captain-policy model.
+
+---
+
+### What I deliberately leave out
+
+The engine has no explicit fielding-skill model.
+
+It has no partnership chemistry.
+
+It has no momentum variable.
+
+It has no psychological state.
+
+It has no ball-to-ball memory beyond what survives in the current scoreboard and striker state.
+
+I make these omissions deliberately.
+
+Every extra hidden mechanism would make the world harder to identify, harder to calibrate and harder to explain.
+
+The task needs enough structure to create meaningful inference, but it also needs a true probability that I can compute accurately and defend.
+
+So I prefer a relatively compact stochastic world whose important assumptions are visible.
+
+---
+
+### Checks
+
+I use several sanity checks on the engine.
+
+When I evaluate ordinary situations in overs 1, 10 and 20 at typical wicket states, the resulting ball distributions should reproduce the broad shape measured in `explore_overs.py`.
+
+Early overs should contain many dots. Middle overs should contain many singles. Death overs should contain far more sixes and wickets.
+
+When I increase wickets lost relative to normal, the model should become more defensive in the same way the fitted wicket vector predicted.
+
+When I increase chase pressure, the model should shift toward more attacking outcomes and greater wicket risk.
+
+These checks tell me that the engine is actually using the fitted situation responses rather than merely containing the right constants on disk.
+
+---
+
+### Innings-level checks
+
+When I simulate many innings with average players, I expect the mean score to land around:
+
+```text id="qr81qd"
+189.5
+```
+
+with a standard deviation around:
+
+```text id="7dg0uf"
+30.0
+```
+
+for the particular average-player test.
+
+I also test a chase of approximately:
+
+```text id="u2j0es"
+170
+```
+
+where about:
+
+```text id="h62c6a"
+75.6%
+```
+
+of those test chases succeed.
+
+These are not the final league-validation numbers because the full league contains player variation, venue variation, pitch variation and other hidden structure.
+
+They are unit-level checks that the innings mechanism behaves sensibly.
+
+---
+
+### Match-level symmetry checks
+
+A particularly useful test is to simulate two identical sides.
+
+If all player and condition values are equal except for Monte Carlo randomness, I should get a win probability close to:
+
+```text id="5h0mml"
+0.5
+```
+
+The observed check is approximately:
+
+```text id="kqonvf"
+0.507
+```
+
+which is consistent with a coin flip within simulation noise.
+
+This is important because it catches accidental asymmetry.
+
+If identical sides systematically produced something like:
+
+```text id="4n6154"
+0.58
+```
+
+then I would know that home/away ordering, batting-order logic or innings handling was introducing an unintended bias.
+
+I also deliberately exaggerate the home effect in a test.
+
+When I multiply the ordinary home lift by ten, the home win probability rises to roughly:
+
+```text id="wys7nc"
+0.656
+```
+
+That tells me the home mechanism is connected to the match outcome in the expected direction.
+
+---
+
+### Bugs this file exposed
+
+Two simple implementation bugs were caught immediately.
+
+The first version omitted the `BattingCard` class.
+
+That caused the module to fail as soon as the relevant code path was imported or used.
+
+The second typo used:
+
+```text id="rbh76w"
+RUN
+```
+
+instead of:
+
+```text id="ai9bgi"
+RUNS
+```
+
+when scoring outcomes.
+
+That failed on the first attempted innings.
+
+These were easy failures because they produced immediate errors.
+
+The more dangerous bugs in this project are the ones that still return plausible cricket numbers, which is why the statistical checks from the earlier files matter so much.
+
+---
+
+### The main limitation of the engine
+
+The engine is intentionally simpler than real cricket.
+
+The Markov assumption means that two match histories leading to the same scoreboard, striker and bowler state are treated as equivalent even if the routes to those states were very different.
+
+Real players may respond to recent boundaries, recent wickets, fatigue, confidence or tactical patterns.
+
+I ignore that memory.
+
+I also simplify extras into an independent extra-run draw, simplify the toss policy, simplify bowling changes and omit fielding.
+
+These choices bound what I can claim.
+
+I am not claiming to have built a perfect generative model of professional T20 cricket.
+
+I am building a calibrated stochastic world that preserves enough of the important cricket structure to create a difficult but inspectable forecasting problem.
+
+---
+
+### How I think about this file
+
+I think of `engine.py` as the **shared physics engine of the task**.
+
+The true world uses it.
+
+The forecaster uses it.
+
+The public statistical rules live inside it.
+
+The hidden quantities are supplied separately through `SkillBook`.
+
+That gives me the architecture:
+
+```text id="ma7nh5"
+                 PUBLIC
+                   |
+                   v
+            BallModel / Engine
+                   ^
+                   |
+        +----------+----------+
+        |                     |
+        |                     |
+ true SkillBook        estimated SkillBook
+        |                     |
+        v                     v
+ true probability       forecast probability
+```
+
+The engine is identical on both sides.
+
+Only the hidden values differ.
+
+That is the central idea:
+
+> **I make the mechanics of cricket public and shared. The forecasting problem is to infer the hidden player, venue and condition values well enough that the same engine produces the correct win probability.**
+
+### References
+
+Swartz, T. B., Gill, P. S., & Muthukumarana, S. (2009). *Modelling and simulation for one-day cricket*. **Canadian Journal of Statistics, 37**(2), 143–160.
+
+Davis, J., Perera, H., & Swartz, T. B. (2015). *A simulator for Twenty20 cricket*. **Australian & New Zealand Journal of Statistics, 57**(1), 55–71.
+
+Devroye, L. (1986). *Non-Uniform Random Variate Generation*. Springer-Verlag.
+
+Metropolis, N., & Ulam, S. (1949). *The Monte Carlo method*. **Journal of the American Statistical Association, 44**(247), 335–341.
+
+Marylebone Cricket Club. *Laws of Cricket*, 2017 Code, 3rd edition. Law 17.6 concerning bowlers changing ends and consecutive overs.

@@ -145,3 +145,89 @@ class InningsSimulator:
             if target is not None:
                 live &= runs < target
         return runs
+
+class SkillBook:
+    """Everything the engine needs to know about players and venues. 
+    The league owns the true one. A forecaster builds its own.
+    """
+    # Per player: style, quality, split (pace-versus-spin gap in quality), kind (bowler type), bowl_quality.
+    # Per venue: level and dew. Per player-venue: affinity. Whole league: home lift, era (season level), day spread, wear.
+    # Two small public-structure tables: type_table [hand][bowling style] and pitch_table [bowling style][pitch type].
+
+    def __init__(self, players, venues, style, quality, split, kind, bowl_quality, type_table, pitch_table, venue_level, venue_dew, affinity, home_lift, era, day_sd, wear):
+        self.players, self.venues = players, venues
+        self.style, self.quality, self.split, self.kind, self.bowl_quality = style, quality, split, kind, bowl_quality
+        self.type_table, self.pitch_table = np.asarray(type_table), np.asarray(pitch_table)
+        self.venue_level, self.venue_dew, self.affinity = venue_level, venue_dew, affinity
+        self.home_lift, self.era, self.day_sd, self.wear = home_lift, era, day_sd, wear
+
+    def cards(self, xi, team, bowlers, venue):
+        # builds the two cards for one side batting against five named bowlers at one ground
+        hand, how = self.players.hand[xi], self.players.style[bowlers]
+        # a batter's quality against pace is quality + split/2, against spin quality - split/2
+        sign = np.where(how == PACE, 0.5, -0.5)
+        at_home = self.home_lift if self.venues.home_team[venue] == team else 0.0
+        # the conditions each batter meets against each bowler: liking for the ground, home lift, hand-versus-style, and the pitch's help to that style
+        meeting = (self.affinity[xi, venue] + at_home)[:, None] + self.type_table[hand][:, how] - self.pitch_table[how, self.venues.pitch[venue]][None, :]
+        batting = BattingCard(self.style[xi], self.quality[xi][:, None] + self.split[xi][:, None] * sign[None, :], meeting + self.pair_effect(xi, bowlers))
+        return batting, BowlingCard(self.kind[bowlers], self.bowl_quality[bowlers])
+
+    def pair_effect(self, xi, bowlers):
+        # a forecaster that believes in head-to-head records can override this; the true league has none
+        return 0.0                       # the true league has no effect tied to one specific batter-bowler pair
+
+    def shift(self, venue, chasing):
+        # the conditions shared by every ball of an innings: the ground's level, the season level, and in a chase the dew minus the wear
+        return self.venue_level[venue] + self.era + ((self.venue_dew[venue] - self.wear) if chasing else 0.0)
+
+
+class MatchSimulator:
+    def __init__(self, model):
+        self.innings = InningsSimulator(model)
+
+    def win_probability(self, book, fixture, n, gen):
+        """
+        P(home side wins). 
+        The toss is a coin flip and the winner always chases. 
+        A tie is settled by a coin flip.
+        """
+        f = fixture
+        xi, five = {f.home: f.home_xi, f.away: f.away_xi}, {f.home: f.home_bowlers, f.away: f.away_bowlers}
+        total = 0.0
+        # both orders of batting are played, each with weight one half, because the toss decides who chases
+        for first, second in ((f.home, f.away), (f.away, f.home)):
+            day = gen.normal(0.0, book.day_sd, n) if book.day_sd > 0 else np.zeros(n)       # the same pitch for both innings of a copy
+            set_ = self.innings.play(*book.cards(xi[first], first, five[second], f.venue), book.shift(f.venue, False) + day, n, gen)
+            chase = self.innings.play(*book.cards(xi[second], second, five[first], f.venue), book.shift(f.venue, True) + day, n, gen, target=set_ + 1)
+            # the chasing side wins if it passes the total; a tie is worth half
+            second_wins = (chase > set_).mean() + 0.5 * (chase == set_).mean()
+            total += 0.5 * (second_wins if second == f.home else 1 - second_wins)
+        return float(total)
+
+
+class PublicConstants:
+    """
+    The documented structure of a ball: 
+        everything in the engine that is not a hidden skill or a hidden condition.
+    """
+    # This is what ships to the agent as public.json: the profiles, the situation responses, the directions and the extras rate.
+    # The spreads, the venue spread and the real targets from calibration.json are deliberately not in it.
+    FIELDS = ("over_logits", "position_vectors", "wickets_vector", "pressure_vector", "second_innings_vector", "typical_wickets", "par_rate")
+
+    def __init__(self, raw):
+        for name in self.FIELDS:
+            setattr(self, name, np.array(raw[name]))
+        self.directions = {k: np.array(v) for k, v in raw["directions"].items()}
+        self.extras_per_ball = raw["extras_per_ball"]
+
+    @classmethod
+    def from_calibration(cls, cal):
+        raw = {name: getattr(cal, name).tolist() for name in cls.FIELDS}
+        raw.update(directions={k: v.tolist() for k, v in cal.directions.items()}, extras_per_ball=cal.extras_per_ball)
+        return raw
+
+
+def load_public_model(path=None):
+    # what the AI agent's copy of the engine does: build a BallModel from public.json beside it
+    raw = json.loads(Path(path or Path(__file__).with_name("public.json")).read_text())
+    return BallModel(PublicConstants(raw))

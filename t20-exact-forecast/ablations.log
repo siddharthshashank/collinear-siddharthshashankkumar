@@ -1,0 +1,33 @@
+world heldout_c: reference regret 0.0074, coin flip 1.26 x
+== trial1_claude-code_forecast.py
+   as submitted: failed to run: ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/argparse.py", line 1538, in add_argument
+    raise ValueError(f'unknown action {action_class!r}')
+ValueError: unknown action 'store_[REDACTED]'
+   ridge 1.0 on everything -> 25: failed to run: ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/argparse.py", line 1538, in add_argument
+    raise ValueError(f'unknown action {action_class!r}')
+ValueError: unknown action 'store_[REDACTED]'
+== trial2_codex_forecast.py
+   as submitted: regret 0.0189 = 2.55 x reference
+   every prior sd x 0.33: regret 0.0116 = 1.57 x reference
+== trial3_claude-code_forecast.py
+   as submitted: failed to run: ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/argparse.py", line 1538, in add_argument
+    raise ValueError(f'unknown action {action_class!r}')
+ValueError: unknown action 'store_[REDACTED]'
+   every ridge x 12: failed to run: ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/argparse.py", line 1538, in add_argument
+    raise ValueError(f'unknown action {action_class!r}')
+ValueError: unknown action 'store_[REDACTED]'
+== trial4_codex_forecast.py
+   as submitted: regret 0.0169 = 2.29 x reference
+   every ridge x 12: regret 0.0118 = 1.60 x reference
+== trial5_claude-code_forecast.py
+   as submitted: regret 0.0155 = 2.10 x reference
+   quality ridges 4 -> 44 and 31: regret 0.0094 = 1.27 x reference
+== trial6_codex_forecast.py
+   as submitted: regret 0.0105 = 1.42 x reference
+   hedge removed: logit scale 0.90 -> 1.0: regret 0.0123 = 1.67 x reference
+   hedge deepened: logit scale 0.90 -> 0.75: regret 0.0084 = 1.13 x reference
+   every prior sd x 0.5, hedge kept: regret 0.0067 = 0.91 x reference

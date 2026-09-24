@@ -1,0 +1,13 @@
+.venv/bin/python dev/bar_analysis.py --leagues 8 --copies 40000
+league 1001: reference regret 0.0146 | simulation noise 2.8% of it | no shrinkage x1.08 | last season only x1.43 | coin flip x1.20  [103s]
+league 1002: reference regret 0.0052 | simulation noise 2.6% of it | no shrinkage x1.27 | last season only x3.38 | coin flip x3.71  [104s]
+league 1003: reference regret 0.0067 | simulation noise 3.2% of it | no shrinkage x1.15 | last season only x1.69 | coin flip x2.76  [104s]
+league 1004: reference regret 0.0061 | simulation noise 5.8% of it | no shrinkage x1.37 | last season only x2.04 | coin flip x1.43  [105s]
+league 1005: reference regret 0.0069 | simulation noise 1.7% of it | no shrinkage x1.90 | last season only x1.90 | coin flip x1.84  [104s]
+league 1006: reference regret 0.0106 | simulation noise 2.8% of it | no shrinkage x1.35 | last season only x1.80 | coin flip x2.34  [103s]
+league 1007: reference regret 0.0065 | simulation noise 4.8% of it | no shrinkage x1.06 | last season only x2.52 | coin flip x0.94  [103s]
+league 1008: reference regret 0.0097 | simulation noise 1.3% of it | no shrinkage x1.21 | last season only x1.68 | coin flip x1.94  [102s]
+
+simulation noise, worst league: 5.8% of the reference's regret. A tolerance should be at least three times that: 17.4%
+closest careless tier: no shrinkage x1.06, last season only x1.43. The tolerance must stay below the smaller of these minus one.
+leagues where no shrinkage would pass a 10% tolerance: 2 of 8; last season only: 0 of 8

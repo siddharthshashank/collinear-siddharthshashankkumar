@@ -1,0 +1,22 @@
+{
+    "job_name": "2026-09-24__00-23-00",
+    "agents": [
+        {
+            "name": "claude-code",
+            "model_name": "anthropic/claude-opus-4-7",
+            "kwargs": {
+                "version": "2.1.274",
+                "reasoning_effort": "high"
+            },
+            "env": {
+                "CLAUDE_FORCE_OAUTH": "****",
+                "CLAUDE_CODE_OAUTH_TOKEN": "${CLAUDE_CODE_OAUTH_TOKEN}"
+            }
+        }
+    ],
+    "tasks": [
+        {
+            "path": "dist/collinear-siddharthshashankkumar/t20-exact-forecast"
+        }
+    ]
+}

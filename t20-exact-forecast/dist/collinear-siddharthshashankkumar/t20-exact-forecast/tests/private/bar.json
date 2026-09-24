@@ -1,0 +1,7 @@
+{
+ "relative_tolerance": 0.1,
+ "absolute_tolerance": 0.0,
+ "clip": 0.002,
+ "rule": "total regret over the graded leagues at most the reference's total times 1.10",
+ "status": "Pre-registered. See DECISIONS.md. Fixed before any model pilot."
+}

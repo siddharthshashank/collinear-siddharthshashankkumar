@@ -1,0 +1,47 @@
+schema_version = "1.4"
+
+# Carried from the agent's container into the verifier's: the submitted forecaster, and the engine so the verifier can check it is untouched.
+artifacts = ["/app/solution", "/app/engine"]
+
+[task]
+name = "collinear-siddharthshashankkumar/t20-exact-forecast"
+version = "0.1.0"
+description = "Forecast match win probabilities in a synthetic T20 league from ball-by-ball history. Forecasts are graded by their exact expected log loss against the true probabilities, on the visible league and on leagues the agent never sees."
+keywords = ["probabilistic forecasting", "statistical inference", "shrinkage", "simulation", "proper scoring rules"]
+
+[[task.authors]]
+name = "Siddharth Shashank Kumar"
+email = "thesidshashank@gmail.com"
+
+[metadata]
+author_name = "Siddharth Shashank Kumar"
+author_email = "thesidshashank@gmail.com"
+difficulty = "hard"
+category = "data_science"
+tags = ["python", "forecasting", "statistics", "sports-analytics", "simulation"]
+expert_time_estimate_min = 480.0
+junior_time_estimate_min = 1500.0
+
+[verifier]
+timeout_sec = 10800.0
+environment_mode = "separate"
+
+[verifier.environment]
+# the grader makes no network calls; "no-network" is left undeclared because Docker Desktop on macOS rejects that mode
+build_timeout_sec = 900.0
+cpus = 2
+memory_mb = 4096
+storage_mb = 10240
+
+[agent]
+# generous on purpose: a timeout should never be the cause of a failure
+timeout_sec = 10800.0
+
+[environment]
+# public only so the agent harness can be installed and can reach its model API. The task needs no network.
+network_mode = "public"
+build_timeout_sec = 900.0
+os = "linux"
+cpus = 2
+memory_mb = 4096
+storage_mb = 10240

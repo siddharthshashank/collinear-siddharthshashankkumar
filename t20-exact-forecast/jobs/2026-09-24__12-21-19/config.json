@@ -1,0 +1,13 @@
+{
+    "agents": [
+        {
+            "name": "claude-code",
+            "model_name": "claude-sonnet-4-6"
+        }
+    ],
+    "tasks": [
+        {
+            "path": "/var/folders/80/39ty5kvj6dqfqd4ksgg9dsmw0000gn/T/harbor-check-y1trwc4g/check-t20-exact-forecast"
+        }
+    ]
+}

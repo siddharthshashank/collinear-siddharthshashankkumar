@@ -63,3 +63,5 @@ The six first-round programs were read and each rerun on held-out world c with o
 ## Fairness, provenance, limitations
 
 Everything the grader checks is stated in the handbook; the reference uses only the agent's files and engine; the rule was committed before any pilot; the oracle passes at exactly 1.000 times the stored reference. The constants were reproduced from the raw Cricsheet archive by the scripts in `dev/` and match an earlier build of the same pipeline to within 0.0007; only aggregates ship. Limitations are in the design document, section 8.
+
+Harbor's own task linter, `harbor check`, run on 24 September 2026 (job 2026-09-24__12-21-19), passed every check: task description, tests, anti-cheating measures, schema, pinned dependencies, solution not in the image, no hardcoded solution. The one typo it noted is in a comment in the engine, left as is because changing the engine after the pilots would change the task.

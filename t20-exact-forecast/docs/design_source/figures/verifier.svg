@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg
+  PUBLIC '-//W3C//DTD SVG 1.0//EN'
+  'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd'>
+<svg width="468" height="250" preserveAspectRatio="xMinYMin meet" viewBox="0 0 468 250" xmlns="http://www.w3.org/2000/svg" version="1.0" fill-rule="evenodd" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<title>...</title>
+	<desc>...</desc>
+	<clipPath id="clip">
+		<rect x="0" y="0" width="468" height="250"/>
+	</clipPath>
+	<g id="group" transform="scale(1,-1) translate(0,-250)" style="clip-path: url(#clip)">
+		<g transform="">
+			<rect x="0" y="150" width="130" height="92" rx="4" ry="4" style="stroke: rgb(54%,58%,62%); stroke-linecap: butt; stroke-width: 0.6; fill: rgb(98%,92%,90%); fill-rule: evenodd;"/>
+			<text x="32.649" y="209.0" style="font-family: Helvetica-Bold; font-size: 8.5px;fill: rgb(12%,13%,15%); stroke:none;" transform="translate(0,418) scale(1,-1)">Agent container</text>
+			<text x="8.719999999999999" y="195.5" style="font-family: Helvetica; font-size: 7.5px;fill: rgb(34%,37%,41%); stroke:none;" transform="translate(0,391) scale(1,-1)">/app/solution holds the forecaster.</text>
+			<text x="11.217500000000001" y="186.0" style="font-family: Helvetica; font-size: 7.5px;fill: rgb(34%,37%,41%); stroke:none;" transform="translate(0,372) scale(1,-1)">/app/engine is the public engine.</text>
+			<text x="10.594999999999999" y="176.5" style="font-family: Helvetica; font-size: 7.5px;fill: rgb(34%,37%,41%); stroke:none;" transform="translate(0,353) scale(1,-1)">/app/league is the visible league.</text>
+			<rect x="0" y="50" width="130" height="64" rx="4" ry="4" style="stroke: rgb(54%,58%,62%); stroke-linecap: butt; stroke-width: 0.6; fill: rgb(94%,93%,90%); fill-rule: evenodd;"/>
+			<text x="47.762" y="90.25" style="font-family: Helvetica-Bold; font-size: 8.5px;fill: rgb(12%,13%,15%); stroke:none;" transform="translate(0,180) scale(1,-1)">Artifacts</text>
+			<text x="12.057499999999997" y="76.75" style="font-family: Helvetica; font-size: 7.5px;fill: rgb(34%,37%,41%); stroke:none;" transform="translate(0,153) scale(1,-1)">Harbor copies /app/solution and</text>
+			<text x="22.684999999999995" y="67.25" style="font-family: Helvetica; font-size: 7.5px;fill: rgb(34%,37%,41%); stroke:none;" transform="translate(0,134) scale(1,-1)">/app/engine to the verifier</text>
+			<path d="M 65,150 L 65,114 Z" style="stroke: rgb(34%,37%,41%); stroke-linecap: butt; stroke-width: 0.9;"/>
+			<polygon points="65 114, 61.8 120, 68.2 120" style="stroke: rgb(34%,37%,41%); stroke-linecap: butt; stroke-width: 0.5; fill: rgb(34%,37%,41%); fill-rule: evenodd;"/>
+			<rect x="168" y="4" width="300" height="242" rx="4" ry="4" style="stroke: rgb(54%,58%,62%); stroke-linecap: butt; stroke-width: 0.6; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<text x="232.2605" y="231" style="font-family: Helvetica-Bold; font-size: 8.5px;fill: rgb(12%,13%,15%); stroke:none;" transform="translate(0,462) scale(1,-1)">Verifier container, never seen by the agent</text>
+			<rect x="180" y="178" width="276" height="42" rx="4" ry="4" style="stroke: rgb(54%,58%,62%); stroke-linecap: butt; stroke-width: 0.6; fill: rgb(93%,92%,99%); fill-rule: evenodd;"/>
+			<text x="280.45125" y="207.25" style="font-family: Helvetica-Bold; font-size: 8.5px;fill: rgb(12%,13%,15%); stroke:none;" transform="translate(0,414) scale(1,-1)">Run the forecaster</text>
+			<text x="189.17999999999998" y="193.75" style="font-family: Helvetica; font-size: 7.5px;fill: rgb(34%,37%,41%); stroke:none;" transform="translate(0,387) scale(1,-1)">As an unprivileged user, on the visible league and on seven held-out leagues,</text>
+			<text x="289.45125" y="184.25" style="font-family: Helvetica; font-size: 7.5px;fill: rgb(34%,37%,41%); stroke:none;" transform="translate(0,368) scale(1,-1)">under a time limit</text>
+			<rect x="180" y="122" width="276" height="42" rx="4" ry="4" style="stroke: rgb(54%,58%,62%); stroke-linecap: butt; stroke-width: 0.6; fill: rgb(93%,92%,99%); fill-rule: evenodd;"/>
+			<text x="264.62850000000003" y="146.5" style="font-family: Helvetica-Bold; font-size: 8.5px;fill: rgb(12%,13%,15%); stroke:none;" transform="translate(0,293) scale(1,-1)">Grade against stored truth</text>
+			<text x="205.02749999999997" y="133.0" style="font-family: Helvetica; font-size: 7.5px;fill: rgb(34%,37%,41%); stroke:none;" transform="translate(0,266) scale(1,-1)">Regret per league from truth computed at 100,000 copies per fixture</text>
+			<path d="M 318,178 L 318,164 Z" style="stroke: rgb(34%,37%,41%); stroke-linecap: butt; stroke-width: 0.9;"/>
+			<polygon points="318 164, 314.8 170, 321.2 170" style="stroke: rgb(34%,37%,41%); stroke-linecap: butt; stroke-width: 0.5; fill: rgb(34%,37%,41%); fill-rule: evenodd;"/>
+			<rect x="180" y="66" width="276" height="42" rx="4" ry="4" style="stroke: rgb(54%,58%,62%); stroke-linecap: butt; stroke-width: 0.6; fill: rgb(93%,92%,99%); fill-rule: evenodd;"/>
+			<text x="258.95475" y="95.25" style="font-family: Helvetica-Bold; font-size: 8.5px;fill: rgb(12%,13%,15%); stroke:none;" transform="translate(0,190) scale(1,-1)">Apply the bar and the checks</text>
+			<text x="193.15125" y="81.75" style="font-family: Helvetica; font-size: 7.5px;fill: rgb(34%,37%,41%); stroke:none;" transform="translate(0,163) scale(1,-1)">Total regret within 1.10 times the stored reference total. Same output twice.</text>
+			<text x="286.72875" y="72.25" style="font-family: Helvetica; font-size: 7.5px;fill: rgb(34%,37%,41%); stroke:none;" transform="translate(0,144) scale(1,-1)">Engine untouched.</text>
+			<path d="M 318,122 L 318,108 Z" style="stroke: rgb(34%,37%,41%); stroke-linecap: butt; stroke-width: 0.9;"/>
+			<polygon points="318 108, 314.8 114, 321.2 114" style="stroke: rgb(34%,37%,41%); stroke-linecap: butt; stroke-width: 0.5; fill: rgb(34%,37%,41%); fill-rule: evenodd;"/>
+			<rect x="180" y="10" width="276" height="42" rx="4" ry="4" style="stroke: rgb(54%,58%,62%); stroke-linecap: butt; stroke-width: 0.6; fill: rgb(93%,92%,99%); fill-rule: evenodd;"/>
+			<text x="304.3065" y="39.25" style="font-family: Helvetica-Bold; font-size: 8.5px;fill: rgb(12%,13%,15%); stroke:none;" transform="translate(0,78) scale(1,-1)">Report</text>
+			<text x="203.36625" y="25.75" style="font-family: Helvetica; font-size: 7.5px;fill: rgb(34%,37%,41%); stroke:none;" transform="translate(0,51) scale(1,-1)">reward.json, and details.json naming the ladder tier the forecast most</text>
+			<text x="300.705" y="16.25" style="font-family: Helvetica; font-size: 7.5px;fill: rgb(34%,37%,41%); stroke:none;" transform="translate(0,32) scale(1,-1)">resembles</text>
+			<path d="M 318,66 L 318,52 Z" style="stroke: rgb(34%,37%,41%); stroke-linecap: butt; stroke-width: 0.9;"/>
+			<polygon points="318 52, 314.8 58, 321.2 58" style="stroke: rgb(34%,37%,41%); stroke-linecap: butt; stroke-width: 0.5; fill: rgb(34%,37%,41%); fill-rule: evenodd;"/>
+			<path d="M 130,82 L 150,82 Z" style="stroke: rgb(34%,37%,41%); stroke-linecap: butt; stroke-width: 0.9;"/>
+			<path d="M 150,82 L 150,199 Z" style="stroke: rgb(34%,37%,41%); stroke-linecap: butt; stroke-width: 0.9;"/>
+			<path d="M 150,199 L 180,199 Z" style="stroke: rgb(34%,37%,41%); stroke-linecap: butt; stroke-width: 0.9;"/>
+			<polygon points="180 199, 174 195.8, 174 202.2" style="stroke: rgb(34%,37%,41%); stroke-linecap: butt; stroke-width: 0.5; fill: rgb(34%,37%,41%); fill-rule: evenodd;"/>
+		</g>
+	</g>
+</svg>

@@ -1,0 +1,163 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="648" viewBox="0 0 1400 648"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#263238"/></marker><marker id="ahm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#607D8B"/></marker></defs><rect width="100%" height="100%" fill="#ffffff"/><rect x="16" y="16" width="252" height="440" rx="8" fill="#F3F5F7" fill-opacity="1.0" stroke="#90A4AE" stroke-width="1.2"/>
+<text x="28" y="36" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="bold" text-anchor="start" fill="#37474F" xml:space="preserve" style="white-space:pre">A. Calibration</text>
+<text x="28" y="52" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="start" fill="#607D8B" xml:space="preserve" style="white-space:pre" font-style="italic">development only</text>
+<path d="M34,66 H238 L250,78 V118 H34 Z" fill="#FFF9EC" stroke="#8D6E63" stroke-width="1.2"/>
+<path d="M238,66 V78 H250" fill="none" stroke="#8D6E63" stroke-width="1.0"/>
+<text x="142.0" y="88.67" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">Cricsheet IPL archive</text>
+<text x="142.0" y="104.51" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#4E342E" xml:space="preserve" style="white-space:pre">YAML, ODC-BY 1.0, not tracked</text>
+<rect x="34" y="148" width="216" height="70" rx="6" fill="#fff" fill-opacity="1.0" stroke="#263238" stroke-width="1.3"/>
+<text x="142.0" y="172.32" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">Calibration pipeline</text>
+<text x="142.0" y="189.48" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">parse_archive → fit_state,</text>
+<text x="142.0" y="204.0" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">fit_constants → build_calibration</text>
+<path d="M34,248 H238 L250,260 V300 H34 Z" fill="#FFF9EC" stroke="#8D6E63" stroke-width="1.2"/>
+<path d="M238,248 V260 H250" fill="none" stroke="#8D6E63" stroke-width="1.0"/>
+<text x="142.0" y="270.66999999999996" font-family="Consolas, 'DejaVu Sans Mono', Menlo, monospace" font-size="12" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">league/calibration.json</text>
+<text x="142.0" y="286.50999999999993" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#4E342E" xml:space="preserve" style="white-space:pre">profiles, directions, spreads</text>
+<rect x="34" y="330" width="216" height="64" rx="6" fill="#fff" fill-opacity="1.0" stroke="#263238" stroke-width="1.3"/>
+<text x="142.0" y="351.32000000000005" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">Design (hard-coded)</text>
+<text x="142.0" y="368.4800000000001" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">league size, form, transfers;</text>
+<text x="142.0" y="383.00000000000006" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">3 values tuned to real targets</text>
+<path d="M142.0,118 L142.0,148" fill="none" stroke="#263238" stroke-width="1.3" marker-end="url(#ah)"/>
+<path d="M142.0,218 L142.0,248" fill="none" stroke="#263238" stroke-width="1.3" marker-end="url(#ah)"/>
+<rect x="284" y="16" width="252" height="440" rx="8" fill="#FBEEE8" fill-opacity="1.0" stroke="#90A4AE" stroke-width="1.2"/>
+<text x="296" y="36" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="bold" text-anchor="start" fill="#37474F" xml:space="preserve" style="white-space:pre">B. Synthetic world</text>
+<text x="296" y="52" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="start" fill="#607D8B" xml:space="preserve" style="white-space:pre" font-style="italic">generator side, holds the hidden state</text>
+<rect x="302" y="66" width="216" height="56" rx="6" fill="#fff" fill-opacity="1.0" stroke="#263238" stroke-width="1.3"/>
+<text x="410.0" y="90.58" font-family="Consolas, 'DejaVu Sans Mono', Menlo, monospace" font-size="13" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">League(seed)</text>
+<text x="410.0" y="107.74" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">one random stream per world</text>
+<path d="M302,152 H506 L518,164 V208 H302 Z" fill="#EAF6FB" stroke="#2E6F8E" stroke-width="1.2"/>
+<path d="M506,152 V164 H518" fill="none" stroke="#2E6F8E" stroke-width="1.0"/>
+<text x="410.0" y="176.67" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">History + fixtures</text>
+<text x="410.0" y="192.51" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">3 seasons of balls, 24 fixtures</text>
+<path d="M302,238 H506 L518,250 V294 H302 Z" fill="#FDE9E7" stroke="#B23B3B" stroke-width="1.2"/>
+<path d="M506,238 V250 H518" fill="none" stroke="#B23B3B" stroke-width="1.0"/>
+<text x="410.0" y="262.66999999999996" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">Hidden SkillBook</text>
+<text x="410.0" y="278.50999999999993" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">abilities, form, venues, conditions</text>
+<rect x="302" y="324" width="216" height="56" rx="6" fill="#fff" fill-opacity="1.0" stroke="#263238" stroke-width="1.3"/>
+<text x="410.0" y="348.58000000000004" font-family="Consolas, 'DejaVu Sans Mono', Menlo, monospace" font-size="13" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">TruthEngine</text>
+<text x="410.0" y="365.74000000000007" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">100,000 copies per fixture → p</text>
+<path d="M410.0,122 L410.0,152" fill="none" stroke="#263238" stroke-width="1.3" marker-end="url(#ah)"/>
+<path d="M518,110 L528,110 L528,266 L518,266" fill="none" stroke="#263238" stroke-width="1.3" marker-end="url(#ah)"/>
+<path d="M410.0,294 L410.0,324" fill="none" stroke="#263238" stroke-width="1.3" marker-end="url(#ah)"/>
+<path d="M250,274 L276,274 L276,88 L302,88" fill="none" stroke="#263238" stroke-width="1.3" marker-end="url(#ah)"/>
+<path d="M250,362 L266,362 L266,104 L302,104" fill="none" stroke="#263238" stroke-width="1.3" marker-end="url(#ah)"/>
+<rect x="552" y="16" width="268" height="440" rx="8" fill="#EEF2F9" fill-opacity="1.0" stroke="#90A4AE" stroke-width="1.2"/>
+<text x="564" y="36" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="bold" text-anchor="start" fill="#37474F" xml:space="preserve" style="white-space:pre">C. Task build and packaging</text>
+<text x="564" y="52" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="start" fill="#607D8B" xml:space="preserve" style="white-space:pre" font-style="italic">make_task_data.py, package_task.py</text>
+<rect x="570" y="66" width="232" height="56" rx="6" fill="#fff" fill-opacity="1.0" stroke="#263238" stroke-width="1.3"/>
+<text x="686.0" y="90.58" font-family="Consolas, 'DejaVu Sans Mono', Menlo, monospace" font-size="13" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">make_task_data.py</text>
+<text x="686.0" y="107.74" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">8 worlds: visible + 7 held-out</text>
+<path d="M570,152 H790 L802,164 V208 H570 Z" fill="#EAF6FB" stroke="#2E6F8E" stroke-width="1.2"/>
+<path d="M790,152 V164 H802" fill="none" stroke="#2E6F8E" stroke-width="1.0"/>
+<text x="686.0" y="176.67" font-family="Consolas, 'DejaVu Sans Mono', Menlo, monospace" font-size="12" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">task_data/leagues/</text>
+<text x="686.0" y="192.51" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">8 public league folders</text>
+<path d="M570,238 H790 L802,250 V294 H570 Z" fill="#FDE9E7" stroke="#B23B3B" stroke-width="1.2"/>
+<path d="M790,238 V250 H802" fill="none" stroke="#B23B3B" stroke-width="1.0"/>
+<text x="686.0" y="262.66999999999996" font-family="Consolas, 'DejaVu Sans Mono', Menlo, monospace" font-size="12" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">task_data/private/</text>
+<text x="686.0" y="278.50999999999993" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">truth, tiers, reference</text>
+<rect x="570" y="324" width="232" height="56" rx="6" fill="#fff" fill-opacity="1.0" stroke="#263238" stroke-width="1.3"/>
+<text x="686.0" y="348.58000000000004" font-family="Consolas, 'DejaVu Sans Mono', Menlo, monospace" font-size="13" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">package_task.py</text>
+<text x="686.0" y="365.74000000000007" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">builds the Harbor task directory</text>
+<path d="M570,80 L518,80" fill="none" stroke="#607D8B" stroke-width="1.3" stroke-dasharray="5,4" marker-end="url(#ahm)"/>
+<path d="M518,180.0 L570,180.0" fill="none" stroke="#263238" stroke-width="1.3" marker-end="url(#ah)"/>
+<path d="M518,352.0 L544,352 L544,272 L570,272" fill="none" stroke="#263238" stroke-width="1.3" marker-end="url(#ah)"/>
+<path d="M686.0,208 L686.0,238" fill="none" stroke="#263238" stroke-width="1.3" marker-end="url(#ah)"/>
+<rect x="643.2" y="216.5" width="85.6" height="12.6" fill="#ffffff" fill-opacity="0.85"/>
+<text x="686" y="226.0" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">reload, fit 6 tiers</text>
+<path d="M686.0,294 L686.0,324" fill="none" stroke="#263238" stroke-width="1.3" marker-end="url(#ah)"/>
+<path d="M802,180 L812,180 L812,340 L802,340" fill="none" stroke="#263238" stroke-width="1.3" marker-end="url(#ah)"/>
+<rect x="836" y="16" width="548" height="440" rx="8" fill="#FFFFFF" fill-opacity="1.0" stroke="#90A4AE" stroke-width="1.2"/>
+<text x="848" y="36" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="bold" text-anchor="start" fill="#37474F" xml:space="preserve" style="white-space:pre">D. Harbor runtime</text>
+<text x="848" y="52" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="start" fill="#607D8B" xml:space="preserve" style="white-space:pre" font-style="italic">separate agent and verifier containers</text>
+<rect x="852" y="58" width="516" height="178" rx="8" fill="#EAF4EA" fill-opacity="1.0" stroke="#6A9C6A" stroke-width="1.2"/>
+<text x="864" y="78" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="bold" text-anchor="start" fill="#37474F" xml:space="preserve" style="white-space:pre">Agent container</text>
+<text x="864" y="94" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="start" fill="#607D8B" xml:space="preserve" style="white-space:pre" font-style="italic">image built from environment/; network: public</text>
+<path d="M868,100 H1106 L1118,112 V224 H868 Z" fill="#EAF6FB" stroke="#2E6F8E" stroke-width="1.2"/>
+<path d="M1106,100 V112 H1118" fill="none" stroke="#2E6F8E" stroke-width="1.0"/>
+<text x="882" y="132.52" font-family="Consolas, 'DejaVu Sans Mono', Menlo, monospace" font-size="12" font-weight="bold" text-anchor="start" fill="#263238" xml:space="preserve" style="white-space:pre">/app</text>
+<text x="882" y="148.36" font-family="Consolas, 'DejaVu Sans Mono', Menlo, monospace" font-size="10" font-weight="normal" text-anchor="start" fill="#263238" xml:space="preserve" style="white-space:pre">engine/  model.py, league_io.py,</text>
+<text x="882" y="161.56" font-family="Consolas, 'DejaVu Sans Mono', Menlo, monospace" font-size="10" font-weight="normal" text-anchor="start" fill="#263238" xml:space="preserve" style="white-space:pre">         public.json</text>
+<text x="882" y="174.76" font-family="Consolas, 'DejaVu Sans Mono', Menlo, monospace" font-size="10" font-weight="normal" text-anchor="start" fill="#263238" xml:space="preserve" style="white-space:pre">league/  visible world only</text>
+<text x="882" y="187.95999999999998" font-family="Consolas, 'DejaVu Sans Mono', Menlo, monospace" font-size="10" font-weight="normal" text-anchor="start" fill="#263238" xml:space="preserve" style="white-space:pre">docs/handbook.md</text>
+<text x="882" y="201.15999999999997" font-family="Consolas, 'DejaVu Sans Mono', Menlo, monospace" font-size="10" font-weight="normal" text-anchor="start" fill="#263238" xml:space="preserve" style="white-space:pre">solution/forecast.py (starter)</text>
+<rect x="1152" y="126" width="200" height="64" rx="6" fill="#fff" fill-opacity="1.0" stroke="#263238" stroke-width="1.3"/>
+<text x="1252.0" y="147.32" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">AI agent</text>
+<text x="1252.0" y="164.48" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">Claude Code or Codex;</text>
+<text x="1252.0" y="179.0" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">replaces solution/forecast.py</text>
+<path d="M1152,158 L1118,158" fill="none" stroke="#263238" stroke-width="1.3" marker-end="url(#ah)" marker-start="url(#ah)"/>
+<rect x="852" y="252" width="516" height="192" rx="8" fill="#FBEEE8" fill-opacity="1.0" stroke="#B23B3B" stroke-width="1.6" stroke-dasharray="6,4"/>
+<text x="864" y="272" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="bold" text-anchor="start" fill="#37474F" xml:space="preserve" style="white-space:pre">Verifier container</text>
+<text x="864" y="288" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="start" fill="#607D8B" xml:space="preserve" style="white-space:pre" font-style="italic">image built from tests/; network: not declared</text>
+<path d="M868,294 H1106 L1118,306 V430 H868 Z" fill="#FDE9E7" stroke="#B23B3B" stroke-width="1.2"/>
+<path d="M1106,294 V306 H1118" fill="none" stroke="#B23B3B" stroke-width="1.0"/>
+<text x="882" y="332.52" font-family="Consolas, 'DejaVu Sans Mono', Menlo, monospace" font-size="12" font-weight="bold" text-anchor="start" fill="#263238" xml:space="preserve" style="white-space:pre">/tests  (root only)</text>
+<text x="882" y="348.35999999999996" font-family="Consolas, 'DejaVu Sans Mono', Menlo, monospace" font-size="10" font-weight="normal" text-anchor="start" fill="#263238" xml:space="preserve" style="white-space:pre">private/  truth, tiers, reference</text>
+<text x="882" y="361.55999999999995" font-family="Consolas, 'DejaVu Sans Mono', Menlo, monospace" font-size="10" font-weight="normal" text-anchor="start" fill="#263238" xml:space="preserve" style="white-space:pre">private/bar.json</text>
+<text x="882" y="374.75999999999993" font-family="Consolas, 'DejaVu Sans Mono', Menlo, monospace" font-size="10" font-weight="normal" text-anchor="start" fill="#263238" xml:space="preserve" style="white-space:pre">leagues/  all 8 public</text>
+<text x="882" y="387.9599999999999" font-family="Consolas, 'DejaVu Sans Mono', Menlo, monospace" font-size="10" font-weight="normal" text-anchor="start" fill="#263238" xml:space="preserve" style="white-space:pre">pristine/engine/</text>
+<text x="882" y="401.1599999999999" font-family="Consolas, 'DejaVu Sans Mono', Menlo, monospace" font-size="10" font-weight="normal" text-anchor="start" fill="#263238" xml:space="preserve" style="white-space:pre">grader.py, test.sh</text>
+<rect x="1152" y="296" width="200" height="64" rx="6" fill="#fff" fill-opacity="1.0" stroke="#263238" stroke-width="1.3"/>
+<text x="1252.0" y="317.32000000000005" font-family="Consolas, 'DejaVu Sans Mono', Menlo, monospace" font-size="13" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">grader.py</text>
+<text x="1252.0" y="334.4800000000001" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">runs forecast.py as runner;</text>
+<text x="1252.0" y="349.00000000000006" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">8 leagues x 720 s</text>
+<path d="M1152,382 H1340 L1352,394 V426 H1152 Z" fill="#FFF9EC" stroke="#8D6E63" stroke-width="1.2"/>
+<path d="M1340,382 V394 H1352" fill="none" stroke="#8D6E63" stroke-width="1.0"/>
+<text x="1252.0" y="400.66999999999996" font-family="Consolas, 'DejaVu Sans Mono', Menlo, monospace" font-size="12" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">reward.json</text>
+<text x="1252.0" y="416.50999999999993" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#4E342E" xml:space="preserve" style="white-space:pre">pooled regret rule</text>
+<path d="M1118,328 L1152,328" fill="none" stroke="#263238" stroke-width="1.3" marker-end="url(#ah)"/>
+<path d="M1252.0,360 L1252.0,382" fill="none" stroke="#263238" stroke-width="1.3" marker-end="url(#ah)"/>
+<path d="M1252,190 L1252,296" fill="none" stroke="#263238" stroke-width="1.3" marker-end="url(#ah)"/>
+<text x="1260" y="206" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="normal" text-anchor="start" fill="#607D8B" xml:space="preserve" style="white-space:pre" font-style="italic">artifacts:</text>
+<text x="1260" y="219" font-family="Consolas, 'DejaVu Sans Mono', Menlo, monospace" font-size="10" font-weight="normal" text-anchor="start" fill="#37474F" xml:space="preserve" style="white-space:pre">/app/solution</text>
+<text x="1260" y="232" font-family="Consolas, 'DejaVu Sans Mono', Menlo, monospace" font-size="10" font-weight="normal" text-anchor="start" fill="#37474F" xml:space="preserve" style="white-space:pre">/app/engine</text>
+<path d="M802,366 L826,366 L826,150 L852,150" fill="none" stroke="#263238" stroke-width="1.3" marker-end="url(#ah)"/>
+<path d="M826,350 L852,350" fill="none" stroke="#263238" stroke-width="1.3" marker-end="url(#ah)"/>
+<rect x="16" y="476" width="1368" height="118" rx="8" fill="#F4F0F8" fill-opacity="1.0" stroke="#90A4AE" stroke-width="1.2"/>
+<text x="28" y="496" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="bold" text-anchor="start" fill="#37474F" xml:space="preserve" style="white-space:pre">E. Research evidence and pass bar</text>
+<text x="28" y="512" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="start" fill="#607D8B" xml:space="preserve" style="white-space:pre" font-style="italic">development-time experiments and recorded Harbor trials</text>
+<rect x="40" y="524" width="170" height="52" rx="6" fill="#fff" fill-opacity="1.0" stroke="#263238" stroke-width="1.3"/>
+<text x="125.0" y="546.5799999999999" font-family="Consolas, 'DejaVu Sans Mono', Menlo, monospace" font-size="13" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">run_ladder.py</text>
+<text x="125.0" y="563.7399999999999" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">8 tiers on chosen seeds</text>
+<path d="M236,524 H438 L450,536 V576 H236 Z" fill="#FFF9EC" stroke="#8D6E63" stroke-width="1.2"/>
+<path d="M438,524 V536 H450" fill="none" stroke="#8D6E63" stroke-width="1.0"/>
+<text x="343.0" y="546.6700000000001" font-family="Consolas, 'DejaVu Sans Mono', Menlo, monospace" font-size="12" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">results/ladder_v2.jsonl</text>
+<text x="343.0" y="562.5100000000001" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#4E342E" xml:space="preserve" style="white-space:pre">seed 1, 12 fixtures</text>
+<rect x="506" y="524" width="190" height="52" rx="6" fill="#fff" fill-opacity="1.0" stroke="#263238" stroke-width="1.3"/>
+<text x="601.0" y="546.5799999999999" font-family="Consolas, 'DejaVu Sans Mono', Menlo, monospace" font-size="13" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">bar_analysis.py</text>
+<text x="601.0" y="563.7399999999999" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">seeds 1001–1008</text>
+<path d="M722,524 H972 L984,536 V576 H722 Z" fill="#FFF9EC" stroke="#8D6E63" stroke-width="1.2"/>
+<path d="M972,524 V536 H984" fill="none" stroke="#8D6E63" stroke-width="1.0"/>
+<text x="853.0" y="546.6700000000001" font-family="Consolas, 'DejaVu Sans Mono', Menlo, monospace" font-size="12" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">harbor/bar.json</text>
+<text x="853.0" y="562.5100000000001" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#4E342E" xml:space="preserve" style="white-space:pre">pooled regret ≤ 1.10 × reference</text>
+<path d="M1100,524 H1348 L1360,536 V576 H1100 Z" fill="#FFF9EC" stroke="#8D6E63" stroke-width="1.2"/>
+<path d="M1348,524 V536 H1360" fill="none" stroke="#8D6E63" stroke-width="1.0"/>
+<text x="1230.0" y="546.6700000000001" font-family="Consolas, 'DejaVu Sans Mono', Menlo, monospace" font-size="12" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">jobs/</text>
+<text x="1230.0" y="562.5100000000001" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#4E342E" xml:space="preserve" style="white-space:pre">oracle, starter, 6 model trials</text>
+<path d="M210,550.0 L236,550.0" fill="none" stroke="#263238" stroke-width="1.3" marker-end="url(#ah)"/>
+<path d="M696,550.0 L722,550.0" fill="none" stroke="#263238" stroke-width="1.3" marker-end="url(#ah)"/>
+<path d="M853,524 L853,466 L740,466 L740,380" fill="none" stroke="#263238" stroke-width="1.3" marker-end="url(#ah)"/>
+<rect x="739.3" y="451.5" width="121.4" height="12.6" fill="#ffffff" fill-opacity="0.85"/>
+<text x="800" y="461.0" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">copied into tests/private</text>
+<path d="M1330,426 L1330,524" fill="none" stroke="#263238" stroke-width="1.3" marker-end="url(#ah)"/>
+<rect x="1310.6" y="495.5" width="38.8" height="12.6" fill="#ffffff" fill-opacity="0.85"/>
+<text x="1330" y="505.0" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">Harbor</text>
+<rect x="24" y="620" width="22" height="14" rx="3" fill="#fff" fill-opacity="1.0" stroke="#263238" stroke-width="1.2"/>
+<text x="54" y="631" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="normal" text-anchor="start" fill="#37474F" xml:space="preserve" style="white-space:pre">process or script</text>
+<path d="M168.99,619 H176.99 L188.99,631 V635 H168.99 Z" fill="#FFF9EC" stroke="#8D6E63" stroke-width="1.2"/>
+<path d="M176.99,619 V631 H188.99" fill="none" stroke="#8D6E63" stroke-width="1.0"/>
+<text x="178.99" y="630.84" font-family="Consolas, 'DejaVu Sans Mono', Menlo, monospace" font-size="12" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre"></text>
+<text x="198.99" y="631" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="normal" text-anchor="start" fill="#37474F" xml:space="preserve" style="white-space:pre">data artefact</text>
+<path d="M288.13,619 H296.13 L308.13,631 V635 H288.13 Z" fill="#EAF6FB" stroke="#2E6F8E" stroke-width="1.2"/>
+<path d="M296.13,619 V631 H308.13" fill="none" stroke="#2E6F8E" stroke-width="1.0"/>
+<text x="298.13" y="630.84" font-family="Consolas, 'DejaVu Sans Mono', Menlo, monospace" font-size="12" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre"></text>
+<text x="318.13" y="631" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="normal" text-anchor="start" fill="#37474F" xml:space="preserve" style="white-space:pre">public data</text>
+<path d="M398.14,619 H406.14 L418.14,631 V635 H398.14 Z" fill="#FDE9E7" stroke="#B23B3B" stroke-width="1.2"/>
+<path d="M406.14,619 V631 H418.14" fill="none" stroke="#B23B3B" stroke-width="1.0"/>
+<text x="408.14" y="630.84" font-family="Consolas, 'DejaVu Sans Mono', Menlo, monospace" font-size="12" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre"></text>
+<text x="428.14" y="631" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="normal" text-anchor="start" fill="#37474F" xml:space="preserve" style="white-space:pre">private data</text>
+<path d="M513.98,627 L537.98,627" fill="none" stroke="#263238" stroke-width="1.3" marker-end="url(#ah)"/>
+<text x="543.98" y="631" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="normal" text-anchor="start" fill="#37474F" xml:space="preserve" style="white-space:pre">data flow</text>
+<path d="M615.52,627 L639.52,627" fill="none" stroke="#607D8B" stroke-width="1.3" stroke-dasharray="5,4" marker-end="url(#ahm)"/>
+<text x="645.52" y="631" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="normal" text-anchor="start" fill="#37474F" xml:space="preserve" style="white-space:pre">call or manual step</text>
+<rect x="767.77" y="619" width="24" height="16" rx="3" fill="none" fill-opacity="1.0" stroke="#B23B3B" stroke-width="1.6" stroke-dasharray="6,4"/>
+<text x="797.77" y="631" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="normal" text-anchor="start" fill="#37474F" xml:space="preserve" style="white-space:pre">private trust zone</text></svg>

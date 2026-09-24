@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg
+  PUBLIC '-//W3C//DTD SVG 1.0//EN'
+  'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd'>
+<svg width="468" height="220" preserveAspectRatio="xMinYMin meet" viewBox="0 0 468 220" xmlns="http://www.w3.org/2000/svg" version="1.0" fill-rule="evenodd" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<title>...</title>
+	<desc>...</desc>
+	<clipPath id="clip">
+		<rect x="0" y="0" width="468" height="220"/>
+	</clipPath>
+	<g id="group" transform="scale(1,-1) translate(0,-220)" style="clip-path: url(#clip)">
+		<g transform="">
+			<rect x="0" y="142" width="102" height="74" rx="4" ry="4" style="stroke: rgb(54%,58%,62%); stroke-linecap: butt; stroke-width: 0.6; fill: rgb(94%,93%,90%); fill-rule: evenodd;"/>
+			<text x="22.899" y="187.25" style="font-family: Helvetica-Bold; font-size: 8.5px;fill: rgb(12%,13%,15%); stroke:none;" transform="translate(0,374) scale(1,-1)">Upload queue</text>
+			<text x="13.901249999999997" y="173.75" style="font-family: Helvetica; font-size: 7.5px;fill: rgb(34%,37%,41%); stroke:none;" transform="translate(0,347) scale(1,-1)">Delivers a batch again</text>
+			<text x="12.442500000000003" y="164.25" style="font-family: Helvetica; font-size: 7.5px;fill: rgb(34%,37%,41%); stroke:none;" transform="translate(0,328) scale(1,-1)">until it is acknowledged</text>
+			<rect x="122" y="142" width="102" height="74" rx="4" ry="4" style="stroke: rgb(54%,58%,62%); stroke-linecap: butt; stroke-width: 0.6; fill: rgb(98%,92%,90%); fill-rule: evenodd;"/>
+			<text x="149.62075" y="192.0" style="font-family: Helvetica-Bold; font-size: 8.5px;fill: rgb(12%,13%,15%); stroke:none;" transform="translate(0,384) scale(1,-1)">Consumers</text>
+			<text x="135.27125" y="178.5" style="font-family: Helvetica; font-size: 7.5px;fill: rgb(34%,37%,41%); stroke:none;" transform="translate(0,357) scale(1,-1)">The owner and, after a</text>
+			<text x="129.02" y="169.0" style="font-family: Helvetica; font-size: 7.5px;fill: rgb(34%,37%,41%); stroke:none;" transform="translate(0,338) scale(1,-1)">handover, a zombie that is</text>
+			<text x="154.03625" y="159.5" style="font-family: Helvetica; font-size: 7.5px;fill: rgb(34%,37%,41%); stroke:none;" transform="translate(0,319) scale(1,-1)">still running</text>
+			<path d="M 102,179 L 122,179 Z" style="stroke: rgb(34%,37%,41%); stroke-linecap: butt; stroke-width: 0.9;"/>
+			<polygon points="122 179, 116 175.8, 116 182.2" style="stroke: rgb(34%,37%,41%); stroke-linecap: butt; stroke-width: 0.5; fill: rgb(34%,37%,41%); fill-rule: evenodd;"/>
+			<rect x="244" y="142" width="102" height="74" rx="4" ry="4" style="stroke: rgb(54%,58%,62%); stroke-linecap: butt; stroke-width: 0.6; fill: rgb(94%,93%,90%); fill-rule: evenodd;"/>
+			<text x="270.20125" y="192.0" style="font-family: Helvetica-Bold; font-size: 8.5px;fill: rgb(12%,13%,15%); stroke:none;" transform="translate(0,384) scale(1,-1)">Object store</text>
+			<text x="254.9875" y="178.5" style="font-family: Helvetica; font-size: 7.5px;fill: rgb(34%,37%,41%); stroke:none;" transform="translate(0,357) scale(1,-1)">Whole-object writes and</text>
+			<text x="267.28" y="169.0" style="font-family: Helvetica; font-size: 7.5px;fill: rgb(34%,37%,41%); stroke:none;" transform="translate(0,338) scale(1,-1)">put-if-absent. No</text>
+			<text x="273.74125" y="159.5" style="font-family: Helvetica; font-size: 7.5px;fill: rgb(34%,37%,41%); stroke:none;" transform="translate(0,319) scale(1,-1)">transactions.</text>
+			<path d="M 224,179 L 244,179 Z" style="stroke: rgb(34%,37%,41%); stroke-linecap: butt; stroke-width: 0.9;"/>
+			<polygon points="244 179, 238 175.8, 238 182.2" style="stroke: rgb(34%,37%,41%); stroke-linecap: butt; stroke-width: 0.5; fill: rgb(34%,37%,41%); fill-rule: evenodd;"/>
+			<rect x="366" y="142" width="102" height="74" rx="4" ry="4" style="stroke: rgb(54%,58%,62%); stroke-linecap: butt; stroke-width: 0.6; fill: rgb(94%,93%,90%); fill-rule: evenodd;"/>
+			<text x="400.2295" y="192.0" style="font-family: Helvetica-Bold; font-size: 8.5px;fill: rgb(12%,13%,15%); stroke:none;" transform="translate(0,384) scale(1,-1)">Readers</text>
+			<text x="376.15125" y="178.5" style="font-family: Helvetica; font-size: 7.5px;fill: rgb(34%,37%,41%); stroke:none;" transform="translate(0,357) scale(1,-1)">Take the highest commit</text>
+			<text x="374.89125" y="169.0" style="font-family: Helvetica; font-size: 7.5px;fill: rgb(34%,37%,41%); stroke:none;" transform="translate(0,338) scale(1,-1)">and read the day tables it</text>
+			<text x="405.74625" y="159.5" style="font-family: Helvetica; font-size: 7.5px;fill: rgb(34%,37%,41%); stroke:none;" transform="translate(0,319) scale(1,-1)">names</text>
+			<path d="M 346,179 L 366,179 Z" style="stroke: rgb(34%,37%,41%); stroke-linecap: butt; stroke-width: 0.9;"/>
+			<polygon points="366 179, 360 175.8, 360 182.2" style="stroke: rgb(34%,37%,41%); stroke-linecap: butt; stroke-width: 0.5; fill: rgb(34%,37%,41%); fill-rule: evenodd;"/>
+			<rect x="61" y="74" width="346" height="46" rx="4" ry="4" style="stroke: rgb(54%,58%,62%); stroke-linecap: butt; stroke-width: 0.6; fill: rgb(93%,92%,99%); fill-rule: evenodd;"/>
+			<text x="213.45125000000002" y="105.25" style="font-family: Helvetica-Bold; font-size: 8.5px;fill: rgb(12%,13%,15%); stroke:none;" transform="translate(0,210) scale(1,-1)">Scheduler</text>
+			<text x="69.54374999999999" y="91.75" style="font-family: Helvetica; font-size: 7.5px;fill: rgb(34%,37%,41%); stroke:none;" transform="translate(0,183) scale(1,-1)">Before every storage or queue call it chooses the next move: step a consumer, kill one, or hand the</text>
+			<text x="214.19625" y="82.25" style="font-family: Helvetica; font-size: 7.5px;fill: rgb(34%,37%,41%); stroke:none;" transform="translate(0,164) scale(1,-1)">queue over.</text>
+			<rect x="61" y="6" width="346" height="46" rx="4" ry="4" style="stroke: rgb(54%,58%,62%); stroke-linecap: butt; stroke-width: 0.6; fill: rgb(93%,92%,99%); fill-rule: evenodd;"/>
+			<text x="216.75775" y="37.25" style="font-family: Helvetica-Bold; font-size: 8.5px;fill: rgb(12%,13%,15%); stroke:none;" transform="translate(0,74) scale(1,-1)">Explorer</text>
+			<text x="74.54999999999998" y="23.75" style="font-family: Helvetica; font-size: 7.5px;fill: rgb(34%,37%,41%); stroke:none;" transform="translate(0,47) scale(1,-1)">Tries every schedule inside the declared bounds. The reader guarantee is checked before every</text>
+			<text x="225.87" y="14.25" style="font-family: Helvetica; font-size: 7.5px;fill: rgb(34%,37%,41%); stroke:none;" transform="translate(0,28) scale(1,-1)">step.</text>
+			<path d="M 173,120 L 173,142 Z" style="stroke: rgb(34%,37%,41%); stroke-linecap: butt; stroke-width: 0.9;"/>
+			<polygon points="173 142, 169.8 136, 176.2 136" style="stroke: rgb(34%,37%,41%); stroke-linecap: butt; stroke-width: 0.5; fill: rgb(34%,37%,41%); fill-rule: evenodd;"/>
+			<path d="M 234,52 L 234,74 Z" style="stroke: rgb(34%,37%,41%); stroke-linecap: butt; stroke-width: 0.9;"/>
+			<polygon points="234 74, 230.8 68, 237.2 68" style="stroke: rgb(34%,37%,41%); stroke-linecap: butt; stroke-width: 0.5; fill: rgb(34%,37%,41%); fill-rule: evenodd;"/>
+		</g>
+	</g>
+</svg>

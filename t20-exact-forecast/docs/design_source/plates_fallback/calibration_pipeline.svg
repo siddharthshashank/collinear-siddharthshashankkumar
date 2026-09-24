@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="452" viewBox="0 0 1400 452"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#263238"/></marker><marker id="ahm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#607D8B"/></marker></defs><rect width="100%" height="100%" fill="#ffffff"/><path d="M20,150 H160 L172,162 V210 H20 Z" fill="#FFF9EC" stroke="#8D6E63" stroke-width="1.2"/>
+<path d="M160,150 V162 H172" fill="none" stroke="#8D6E63" stroke-width="1.0"/>
+<text x="96.0" y="176.67" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">Cricsheet archive</text>
+<text x="96.0" y="192.51" font-family="Consolas, 'DejaVu Sans Mono', Menlo, monospace" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#4E342E" xml:space="preserve" style="white-space:pre">data/raw/ipl/*.yaml</text>
+<text x="96" y="226" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="normal" text-anchor="middle" fill="#607D8B" xml:space="preserve" style="white-space:pre" font-style="italic">not tracked</text>
+<rect x="198" y="150" width="132" height="60" rx="6" fill="#fff" fill-opacity="1.0" stroke="#263238" stroke-width="1.3"/>
+<text x="264.0" y="176.42" font-family="Consolas, 'DejaVu Sans Mono', Menlo, monospace" font-size="12" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">parse_archive.py</text>
+<text x="264.0" y="192.26" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">YAML → rows</text>
+<path d="M356,150 H478 L490,162 V210 H356 Z" fill="#FFF9EC" stroke="#8D6E63" stroke-width="1.2"/>
+<path d="M478,150 V162 H490" fill="none" stroke="#8D6E63" stroke-width="1.0"/>
+<text x="423.0" y="176.67" font-family="Consolas, 'DejaVu Sans Mono', Menlo, monospace" font-size="12" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">data/balls.pkl</text>
+<text x="423.0" y="192.51" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#4E342E" xml:space="preserve" style="white-space:pre">one row per delivery</text>
+<text x="423" y="226" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="normal" text-anchor="middle" fill="#607D8B" xml:space="preserve" style="white-space:pre" font-style="italic">not tracked</text>
+<rect x="522" y="58" width="172" height="76" rx="6" fill="#fff" fill-opacity="1.0" stroke="#263238" stroke-width="1.3"/>
+<text x="608.0" y="85.32" font-family="Consolas, 'DejaVu Sans Mono', Menlo, monospace" font-size="13" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">fit_state.py</text>
+<text x="608.0" y="102.47999999999999" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">multinomial situation model,</text>
+<text x="608.0" y="116.99999999999999" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">player outcome directions</text>
+<rect x="522" y="226" width="172" height="76" rx="6" fill="#fff" fill-opacity="1.0" stroke="#263238" stroke-width="1.3"/>
+<text x="608.0" y="253.32" font-family="Consolas, 'DejaVu Sans Mono', Menlo, monospace" font-size="13" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">fit_constants.py</text>
+<text x="608.0" y="270.48" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">extras, reliability, venue</text>
+<text x="608.0" y="285.0" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">spread, real-world targets</text>
+<rect x="338" y="336" width="172" height="56" rx="6" fill="#fff" fill-opacity="1.0" stroke="#607D8B" stroke-width="1.3" stroke-dasharray="5,4"/>
+<text x="424.0" y="360.58000000000004" font-family="Consolas, 'DejaVu Sans Mono', Menlo, monospace" font-size="13" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">explore_*.py</text>
+<text x="424.0" y="377.74000000000007" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">exploratory, print only</text>
+<path d="M722,66 H886 L898,78 V126 H722 Z" fill="#FFF9EC" stroke="#8D6E63" stroke-width="1.2"/>
+<path d="M886,66 V78 H898" fill="none" stroke="#8D6E63" stroke-width="1.0"/>
+<text x="810.0" y="92.67" font-family="Consolas, 'DejaVu Sans Mono', Menlo, monospace" font-size="12" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">data/state_fit.json</text>
+<text x="810.0" y="108.51" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#4E342E" xml:space="preserve" style="white-space:pre">fitted effects, directions</text>
+<text x="810" y="142" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="normal" text-anchor="middle" fill="#607D8B" xml:space="preserve" style="white-space:pre" font-style="italic">not tracked</text>
+<path d="M722,234 H886 L898,246 V294 H722 Z" fill="#FFF9EC" stroke="#8D6E63" stroke-width="1.2"/>
+<path d="M886,234 V246 H898" fill="none" stroke="#8D6E63" stroke-width="1.0"/>
+<text x="810.0" y="260.66999999999996" font-family="Consolas, 'DejaVu Sans Mono', Menlo, monospace" font-size="12" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">data/constants_fit.json</text>
+<text x="810.0" y="276.50999999999993" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#4E342E" xml:space="preserve" style="white-space:pre">measured constants, targets</text>
+<text x="810" y="310" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="normal" text-anchor="middle" fill="#607D8B" xml:space="preserve" style="white-space:pre" font-style="italic">not tracked</text>
+<rect x="926" y="150" width="164" height="60" rx="6" fill="#fff" fill-opacity="1.0" stroke="#263238" stroke-width="1.3"/>
+<text x="1008.0" y="176.42" font-family="Consolas, 'DejaVu Sans Mono', Menlo, monospace" font-size="12" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">build_calibration.py</text>
+<text x="1008.0" y="192.26" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">directions, era, units</text>
+<path d="M1116,150 H1300 L1312,162 V210 H1116 Z" fill="#FFF9EC" stroke="#8D6E63" stroke-width="1.2"/>
+<path d="M1300,150 V162 H1312" fill="none" stroke="#8D6E63" stroke-width="1.0"/>
+<text x="1214.0" y="176.67" font-family="Consolas, 'DejaVu Sans Mono', Menlo, monospace" font-size="12" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">league/calibration.json</text>
+<text x="1214.0" y="192.51" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#4E342E" xml:space="preserve" style="white-space:pre">committed, operative artefact</text>
+<text x="1150" y="226" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="normal" text-anchor="middle" fill="#607D8B" xml:space="preserve" style="white-space:pre" font-style="italic">tracked</text>
+<path d="M172,180.0 L198,180.0" fill="none" stroke="#263238" stroke-width="1.3" marker-end="url(#ah)"/>
+<path d="M330,180.0 L356,180.0" fill="none" stroke="#263238" stroke-width="1.3" marker-end="url(#ah)"/>
+<path d="M490,170 L506,170 L506,96 L522,96" fill="none" stroke="#263238" stroke-width="1.3" marker-end="url(#ah)"/>
+<path d="M490,190 L506,190 L506,264 L522,264" fill="none" stroke="#263238" stroke-width="1.3" marker-end="url(#ah)"/>
+<path d="M423,244 L423,336" fill="none" stroke="#607D8B" stroke-width="1.3" stroke-dasharray="5,4" marker-end="url(#ahm)"/>
+<path d="M694,96.0 L722,96.0" fill="none" stroke="#263238" stroke-width="1.3" marker-end="url(#ah)"/>
+<path d="M694,264.0 L722,264.0" fill="none" stroke="#263238" stroke-width="1.3" marker-end="url(#ah)"/>
+<path d="M898,96 L912,96 L912,170 L926,170" fill="none" stroke="#263238" stroke-width="1.3" marker-end="url(#ah)"/>
+<path d="M898,264 L912,264 L912,190 L926,190" fill="none" stroke="#263238" stroke-width="1.3" marker-end="url(#ah)"/>
+<path d="M1090,180.0 L1116,180.0" fill="none" stroke="#263238" stroke-width="1.3" marker-end="url(#ah)"/>
+<rect x="700" y="332" width="216" height="70" rx="6" fill="#fff" fill-opacity="1.0" stroke="#263238" stroke-width="1.3"/>
+<text x="808.0" y="356.32000000000005" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">Design (hard-coded)</text>
+<text x="808.0" y="373.4800000000001" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">level_runs, day_sd_runs and</text>
+<text x="808.0" y="388.00000000000006" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">wear_runs are tuned here</text>
+<rect x="960" y="332" width="190" height="70" rx="6" fill="#fff" fill-opacity="1.0" stroke="#263238" stroke-width="1.3"/>
+<text x="1055.0" y="356.32000000000005" font-family="Consolas, 'DejaVu Sans Mono', Menlo, monospace" font-size="13" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">validate_world.py</text>
+<text x="1055.0" y="373.4800000000001" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">leagues 1–3; prints</text>
+<text x="1055.0" y="388.00000000000006" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">aggregates vs targets</text>
+<rect x="1190" y="332" width="190" height="70" rx="6" fill="#fff" fill-opacity="1.0" stroke="#607D8B" stroke-width="1.3" stroke-dasharray="5,4"/>
+<text x="1285.0" y="363.58000000000004" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">Human review</text>
+<text x="1285.0" y="380.74000000000007" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">no coded tolerance</text>
+<path d="M1250,210 L1250,270 L1055,270 L1055,332" fill="none" stroke="#263238" stroke-width="1.3" marker-end="url(#ah)"/>
+<rect x="1118.2" y="254.5" width="63.5" height="12.6" fill="#ffffff" fill-opacity="0.85"/>
+<text x="1150" y="264.0" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">real_targets</text>
+<path d="M916,367.0 L960,367.0" fill="none" stroke="#263238" stroke-width="1.3" marker-end="url(#ah)"/>
+<path d="M1150,367.0 L1190,367.0" fill="none" stroke="#263238" stroke-width="1.3" marker-end="url(#ah)"/>
+<path d="M1285,402 L1285,422 L808,422 L808,402" fill="none" stroke="#607D8B" stroke-width="1.3" stroke-dasharray="5,4" marker-end="url(#ahm)"/>
+<rect x="966.4" y="408.5" width="159.2" height="12.6" fill="#ffffff" fill-opacity="0.85"/>
+<text x="1046" y="418.0" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#607D8B" xml:space="preserve" style="white-space:pre" font-style="italic">manual: adjust Design and rerun</text>
+<rect x="20" y="20" width="22" height="14" rx="3" fill="#fff" fill-opacity="1.0" stroke="#263238" stroke-width="1.2"/>
+<text x="50" y="31" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="normal" text-anchor="start" fill="#37474F" xml:space="preserve" style="white-space:pre">script</text>
+<path d="M105.92,19 H113.92 L125.92,31 V35 H105.92 Z" fill="#FFF9EC" stroke="#8D6E63" stroke-width="1.2"/>
+<path d="M113.92,19 V31 H125.92" fill="none" stroke="#8D6E63" stroke-width="1.0"/>
+<text x="115.92" y="30.84" font-family="Consolas, 'DejaVu Sans Mono', Menlo, monospace" font-size="12" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre"></text>
+<text x="135.92000000000002" y="31" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="normal" text-anchor="start" fill="#37474F" xml:space="preserve" style="white-space:pre">file</text>
+<path d="M177.64999999999998,27 L201.64999999999998,27" fill="none" stroke="#263238" stroke-width="1.3" marker-end="url(#ah)"/>
+<text x="207.64999999999998" y="31" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="normal" text-anchor="start" fill="#37474F" xml:space="preserve" style="white-space:pre">data flow</text>
+<path d="M279.19,27 L303.19,27" fill="none" stroke="#607D8B" stroke-width="1.3" stroke-dasharray="5,4" marker-end="url(#ahm)"/>
+<text x="309.19" y="31" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="normal" text-anchor="start" fill="#37474F" xml:space="preserve" style="white-space:pre">exploratory or manual</text></svg>

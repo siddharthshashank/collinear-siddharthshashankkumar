@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg
+  PUBLIC '-//W3C//DTD SVG 1.0//EN'
+  'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd'>
+<svg width="468" height="300" preserveAspectRatio="xMinYMin meet" viewBox="0 0 468 300" xmlns="http://www.w3.org/2000/svg" version="1.0" fill-rule="evenodd" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<title>...</title>
+	<desc>...</desc>
+	<clipPath id="clip">
+		<rect x="0" y="0" width="468" height="300"/>
+	</clipPath>
+	<g id="group" transform="scale(1,-1) translate(0,-300)" style="clip-path: url(#clip)">
+		<g transform="">
+			<rect x="0" y="256" width="200" height="38" rx="4" ry="4" style="stroke: rgb(54%,58%,62%); stroke-linecap: butt; stroke-width: 0.6; fill: rgb(94%,93%,90%); fill-rule: evenodd;"/>
+			<text x="56.773250000000004" y="278.5" style="font-family: Helvetica-Bold; font-size: 8.5px;fill: rgb(12%,13%,15%); stroke:none;" transform="translate(0,557) scale(1,-1)">Cricsheet IPL archive</text>
+			<text x="51.013749999999995" y="265.0" style="font-family: Helvetica; font-size: 7.5px;fill: rgb(34%,37%,41%); stroke:none;" transform="translate(0,530) scale(1,-1)">1,243 matches, 295,557 balls</text>
+			<rect x="0" y="206" width="200" height="38" rx="4" ry="4" style="stroke: rgb(54%,58%,62%); stroke-linecap: butt; stroke-width: 0.6; fill: rgb(88%,96%,93%); fill-rule: evenodd;"/>
+			<text x="70.2415" y="233.25" style="font-family: Helvetica-Bold; font-size: 8.5px;fill: rgb(12%,13%,15%); stroke:none;" transform="translate(0,466) scale(1,-1)">Measurements</text>
+			<text x="13.299999999999997" y="219.75" style="font-family: Helvetica; font-size: 7.5px;fill: rgb(34%,37%,41%); stroke:none;" transform="translate(0,439) scale(1,-1)">Form, interactions, situation responses, directions of</text>
+			<text x="70.405" y="210.25" style="font-family: Helvetica; font-size: 7.5px;fill: rgb(34%,37%,41%); stroke:none;" transform="translate(0,420) scale(1,-1)">player differences</text>
+			<rect x="0" y="156" width="200" height="38" rx="4" ry="4" style="stroke: rgb(54%,58%,62%); stroke-linecap: butt; stroke-width: 0.6; fill: rgb(88%,96%,93%); fill-rule: evenodd;"/>
+			<text x="68.58825" y="178.5" style="font-family: Helvetica-Bold; font-size: 8.5px;fill: rgb(12%,13%,15%); stroke:none;" transform="translate(0,357) scale(1,-1)">calibration.json</text>
+			<text x="31.42375" y="165.0" style="font-family: Helvetica; font-size: 7.5px;fill: rgb(34%,37%,41%); stroke:none;" transform="translate(0,330) scale(1,-1)">Aggregate constants only, with attribution</text>
+			<rect x="0" y="106" width="200" height="38" rx="4" ry="4" style="stroke: rgb(54%,58%,62%); stroke-linecap: butt; stroke-width: 0.6; fill: rgb(93%,92%,99%); fill-rule: evenodd;"/>
+			<text x="85.8305" y="128.5" style="font-family: Helvetica-Bold; font-size: 8.5px;fill: rgb(12%,13%,15%); stroke:none;" transform="translate(0,257) scale(1,-1)">Engine</text>
+			<text x="25.393749999999997" y="115.0" style="font-family: Helvetica; font-size: 7.5px;fill: rgb(34%,37%,41%); stroke:none;" transform="translate(0,230) scale(1,-1)">BallModel, InningsSimulator, MatchSimulator</text>
+			<rect x="0" y="56" width="200" height="38" rx="4" ry="4" style="stroke: rgb(54%,58%,62%); stroke-linecap: butt; stroke-width: 0.6; fill: rgb(93%,92%,99%); fill-rule: evenodd;"/>
+			<text x="85.12075" y="78.5" style="font-family: Helvetica-Bold; font-size: 8.5px;fill: rgb(12%,13%,15%); stroke:none;" transform="translate(0,157) scale(1,-1)">League</text>
+			<text x="7.881249999999994" y="65.0" style="font-family: Helvetica; font-size: 7.5px;fill: rgb(34%,37%,41%); stroke:none;" transform="translate(0,130) scale(1,-1)">Hidden skills and conditions. Public history and fixtures.</text>
+			<rect x="0" y="6" width="200" height="38" rx="4" ry="4" style="stroke: rgb(54%,58%,62%); stroke-linecap: butt; stroke-width: 0.6; fill: rgb(93%,92%,99%); fill-rule: evenodd;"/>
+			<text x="74.262" y="28.5" style="font-family: Helvetica-Bold; font-size: 8.5px;fill: rgb(12%,13%,15%); stroke:none;" transform="translate(0,57) scale(1,-1)">Truth engine</text>
+			<text x="14.552499999999995" y="15.0" style="font-family: Helvetica; font-size: 7.5px;fill: rgb(34%,37%,41%); stroke:none;" transform="translate(0,30) scale(1,-1)">Exact home-win probability of every fixture. Hidden.</text>
+			<path d="M 100,256 L 100,244 Z" style="stroke: rgb(34%,37%,41%); stroke-linecap: butt; stroke-width: 0.9;"/>
+			<polygon points="100 244, 96.8 250, 103.2 250" style="stroke: rgb(34%,37%,41%); stroke-linecap: butt; stroke-width: 0.5; fill: rgb(34%,37%,41%); fill-rule: evenodd;"/>
+			<path d="M 100,206 L 100,194 Z" style="stroke: rgb(34%,37%,41%); stroke-linecap: butt; stroke-width: 0.9;"/>
+			<polygon points="100 194, 96.8 200, 103.2 200" style="stroke: rgb(34%,37%,41%); stroke-linecap: butt; stroke-width: 0.5; fill: rgb(34%,37%,41%); fill-rule: evenodd;"/>
+			<path d="M 100,156 L 100,144 Z" style="stroke: rgb(34%,37%,41%); stroke-linecap: butt; stroke-width: 0.9;"/>
+			<polygon points="100 144, 96.8 150, 103.2 150" style="stroke: rgb(34%,37%,41%); stroke-linecap: butt; stroke-width: 0.5; fill: rgb(34%,37%,41%); fill-rule: evenodd;"/>
+			<path d="M 100,106 L 100,94 Z" style="stroke: rgb(34%,37%,41%); stroke-linecap: butt; stroke-width: 0.9;"/>
+			<polygon points="100 94, 96.8 100, 103.2 100" style="stroke: rgb(34%,37%,41%); stroke-linecap: butt; stroke-width: 0.5; fill: rgb(34%,37%,41%); fill-rule: evenodd;"/>
+			<path d="M 100,56 L 100,44 Z" style="stroke: rgb(34%,37%,41%); stroke-linecap: butt; stroke-width: 0.9;"/>
+			<polygon points="100 44, 96.8 50, 103.2 50" style="stroke: rgb(34%,37%,41%); stroke-linecap: butt; stroke-width: 0.5; fill: rgb(34%,37%,41%); fill-rule: evenodd;"/>
+			<rect x="268" y="206" width="200" height="88" rx="4" ry="4" style="stroke: rgb(54%,58%,62%); stroke-linecap: butt; stroke-width: 0.6; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<text x="299.74924999999996" y="263.0" style="font-family: Helvetica-Bold; font-size: 8.5px;fill: rgb(12%,13%,15%); stroke:none;" transform="translate(0,526) scale(1,-1)">What is public and what is hidden</text>
+			<text x="279.21875" y="249.5" style="font-family: Helvetica; font-size: 7.5px;fill: rgb(34%,37%,41%); stroke:none;" transform="translate(0,499) scale(1,-1)">Public. How a ball works, the match rules, the history,</text>
+			<text x="284.95625" y="240.0" style="font-family: Helvetica; font-size: 7.5px;fill: rgb(34%,37%,41%); stroke:none;" transform="translate(0,480) scale(1,-1)">the line-ups. Hidden. Every player's values, venue</text>
+			<text x="284.4125" y="230.5" style="font-family: Helvetica; font-size: 7.5px;fill: rgb(34%,37%,41%); stroke:none;" transform="translate(0,461) scale(1,-1)">levels, dew, the season level, the pitch on the day.</text>
+			<rect x="268" y="106" width="200" height="38" rx="4" ry="4" style="stroke: rgb(54%,58%,62%); stroke-linecap: butt; stroke-width: 0.6; fill: rgb(94%,93%,90%); fill-rule: evenodd;"/>
+			<text x="314.62425" y="128.5" style="font-family: Helvetica-Bold; font-size: 8.5px;fill: rgb(12%,13%,15%); stroke:none;" transform="translate(0,257) scale(1,-1)">Public history and fixtures</text>
+			<text x="322.145" y="115.0" style="font-family: Helvetica; font-size: 7.5px;fill: rgb(34%,37%,41%); stroke:none;" transform="translate(0,230) scale(1,-1)">Seven CSV files per league</text>
+			<rect x="268" y="56" width="200" height="38" rx="4" ry="4" style="stroke: rgb(54%,58%,62%); stroke-linecap: butt; stroke-width: 0.6; fill: rgb(98%,92%,90%); fill-rule: evenodd;"/>
+			<text x="330.855" y="78.5" style="font-family: Helvetica-Bold; font-size: 8.5px;fill: rgb(12%,13%,15%); stroke:none;" transform="translate(0,157) scale(1,-1)">Agent's forecaster</text>
+			<text x="307.13374999999996" y="65.0" style="font-family: Helvetica; font-size: 7.5px;fill: rgb(34%,37%,41%); stroke:none;" transform="translate(0,130) scale(1,-1)">Sees only public files and the engine</text>
+			<rect x="268" y="6" width="200" height="38" rx="4" ry="4" style="stroke: rgb(54%,58%,62%); stroke-linecap: butt; stroke-width: 0.6; fill: rgb(93%,92%,99%); fill-rule: evenodd;"/>
+			<text x="315.0875" y="33.25" style="font-family: Helvetica-Bold; font-size: 8.5px;fill: rgb(12%,13%,15%); stroke:none;" transform="translate(0,66) scale(1,-1)">Exact scorer and pass bar</text>
+			<text x="289.20875" y="19.75" style="font-family: Helvetica; font-size: 7.5px;fill: rgb(34%,37%,41%); stroke:none;" transform="translate(0,39) scale(1,-1)">Expected log loss against the truth, relative to a</text>
+			<text x="352.16" y="10.25" style="font-family: Helvetica; font-size: 7.5px;fill: rgb(34%,37%,41%); stroke:none;" transform="translate(0,20) scale(1,-1)">reference</text>
+			<path d="M 200,85 L 234,85 Z" style="stroke: rgb(34%,37%,41%); stroke-linecap: butt; stroke-width: 0.9;"/>
+			<path d="M 234,85 L 234,125 Z" style="stroke: rgb(34%,37%,41%); stroke-linecap: butt; stroke-width: 0.9;"/>
+			<path d="M 234,125 L 268,125 Z" style="stroke: rgb(34%,37%,41%); stroke-linecap: butt; stroke-width: 0.9;"/>
+			<polygon points="268 125, 262 121.8, 262 128.2" style="stroke: rgb(34%,37%,41%); stroke-linecap: butt; stroke-width: 0.5; fill: rgb(34%,37%,41%); fill-rule: evenodd;"/>
+			<path d="M 368,106 L 368,94 Z" style="stroke: rgb(34%,37%,41%); stroke-linecap: butt; stroke-width: 0.9;"/>
+			<polygon points="368 94, 364.8 100, 371.2 100" style="stroke: rgb(34%,37%,41%); stroke-linecap: butt; stroke-width: 0.5; fill: rgb(34%,37%,41%); fill-rule: evenodd;"/>
+			<path d="M 368,56 L 368,44 Z" style="stroke: rgb(34%,37%,41%); stroke-linecap: butt; stroke-width: 0.9;"/>
+			<polygon points="368 44, 364.8 50, 371.2 50" style="stroke: rgb(34%,37%,41%); stroke-linecap: butt; stroke-width: 0.5; fill: rgb(34%,37%,41%); fill-rule: evenodd;"/>
+			<path d="M 200,25 L 268,25 Z" style="stroke: rgb(34%,37%,41%); stroke-linecap: butt; stroke-width: 0.9;"/>
+			<polygon points="268 25, 262 21.8, 262 28.2" style="stroke: rgb(34%,37%,41%); stroke-linecap: butt; stroke-width: 0.5; fill: rgb(34%,37%,41%); fill-rule: evenodd;"/>
+		</g>
+	</g>
+</svg>

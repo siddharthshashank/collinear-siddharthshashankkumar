@@ -1,25 +1,13 @@
 world heldout_c: reference regret 0.0074, coin flip 1.26 x
 == trial1_claude-code_forecast.py
-   as submitted: failed to run: ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/argparse.py", line 1538, in add_argument
-    raise ValueError(f'unknown action {action_class!r}')
-ValueError: unknown action 'store_[REDACTED]'
-   ridge 1.0 on everything -> 25: failed to run: ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/argparse.py", line 1538, in add_argument
-    raise ValueError(f'unknown action {action_class!r}')
-ValueError: unknown action 'store_[REDACTED]'
+   as submitted: regret 0.0200 = 2.70 x reference
+   ridge 1.0 on everything -> 25: regret 0.0101 = 1.36 x reference
 == trial2_codex_forecast.py
    as submitted: regret 0.0189 = 2.55 x reference
    every prior sd x 0.33: regret 0.0116 = 1.57 x reference
 == trial3_claude-code_forecast.py
-   as submitted: failed to run: ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/argparse.py", line 1538, in add_argument
-    raise ValueError(f'unknown action {action_class!r}')
-ValueError: unknown action 'store_[REDACTED]'
-   every ridge x 12: failed to run: ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/argparse.py", line 1538, in add_argument
-    raise ValueError(f'unknown action {action_class!r}')
-ValueError: unknown action 'store_[REDACTED]'
+   as submitted: regret 0.0160 = 2.17 x reference
+   every ridge x 12: regret 0.0121 = 1.64 x reference
 == trial4_codex_forecast.py
    as submitted: regret 0.0169 = 2.29 x reference
    every ridge x 12: regret 0.0118 = 1.60 x reference

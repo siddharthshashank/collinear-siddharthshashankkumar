@@ -13256,7 +13256,7 @@ The worlds produced here are internally consistent with this repository's own ca
 
 They therefore form a complete benchmark in their own right.
 
-But they are not automatically the exact same worlds on which the six original pilots ran.
+But they are not automatically the same worlds that an earlier build of this pipeline produced from constants a few ten-thousandths different.
 
 That distinction matters when I talk about reproducibility.
 
@@ -18608,7 +18608,7 @@ Skalse, J., Howe, N. H. R., Krasheninnikov, D., & Krueger, D. (2022). *Defining 
 
 ## Pilots on the rebuilt task
 
-Six trials in the real Harbor harness on the task built from this repository's own constants, after `bar.json` was committed and before any model ran on it. Three of Claude Opus 4.7 under Claude Code at high reasoning effort, three of GPT-5.5 under Codex at high effort, alternating, on 23 September 2026.
+Ten trials in the real Harbor harness on the task built from this repository's own constants, after `bar.json` was committed and before any model ran on it. Five of Claude Opus 4.7 under Claude Code at high reasoning effort, five of GPT-5.5 under Codex at high effort, alternating, on 23 and 24 September 2026.
 
 | Run | Model | Total regret, times the reference (bar 1.10) | Held out | Forecast most resembles | Session |
 |---|---|---|---|---|---|
@@ -18618,8 +18618,12 @@ Six trials in the real Harbor harness on the task built from this repository's o
 | 4 | GPT-5.5 | 1.545 | 1.543 | no shrinkage on 5, last season only on 2 | 19 min |
 | 5 | Opus 4.7 | 1.396 | 1.376 | no shrinkage on all 8 | 21 min |
 | 6 | GPT-5.5 | 1.109 | 1.117 | the reference on 7 of 8 | 20 min |
+| 7 | Opus 4.7 | 1.364 | 1.345 | no shrinkage on all 8 | 22 min |
+| 8 | GPT-5.5 | 1.362 | 1.341 | no shrinkage on all 8 | 13 min, cut short by my account's usage limit |
+| 9 | Opus 4.7 | 1.703 | 1.661 | no shrinkage on all 8 | 23 min |
+| 10 | GPT-5.5 | 1.409 | 1.398 | no shrinkage on all 8 | 26 min |
 
-Opus 4.7 passed 0 of 3 and GPT-5.5 0 of 3. No run raised an exception or came near a time limit; every run wrote a complete, valid, deterministic forecast and left the engine untouched, so every verdict is about forecast quality. The coin flip sits at 1.89 on these worlds. Five of the six forecasts carry the unshrunk fingerprint, the same failure the original pilots showed. The sixth missed the bar by 0.9 points on all eight worlds and 1.7 on the held-out seven, the closest any run on either build has come without passing; a tolerance of 1.12 would have passed it, which is the sensitivity the design document reports for the original's near miss at 1.175. Every Opus session ran under 26 minutes, the length that in the original runs went with no synthetic-league check; the programs and session logs of these six were not read, so that is an inference from the fingerprints and the session lengths, not a finding.
+Opus 4.7 passed 0 of 5 and GPT-5.5 0 of 5. No run came near a time limit; every run wrote a complete, valid, deterministic forecast and left the engine untouched, so every verdict is about forecast quality. The coin flip sits at 1.89 on these worlds. Nine of the ten forecasts carry the unshrunk fingerprint on most or all of the eight worlds. The sixth missed the bar by 0.9 points on all eight worlds and 1.7 on the held-out seven, the closest any run has come without passing; a tolerance of 1.12 would have passed it. Run 8 delivered a complete 230-line forecaster, then Codex reported that my account had reached its usage limit and the session ended at 13 minutes; the delivered program was graded and failed with the same fingerprint as the others, so I count the run and flag it. Excluding it leaves GPT-5.5 at 0 of 4 and changes nothing. Every Opus session ran under 26 minutes. What the programs did, and the ablations that confirm the cause, are in the section after this one.
 
 ---
 

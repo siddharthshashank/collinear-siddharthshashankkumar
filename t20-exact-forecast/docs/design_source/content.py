@@ -691,6 +691,6 @@ BLOCKS = [
     ("plate", "harbor_runtime", "Plate 4. The two containers and the grader's checks", "The agent sees only the public task. The verifier holds the answers, runs the submission as an unprivileged user beside a pristine engine, and applies the integrity, validity and scoring checks."),
     ("plate", "grading_rule", "Plate 5. The pass rule and the reward composition", "One rule applied twice, to all eight worlds and to the seven held-out worlds, then the constraint and artifact checks, and how the four keys combine into the overall reward."),
     ("plate", "research_ladder", "Plate 6. The experiments behind the bar", "The ladder runner across worlds, the bar analysis on eight worlds that are never graded, the quantities each measured, and the rule they produced."),
-    ("plate", "pilot_results", "Plate 7. Pilot results on the graded worlds", "Left, every recorded model run and the ladder tiers as multiples of the reference's summed regret, against the 1.10 bar. Right, the same runs world by world. Generated from the job records in the repository at the time the figure was built."),
+    ("plate", "pilot_results", "Plate 7. Pilot results on the graded worlds", "Left, the six first-round model runs and the ladder tiers as multiples of the reference's summed regret, against the 1.10 bar. Right, the same runs world by world. Drawn from the job records of the first round; runs 7 to 10 are in the table in Section 6."),
     ("portrait",),
 ]

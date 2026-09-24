@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg
+  PUBLIC '-//W3C//DTD SVG 1.0//EN'
+  'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd'>
+<svg width="468" height="236" preserveAspectRatio="xMinYMin meet" viewBox="0 0 468 236" xmlns="http://www.w3.org/2000/svg" version="1.0" fill-rule="evenodd" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<title>...</title>
+	<desc>...</desc>
+	<clipPath id="clip">
+		<rect x="0" y="0" width="468" height="236"/>
+	</clipPath>
+	<g id="group" transform="scale(1,-1) translate(0,-236)" style="clip-path: url(#clip)">
+		<g transform="">
+			<rect x="0" y="156" width="146" height="76" rx="4" ry="4" style="stroke: rgb(54%,58%,62%); stroke-linecap: butt; stroke-width: 0.6; fill: rgb(88%,96%,93%); fill-rule: evenodd;"/>
+			<text x="38.51975" y="207.0" style="font-family: Helvetica-Bold; font-size: 8.5px;fill: rgb(12%,13%,15%); stroke:none;" transform="translate(0,414) scale(1,-1)">A. Backtest audit</text>
+			<text x="17.559999999999995" y="193.5" style="font-family: Helvetica; font-size: 7.5px;fill: rgb(34%,37%,41%); stroke:none;" transform="translate(0,387) scale(1,-1)">A repository of forecast backtests</text>
+			<text x="9.850000000000001" y="184.0" style="font-family: Helvetica; font-size: 7.5px;fill: rgb(34%,37%,41%); stroke:none;" transform="translate(0,368) scale(1,-1)">silently uses revised data. One written</text>
+			<text x="14.020000000000003" y="174.5" style="font-family: Helvetica; font-size: 7.5px;fill: rgb(34%,37%,41%); stroke:none;" transform="translate(0,349) scale(1,-1)">rule. The agent repairs every script.</text>
+			<rect x="0" y="64" width="146" height="70" rx="4" ry="4" style="stroke: rgb(54%,58%,62%); stroke-linecap: butt; stroke-width: 0.6; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<text x="54.5805" y="112.0" style="font-family: Helvetica-Bold; font-size: 8.5px;fill: rgb(12%,13%,15%); stroke:none;" transform="translate(0,224) scale(1,-1)">Outcome</text>
+			<text x="6.5049999999999955" y="98.5" style="font-family: Helvetica; font-size: 7.5px;fill: rgb(34%,37%,41%); stroke:none;" transform="translate(0,197) scale(1,-1)">Built and piloted. Opus 4.7 and GPT-5.5</text>
+			<text x="6.295000000000002" y="89.0" style="font-family: Helvetica; font-size: 7.5px;fill: rgb(34%,37%,41%); stroke:none;" transform="translate(0,178) scale(1,-1)">solve it at 8, 24 and 48 scripts. Sonnet 5</text>
+			<text x="42.985" y="79.5" style="font-family: Helvetica; font-size: 7.5px;fill: rgb(34%,37%,41%); stroke:none;" transform="translate(0,159) scale(1,-1)">and Haiku 4.5 fail.</text>
+			<path d="M 73,156 L 73,134 Z" style="stroke: rgb(34%,37%,41%); stroke-linecap: butt; stroke-width: 0.9;"/>
+			<polygon points="73 134, 69.8 140, 76.2 140" style="stroke: rgb(34%,37%,41%); stroke-linecap: butt; stroke-width: 0.5; fill: rgb(34%,37%,41%); fill-rule: evenodd;"/>
+			<rect x="161" y="156" width="146" height="76" rx="4" ry="4" style="stroke: rgb(54%,58%,62%); stroke-linecap: butt; stroke-width: 0.6; fill: rgb(88%,96%,93%); fill-rule: evenodd;"/>
+			<text x="188.6525" y="207.0" style="font-family: Helvetica-Bold; font-size: 8.5px;fill: rgb(12%,13%,15%); stroke:none;" transform="translate(0,414) scale(1,-1)">B. Exactly-once ingest</text>
+			<text x="174.59625" y="193.5" style="font-family: Helvetica; font-size: 7.5px;fill: rgb(34%,37%,41%); stroke:none;" transform="translate(0,387) scale(1,-1)">An ingest service on an object store</text>
+			<text x="173.355" y="184.0" style="font-family: Helvetica; font-size: 7.5px;fill: rgb(34%,37%,41%); stroke:none;" transform="translate(0,368) scale(1,-1)">must stay correct under every crash,</text>
+			<text x="169.815" y="174.5" style="font-family: Helvetica; font-size: 7.5px;fill: rgb(34%,37%,41%); stroke:none;" transform="translate(0,349) scale(1,-1)">redelivery and zombie-writer schedule.</text>
+			<rect x="161" y="64" width="146" height="70" rx="4" ry="4" style="stroke: rgb(54%,58%,62%); stroke-linecap: butt; stroke-width: 0.6; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<text x="215.5805" y="112.0" style="font-family: Helvetica-Bold; font-size: 8.5px;fill: rgb(12%,13%,15%); stroke:none;" transform="translate(0,224) scale(1,-1)">Outcome</text>
+			<text x="169.58999999999997" y="98.5" style="font-family: Helvetica; font-size: 7.5px;fill: rgb(34%,37%,41%); stroke:none;" transform="translate(0,197) scale(1,-1)">Built and verified on 27,710 schedules.</text>
+			<text x="173.55" y="89.0" style="font-family: Helvetica; font-size: 7.5px;fill: rgb(34%,37%,41%); stroke:none;" transform="translate(0,178) scale(1,-1)">Judged likely to be solved by the top</text>
+			<text x="206.90625" y="79.5" style="font-family: Helvetica; font-size: 7.5px;fill: rgb(34%,37%,41%); stroke:none;" transform="translate(0,159) scale(1,-1)">models. Parked.</text>
+			<path d="M 234,156 L 234,134 Z" style="stroke: rgb(34%,37%,41%); stroke-linecap: butt; stroke-width: 0.9;"/>
+			<polygon points="234 134, 230.8 140, 237.2 140" style="stroke: rgb(34%,37%,41%); stroke-linecap: butt; stroke-width: 0.5; fill: rgb(34%,37%,41%); fill-rule: evenodd;"/>
+			<rect x="322" y="156" width="146" height="76" rx="4" ry="4" style="stroke: rgb(54%,58%,62%); stroke-linecap: butt; stroke-width: 0.6; fill: rgb(93%,92%,99%); fill-rule: evenodd;"/>
+			<text x="343.048" y="207.0" style="font-family: Helvetica-Bold; font-size: 8.5px;fill: rgb(12%,13%,15%); stroke:none;" transform="translate(0,414) scale(1,-1)">C. Exact-truth forecasting</text>
+			<text x="339.35375" y="193.5" style="font-family: Helvetica; font-size: 7.5px;fill: rgb(34%,37%,41%); stroke:none;" transform="translate(0,387) scale(1,-1)">Forecast a simulated league from</text>
+			<text x="339.7775" y="184.0" style="font-family: Helvetica; font-size: 7.5px;fill: rgb(34%,37%,41%); stroke:none;" transform="translate(0,368) scale(1,-1)">ball-by-ball history. Forecasts are</text>
+			<text x="334.34375" y="174.5" style="font-family: Helvetica; font-size: 7.5px;fill: rgb(34%,37%,41%); stroke:none;" transform="translate(0,349) scale(1,-1)">graded against the true probabilities.</text>
+			<rect x="322" y="64" width="146" height="70" rx="4" ry="4" style="stroke: rgb(54%,58%,62%); stroke-linecap: butt; stroke-width: 0.6; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<text x="376.5805" y="112.0" style="font-family: Helvetica-Bold; font-size: 8.5px;fill: rgb(12%,13%,15%); stroke:none;" transform="translate(0,224) scale(1,-1)">Outcome</text>
+			<text x="331.2125" y="98.5" style="font-family: Helvetica; font-size: 7.5px;fill: rgb(34%,37%,41%); stroke:none;" transform="translate(0,197) scale(1,-1)">Chosen, built, gated and piloted. Opus</text>
+			<text x="331.62874999999997" y="89.0" style="font-family: Helvetica; font-size: 7.5px;fill: rgb(34%,37%,41%); stroke:none;" transform="translate(0,178) scale(1,-1)">4.7 0 of 5, GPT-5.5 0 of 5 under a rule</text>
+			<text x="369.57875" y="79.5" style="font-family: Helvetica; font-size: 7.5px;fill: rgb(34%,37%,41%); stroke:none;" transform="translate(0,159) scale(1,-1)">committed first.</text>
+			<path d="M 395,156 L 395,134 Z" style="stroke: rgb(34%,37%,41%); stroke-linecap: butt; stroke-width: 0.9;"/>
+			<polygon points="395 134, 391.8 140, 398.2 140" style="stroke: rgb(34%,37%,41%); stroke-linecap: butt; stroke-width: 0.5; fill: rgb(34%,37%,41%); fill-rule: evenodd;"/>
+			<rect x="0" y="4" width="468" height="42" rx="4" ry="4" style="stroke: rgb(54%,58%,62%); stroke-linecap: butt; stroke-width: 0.6; fill: rgb(94%,93%,90%); fill-rule: evenodd;"/>
+			<text x="197.15675" y="33.25" style="font-family: Helvetica-Bold; font-size: 8.5px;fill: rgb(12%,13%,15%); stroke:none;" transform="translate(0,66) scale(1,-1)">Rejected on paper</text>
+			<text x="6.607500000000016" y="19.75" style="font-family: Helvetica; font-size: 7.5px;fill: rgb(34%,37%,41%); stroke:none;" transform="translate(0,39) scale(1,-1)">A port of a live Kaggle competition. Stock and candlestick prediction. Live sports forecasting. Recovery of a sealed binary format. A query</text>
+			<text x="170.63625" y="10.25" style="font-family: Helvetica; font-size: 7.5px;fill: rgb(34%,37%,41%); stroke:none;" transform="translate(0,20) scale(1,-1)">cost budget. Machine-checked proofs.</text>
+		</g>
+	</g>
+</svg>

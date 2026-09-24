@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="520" viewBox="0 0 1400 520"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#263238"/></marker><marker id="ahm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#607D8B"/></marker></defs><rect width="100%" height="100%" fill="#ffffff"/><rect x="30" y="24" width="150" height="58" rx="6" fill="#EAF6FB" fill-opacity="1.0" stroke="#2E6F8E" stroke-width="1.3"/>
+<text x="105.0" y="43.32000000000001" font-family="Consolas, 'DejaVu Sans Mono', Menlo, monospace" font-size="12" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">visible</text>
+<text x="105.0" y="59.16000000000001" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">R = mean KL regret</text>
+<text x="105.0" y="72.36000000000001" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">if forecast is valid</text>
+<rect x="198" y="24" width="150" height="58" rx="6" fill="#FFFFFF" fill-opacity="1.0" stroke="#263238" stroke-width="1.3"/>
+<text x="273.0" y="43.32000000000001" font-family="Consolas, 'DejaVu Sans Mono', Menlo, monospace" font-size="12" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">heldout_a</text>
+<text x="273.0" y="59.16000000000001" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">R = mean KL regret</text>
+<text x="273.0" y="72.36000000000001" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">if forecast is valid</text>
+<rect x="366" y="24" width="150" height="58" rx="6" fill="#FFFFFF" fill-opacity="1.0" stroke="#263238" stroke-width="1.3"/>
+<text x="441.0" y="43.32000000000001" font-family="Consolas, 'DejaVu Sans Mono', Menlo, monospace" font-size="12" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">heldout_b</text>
+<text x="441.0" y="59.16000000000001" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">R = mean KL regret</text>
+<text x="441.0" y="72.36000000000001" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">if forecast is valid</text>
+<rect x="534" y="24" width="150" height="58" rx="6" fill="#FFFFFF" fill-opacity="1.0" stroke="#263238" stroke-width="1.3"/>
+<text x="609.0" y="43.32000000000001" font-family="Consolas, 'DejaVu Sans Mono', Menlo, monospace" font-size="12" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">heldout_c</text>
+<text x="609.0" y="59.16000000000001" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">R = mean KL regret</text>
+<text x="609.0" y="72.36000000000001" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">if forecast is valid</text>
+<rect x="702" y="24" width="150" height="58" rx="6" fill="#FFFFFF" fill-opacity="1.0" stroke="#263238" stroke-width="1.3"/>
+<text x="777.0" y="43.32000000000001" font-family="Consolas, 'DejaVu Sans Mono', Menlo, monospace" font-size="12" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">heldout_d</text>
+<text x="777.0" y="59.16000000000001" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">R = mean KL regret</text>
+<text x="777.0" y="72.36000000000001" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">if forecast is valid</text>
+<rect x="870" y="24" width="150" height="58" rx="6" fill="#FFFFFF" fill-opacity="1.0" stroke="#263238" stroke-width="1.3"/>
+<text x="945.0" y="43.32000000000001" font-family="Consolas, 'DejaVu Sans Mono', Menlo, monospace" font-size="12" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">heldout_e</text>
+<text x="945.0" y="59.16000000000001" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">R = mean KL regret</text>
+<text x="945.0" y="72.36000000000001" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">if forecast is valid</text>
+<rect x="1038" y="24" width="150" height="58" rx="6" fill="#FFFFFF" fill-opacity="1.0" stroke="#263238" stroke-width="1.3"/>
+<text x="1113.0" y="43.32000000000001" font-family="Consolas, 'DejaVu Sans Mono', Menlo, monospace" font-size="12" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">heldout_f</text>
+<text x="1113.0" y="59.16000000000001" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">R = mean KL regret</text>
+<text x="1113.0" y="72.36000000000001" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">if forecast is valid</text>
+<rect x="1206" y="24" width="150" height="58" rx="6" fill="#FFFFFF" fill-opacity="1.0" stroke="#263238" stroke-width="1.3"/>
+<text x="1281.0" y="43.32000000000001" font-family="Consolas, 'DejaVu Sans Mono', Menlo, monospace" font-size="12" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">heldout_g</text>
+<text x="1281.0" y="59.16000000000001" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">R = mean KL regret</text>
+<text x="1281.0" y="72.36000000000001" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">if forecast is valid</text>
+<path d="M105,82 L105,112" fill="none" stroke="#263238" stroke-width="1.3"/>
+<circle cx="105" cy="104" r="2.6" fill="#263238"/>
+<path d="M273,82 L273,128" fill="none" stroke="#263238" stroke-width="1.3"/>
+<circle cx="273" cy="104" r="2.6" fill="#263238"/>
+<circle cx="273" cy="128" r="2.6" fill="#263238"/>
+<path d="M441,82 L441,128" fill="none" stroke="#263238" stroke-width="1.3"/>
+<circle cx="441" cy="104" r="2.6" fill="#263238"/>
+<circle cx="441" cy="128" r="2.6" fill="#263238"/>
+<path d="M609,82 L609,128" fill="none" stroke="#263238" stroke-width="1.3"/>
+<circle cx="609" cy="104" r="2.6" fill="#263238"/>
+<circle cx="609" cy="128" r="2.6" fill="#263238"/>
+<path d="M777,82 L777,128" fill="none" stroke="#263238" stroke-width="1.3"/>
+<circle cx="777" cy="104" r="2.6" fill="#263238"/>
+<circle cx="777" cy="128" r="2.6" fill="#263238"/>
+<path d="M945,82 L945,128" fill="none" stroke="#263238" stroke-width="1.3"/>
+<circle cx="945" cy="104" r="2.6" fill="#263238"/>
+<circle cx="945" cy="128" r="2.6" fill="#263238"/>
+<path d="M1113,82 L1113,128" fill="none" stroke="#263238" stroke-width="1.3"/>
+<circle cx="1113" cy="104" r="2.6" fill="#263238"/>
+<circle cx="1113" cy="128" r="2.6" fill="#263238"/>
+<path d="M1281,82 L1281,128" fill="none" stroke="#263238" stroke-width="1.3"/>
+<circle cx="1281" cy="104" r="2.6" fill="#263238"/>
+<circle cx="1281" cy="128" r="2.6" fill="#263238"/>
+<path d="M105,104 L1281,104" fill="none" stroke="#263238" stroke-width="1.3"/>
+<path d="M273,128 L1281,128" fill="none" stroke="#263238" stroke-width="1.3"/>
+<text x="114" y="118" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="start" fill="#607D8B" xml:space="preserve" style="white-space:pre" font-style="italic">all 8 leagues</text>
+<text x="1276" y="144" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="end" fill="#607D8B" xml:space="preserve" style="white-space:pre" font-style="italic">7 held-out leagues</text>
+<path d="M240,104 L240,166" fill="none" stroke="#263238" stroke-width="1.3" marker-end="url(#ah)"/>
+<path d="M670,128 L670,166" fill="none" stroke="#263238" stroke-width="1.3" marker-end="url(#ah)"/>
+<rect x="30" y="166" width="420" height="92" rx="6" fill="#fff" fill-opacity="1.0" stroke="#263238" stroke-width="1.3"/>
+<text x="240.0" y="201.9" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">Σ R  ≤  1.10 × Σ R_reference   (all 8)</text>
+<text x="240.0" y="219.06" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">every league must have a valid forecast</text>
+<text x="240.0" y="232.92000000000002" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">committed worlds: reference total 0.0780; coin flip ×1.89</text>
+<rect x="470" y="166" width="400" height="92" rx="6" fill="#fff" fill-opacity="1.0" stroke="#263238" stroke-width="1.3"/>
+<text x="670.0" y="201.9" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">Σ R  ≤  1.10 × Σ R_reference   (held-out 7)</text>
+<text x="670.0" y="219.06" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">every held-out league must be valid</text>
+<text x="670.0" y="232.92000000000002" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">committed worlds: reference total 0.0693; coin flip ×1.83</text>
+<rect x="890" y="166" width="236" height="92" rx="6" fill="#fff" fill-opacity="1.0" stroke="#263238" stroke-width="1.3"/>
+<text x="1008.0" y="194.97" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">Constraints</text>
+<text x="1008.0" y="212.13" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">agent&#x27;s engine/ unchanged (SHA-256)</text>
+<text x="1008.0" y="225.99" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">visible league rerun matches to 1e-12</text>
+<text x="1008.0" y="239.85000000000002" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">every league within 720 s</text>
+<rect x="1146" y="166" width="224" height="92" rx="6" fill="#fff" fill-opacity="1.0" stroke="#263238" stroke-width="1.3"/>
+<text x="1258.0" y="194.97" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">Artifacts</text>
+<text x="1258.0" y="212.13" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">share of the 8 leagues with</text>
+<text x="1258.0" y="225.99" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">a complete, finite forecast</text>
+<text x="1258.0" y="239.85000000000002" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">in [0, 1]</text>
+<path d="M240.0,258 L240.0,298" fill="none" stroke="#263238" stroke-width="1.3" marker-end="url(#ah)"/>
+<path d="M40,298 H428 L440,310 V348 H40 Z" fill="#FFF9EC" stroke="#8D6E63" stroke-width="1.2"/>
+<path d="M428,298 V310 H440" fill="none" stroke="#8D6E63" stroke-width="1.0"/>
+<text x="240.0" y="319.66999999999996" font-family="Consolas, 'DejaVu Sans Mono', Menlo, monospace" font-size="12" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">functional_correctness</text>
+<text x="240.0" y="335.50999999999993" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#4E342E" xml:space="preserve" style="white-space:pre">0 or 1</text>
+<path d="M670.0,258 L670.0,298" fill="none" stroke="#263238" stroke-width="1.3" marker-end="url(#ah)"/>
+<path d="M480,298 H848 L860,310 V348 H480 Z" fill="#FFF9EC" stroke="#8D6E63" stroke-width="1.2"/>
+<path d="M848,298 V310 H860" fill="none" stroke="#8D6E63" stroke-width="1.0"/>
+<text x="670.0" y="319.66999999999996" font-family="Consolas, 'DejaVu Sans Mono', Menlo, monospace" font-size="12" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">robustness</text>
+<text x="670.0" y="335.50999999999993" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#4E342E" xml:space="preserve" style="white-space:pre">0 or 1</text>
+<path d="M1008.0,258 L1008.0,298" fill="none" stroke="#263238" stroke-width="1.3" marker-end="url(#ah)"/>
+<path d="M900,298 H1104 L1116,310 V348 H900 Z" fill="#FFF9EC" stroke="#8D6E63" stroke-width="1.2"/>
+<path d="M1104,298 V310 H1116" fill="none" stroke="#8D6E63" stroke-width="1.0"/>
+<text x="1008.0" y="319.66999999999996" font-family="Consolas, 'DejaVu Sans Mono', Menlo, monospace" font-size="12" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">constraint_satisfaction</text>
+<text x="1008.0" y="335.50999999999993" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#4E342E" xml:space="preserve" style="white-space:pre">mean of the 3 checks</text>
+<path d="M1258.0,258 L1258.0,298" fill="none" stroke="#263238" stroke-width="1.3" marker-end="url(#ah)"/>
+<path d="M1156,298 H1348 L1360,310 V348 H1156 Z" fill="#FFF9EC" stroke="#8D6E63" stroke-width="1.2"/>
+<path d="M1348,298 V310 H1360" fill="none" stroke="#8D6E63" stroke-width="1.0"/>
+<text x="1258.0" y="319.66999999999996" font-family="Consolas, 'DejaVu Sans Mono', Menlo, monospace" font-size="12" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">artifact_quality</text>
+<text x="1258.0" y="335.50999999999993" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#4E342E" xml:space="preserve" style="white-space:pre">0 to 1</text>
+<path d="M240,348 L240,400" fill="none" stroke="#263238" stroke-width="1.3" marker-end="url(#ah)"/>
+<path d="M670,348 L670,400" fill="none" stroke="#263238" stroke-width="1.3" marker-end="url(#ah)"/>
+<path d="M1008,348 L1008,400" fill="none" stroke="#263238" stroke-width="1.3" marker-end="url(#ah)"/>
+<path d="M1258,348 L1258,400" fill="none" stroke="#263238" stroke-width="1.3" marker-end="url(#ah)"/>
+<rect x="30" y="400" width="1340" height="78" rx="6" fill="#fff" fill-opacity="1.0" stroke="#263238" stroke-width="1.3"/>
+<text x="700.0" y="435.74" font-family="Arial, Helvetica, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">overall = functional_correctness × (0.50 × robustness + 0.25 × constraint_satisfaction + 0.25 × artifact_quality)</text>
+<text x="700.0" y="454.22" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">Only overall = 1 counts as solved: both pooled checks pass, the engine is untouched, the output is deterministic, and every league is valid and on time.</text>
+<text x="30" y="506" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="start" fill="#607D8B" xml:space="preserve" style="white-space:pre" font-style="italic">R_reference comes from reference.json (the reference forecaster at 4,000 copies per fixture). Forecasts are clipped to [0.002, 0.998] before scoring.</text></svg>

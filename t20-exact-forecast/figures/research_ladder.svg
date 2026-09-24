@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="486" viewBox="0 0 1400 486"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#263238"/></marker><marker id="ahm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#607D8B"/></marker></defs><rect width="100%" height="100%" fill="#ffffff"/><rect x="16" y="16" width="1080" height="196" rx="8" fill="#F4F0F8" fill-opacity="1.0" stroke="#90A4AE" stroke-width="1.2"/>
+<text x="28" y="36" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="bold" text-anchor="start" fill="#37474F" xml:space="preserve" style="white-space:pre">dev/run_ladder.py</text>
+<text x="28" y="52" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="start" fill="#607D8B" xml:space="preserve" style="white-space:pre" font-style="italic">exploration: how do the tiers compare across worlds?</text>
+<rect x="36" y="72" width="140" height="118" rx="6" fill="#fff" fill-opacity="1.0" stroke="#263238" stroke-width="1.3"/>
+<text x="106.0" y="120.89999999999999" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">Seeds</text>
+<text x="106.0" y="138.06" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">command-line list,</text>
+<text x="106.0" y="151.92000000000002" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">default 1</text>
+<rect x="196" y="72" width="190" height="118" rx="6" fill="#fff" fill-opacity="1.0" stroke="#263238" stroke-width="1.3"/>
+<text x="291.0" y="113.97" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">League + TruthEngine</text>
+<text x="291.0" y="131.13" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">History kept in memory</text>
+<text x="291.0" y="144.99" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">30 fixtures by default</text>
+<text x="291.0" y="158.85000000000002" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">10,000 truth copies</text>
+<rect x="406" y="72" width="262" height="118" rx="6" fill="#fff" fill-opacity="1.0" stroke="#263238" stroke-width="1.3"/>
+<text x="537.0" y="100.10999999999999" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">8 ladder tiers</text>
+<text x="537.0" y="117.26999999999998" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">coin flip, team ratings,</text>
+<text x="537.0" y="131.13" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">no shrinkage, last season only</text>
+<text x="537.0" y="144.99" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">(scale fixed at 0.3), reference,</text>
+<text x="537.0" y="158.85000000000002" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">raw head-to-head, matchups,</text>
+<text x="537.0" y="172.71000000000004" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">matchups + venue affinity</text>
+<rect x="688" y="72" width="168" height="118" rx="6" fill="#fff" fill-opacity="1.0" stroke="#263238" stroke-width="1.3"/>
+<text x="772.0" y="120.89999999999999" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">ExactScorer</text>
+<text x="772.0" y="138.06" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">regret, skill,</text>
+<text x="772.0" y="151.92000000000002" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">MAE, slope</text>
+<path d="M876,72 H1068 L1080,84 V190 H876 Z" fill="#FFF9EC" stroke="#8D6E63" stroke-width="1.2"/>
+<path d="M1068,72 V84 H1080" fill="none" stroke="#8D6E63" stroke-width="1.0"/>
+<text x="978.0" y="106.88" font-family="Consolas, 'DejaVu Sans Mono', Menlo, monospace" font-size="12" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">results/ladder_v2.jsonl</text>
+<text x="978.0" y="122.72" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#4E342E" xml:space="preserve" style="white-space:pre">seed, name, skill, regret</text>
+<text x="978.0" y="136.58" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#4E342E" xml:space="preserve" style="white-space:pre">append-only; no fixture</text>
+<text x="978.0" y="150.44000000000003" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#4E342E" xml:space="preserve" style="white-space:pre">count, copies or code</text>
+<text x="978.0" y="164.30000000000004" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#4E342E" xml:space="preserve" style="white-space:pre">version recorded</text>
+<path d="M176,131 L196,131" fill="none" stroke="#263238" stroke-width="1.3" marker-end="url(#ah)"/>
+<path d="M386,131 L406,131" fill="none" stroke="#263238" stroke-width="1.3" marker-end="url(#ah)"/>
+<path d="M668,131 L688,131" fill="none" stroke="#263238" stroke-width="1.3" marker-end="url(#ah)"/>
+<path d="M856,131 L876,131" fill="none" stroke="#263238" stroke-width="1.3" marker-end="url(#ah)"/>
+<rect x="16" y="244" width="1080" height="196" rx="8" fill="#F4F0F8" fill-opacity="1.0" stroke="#90A4AE" stroke-width="1.2"/>
+<text x="28" y="264" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="bold" text-anchor="start" fill="#37474F" xml:space="preserve" style="white-space:pre">dev/bar_analysis.py</text>
+<text x="28" y="280" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="start" fill="#607D8B" xml:space="preserve" style="white-space:pre" font-style="italic">threshold design on worlds that are never graded</text>
+<rect x="36" y="300" width="140" height="118" rx="6" fill="#fff" fill-opacity="1.0" stroke="#263238" stroke-width="1.3"/>
+<text x="106.0" y="348.90000000000003" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">Seeds 1001–1008</text>
+<text x="106.0" y="366.06000000000006" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">not used for</text>
+<text x="106.0" y="379.9200000000001" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">grading</text>
+<rect x="196" y="300" width="190" height="118" rx="6" fill="#fff" fill-opacity="1.0" stroke="#263238" stroke-width="1.3"/>
+<text x="291.0" y="348.90000000000003" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">League + TruthEngine</text>
+<text x="291.0" y="366.06000000000006" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">24 fixtures</text>
+<text x="291.0" y="379.9200000000001" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">40,000 truth copies</text>
+<rect x="406" y="300" width="262" height="118" rx="6" fill="#fff" fill-opacity="1.0" stroke="#263238" stroke-width="1.3"/>
+<text x="537.0" y="335.04" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">3 tiers</text>
+<text x="537.0" y="352.20000000000005" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">reference, fitted once and</text>
+<text x="537.0" y="366.06000000000006" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">re-simulated with 4 seeds;</text>
+<text x="537.0" y="379.9200000000001" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">no shrinkage;</text>
+<text x="537.0" y="393.7800000000001" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">last season only</text>
+<rect x="688" y="300" width="168" height="118" rx="6" fill="#fff" fill-opacity="1.0" stroke="#263238" stroke-width="1.3"/>
+<text x="772.0" y="348.90000000000003" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">Regret ratios</text>
+<text x="772.0" y="366.06000000000006" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">per world</text>
+<text x="772.0" y="379.9200000000001" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">and pooled</text>
+<path d="M876,300 H1068 L1080,312 V418 H876 Z" fill="#FFF9EC" stroke="#8D6E63" stroke-width="1.2"/>
+<path d="M1068,300 V312 H1080" fill="none" stroke="#8D6E63" stroke-width="1.0"/>
+<text x="978.0" y="334.88" font-family="Consolas, 'DejaVu Sans Mono', Menlo, monospace" font-size="12" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">stdout only</text>
+<text x="978.0" y="350.71999999999997" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#4E342E" xml:space="preserve" style="white-space:pre">per-world noise up to 5.9%</text>
+<text x="978.0" y="364.58" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#4E342E" xml:space="preserve" style="white-space:pre">pooled noise about 1.1%</text>
+<text x="978.0" y="378.44" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#4E342E" xml:space="preserve" style="white-space:pre">pooled careless tiers</text>
+<text x="978.0" y="392.3" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#4E342E" xml:space="preserve" style="white-space:pre">at ×1.30 or worse</text>
+<path d="M176,359 L196,359" fill="none" stroke="#263238" stroke-width="1.3" marker-end="url(#ah)"/>
+<path d="M386,359 L406,359" fill="none" stroke="#263238" stroke-width="1.3" marker-end="url(#ah)"/>
+<path d="M668,359 L688,359" fill="none" stroke="#263238" stroke-width="1.3" marker-end="url(#ah)"/>
+<path d="M856,359 L876,359" fill="none" stroke="#263238" stroke-width="1.3" marker-end="url(#ah)"/>
+<rect x="1112" y="16" width="272" height="424" rx="8" fill="#FFFFFF" fill-opacity="1.0" stroke="#90A4AE" stroke-width="1.2"/>
+<text x="1124" y="36" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="bold" text-anchor="start" fill="#37474F" xml:space="preserve" style="white-space:pre">Pass bar</text>
+<text x="1124" y="52" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="start" fill="#607D8B" xml:space="preserve" style="white-space:pre" font-style="italic">fixed before the model trials</text>
+<path d="M1128,66 H1356 L1368,78 V198 H1128 Z" fill="#FDE9E7" stroke="#B23B3B" stroke-width="1.2"/>
+<path d="M1356,66 V78 H1368" fill="none" stroke="#B23B3B" stroke-width="1.0"/>
+<text x="1248.0" y="100.95" font-family="Consolas, 'DejaVu Sans Mono', Menlo, monospace" font-size="12" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">harbor/bar.json</text>
+<text x="1248.0" y="116.79" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">pooled regret ≤ 1.10 × reference</text>
+<text x="1248.0" y="130.65" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">on all 8 leagues and on</text>
+<text x="1248.0" y="144.51000000000002" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">the 7 held-out leagues</text>
+<text x="1248.0" y="158.37000000000003" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">committed 18:59; first</text>
+<text x="1248.0" y="172.23000000000005" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">model trial started 19:48</text>
+<rect x="1128" y="278" width="240" height="132" rx="6" fill="#fff" fill-opacity="1.0" stroke="#B23B3B" stroke-width="1.3" stroke-dasharray="5,4"/>
+<text x="1248.0" y="313.11" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre">Not measured</text>
+<text x="1248.0" y="330.27000000000004" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">spread of other methods of</text>
+<text x="1248.0" y="344.13000000000005" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">reference quality; variance</text>
+<text x="1248.0" y="357.99000000000007" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">from the fixture draw; truth</text>
+<text x="1248.0" y="371.8500000000001" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">Monte Carlo noise; priors</text>
+<text x="1248.0" y="385.7100000000001" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="normal" text-anchor="middle" fill="#37474F" xml:space="preserve" style="white-space:pre">learned from public data</text>
+<path d="M1080,359 L1100,359 L1100,132 L1128,132" fill="none" stroke="#607D8B" stroke-width="1.3" stroke-dasharray="5,4" marker-end="url(#ahm)"/>
+<path d="M978,190 L978,300" fill="none" stroke="#607D8B" stroke-width="1.3" stroke-dasharray="5,4" marker-end="url(#ahm)"/>
+<text x="970" y="232" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="normal" text-anchor="end" fill="#607D8B" xml:space="preserve" style="white-space:pre" font-style="italic">worlds differ widely, so the per-world rule was dropped</text>
+<rect x="20" y="462" width="22" height="14" rx="3" fill="#fff" fill-opacity="1.0" stroke="#263238" stroke-width="1.2"/>
+<text x="50" y="473" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="normal" text-anchor="start" fill="#37474F" xml:space="preserve" style="white-space:pre">step</text>
+<path d="M96.79,461 H104.79 L116.79,473 V477 H96.79 Z" fill="#FFF9EC" stroke="#8D6E63" stroke-width="1.2"/>
+<path d="M104.79,461 V473 H116.79" fill="none" stroke="#8D6E63" stroke-width="1.0"/>
+<text x="106.79" y="472.84" font-family="Consolas, 'DejaVu Sans Mono', Menlo, monospace" font-size="12" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre"></text>
+<text x="126.79" y="473" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="normal" text-anchor="start" fill="#37474F" xml:space="preserve" style="white-space:pre">output</text>
+<path d="M182.71,461 H190.71 L202.71,473 V477 H182.71 Z" fill="#FDE9E7" stroke="#B23B3B" stroke-width="1.2"/>
+<path d="M190.71,461 V473 H202.71" fill="none" stroke="#B23B3B" stroke-width="1.0"/>
+<text x="192.71" y="472.84" font-family="Consolas, 'DejaVu Sans Mono', Menlo, monospace" font-size="12" font-weight="bold" text-anchor="middle" fill="#263238" xml:space="preserve" style="white-space:pre"></text>
+<text x="212.71" y="473" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="normal" text-anchor="start" fill="#37474F" xml:space="preserve" style="white-space:pre">grader-only file</text>
+<path d="M319.34000000000003,469 L343.34000000000003,469" fill="none" stroke="#263238" stroke-width="1.3" marker-end="url(#ah)"/>
+<text x="349.34000000000003" y="473" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="normal" text-anchor="start" fill="#37474F" xml:space="preserve" style="white-space:pre">data flow</text>
+<path d="M420.88000000000005,469 L444.88000000000005,469" fill="none" stroke="#607D8B" stroke-width="1.3" stroke-dasharray="5,4" marker-end="url(#ahm)"/>
+<text x="450.88000000000005" y="473" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="normal" text-anchor="start" fill="#37474F" xml:space="preserve" style="white-space:pre">manual decision</text></svg>

@@ -14126,3 +14126,4497 @@ The central principle is:
 Simmons, J. P., Nelson, L. D., & Simonsohn, U. (2011). *False-positive psychology: Undisclosed flexibility in data collection and analysis allows presenting anything as significant*. **Psychological Science, 22**(11), 1359–1366.
 
 Nosek, B. A., Ebersole, C. R., DeHaven, A. C., & Mellor, D. T. (2018). *The preregistration revolution*. **Proceedings of the National Academy of Sciences, 115**(11), 2600–2606.
+
+## 18. harbor/task.toml, bar.json, requirements.lock, instruction.md
+
+### What I am trying to do
+
+At this point the statistical task already exists.
+
+I have a synthetic cricket world, a public history, future fixtures, an exact scorer, hidden truth, a reference forecaster, careless baselines and a pass rule that I chose before running the model pilots.
+
+What I still need is the infrastructure that tells Harbor how to execute all of that.
+
+These files are the boundary between the benchmark I designed and the agent that will actually attempt it.
+
+`task.toml` tells Harbor how to run the containers and what artifacts must survive from the agent environment into the verifier.
+
+`bar.json` contains the grading threshold as data.
+
+`requirements.lock` fixes the Python environment.
+
+`instruction.md` is the first page the agent sees.
+
+Together they answer four different questions:
+
+```text
+How is the task executed?
+
+What exactly counts as passing?
+
+Which software versions define the environment?
+
+What is the agent told before it begins?
+```
+
+I keep those responsibilities separate because they serve different audiences.
+
+Harbor needs the execution configuration.
+
+The verifier needs the grading rule.
+
+The containers need the dependency versions.
+
+The agent needs the task instructions.
+
+---
+
+### Why Harbor is the execution layer
+
+I package the task in Harbor because I need more than a static collection of files.
+
+The agent has to work inside a controlled container, create a solution, and then have that solution evaluated in a separate environment that it never controls.
+
+Harbor provides that execution model.
+
+The current Harbor task format uses a task directory containing configuration, natural-language instructions, an agent environment, verifier tests and an optional oracle or reference solution. Current Harbor and Terminal-Bench documentation also place `artifacts` at the top level of `task.toml` and support a separate verifier environment so the verifier does not inherit the agent's mutable container state.
+
+That separation matters especially for this benchmark because I am explicitly testing whether the agent leaves the engine unchanged.
+
+I do not want the same container that the agent modified to become the authority that decides whether those modifications were allowed.
+
+---
+
+### `task.toml`
+
+`task.toml` is the execution contract for Harbor.
+
+The file begins with:
+
+```toml
+schema_version = "1.4"
+```
+
+which identifies the task configuration schema used by this repository.
+
+Current Harbor task tooling also uses schema version `1.4`, although the exact metadata conventions can differ between Harbor datasets and benchmark-specific contribution templates.
+
+The important point for me is that this file is not descriptive documentation alone.
+
+Harbor actually reads it to decide what to build, what to preserve and how long each phase may run.
+
+---
+
+### The stable task identity
+
+The task name is:
+
+```text
+collinear-siddharthshashankkumar/t20-exact-forecast
+```
+
+I treat this slug as a stable identity.
+
+Once I begin running pilots against a task under that name, I do not want later iterations silently referring to a different benchmark under the same identifier.
+
+Versioning can change deliberately.
+
+The identity should not drift casually.
+
+That makes experiment logs easier to interpret because the name continues to refer to one benchmark lineage.
+
+---
+
+### Description and keywords
+
+The description summarizes the actual inference problem:
+
+```text
+Forecast match win probabilities in a synthetic T20 league
+from ball-by-ball history.
+```
+
+It also states the unusual grading property: forecasts are compared with the true probabilities rather than with realized future match winners.
+
+The keywords emphasize:
+
+```text
+probabilistic forecasting
+statistical inference
+shrinkage
+simulation
+proper scoring rules
+```
+
+Those are the concepts I actually want the task to test.
+
+I avoid describing it merely as:
+
+```text
+cricket analytics
+```
+
+because cricket is the environment, not the core technical challenge.
+
+The technical problem is latent-state estimation and probabilistic forecasting inside a known stochastic simulator.
+
+---
+
+### Authorship metadata
+
+I keep authorship information in the task metadata so that the generated task remains traceable to its author.
+
+The configuration records my name and contact information.
+
+This does not affect grading.
+
+Its purpose is provenance.
+
+A reviewer should be able to identify who designed the task, just as the calibration files record where the data came from and the design document records why hidden constants exist.
+
+I treat benchmark provenance the same way I treated model provenance earlier in the project: decisions and ownership should not become anonymous simply because the task has been packaged.
+
+---
+
+### The artifacts boundary
+
+The top-level configuration contains:
+
+```toml
+artifacts = ["/app/solution", "/app/engine"]
+```
+
+This line is extremely important.
+
+The verifier runs in a separate container.
+
+When the agent's environment disappears, Harbor needs to know which files should be transferred into the verifier's environment.
+
+I preserve two directories.
+
+The first is:
+
+```text
+/app/solution
+```
+
+because that contains the candidate's submitted forecaster.
+
+The second is:
+
+```text
+/app/engine
+```
+
+because I also want the verifier to check that the public engine has not been modified.
+
+So the verifier receives both:
+
+```text
+what the agent created
+```
+
+and:
+
+```text
+the engine the agent was forbidden to alter.
+```
+
+Current Harbor documentation explicitly describes top-level `artifacts` as the files or directories transferred from the agent container to a separate verifier container.
+
+This is how the rule:
+
+> **Do not modify the engine**
+
+becomes mechanically checkable instead of being only an instruction.
+
+---
+
+### Why I use a separate verifier
+
+The verifier configuration uses:
+
+```toml
+environment_mode = "separate"
+```
+
+I want verification to happen in a clean environment that the agent never occupied.
+
+If the verifier ran inside the same mutable container, the agent could potentially affect installed packages, filesystem state or verification dependencies.
+
+A separate verifier provides a much cleaner trust boundary.
+
+The agent can modify its own environment while solving the task.
+
+When it finishes, Harbor extracts only the declared artifacts and evaluates them in another container.
+
+Current Terminal-Bench guidance explicitly requires or recommends this separate-verifier pattern because shared verification can inherit agent-created state.
+
+For this task, that isolation is particularly valuable because part of the verifier's job is to decide whether the agent respected the public-engine boundary.
+
+---
+
+### The agent timeout
+
+I set:
+
+```toml
+[agent]
+timeout_sec = 10800.0
+```
+
+which gives the agent three hours.
+
+This is intentionally generous.
+
+I do not want a model to fail because I guessed too aggressively about how long inference or coding should take.
+
+The longest pilot completed in roughly:
+
+```text
+66 minutes
+```
+
+which leaves substantial margin.
+
+My intention is that the benchmark test planning, statistical inference and implementation quality.
+
+It is not supposed to become a race against an artificially short wall clock.
+
+So the timeout is a safety ceiling rather than a target runtime.
+
+---
+
+### The verifier timeout
+
+The verifier receives the same three-hour ceiling:
+
+```toml
+[verifier]
+timeout_sec = 10800.0
+```
+
+Again, this is deliberately larger than I expect normal verification to require.
+
+The verifier may need to execute the submitted forecaster across several graded league folders and then compute the final regret.
+
+I do not want a correct but somewhat slower implementation to be misclassified solely because verification was given an unnecessarily tight runtime budget.
+
+The actual resource limits still constrain how much computation a solution can use.
+
+---
+
+### CPU and memory limits
+
+Both sides receive:
+
+```text
+2 CPUs
+4096 MB memory
+10240 MB storage
+```
+
+These limits are enough for the reference forecaster while still defining a reasonably modest environment.
+
+The reference was designed around NumPy, pandas and SciPy rather than GPU training or massive parallel infrastructure.
+
+So the resource specification reflects the task I actually designed.
+
+An agent should not need dozens of cores or accelerators to solve the benchmark.
+
+The difficult part is statistical reasoning and implementation, not raw hardware.
+
+---
+
+### Why the limits matter for fairness
+
+Resource limits are part of the task specification.
+
+Without them, two runs could effectively be different benchmarks.
+
+One agent might receive a small local machine while another receives enough hardware to perform huge brute-force searches or enormous Monte Carlo sweeps.
+
+By fixing CPU, memory and storage in the environment configuration, I make computational budget part of the reproducible experiment.
+
+This follows the same principle I used when locking Python package versions.
+
+The environment is part of the method.
+
+---
+
+### Network access
+
+The task environment declares:
+
+```toml
+network_mode = "public"
+```
+
+This does **not** mean that the forecasting problem itself requires internet access.
+
+The benchmark data are already inside the container.
+
+The engine is local.
+
+The history is local.
+
+The solution should not need an external cricket API, website or live dataset.
+
+I keep public networking available because the agent harness may need network access to install or communicate with the model infrastructure used by the evaluation system.
+
+Current Harbor supports `public`, `no-network` and allowlisted network policies, with public access serving as the standard open-network baseline in several task configurations.
+
+So the network exists for the execution harness, not because the statistical task depends on outside information.
+
+---
+
+### The verifier network decision
+
+The verifier does not need the internet.
+
+Its inputs are already available locally: the submitted solution, the preserved engine, the hidden grading data and the verification code.
+
+I therefore conceptually want the verifier to have no reason to make outside network requests.
+
+In this repository I leave an explicit verifier `no-network` mode undeclared because the local Docker Desktop setup used during development rejected that configuration.
+
+I record this as an implementation limitation rather than pretending the verifier requires external access.
+
+The important security property remains the separate container and the narrow artifact transfer.
+
+---
+
+### `bar.json`
+
+I keep the grading threshold in its own machine-readable file:
+
+```json
+{
+  "relative_tolerance": 0.10,
+  "absolute_tolerance": 0.0,
+  "clip": 0.002,
+  "rule": "total regret over the graded leagues at most the reference's total times 1.10",
+  "status": "Pre-registered. See DECISIONS.md. Fixed before any model pilot."
+}
+```
+
+This file exists because I do not want the grading rule duplicated manually in several places.
+
+If the tolerance appears separately in Python, the handbook and the instructions, those copies can drift.
+
+Instead, I treat `bar.json` as the authoritative small data object describing the threshold.
+
+The packager can read it.
+
+The grader can read it.
+
+The handbook can be generated from it.
+
+So the numerical rule is defined once.
+
+---
+
+### Relative tolerance
+
+The important value is:
+
+```text
+relative_tolerance = 0.10
+```
+
+which encodes the ten-percent tolerance chosen in File 17.
+
+Conceptually, the aggregated rule is:
+
+$$
+R_{\text{submission,total}}
+\le
+1.10
+R_{\text{reference,total}}.
+$$
+
+This is not an arbitrary number selected after the model pilots.
+
+The bar analysis showed that aggregated simulation noise was around one percent while the nearest deliberately careless tier remained around thirty percent worse than the reference.
+
+Ten percent sits between those two scales.
+
+`bar.json` is therefore the machine-readable result of that earlier statistical design work.
+
+---
+
+### Absolute tolerance
+
+I set:
+
+```text
+absolute_tolerance = 0.0
+```
+
+because the intended rule is reference-relative rather than a mixture of relative and absolute slack.
+
+I do not want an additional hidden additive allowance quietly changing the threshold when regret values are small.
+
+The criterion is supposed to remain simple:
+
+> **Stay within the stated percentage of the reference total.**
+
+If I later introduced an absolute term, that would be another grading decision requiring its own justification.
+
+For this task I do not need it.
+
+---
+
+### The clip in `bar.json`
+
+I also store:
+
+```text
+clip = 0.002
+```
+
+which matches the probability floor in `ExactScorer`.
+
+That matters because the handbook, task packager and verifier should agree on the exact scoring rule.
+
+If the documentation says forecasts are clipped at `0.002` but the grader uses `0.001`, the benchmark no longer has one definition.
+
+Keeping the value alongside the pass threshold makes the grading contract explicit.
+
+---
+
+### Recording preregistration status
+
+The file also contains:
+
+```text
+Pre-registered. See DECISIONS.md. Fixed before any model pilot.
+```
+
+This is not used numerically.
+
+It exists to document the chronology established in File 17.
+
+I want someone inspecting the packaged task to know that the threshold was not picked after seeing model performance.
+
+The actual evidence is in version history and `DECISIONS.md`.
+
+The field here serves as a pointer to that evidence.
+
+---
+
+### Why I keep the rule as data
+
+Keeping the bar as data solves a subtle documentation problem.
+
+I want the agent to know exactly how it is graded.
+
+I also want the verifier to use exactly that same rule.
+
+So instead of manually writing:
+
+```text
+10 percent
+```
+
+in several files, the packager can read:
+
+```text
+bar.json
+```
+
+and insert the same value into the handbook.
+
+That makes it much harder for the public explanation and private grader to drift apart.
+
+The grading rule becomes part of the build rather than a prose convention.
+
+---
+
+### `requirements.lock`
+
+The Python dependency file contains only:
+
+```text
+numpy==2.4.4
+pandas==3.0.2
+scipy==1.17.1
+```
+
+I deliberately pin exact versions.
+
+These three libraries cover essentially all of the numerical work in the task.
+
+NumPy handles arrays, random generation and vectorized simulation.
+
+pandas handles the public league tables.
+
+SciPy provides the numerical optimizer used by the reference forecaster.
+
+I do not need a large machine-learning framework.
+
+That helps keep the environment relatively transparent.
+
+---
+
+### Why exact package versions matter
+
+A reproducible benchmark requires more than reproducible source code.
+
+Numerical libraries change.
+
+Optimization behaviour can change.
+
+Data-type defaults can change.
+
+Serialization details can change.
+
+Random or floating-point behaviour can change subtly between implementations and versions.
+
+This project already demonstrated that tiny numerical differences can cause a seeded stochastic simulation eventually to diverge.
+
+So I do not want:
+
+```text
+numpy>=2
+```
+
+or simply:
+
+```text
+scipy
+```
+
+and then hope that future environments behave identically.
+
+I pin the actual versions used by the benchmark.
+
+Peng's discussion of reproducible computational research emphasizes that the computational environment is part of what must be preserved alongside the code and data (Peng, 2011).
+
+That is especially relevant here because the benchmark's outputs are numerical and path-dependent.
+
+---
+
+### Why the dependency list is intentionally small
+
+A small dependency surface also makes the task easier to audit.
+
+The world generator and reference model do not depend on dozens of hidden packages.
+
+Most of the numerical machinery is visible in ordinary Python, NumPy and SciPy.
+
+This makes it easier for a reviewer to understand where a result came from.
+
+It also reduces the risk that some unused framework or transitive dependency becomes an accidental source of nondeterminism.
+
+The environment is deliberately boring.
+
+That is a strength for a benchmark.
+
+---
+
+### `instruction.md`
+
+`instruction.md` is the first document the agent sees.
+
+Everything before this point has been written mainly for the benchmark builder and reviewer.
+
+This file is written for the solver.
+
+I want it to be short.
+
+The agent should understand the task immediately and then know where to find the detailed handbook.
+
+I do not want the first page to become a condensed copy of every design decision I made.
+
+---
+
+### The title tells the core problem
+
+The instruction begins with:
+
+```text
+Forecast a simulated T20 league, graded against the exact truth
+```
+
+That one sentence establishes both the domain and the unusual evaluation design.
+
+The agent immediately knows it is producing probabilistic forecasts rather than predicting binary winners.
+
+It also knows the benchmark owns the underlying simulator and therefore has access to the probability truth.
+
+---
+
+### Telling the agent where the evidence lives
+
+The instruction identifies three important locations.
+
+The public league data are under:
+
+```text
+/app/league/
+```
+
+The detailed documentation is under:
+
+```text
+/app/docs/handbook.md
+```
+
+and the public simulator is under:
+
+```text
+/app/engine/
+```
+
+I describe the engine as having every hidden value removed.
+
+That is an important promise.
+
+The agent is allowed to inspect how the stochastic ball model works.
+
+It simply cannot inspect the hidden latent values used by the real league.
+
+So the challenge is not reverse engineering undocumented game mechanics.
+
+The challenge is estimating hidden values from the public history.
+
+---
+
+### The required deliverable
+
+The task asks for one program:
+
+```text
+/app/solution/forecast.py
+```
+
+with the command:
+
+```bash
+python solution/forecast.py --league <folder> --out <file.csv>
+```
+
+This is intentionally explicit.
+
+The agent does not have to guess what filename the grader searches for or what command-line interface it expects.
+
+The solution receives a league folder and must write forecasts to the requested output path.
+
+That interface is sufficient for the grader to run the same program against both visible and unseen leagues.
+
+---
+
+### Why everything must live in `/app/solution`
+
+I tell the agent:
+
+```text
+Everything your program needs must live under /app/solution/.
+```
+
+That simplifies artifact collection.
+
+Harbor only has to preserve the declared solution directory.
+
+It also discourages the candidate from depending on random temporary files elsewhere in the container.
+
+A self-contained solution is easier to verify, reproduce and inspect.
+
+---
+
+### The starter solution
+
+The task already contains a starter that predicts:
+
+```text
+0.5
+```
+
+for every fixture.
+
+That means the initial repository is runnable.
+
+A model can inspect the required output format and execute the full submission path before it writes a sophisticated estimator.
+
+This is useful ergonomically.
+
+The task begins from a valid but weak forecasting program instead of from an empty directory.
+
+The agent's job is simply:
+
+> **Replace the coin flip with something better.**
+
+---
+
+### The one explicit prohibition
+
+The instruction says:
+
+```text
+Do not change /app/engine/.
+```
+
+This is the central integrity rule.
+
+The public engine exists so the solver can use it.
+
+It is not part of the deliverable.
+
+Changing it could let a solution alter the semantics of probability calculation or create disagreement between the public and private versions.
+
+That is why `/app/engine` is also preserved as an artifact and checked by the verifier.
+
+The instruction and the infrastructure therefore enforce the same boundary.
+
+---
+
+### How I explain grading to the agent
+
+I tell the agent that the grader runs the program on the visible league and on additional leagues generated by the same process that it has not seen.
+
+That communicates the generalization requirement without exposing any hidden seeds or truths.
+
+I also explain that, because the worlds are simulated, the true home-win probability is known.
+
+The forecast is therefore graded by expected log loss against that probability.
+
+No future match winner is used.
+
+This is the most important conceptual fact about the benchmark, so it belongs on the first page rather than being buried deep in the handbook.
+
+---
+
+### Why I point to the handbook instead of explaining everything here
+
+The instruction deliberately stays short.
+
+The exact regret formula, probability clipping, pass tolerance, runtime rules and detailed league structure already exist in the handbook.
+
+Duplicating all of that into `instruction.md` would create another place where wording or numbers could become inconsistent.
+
+So I give the agent the essential rule and point it to:
+
+```text
+/app/docs/handbook.md
+```
+
+for the complete contract.
+
+The first page tells the solver what to do.
+
+The handbook tells it precisely how the world and grader work.
+
+---
+
+### What I deliberately do not tell the agent
+
+I do not describe the implementation of the reference forecaster.
+
+The instruction only says that the submission is compared with a reference using the same public information.
+
+I do not reveal its ridge strengths.
+
+I do not reveal the hidden population spreads.
+
+I do not reveal the held-out seeds.
+
+I do not reveal the true probabilities.
+
+I do not describe the careless ladder tiers.
+
+Those details would change the statistical problem.
+
+The agent should solve the inference task, not reproduce my private benchmark-development code.
+
+---
+
+### Why saying the reference uses only public files matters
+
+Although I do not explain the reference algorithm, it is important that the agent knows the comparison is fair.
+
+The reference does not receive a secret copy of the `SkillBook`.
+
+File 16 deliberately loads the public league back from disk before fitting the reference.
+
+So the statement:
+
+> **The reference uses only the files you have**
+
+is a meaningful guarantee.
+
+The reference may have designer advantages such as informed regularization, but it does not receive the hidden truth as training input.
+
+---
+
+### Visible and unseen evaluation
+
+The instruction explains that the solution is not evaluated only on the league the agent can inspect.
+
+The grader also runs it on unseen leagues produced by the same generator.
+
+This is essential because otherwise a long-horizon agent could overfit its implementation to peculiarities of the visible world.
+
+The benchmark is intended to reward a method.
+
+Not a memorized set of predictions.
+
+The same executable must therefore work against new league folders.
+
+---
+
+### The wording of the pass rule
+
+The public instruction says that regret is combined over the graded leagues and compared with the reference according to the stated tolerance.
+
+It also points the solver to the handbook for the exact rule.
+
+That is important because the mathematical definition should have one canonical explanation.
+
+`bar.json` contains the machine-readable numbers.
+
+The handbook contains the full human-readable formula.
+
+The instruction only needs to make the existence and nature of the threshold clear.
+
+---
+
+### “Only a perfect result counts as solved”
+
+The final line says:
+
+```text
+Only a perfect result counts as solved.
+```
+
+I use that wording in the Harbor sense of the task reward.
+
+The verifier decides whether the complete submission satisfies the benchmark contract.
+
+This is not a partial-credit leaderboard where a slightly better forecast automatically receives a partially solved status.
+
+The task has a precommitted pass criterion.
+
+The candidate either satisfies it or does not.
+
+---
+
+### Why these files are part of reproducibility
+
+I think of reproducibility in this benchmark as requiring four things simultaneously.
+
+I need the same code.
+
+I need the same data.
+
+I need the same numerical environment.
+
+And I need the same execution and grading contract.
+
+`task.toml` captures much of the execution contract.
+
+`bar.json` captures the grading threshold.
+
+`requirements.lock` captures the main Python numerical environment.
+
+`instruction.md` captures the task the agent was actually told to solve.
+
+Without those files, reproducing the simulator alone would not reproduce the experiment.
+
+---
+
+### The public/private boundary at the Harbor level
+
+Earlier files established the statistical boundary:
+
+```text
+History is public
+SkillBook is private
+```
+
+At the packaging layer, I now establish the operational boundary:
+
+```text
+agent container
+        |
+        | only declared artifacts
+        v
+separate verifier container
+```
+
+The agent sees the public task environment.
+
+The verifier owns the hidden grading data.
+
+Only the solution and the engine state cross from one side to the other.
+
+This is the infrastructure version of the same information-discipline principle I have used throughout the project.
+
+---
+
+### How this fits into the full benchmark
+
+The full path now looks like:
+
+```text
+real cricket
+      |
+      v
+statistical calibration
+      |
+      v
+synthetic world generator
+      |
+      v
+public histories + hidden truths
+      |
+      v
+task_data
+      |
+      v
+Harbor task package
+      |
+      +-------------------+
+      |                   |
+      v                   v
+agent container      verifier container
+      |                   |
+      v                   |
+forecast.py               |
+      |                   |
+      +---- artifacts ----+
+                          |
+                          v
+                    exact grader
+                          |
+                          v
+                     pass / fail
+```
+
+This is the point where all of the statistical work becomes an executable agent benchmark.
+
+---
+
+### How I think about these files
+
+I think of these four files as the **contract around the benchmark**.
+
+The simulator defines the world.
+
+The scorer defines mathematical correctness.
+
+The bar analysis defines what level of performance is sufficient.
+
+These Harbor files define how that experiment is actually presented and enforced.
+
+`task.toml` tells the infrastructure what may happen.
+
+`bar.json` tells the grader where the line is.
+
+`requirements.lock` tells the computer which numerical environment exists.
+
+`instruction.md` tells the agent what it is responsible for producing.
+
+The central principle is:
+
+> **I make the execution environment, grading threshold, dependency versions and solver instructions explicit artifacts of the benchmark, so that the task being evaluated is the same task I designed and documented.**
+
+### References
+
+Harbor Framework Team. (2026). *Harbor: A framework for evaluating and optimizing agents and models in container environments*. Laude Institute.
+
+Peng, R. D. (2011). *Reproducible research in computational science*. **Science, 334**(6060), 1226–1227.
+
+## 19. task_src/docs/handbook.md
+
+### What I am trying to do
+
+`task_src/docs/handbook.md` is where I write down the complete public contract of the task.
+
+The benchmark contains many hidden quantities, but it should contain no hidden **rules**.
+
+A solver should never fail because the grader relied on some assumption that was never disclosed. If the task expects a program to infer player ability, that ability may be hidden. If the task clips probabilities before scoring, the clipping rule cannot be hidden. If the task contains no true batter-bowler head-to-head effect, I want that structural fact stated. If the engine may be used for self-testing, I want that route explicitly available.
+
+So I think of the handbook as the fairness argument written in prose.
+
+The code determines what the world actually does.
+
+The handbook tells the solver everything about that world that it is entitled to know.
+
+The two should agree.
+
+---
+
+### What the handbook has to contain
+
+I want the handbook to answer every operational question a serious solver should reasonably ask.
+
+It explains what must be predicted, how the program is executed, what output format is expected, how forecasts are scored, how probabilities are clipped, how the pass threshold works, what files are available, what every important column means, how the public ball model works, which quantities are hidden, how those hidden quantities evolve and what restrictions the submitted program must obey.
+
+Conceptually I want:
+
+```text id="b35sc1"
+task objective
++
+data dictionary
++
+public generative model
++
+hidden-state description
++
+scoring rule
++
+pass rule
++
+execution rules
+```
+
+in one document.
+
+That makes the handbook much more than user documentation.
+
+It is the public specification of the benchmark.
+
+---
+
+### The job
+
+The handbook begins with the simplest possible description of the forecasting problem.
+
+There are ten teams.
+
+The solver receives three historical seasons of ball-by-ball cricket and a collection of future fixtures with announced line-ups.
+
+For each future fixture it must predict:
+
+$$
+P(\text{home side wins}).
+$$
+
+This immediately establishes that the task is probabilistic.
+
+The agent is not being asked:
+
+```text id="mu2ye7"
+Which team wins?
+```
+
+It is being asked:
+
+```text id="xwkp9u"
+How likely is the home team to win?
+```
+
+That distinction matters because everything else in the benchmark, from `ExactScorer` to the Monte Carlo engine, is built around calibrated probabilities rather than binary classifications.
+
+---
+
+### The solver has to generalize
+
+The handbook explicitly says that the program is run not only on the visible league but on other leagues of the same kind that the solver has never seen.
+
+That sentence is essential.
+
+Without it, an agent could reasonably treat the visible world as the entire problem.
+
+It might hard-code player IDs, memorize fixture-specific patterns or manually tune constants around seed 101.
+
+The actual benchmark asks for a reusable forecasting method.
+
+So the executable receives a league folder:
+
+```bash id="ndd706"
+python solution/forecast.py \
+    --league <folder> \
+    --out <file.csv>
+```
+
+and must infer what it needs from whichever compatible league folder it is given.
+
+The interface itself communicates the intended abstraction.
+
+The solution operates on a league, not on one fixed dataset.
+
+---
+
+### The output format
+
+The output is deliberately simple.
+
+The program writes two columns:
+
+```text id="0dl781"
+fixture
+p_home
+```
+
+with exactly one row for each fixture listed in:
+
+```text id="5vup31"
+<folder>/fixtures.csv
+```
+
+`fixture` identifies the match.
+
+`p_home` is the forecast probability that the home side wins.
+
+This keeps the submission boundary narrow.
+
+The grader does not need a serialized model, diagnostics, feature files or internal parameters.
+
+It only needs the probability claims that will be scored.
+
+---
+
+### Why I explain the scoring rule completely
+
+The handbook gives the exact scoring equation:
+
+$$
+p\ln\frac{p}{q}
++
+(1-p)\ln\frac{1-p}{1-q}.
+$$
+
+Here:
+
+$$
+p
+$$
+
+is the hidden true home-win probability and:
+
+$$
+q
+$$
+
+is the submitted forecast.
+
+This is the same KL-regret quantity implemented by `ExactScorer`.
+
+I deliberately disclose the formula in full.
+
+There is no advantage to hiding it.
+
+A strictly proper scoring rule is designed so that a forecaster minimizes expected loss by reporting its actual probability belief. Gneiting and Raftery (2007) formalize this property.
+
+So revealing the scoring rule does not create an exploit where the agent should report something other than what it believes.
+
+Instead, it lets the solver understand exactly what kind of mistakes are expensive.
+
+---
+
+### Why I explain that no match result is used
+
+The handbook states that no future match is played for grading and no realized winner is used.
+
+The submission is graded directly against the true fixture probability.
+
+This is one of the most unusual and important aspects of the benchmark.
+
+A solver familiar with ordinary forecasting competitions might otherwise assume that it is being judged by realized log loss.
+
+Instead:
+
+```text id="0b6rei"
+forecast q
+     |
+     v
+compare directly with p
+```
+
+rather than:
+
+```text id="93ag74"
+forecast q
+     |
+     v
+sample future winner
+     |
+     v
+score against one outcome
+```
+
+That tells the solver why luck does not affect the final grade.
+
+---
+
+### Probability clipping
+
+The handbook also states that forecasts are clipped to:
+
+```text id="wnfqc3"
+[{clip}, {one_minus_clip}]
+```
+
+before scoring.
+
+Those values are placeholders in the source handbook.
+
+The packager later fills them using the authoritative values from:
+
+```text id="sh4dco"
+bar.json
+```
+
+With the current bar configuration they become:
+
+```text id="j0xm25"
+[0.002, 0.998]
+```
+
+This has to be public because extreme probability handling directly changes the scoring rule.
+
+An agent should never discover only after grading that a forecast of zero was secretly transformed into something else.
+
+---
+
+### The league regret
+
+For each league I average the fixture penalties.
+
+So if a league contains $N$ future fixtures:
+
+$$
+R_{\text{league}}
+=
+\frac{1}{N}
+\sum_{i=1}^{N}
+R_i.
+$$
+
+This gives one regret value for that world.
+
+The grading rule then combines those world-level values according to the aggregate rule described next.
+
+---
+
+### The reference forecaster
+
+The handbook tells the solver that its regret is compared with a reference forecaster.
+
+I deliberately describe the reference only at a high level:
+
+> **The reference uses only the files you have, the engine you have, and standard statistical practice.**
+
+That sentence performs two jobs.
+
+It assures the solver that the reference does not receive hidden truth as an input.
+
+But it does not reveal the reference implementation.
+
+I do not disclose the exact ridge strengths, fitted parameterization or model-selection logic from `forecasters/ladder.py`.
+
+Those are part of benchmark development, not part of the public task specification.
+
+---
+
+### Why I disclose the reference's simulation budget
+
+I do tell the solver that the reference plays each fixture:
+
+```text id="iwojfb"
+4,000 times
+```
+
+because simulation noise matters.
+
+A candidate using only a tiny number of Monte Carlo copies may have an excellent fitted model but still lose regret because its reported probabilities fluctuate too much.
+
+The handbook explicitly warns:
+
+> **Simulation noise in your own forecasts counts against you, so play each fixture enough times.**
+
+That prevents the candidate from unknowingly failing for a purely numerical reason.
+
+---
+
+### The eight-league rule
+
+The handbook states that the submission is run on:
+
+```text id="81nsdh"
+1 visible league
++
+7 unseen leagues
+```
+
+for a total of eight.
+
+The main condition is that aggregate regret over all eight leagues must stay within the stated percentage of the aggregate reference regret.
+
+The source text also requires the same condition to hold on the seven unseen leagues considered on their own.
+
+That second condition prevents exceptional performance on the visible world from compensating for poor generalization to hidden worlds.
+
+So the public grading contract contains both:
+
+```text id="ppnd5b"
+all eight worlds together
+```
+
+and:
+
+```text id="n9fr69"
+the seven held-out worlds alone.
+```
+
+The solver therefore knows explicitly that visible-world tuning cannot by itself carry the submission.
+
+---
+
+### The tolerance placeholder
+
+The handbook source contains:
+
+```text id="6866vg"
+{relative_pct}
+```
+
+rather than manually writing the percentage.
+
+The packager fills that from:
+
+```text id="5k0ez8"
+bar.json
+```
+
+so the handbook and grader cannot accidentally use different thresholds.
+
+With the current bar this communicates the ten-percent reference-relative tolerance.
+
+I prefer this to maintaining another handwritten copy of the number in documentation.
+
+---
+
+### A useful yardstick for the solver
+
+The handbook includes the sentence:
+
+> **A coin flip has a little under twice the reference's regret.**
+
+This is deliberately more informative than simply saying that the coin flip is worse.
+
+It gives the solver a rough scale.
+
+If an agent develops a model and discovers that its own cross-validation or simulation suggests performance close to a coin flip, it now knows that the method is nowhere near reference quality.
+
+That sentence turned out to matter during the pilots.
+
+One passing Opus run used this yardstick to realize that its initial forecaster was not competitive and continued improving it.
+
+So the sentence makes self-verification easier.
+
+I treat that as a feature of the benchmark, although the design document correctly records that it is also a hint.
+
+---
+
+### Why I warn that individual worlds can behave strangely
+
+Immediately after the coin-flip yardstick I say:
+
+> **On a single league anything can happen.**
+
+This comes directly from the bar and ladder analysis.
+
+Some random worlds contain substantial predictable structure.
+
+Others contain very little.
+
+In a low-signal world even the reference can sit close to, or occasionally behind, the coin flip.
+
+I want the solver to know this.
+
+Otherwise it might inspect one visible-world result, conclude that its whole modelling strategy is wrong and overreact to what is actually normal seed-to-seed variation.
+
+The grading rule is deliberately multi-world because the benchmark already learned this lesson during development.
+
+---
+
+### The league files
+
+The handbook documents the seven tabular files a solver receives for one league.
+
+`balls.csv` contains one row per legal ball.
+
+`matches.csv` contains one row per historical match.
+
+`lineups.csv` identifies the players and roles in each historical match.
+
+`players.csv` gives public player attributes.
+
+`venues.csv` gives public venue attributes.
+
+`fixtures.csv` lists the future matches to forecast.
+
+`fixture_lineups.csv` gives the announced players for those future matches.
+
+I include the exact column names in the handbook.
+
+The agent should not need to inspect source code merely to discover the data schema.
+
+---
+
+### Why the ball file is described precisely
+
+`balls.csv` contains:
+
+```text id="e0jlxj"
+season
+match
+innings
+over
+ball
+batting_team
+bowling_team
+venue
+batter
+bowler
+outcome
+extra
+position
+wickets_before
+runs_before
+target
+```
+
+The scoreboard variables are recorded **before** the current ball.
+
+That detail matters when reconstructing the public state model.
+
+If the solver interpreted `runs_before` as the score after the ball, its pressure calculation would be shifted.
+
+So these semantic details belong in the handbook, not just in implementation comments.
+
+---
+
+### Outcome encoding
+
+The handbook explicitly states that:
+
+```text id="y2gcfr"
+outcome ∈ {W, 0, 1, 2, 4, 6}
+```
+
+and that:
+
+```text id="0a3wce"
+extra = 1
+```
+
+means the same delivery also produced one extra run.
+
+This explains the coarse event model that the engine uses.
+
+A solver therefore does not have to infer what `W` or the numeric-looking string `"0"` means from examples.
+
+---
+
+### Batting position and bowling slot
+
+I also document that:
+
+```text id="46dlrv"
+position
+```
+
+starts from zero.
+
+Likewise:
+
+```text id="bd4w9k"
+bowling_slot = -1
+```
+
+means that the player does not belong to the five-player bowling rotation.
+
+These details are small but operationally important.
+
+A single off-by-one interpretation of batting position could corrupt every state feature while still producing code that runs.
+
+The handbook exists partly to prevent exactly that kind of avoidable failure.
+
+---
+
+### `target`
+
+The handbook states that:
+
+```text id="di4fsm"
+target = 0
+```
+
+during the first innings.
+
+That distinguishes the absence of a chase target from a missing value.
+
+During the second innings the target contains the required score.
+
+This allows a solver to reconstruct the engine's public pressure feature directly from the data.
+
+---
+
+### Pointing to `engine/league_io.py`
+
+I tell the solver that:
+
+```text id="84whz6"
+engine/league_io.py
+```
+
+already reads a league folder into the objects used by the engine.
+
+That is useful because the candidate does not have to rewrite serialization code before doing any statistical work.
+
+It can read the CSV files manually if it wants.
+
+But it can also use the exact public loading path already tested by the benchmark.
+
+Again, the goal is to test modelling, not punish the solver with undocumented plumbing.
+
+---
+
+### The engine is the exact specification
+
+The handbook describes the ball model in prose, but it explicitly says:
+
+> **`engine/model.py` is the engine, and `engine/public.json` holds its public constants. They are the exact definition.**
+
+This resolves a common documentation problem.
+
+Natural-language explanations inevitably compress implementation detail.
+
+If there is ever ambiguity between a sentence in the handbook and the exact numerical mechanics, the public code is authoritative.
+
+The prose helps the solver build intuition.
+
+The engine supplies the exact executable definition.
+
+---
+
+### The public part of the ball model
+
+The handbook explains the logits as a sum of several components.
+
+The first is the over profile and batting-position shift.
+
+The second is the match situation, including wickets relative to what is typical at that stage.
+
+In a chase, the engine adds both the second-innings shift and the pressure response.
+
+The third class contains hidden scalar coordinates for batting style, batting quality, bowling type, bowling quality and conditions.
+
+Those hidden scalar values act along fixed public directions.
+
+This is the central statistical architecture of the task.
+
+The solver knows:
+
+```text id="ym7sg6"
+the directions
+```
+
+but must estimate:
+
+```text id="6f5bvd"
+the coordinates along those directions.
+```
+
+---
+
+### Public chase pressure
+
+The handbook explicitly explains the pressure variable as the logarithm of:
+
+$$
+\frac{\text{required run rate}}
+{\text{usual rate from this stage onward}}
+$$
+
+clipped to:
+
+```text id="yij0pn"
+[-1, 1.2].
+```
+
+This is enough for a solver to understand why chasing behaviour changes as a target becomes harder.
+
+It also matches the public implementation in the engine.
+
+Again, there is no need to reverse engineer the feature from historical outcomes.
+
+It is part of the known model.
+
+---
+
+### The public directions
+
+I name the five hidden coordinates directly:
+
+```text id="tb9rvd"
+batter style
+batter quality
+bowler type
+bowler quality
+conditions
+```
+
+Each is one scalar quantity acting along one public six-outcome vector.
+
+This tells the solver what kind of latent structure exists.
+
+The task is not asking it to discover a completely arbitrary hidden neural network.
+
+There is a low-dimensional generative model.
+
+The statistical challenge is to estimate its hidden state from noisy cricket history.
+
+---
+
+### Public match mechanics
+
+The handbook also gives the deterministic structure surrounding the probability model.
+
+Batters enter in line-up order.
+
+Strike changes on odd runs and at over boundaries.
+
+Five bowlers rotate one over at a time.
+
+An innings ends after 120 legal balls, ten wickets or a successful chase.
+
+The toss is a coin flip.
+
+The toss winner always chases.
+
+A tied match is decided by a coin flip.
+
+These mechanics are not things the solver should have to infer statistically.
+
+They are rules of the artificial world and therefore public.
+
+---
+
+### Why I describe the hidden structure
+
+The next section tells the solver what kinds of latent quantities exist.
+
+This may initially sound generous.
+
+I am telling the agent that batting quality consists of talent plus drifting form, that venue effects exist, that dew exists and that player transfers occur.
+
+But the task is supposed to measure estimation and verification, not blind model discovery.
+
+If the entire hidden model class were secret, failure could simply mean that the solver guessed the wrong simulator family.
+
+Instead, I disclose the **structure** and hide the **magnitudes and realizations**.
+
+That makes the problem much cleaner.
+
+---
+
+### Hidden batter structure
+
+The handbook says that batting style is fixed.
+
+Batting quality contains:
+
+```text id="61zcji"
+fixed talent
++
+slowly drifting form.
+```
+
+Form is mean reverting.
+
+The handbook also tells the solver that a batter can have a small quality difference against pace and spin.
+
+And because the engine models every player's batting appearances, every player has these batting coordinates.
+
+The solver therefore knows to consider both long-term player evidence and recency.
+
+What it does not know is how large each component is.
+
+---
+
+### Hidden bowling structure
+
+Bowling type is related to the public pace/spin label but contains additional hidden personal variation.
+
+Bowling quality also consists of:
+
+```text id="9f93qz"
+talent
++
+drifting form.
+```
+
+This means public bowling style is informative but incomplete.
+
+A model that treats every spinner as identical throws away signal.
+
+A model that ignores the public label also throws away useful prior structure.
+
+The handbook makes that relationship explicit.
+
+---
+
+### Hidden conditions
+
+The condition structure is broader.
+
+There is a hidden scoring level for each venue.
+
+The league-wide scoring level changes with season and continues moving into the forecast season.
+
+Every match receives a fresh pitch-on-the-day effect shared by both innings.
+
+Some grounds have dew that helps the chase.
+
+There is a general second-innings disadvantage.
+
+Batters receive a home-ground lift.
+
+Each batter can have a personal affinity for particular venues.
+
+And there are small league-wide effects for batter handedness against bowling style and pitch type against bowling style.
+
+This tells the solver the kinds of persistent and transient environmental effects it may want to estimate.
+
+Again, none of their numerical scales are disclosed.
+
+---
+
+### The head-to-head sentence
+
+One sentence does unusually important work:
+
+> **There is no effect that belongs to one specific batter against one specific bowler.**
+
+I include this explicitly because the task has a natural statistical trap.
+
+Cricket discussions frequently emphasize head-to-head records.
+
+A solver could easily spend a large number of parameters fitting one effect for every batter-bowler pair.
+
+File 6 found those pair effects barely repeat.
+
+The true synthetic world therefore deliberately does not contain them.
+
+If I kept that fact secret, the benchmark could reward the agent for guessing my preferred modelling philosophy.
+
+Instead, I tell it.
+
+A model that still overfits raw head-to-head tables does so despite being warned about the true structure.
+
+That makes the resulting failure much more meaningful.
+
+---
+
+### Transfers and rotating line-ups
+
+The handbook tells the solver that roughly a quarter of players change teams between seasons and that line-ups rotate heavily from match to match.
+
+This is important because it explains why team identity alone is unreliable.
+
+A solver should not assume:
+
+```text id="v9e4zu"
+team strength = permanent latent constant.
+```
+
+Player information moves between teams.
+
+The announced future line-ups therefore matter.
+
+This is one of the reasons the benchmark rewards player-level modelling rather than simple standings-based prediction.
+
+---
+
+### The unseen final off-season
+
+The handbook states that future fixtures occur at the beginning of the next season after one more off-season of skill drift.
+
+This tells the solver something subtle but important.
+
+The last historical observation of a player is not the exact current hidden skill.
+
+Form has moved again after the visible history ended.
+
+So even a perfect estimator of the end-of-season state faces uncertainty at forecast time.
+
+This is part of why the benchmark remains probabilistic even for a very strong estimator.
+
+---
+
+### What I deliberately withhold
+
+The handbook names the hidden variables but does not reveal their scales.
+
+I do not tell the solver the population standard deviation of batting style.
+
+I do not reveal the batting- or bowling-quality spreads.
+
+I do not give the talent/form variance split.
+
+I do not give the form-memory timescale.
+
+I do not reveal the venue-level spread.
+
+I do not state the numerical home lift, dew effect, wear effect or day-level variation.
+
+I do not disclose the batter-venue affinity spread.
+
+Those quantities are precisely what historical inference is supposed to recover.
+
+The distinction is:
+
+```text id="red4lb"
+what exists          -> public
+
+how large it is      -> hidden
+
+who has which value  -> hidden
+```
+
+That is the information boundary I want.
+
+---
+
+### Why revealing the scoring rule costs nothing
+
+The scoring rule is completely different.
+
+There is no benefit to hiding its parameters.
+
+Because the log score is strictly proper, the optimal strategy remains to report the forecaster's genuine estimate of $p$.
+
+Knowing:
+
+```text id="z7ap13"
+the formula
+the clipping rule
+the tolerance
+```
+
+does not give a solver a reason to distort its probabilities away from its beliefs.
+
+So I disclose all of them.
+
+The hidden information should be hidden because it constitutes the statistical target, not merely because hiding things makes the task harder.
+
+---
+
+### Determinism requirement
+
+The program must return the same output every time it runs on the same league folder.
+
+The handbook explicitly says:
+
+> **Fix your random seeds.**
+
+This matters because Monte Carlo prediction is an obvious solution strategy.
+
+Without deterministic seeding, running the same submission twice could produce two different probability files and potentially two different pass/fail outcomes.
+
+The benchmark should evaluate an implementation, not whichever simulation draw happened to occur that run.
+
+So determinism is part of the program contract.
+
+---
+
+### Runtime and compute contract
+
+The handbook gives the submission:
+
+```text id="nij0o6"
+12 minutes per league
+```
+
+on:
+
+```text id="edkpdw"
+2 CPU cores.
+```
+
+It also states that the solution may not use the network.
+
+These are public because computational resources are part of the problem.
+
+A candidate has to design something that works within the actual verifier budget.
+
+I do not want a solver to build a statistically excellent method and only discover afterward that the intended environment allows far less computation than it assumed.
+
+---
+
+### Allowed dependencies
+
+The solution may use:
+
+```text id="wf2gh1"
+engine
+numpy
+pandas
+scipy
+Python standard library
+```
+
+Everything it needs must live under:
+
+```text id="tfut84"
+solution/
+```
+
+This matches the controlled environment described by the Harbor configuration and dependency lock.
+
+The solver is therefore free to implement substantial statistical machinery without depending on an arbitrary package ecosystem.
+
+---
+
+### The engine must remain unchanged
+
+The handbook repeats the prohibition:
+
+```text id="2kxbki"
+Do not change anything under engine/.
+```
+
+That repetition is intentional.
+
+The engine is both a tool and part of the benchmark definition.
+
+The solver may import it, inspect it and call it.
+
+It may not alter it.
+
+This rule appears in both `instruction.md` and the handbook because it is important enough that a solver should not miss it.
+
+---
+
+### The sentence that exposes the intended self-check
+
+The final program rule says:
+
+> **The engine is yours to use in any way you like, including to test your own method on leagues you simulate yourself.**
+
+This sentence is extremely important to the design of the long-horizon task.
+
+The engine contains the public mechanics.
+
+A capable agent can use those mechanics to create its own simulated experiments.
+
+It can build a model, generate synthetic worlds, test whether its estimator recovers hidden structure and detect overconfidence before submitting.
+
+So the task contains its own route to empirical self-verification.
+
+The solver is not limited to staring at one historical dataset and guessing whether its method works.
+
+It can conduct experiments.
+
+---
+
+### Why that sentence is also a hint
+
+The design document acknowledges that making this capability explicit helps a capable agent.
+
+An agent that otherwise would not think of simulation-based self-testing is being told that this is allowed.
+
+But this is deliberate.
+
+The benchmark is intended to measure whether an agent can perform long-horizon scientific and engineering work, including iterative verification.
+
+I do not want successful self-checking to depend on discovering an undocumented permission.
+
+The route to verification should be available.
+
+The hard part is using it effectively.
+
+---
+
+### The three sentences that matter most
+
+There are three sentences in the handbook that I think do disproportionate work.
+
+The first is:
+
+> **There is no effect that belongs to one specific batter against one specific bowler.**
+
+That prevents the head-to-head failure from being an undisclosed trap.
+
+The second is:
+
+> **A coin flip has a little under twice the reference's regret.**
+
+That gives the solver a meaningful scale for its own validation.
+
+The third is:
+
+> **The engine is yours to use in any way you like, including to test your own method on leagues you simulate yourself.**
+
+That identifies the route by which a strong agent can discover its own modelling mistakes.
+
+Together they turn the task from an opaque guessing exercise into a difficult but inspectable forecasting problem.
+
+---
+
+### Source attribution
+
+The handbook states that the calibration constants ultimately derive from Cricsheet data.
+
+It also states that only aggregate calibration constants are included in the benchmark and that the players, teams and venues in the task are invented.
+
+This is important conceptually.
+
+The generated league is not a disguised historical IPL dataset.
+
+Real cricket supplies the calibrated statistical structure.
+
+The actual task world is synthetic.
+
+---
+
+### Packaging placeholders
+
+The source handbook contains exactly three build placeholders:
+
+```text id="de5l4w"
+{clip}
+{one_minus_clip}
+{relative_pct}
+```
+
+Each appears once.
+
+The packager fills them using:
+
+```text id="x8qrxn"
+bar.json
+```
+
+before the final task is produced.
+
+This gives me a simple reproducibility check.
+
+If a placeholder remains after packaging, the public scoring description is incomplete.
+
+If the value is typed manually instead, it could drift from the grader.
+
+So the placeholder system makes the public contract a build product of the actual grading configuration.
+
+---
+
+### Why I call the handbook the fairness argument
+
+A difficult benchmark can fail for two very different reasons.
+
+The solver can genuinely fail to infer the hidden structure.
+
+Or the benchmark can fail to tell the solver something it needed to know.
+
+Only the first is interesting.
+
+The handbook exists to remove the second explanation as much as possible.
+
+The hidden player quality is not disclosed because estimating it is the task.
+
+The existence of player quality is disclosed.
+
+The hidden form timescale is not disclosed because estimating temporal persistence is part of the task.
+
+The existence of drifting form is disclosed.
+
+The exact future probabilities are hidden because they are the answers.
+
+The scoring rule used to compare against them is fully disclosed.
+
+This is the distinction I want throughout the benchmark:
+
+> **Unknown quantities are allowed. Unknown rules are not.**
+
+---
+
+### How this fits into the complete task
+
+At this point the public side of the benchmark looks like:
+
+```text id="h24tei"
+instruction.md
+      |
+      v
+   handbook.md
+      |
+      +-----------------------------+
+      |                             |
+      v                             v
+public league files            public engine
+      |                             |
+      +--------------+--------------+
+                     |
+                     v
+               solver method
+                     |
+                     v
+                 forecast.csv
+```
+
+The private side contains:
+
+```text id="wq9vy7"
+hidden worlds
+truth probabilities
+reference forecasts
+bar configuration
+verifier
+```
+
+The handbook describes the public contract between those two sides without crossing the information boundary.
+
+---
+
+### How I think about this file
+
+I think of `handbook.md` as the document that makes the benchmark hard **without making it mysterious**.
+
+A solver should know what game it is playing.
+
+It should know how the data are encoded.
+
+It should know the mathematical scoring rule.
+
+It should know the computational restrictions.
+
+It should know which structural effects really exist.
+
+It should know that the engine is reusable for experiments.
+
+What it should not know are the hidden numerical values that historical inference is meant to uncover.
+
+The central principle is:
+
+> **I disclose every rule, interface and structural fact needed to solve and verify the task, while withholding only the latent numerical quantities whose estimation is the task itself. A failure should therefore come from inference, modelling, implementation or verification—not from an undisclosed rule.**
+
+### Reference
+
+Gneiting, T., & Raftery, A. E. (2007). *Strictly proper scoring rules, prediction, and estimation*. **Journal of the American Statistical Association, 102**, 359–378.
+
+## 20. task_src/solution/forecast.py
+
+### What I am trying to do
+
+`task_src/solution/forecast.py` is the starter solution that ships to the agent.
+
+Its purpose is not to solve the forecasting problem.
+
+Its purpose is to make the submission contract impossible to misunderstand.
+
+Before an agent estimates a single player parameter, fits a statistical model or runs the engine, it already has a complete executable program that:
+
+```text
+accepts the required command-line arguments
+reads the future fixtures
+produces one probability per fixture
+writes the correct output columns
+```
+
+So the task does not begin with:
+
+> **Figure out what kind of program the grader expects.**
+
+It begins with:
+
+> **Here is a valid program. Improve its forecasts.**
+
+That is an important fairness decision.
+
+I want the difficulty to come from statistical reasoning and verification, not from guessing the file format or entry point.
+
+---
+
+### The complete starter is deliberately tiny
+
+The entire forecasting logic is:
+
+```python
+fixtures = pd.read_csv(
+    Path(args.league) / "fixtures.csv"
+)
+
+pd.DataFrame(
+    {
+        "fixture": fixtures.fixture,
+        "p_home": 0.5
+    }
+).to_csv(
+    args.out,
+    index=False
+)
+```
+
+The starter makes no attempt to learn from history.
+
+It does not read:
+
+```text
+balls.csv
+matches.csv
+players.csv
+venues.csv
+lineups.csv
+fixture_lineups.csv
+```
+
+It reads only the fixture IDs that need predictions.
+
+For every one of them it reports:
+
+$$
+P(\text{home wins})=0.5.
+$$
+
+So statistically this is exactly the `CoinFlip` forecaster from the ladder.
+
+---
+
+### The command-line interface
+
+The program defines two required arguments:
+
+```python
+parser.add_argument(
+    "--league",
+    required=True
+)
+
+parser.add_argument(
+    "--out",
+    required=True
+)
+```
+
+This matches the interface documented in `instruction.md` and the handbook:
+
+```bash
+python solution/forecast.py \
+    --league <folder> \
+    --out <file.csv>
+```
+
+The league location is therefore not hard-coded.
+
+The same program can be pointed at:
+
+```text
+the visible league
+held-out league A
+held-out league B
+...
+```
+
+without modification.
+
+That property is essential because the grader runs the submitted program on multiple worlds.
+
+---
+
+### Why I use the supplied league path
+
+The script constructs:
+
+```python
+Path(args.league) / "fixtures.csv"
+```
+
+rather than assuming that the task data always live under one fixed path such as:
+
+```text
+/app/league/
+```
+
+This is deliberate.
+
+The visible league may be located there during the agent's work, but the verifier needs to run the same executable against other league folders.
+
+The solution therefore treats the league directory as an input.
+
+That prevents a valid submission from accidentally becoming tied to only the visible dataset.
+
+---
+
+### Reading `fixtures.csv`
+
+The starter only needs:
+
+```text
+fixtures.csv
+```
+
+because it is not attempting to learn anything.
+
+It reads:
+
+```python
+fixtures = pd.read_csv(
+    Path(args.league) / "fixtures.csv"
+)
+```
+
+and uses the existing:
+
+```text
+fixture
+```
+
+column as the identifier for its output.
+
+This provides the agent with a concrete example of how fixture IDs should be propagated.
+
+It does not have to infer whether the grader expects sequential row numbers, match IDs or some other identifier.
+
+The correct key is already demonstrated.
+
+---
+
+### The output contract
+
+The program writes exactly two columns:
+
+```text
+fixture
+p_home
+```
+
+using:
+
+```python
+pd.DataFrame(
+    {
+        "fixture": fixtures.fixture,
+        "p_home": 0.5
+    }
+)
+```
+
+This matches the handbook precisely.
+
+There is one output row for every input fixture.
+
+The order is inherited directly from `fixtures.csv`.
+
+The probability column is named exactly:
+
+```text
+p_home
+```
+
+So an agent beginning work already has a syntactically correct submission artifact.
+
+---
+
+### Why the starter predicts 0.5
+
+I deliberately choose:
+
+```text
+0.5
+```
+
+rather than some random probability or an obviously invalid placeholder.
+
+This is a legitimate probabilistic forecast.
+
+It means:
+
+> **I have no information that distinguishes the two sides.**
+
+That makes it the cleanest possible baseline.
+
+It also matches the coin-flip forecaster used throughout the benchmark design.
+
+So the starter program is not merely a template.
+
+It corresponds to an explicitly measured statistical tier.
+
+---
+
+### The starter already satisfies the mechanical contract
+
+The program is already capable of completing the required invocation.
+
+It parses its inputs.
+
+It finds the fixture file.
+
+It writes a CSV.
+
+It contains the expected columns.
+
+It produces one probability for every fixture.
+
+It does not modify the engine.
+
+It does not require the network.
+
+It behaves deterministically.
+
+That distinction matters because I want the grader to separate two questions:
+
+```text
+Did the agent produce a valid submission?
+```
+
+and:
+
+```text
+Did the agent produce a good forecast?
+```
+
+A poor forecast should not automatically look like a malformed artifact.
+
+Likewise, a perfectly formatted file should not be mistaken for successful forecasting.
+
+---
+
+### Artifact validity versus forecasting quality
+
+The reward structure deliberately separates those concepts.
+
+The do-nothing starter can receive full credit for satisfying the artifact and constraint requirements while receiving no forecasting success.
+
+Its statistical performance is the coin flip.
+
+By construction, the benchmark's skill normalization gives the coin flip:
+
+$$
+\text{skill}=0.
+$$
+
+So the starter provides a clean floor.
+
+The agent can run the task immediately and see:
+
+```text
+submission mechanics: valid
+forecasting performance: baseline
+```
+
+That makes subsequent improvement easier to interpret.
+
+---
+
+### Why this split is useful for debugging
+
+Suppose an agent writes a complicated forecaster and the final evaluation fails.
+
+Without separate structural checks, several completely different problems could look identical:
+
+```text
+the model is statistically poor
+the CSV has the wrong columns
+some fixtures are missing
+the script crashes
+the engine was modified
+the predictions are nondeterministic
+```
+
+The starter establishes what a mechanically valid submission looks like.
+
+The reward keys can then distinguish a forecasting failure from an execution or contract failure.
+
+This is particularly useful in a long-horizon agent task because there are many opportunities for the agent to break something while iterating.
+
+---
+
+### Why I do not give the agent an empty file
+
+An empty `forecast.py` would make the task slightly harder, but for the wrong reason.
+
+The agent would first have to infer the expected command line, parse the league directory and determine the output schema before it could begin working on the actual statistical problem.
+
+None of those steps measure the capability I care about.
+
+I already documented the interface.
+
+So I also provide executable code demonstrating it.
+
+The agent can preserve the interface and replace only the forecasting logic.
+
+---
+
+### The intended development path
+
+The starter naturally encourages an incremental workflow.
+
+The agent begins with:
+
+```text
+0.5 everywhere
+```
+
+and a working submission.
+
+It can then start reading:
+
+```text
+matches.csv
+```
+
+and perhaps build a simple team model.
+
+Later it can inspect:
+
+```text
+balls.csv
+players.csv
+lineups.csv
+engine/model.py
+```
+
+and develop a player-level estimator.
+
+At every point it can retain the same output interface.
+
+Conceptually:
+
+```text
+valid coin flip
+      |
+      v
+simple baseline
+      |
+      v
+player model
+      |
+      v
+regularized model
+      |
+      v
+self-tested final solution
+```
+
+The program structure does not need to be reinvented at each stage.
+
+---
+
+### Why no random seed appears here
+
+The starter contains no stochastic operations.
+
+Therefore it is automatically deterministic.
+
+Running it twice against the same league produces exactly the same probabilities:
+
+```text
+0.5
+0.5
+0.5
+...
+```
+
+Once the agent replaces this with Monte Carlo simulation, the handbook explicitly requires fixed random seeds.
+
+So the starter demonstrates the determinism requirement in the simplest possible way.
+
+---
+
+### Why pandas is enough
+
+The file imports only:
+
+```python
+argparse
+Path
+pandas
+```
+
+No engine import is necessary.
+
+No numerical optimizer is necessary.
+
+No simulator is necessary.
+
+That makes the starter robust.
+
+Even if the agent has not yet understood the model code, it can execute a complete valid submission immediately.
+
+This is useful for testing the Harbor plumbing before touching the difficult parts of the task.
+
+---
+
+### The starter as an end-to-end smoke test
+
+Because this file is already valid, I can use it to test the entire candidate execution path.
+
+Harbor can invoke:
+
+```bash
+python solution/forecast.py \
+    --league <folder> \
+    --out <file.csv>
+```
+
+The script should complete.
+
+The output should exist.
+
+The grader should parse it.
+
+The constraint checks should succeed.
+
+The statistical gate should reject it as insufficient.
+
+That is exactly the behaviour I want from a do-nothing solution.
+
+If the starter itself cannot complete this path, the benchmark packaging is broken before any agent has done meaningful work.
+
+---
+
+### Why it should fail the forecasting gate
+
+A valid starter should not accidentally solve the benchmark.
+
+The task is specifically constructed so that there is useful predictive information in the historical league data when averaged across the graded worlds.
+
+The coin flip deliberately ignores all of it.
+
+From the bar analysis, the coin flip's aggregate regret is roughly:
+
+```text
+1.9 × reference regret
+```
+
+on comparable worlds.
+
+The allowed tolerance is only:
+
+```text
+1.10 × reference regret.
+```
+
+So the starter is comfortably outside the forecasting pass region.
+
+That gives me a sensible initial state:
+
+```text
+valid program
++
+bad model
+=
+not solved
+```
+
+---
+
+### Why this is different from the oracle
+
+The starter and oracle have the same external interface but opposite purposes.
+
+The starter proves that the minimum submission contract works:
+
+```text
+read fixtures
+write probabilities
+```
+
+while intentionally doing no inference.
+
+The oracle proves that the same public contract supports a passing solution.
+
+So together they bracket the task:
+
+```text
+starter
+   |
+   | valid but statistically weak
+   v
+public task
+   ^
+   | valid and statistically strong
+   |
+oracle
+```
+
+That is a useful benchmark property.
+
+I have both a known failing solution and a known passing solution operating through the same interface.
+
+---
+
+### Why the starter belongs in `task_src`
+
+This file lives in:
+
+```text
+task_src/solution/
+```
+
+because it is part of the public task template.
+
+When the task is packaged, this is the program initially placed in the agent's:
+
+```text
+/app/solution/
+```
+
+directory.
+
+The agent can edit or replace it.
+
+The oracle implementation from File 21 is separate and is not part of the ordinary public solution directory supplied to the model.
+
+That separation keeps the benchmark's known-good solution private while still giving the agent a functioning template.
+
+---
+
+### The information boundary remains clean
+
+The starter contains no hidden benchmark information.
+
+It does not contain:
+
+```text
+hidden seeds
+reference probabilities
+true probabilities
+private calibration
+population spreads
+pass-world identities
+```
+
+It merely demonstrates the required file interface.
+
+So giving the starter to the agent does not weaken the inference problem.
+
+It removes only avoidable interface ambiguity.
+
+---
+
+### How this fits into the Harbor task
+
+The initial agent-side workflow is now:
+
+```text
+/app/league/
+     |
+     v
+fixtures.csv
+     |
+     v
+solution/forecast.py
+     |
+     v
+0.5 for each fixture
+     |
+     v
+forecast.csv
+     |
+     v
+verifier
+```
+
+The agent's job is to replace the middle of that flow.
+
+The input and output boundaries are already working.
+
+That leaves the difficult question:
+
+> **How do I use the public history and engine to replace 0.5 with a much better estimate of the true probability?**
+
+That is exactly where I want the task difficulty to begin.
+
+---
+
+### How I think about this file
+
+I think of `task_src/solution/forecast.py` as the **minimum valid answer**.
+
+It shows the agent exactly what must be delivered while intentionally solving none of the interesting inference problem.
+
+The benchmark therefore starts from a functioning baseline rather than from an empty scaffold.
+
+The central principle is:
+
+> **I give the solver a complete, deterministic, contract-valid coin-flip program so that any later failure in forecasting quality cannot be blamed on ambiguity about how to read the fixtures, invoke the submission, or write the required output.**
+
+## 21. harbor/solution/solve.sh and harbor/solution/forecast.py
+
+### What I am trying to do
+
+These two files are my proof that the task is actually solvable from the information I give the agent.
+
+A benchmark can look fair on paper and still be impossible because the public files are missing something essential, because the packaged engine behaves differently from the development engine, because the documented interface cannot actually reproduce the reference, or because the verifier expects information that never reaches the solver.
+
+The oracle is my end-to-end check against those failures.
+
+Harbor's oracle agent does not receive my hidden `League` object, the true `SkillBook`, `truth.csv`, the private calibration or the grader's stored answers.
+
+It receives the same public task environment that an ordinary agent receives.
+
+`solve.sh` installs a known-good forecasting program into:
+
+```text
+/app/solution/
+```
+
+and that program reconstructs its model using the public league data and public engine.
+
+If that solution reproduces the stored reference performance, I have evidence that the public task contains enough information to meet its own bar.
+
+That is the purpose of the oracle.
+
+---
+
+### The important distinction
+
+The oracle is not supposed to prove that the task is easy.
+
+It is supposed to prove that the task is **possible**.
+
+There is a large difference between:
+
+```text
+I know the hidden truth because I built the world
+```
+
+and:
+
+```text
+I can recover a passing forecast using only the public task
+```
+
+The first would prove nothing about fairness.
+
+The second is what I need.
+
+So the oracle deliberately uses the same inference procedure as the reference forecaster from File 13, but it runs that procedure from the packaged public environment.
+
+Conceptually:
+
+```text
+public league folder
+        |
+        v
+engine/league_io.py
+        |
+        v
+public History + Fixtures
+        |
+        v
+engine/public.json
+        |
+        v
+public BallModel
+        |
+        v
+reference forecaster
+        |
+        v
+forecast.csv
+```
+
+There is no hidden-state input anywhere in that path.
+
+---
+
+### `solve.sh`
+
+The oracle entry point is intentionally tiny:
+
+```bash
+#!/bin/bash
+
+set -euo pipefail
+
+HERE="$(cd "$(dirname "$0")" && pwd)"
+
+cp "$HERE/forecast.py" \
+   "$HERE/reference_forecaster.py" \
+   /app/solution/
+```
+
+Its only job is to install the known-good solution into the location Harbor expects.
+
+The actual forecasting logic remains in Python.
+
+I prefer keeping `solve.sh` this small because there is almost nothing to debug.
+
+It determines its own directory and copies two files into:
+
+```text
+/app/solution/
+```
+
+The first is:
+
+```text
+forecast.py
+```
+
+which is the executable submission interface.
+
+The second is:
+
+```text
+reference_forecaster.py
+```
+
+which contains the reference model implementation.
+
+---
+
+### Why I use `set -euo pipefail`
+
+The shell script begins with:
+
+```bash
+set -euo pipefail
+```
+
+because I want installation failures to be visible.
+
+`-e` stops if a command fails.
+
+`-u` treats an unset variable as an error.
+
+`pipefail` ensures that failures inside shell pipelines are not silently hidden by a later successful command.
+
+There is almost no shell logic here, but I still prefer the oracle installation step to fail loudly rather than leave a partially installed solution that produces a confusing error later.
+
+---
+
+### Why I compute `HERE`
+
+I use:
+
+```bash
+HERE="$(cd "$(dirname "$0")" && pwd)"
+```
+
+rather than assuming Harbor launches the script from a particular working directory.
+
+That gives me the absolute location of the oracle files themselves.
+
+The copy therefore works whether Harbor happens to invoke the script from the task root, `/app`, or another directory.
+
+This is a small portability detail, but it keeps the oracle independent of an accidental current working directory.
+
+---
+
+### Why the reference forecaster is copied into the solution
+
+The packaged oracle contains a copy of the reference forecaster from File 13.
+
+During packaging, that copy has the appropriate import path adjusted for the agent-facing engine layout.
+
+The statistical implementation itself is the same reference method.
+
+This gives me a useful separation.
+
+The development repository may organize modules as:
+
+```text
+league.engine
+forecasters.ladder
+```
+
+while the final task exposes:
+
+```text
+engine.model
+engine.league_io
+```
+
+The oracle tests the version that exists in the actual packaged task.
+
+That matters because solving the development repository is not sufficient evidence that the Harbor package works.
+
+I need the packaged imports and public files to work too.
+
+---
+
+### `forecast.py`
+
+`forecast.py` is the actual oracle submission.
+
+It has exactly the command-line interface promised by the task:
+
+```bash
+python solution/forecast.py \
+    --league <folder> \
+    --out <file.csv>
+```
+
+So the oracle does not receive a special execution path.
+
+The grader invokes it in the same form it can invoke an ordinary candidate submission.
+
+This is important because I want the oracle to test the public contract rather than bypass it.
+
+---
+
+### Setting the import path
+
+The script begins by finding its own directory:
+
+```python
+HERE = Path(__file__).resolve().parent
+```
+
+and then prepends:
+
+```python
+sys.path[:0] = [
+    str(HERE),
+    str(HERE.parent)
+]
+```
+
+The first path makes:
+
+```python
+from reference_forecaster import BallModelForecaster
+```
+
+resolve to the copy installed under:
+
+```text
+/app/solution/
+```
+
+The second puts:
+
+```text
+/app/
+```
+
+on the Python path so the packaged:
+
+```text
+engine/
+```
+
+module can be imported.
+
+That means the oracle deliberately imports from the final task layout.
+
+It is not reaching backward into my development repository.
+
+---
+
+### Loading through the public I/O layer
+
+The script reads the league with:
+
+```python
+history, fixtures = load_league(args.league)
+```
+
+using:
+
+```python
+from engine.league_io import load_league
+```
+
+This is exactly the loader documented in the handbook.
+
+That detail is important for fairness.
+
+The oracle does not receive a richer in-memory `History` produced directly by `League.play_history()`.
+
+It sees the serialized public files and reconstructs them through the same loader that I explicitly tell the agent it may use.
+
+So if information was lost during packaging, the oracle would suffer from the same loss.
+
+---
+
+### Loading the public model
+
+The ball model comes from:
+
+```python
+load_public_model()
+```
+
+imported from:
+
+```python
+engine.model
+```
+
+That function reads the packaged:
+
+```text
+engine/public.json
+```
+
+and constructs the public `BallModel`.
+
+This means the oracle does not load the private:
+
+```text
+league/calibration.json
+```
+
+used while generating the world.
+
+It receives only the subset deliberately exposed to the solver.
+
+This is one of the most important checks in the oracle.
+
+The solver is supposed to know the mechanics and directions of the ball model, but not the hidden population spreads and true latent values.
+
+The oracle respects that boundary.
+
+---
+
+### Fitting from public history
+
+The core line is:
+
+```python
+forecaster = BallModelForecaster(
+    "reference",
+    load_public_model(),
+    copies=4000
+).fit(history)
+```
+
+This recreates the careful reference tier from File 13.
+
+It begins with the public ball model.
+
+Then it fits its latent player, venue and league estimates from the public historical balls.
+
+No true player parameter is supplied.
+
+No true venue parameter is supplied.
+
+No true form value is supplied.
+
+No true probability is supplied.
+
+The model has to infer the hidden state in exactly the way an external statistical solution would.
+
+---
+
+### Why I use 4,000 copies
+
+The oracle forecasts each fixture with:
+
+```text
+4,000 Monte Carlo copies
+```
+
+because this is the same reference configuration used when the private task data were built.
+
+In `make_task_data.py`, I stored reference regrets generated with:
+
+```python
+REFERENCE_COPIES = 4000
+```
+
+The oracle therefore reproduces the same forecasting procedure whose private scores form the benchmark.
+
+This is necessary for the strongest possible check.
+
+I do not merely want the oracle to pass.
+
+I want it to reproduce the stored reference itself.
+
+---
+
+### Writing the required output
+
+After fitting, I calculate:
+
+```python
+forecaster.predict(fixtures)
+```
+
+and write:
+
+```python
+pd.DataFrame(
+    {
+        "fixture": [f.match for f in fixtures],
+        "p_home": forecaster.predict(fixtures),
+    }
+).to_csv(
+    args.out,
+    index=False
+)
+```
+
+This is exactly the output schema promised in the handbook:
+
+```text
+fixture
+p_home
+```
+
+There are no additional private columns.
+
+The grader therefore receives a completely ordinary candidate forecast file.
+
+---
+
+### Why this is stronger than calling the stored reference directly
+
+I could have made a fake oracle that simply copied precomputed reference probabilities from the private task data.
+
+That would trivially obtain a perfect ratio.
+
+It would also prove almost nothing.
+
+Such an oracle would bypass:
+
+```text
+the public history
+the public engine
+the package imports
+the fitting process
+the simulation process
+```
+
+and therefore would not establish that the task itself is solvable.
+
+Instead, my oracle recomputes the forecasts from scratch using the solver-visible environment.
+
+That makes its successful gate meaningful.
+
+---
+
+### Why a 1.000 regret ratio is not automatically a tautology
+
+The recorded gate result is:
+
+```text
+1.000
+```
+
+with reference regret ratios of:
+
+```text
+1.000
+```
+
+because the oracle reproduces the same reference procedure used to create the stored benchmark numbers.
+
+At first glance that may look inevitable.
+
+It is not inevitable at the packaging level.
+
+Several things could have broken the equality.
+
+The public engine might have contained different constants.
+
+`league_io.py` might have reconstructed fixtures differently.
+
+An import change might have changed behaviour.
+
+The packaged dependency versions might have altered optimization.
+
+The public league folder might have omitted information used during reference construction.
+
+The deterministic Monte Carlo seeds might have differed.
+
+The copied reference file might have diverged from the development version.
+
+Any of those would cause the regenerated forecasts or regret to move.
+
+So the equality is useful as an integration test.
+
+It says that the entire public path reconstructs the same reference benchmark used when the private task data were produced.
+
+---
+
+### What the oracle actually proves
+
+The oracle provides evidence for several properties simultaneously.
+
+It shows that the public league files contain enough information for a passing model.
+
+It shows that the packaged public engine is sufficient to reproduce the reference simulation.
+
+It shows that the documented `forecast.py` interface works.
+
+It shows that the dependencies and package layout are functional.
+
+It shows that the solution can execute under Harbor's resource environment.
+
+And it shows that the grader's stored reference numbers correspond to something that can actually be produced from the solver-visible side of the task.
+
+That is much stronger than simply unit-testing the forecasting class inside my development repository.
+
+---
+
+### What the oracle does not prove
+
+The oracle does not prove that an arbitrary model can discover the reference solution easily.
+
+It does not prove that the task is appropriately difficult for a particular frontier model.
+
+It does not prove that every instruction is perfectly clear.
+
+It does not prove that every alternative modelling approach can finish inside the time limit.
+
+Those questions require pilots and external-agent evaluation.
+
+The oracle answers the narrower foundational question:
+
+> **Does at least one valid solution, operating only within the public contract, meet the benchmark?**
+
+For this task, the answer recorded by the gate is yes.
+
+---
+
+### Why I test the oracle repeatedly
+
+I do not want a single successful run on my current working tree to be the only evidence.
+
+The notes record three kinds of oracle execution.
+
+The oracle was run once for each packaged task during the Saturday build.
+
+It was run again from a fresh clone.
+
+And it was run on an `amd64` environment.
+
+These checks target different failure modes.
+
+Running the package checks ordinary integration.
+
+Running from a fresh clone checks that success does not depend on an untracked local file, cache or accidental modification.
+
+Running on another architecture checks that the task is not relying on some local machine-specific assumption.
+
+I treat these as deployment checks rather than statistical validation.
+
+---
+
+### Why the fresh-clone test matters
+
+A development directory tends to accumulate state.
+
+There may be generated files, cached results, local artifacts or uncommitted changes that make something work accidentally.
+
+A fresh clone removes most of those conveniences.
+
+If the oracle still works after cloning the repository into a clean environment and rebuilding the task, I have much stronger evidence that everything needed for solvability is actually committed.
+
+This is especially important for a benchmark submission.
+
+The reviewer will not receive my laptop's working directory.
+
+They receive the repository.
+
+---
+
+### Why testing another architecture matters
+
+My development machine and the target evaluation environment do not necessarily use the same processor architecture.
+
+Numerical packages can have different builds and underlying BLAS implementations.
+
+Container behaviour can also differ.
+
+The task is dominated by ordinary NumPy and SciPy operations, so I do not expect architecture-specific logic.
+
+But the oracle test on `amd64` checks that assumption empirically.
+
+Again, this is not a mathematical proof of portability.
+
+It is a practical packaging check.
+
+---
+
+### The relationship between the oracle and the reference
+
+The reference forecaster has two roles in the project.
+
+During benchmark development it is a measurement instrument.
+
+It tells me what careful regularized forecasting can achieve and gives me a point from which to set the bar.
+
+Inside the Harbor oracle it becomes a solvability witness.
+
+The algorithm is the same, but the question changes.
+
+In File 13 I ask:
+
+> **How good is this forecasting method?**
+
+Here I ask:
+
+> **Can this method be reconstructed and run entirely from the public packaged task?**
+
+That second question is what the oracle answers.
+
+---
+
+### Why the oracle remains private
+
+I do not give `reference_forecaster.py` to the ordinary solving agent as part of the public task.
+
+Doing so would collapse the challenge.
+
+The oracle belongs to the benchmark infrastructure.
+
+Harbor can use it to verify solvability during task development or evaluation, but the candidate is still expected to construct its own forecasting method from the public information.
+
+So the benchmark contains:
+
+```text
+public engine
+public handbook
+public history
+starter solution
+```
+
+for the solver, while:
+
+```text
+oracle reference implementation
+```
+
+remains on the task-author side.
+
+---
+
+### Connection to the fairness argument
+
+The handbook promises:
+
+> **The reference uses only the files you have.**
+
+These oracle files are the executable evidence behind that sentence.
+
+`forecast.py` calls:
+
+```text
+engine.league_io
+engine.model
+reference_forecaster
+```
+
+and receives the league folder.
+
+Nothing in the code imports:
+
+```text
+league.world
+TruthEngine
+private task data
+calibration.json
+hidden SkillBook
+```
+
+That is the property I care about.
+
+The claim is not merely written in prose.
+
+I can inspect the oracle's imports and execution path and verify it directly.
+
+---
+
+### The public/private flow
+
+At this stage the solvability test looks like:
+
+```text
+                 PUBLIC TASK
+                     |
+        +------------+-------------+
+        |                          |
+        v                          v
+ league/*.csv                engine/public.json
+        |                          |
+        v                          v
+ engine/league_io.py          BallModel
+        |                          |
+        +------------+-------------+
+                     |
+                     v
+            reference forecaster
+                     |
+                     v
+              4,000-copy MC
+                     |
+                     v
+                forecast.csv
+                     |
+                     v
+              PRIVATE GRADER
+                     |
+                     v
+          compare with stored truth
+                     |
+                     v
+                 pass = 1
+```
+
+The oracle crosses into the private side only after it has produced the same public `forecast.csv` that any candidate submission must produce.
+
+That is the boundary I want.
+
+---
+
+### Why this matters for a long-horizon agent task
+
+A long-horizon benchmark can fail in an especially frustrating way if an agent does substantial work and only later discovers that the target was impossible from the supplied evidence.
+
+I want difficulty to come from planning, statistical estimation, debugging, validation and iterative improvement.
+
+I do not want it to come from a missing hidden constant that even the ideal solver could never recover.
+
+The oracle is my final defence against that class of benchmark bug.
+
+If my own careful public-information forecaster cannot pass after packaging, I should not expect an external agent to do so.
+
+---
+
+### How I think about these files
+
+I think of `solve.sh` and `forecast.py` as the **constructive proof of solvability**.
+
+Everything before this point argues that the benchmark is fair.
+
+These files actually attempt it.
+
+They enter through the solver's public interface, load the solver's public data, construct the solver's public engine, infer hidden quantities from history, generate forecasts under the same computational restrictions and hand those forecasts to the real grader.
+
+The central principle is:
+
+> **I do not prove solvability by reading the hidden truth. I prove it by running a known-good forecaster through the exact public interface available to the agent and verifying that it reproduces the reference benchmark from that information alone.**
+
+### References
+
+Harbor Framework Team. *Harbor* repository. Laude Institute.
+Terminal-Bench. Task contribution and oracle-validation guidance.
+
+## 22. harbor/environment/Dockerfile, harbor/tests/Dockerfile, harbor/tests/test.sh
+
+### What I am trying to do
+
+These files define the two container environments in which the task actually runs.
+
+The first container belongs to the agent.
+
+The second belongs to the verifier.
+
+I want both environments to be reproducible, but I also want them to have very different trust boundaries.
+
+The agent container needs the public task, the public engine, the starter solution and the numerical libraries required to build a forecaster.
+
+The verifier container needs the submitted artifacts plus the private grader, truth probabilities and reference information.
+
+The critical security requirement is that submitted code must never be able to read those private verifier files.
+
+So these files are doing two jobs at once:
+
+```text
+reproducibility
++
+isolation
+```
+
+The Dockerfiles make the environments reproducible.
+
+The permissions and separate verifier container protect the answers.
+
+`test.sh` then makes sure the verifier always produces a valid Harbor reward artifact even when grading itself fails.
+
+---
+
+### Two different containers
+
+The high-level architecture is:
+
+```text
+AGENT CONTAINER
+---------------
+public league
+public engine
+handbook
+starter solution
+agent's code
+
+        |
+        | declared artifacts only
+        v
+
+VERIFIER CONTAINER
+------------------
+submitted solution
+submitted engine copy
+private truth
+reference scores
+grader
+```
+
+The agent never receives the verifier container.
+
+That is the first security boundary.
+
+The verifier then creates another boundary inside its own container: the submitted forecasting program runs under a low-privilege user that cannot read the private `/tests` directory.
+
+So there are two layers of isolation:
+
+```text
+agent cannot see verifier container
+```
+
+and:
+
+```text
+submitted program inside verifier cannot read verifier secrets
+```
+
+I want both.
+
+---
+
+### The same pinned base image
+
+Both Dockerfiles begin with:
+
+```dockerfile
+FROM python:3.12-slim@sha256:78387bc3881b8273120a12ebe6c1ab22b018ccc2c9adf565ae1ac9b536e184ea
+```
+
+I deliberately pin the image by content digest rather than relying only on:
+
+```text
+python:3.12-slim
+```
+
+A tag is a human-readable pointer.
+
+The bytes behind a tag can change over time.
+
+A content digest identifies one specific image content.
+
+So the intention is that rebuilding the benchmark later begins from the same base image rather than whatever image happens to carry the `python:3.12-slim` tag at that future date.
+
+This extends the reproducibility principle from Python package versions down to the operating-system image itself.
+
+---
+
+### Why both images use the same base
+
+The agent and verifier do different jobs, but I do not want differences between their Python runtimes to become another source of bugs.
+
+Both use:
+
+```text
+Python 3.12 slim
+```
+
+from the same digest.
+
+Both install the same `requirements.lock`.
+
+That means a submitted forecasting program is evaluated with the same major numerical stack it had available while being developed.
+
+The security boundary differs.
+
+The numerical environment does not.
+
+---
+
+### Environment variables
+
+Both images define:
+
+```dockerfile
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONHASHSEED=0 \
+    PIP_NO_CACHE_DIR=1
+```
+
+Each variable has a practical purpose.
+
+`PYTHONDONTWRITEBYTECODE=1` stops Python from scattering `.pyc` bytecode caches throughout the filesystem.
+
+Those files are not useful to the task and can make container state noisier than necessary.
+
+`PIP_NO_CACHE_DIR=1` prevents pip from retaining its package download cache.
+
+The image only needs the installed packages, not their cached installation archives.
+
+The more important reproducibility setting is:
+
+```text
+PYTHONHASHSEED=0
+```
+
+---
+
+### Why I fix `PYTHONHASHSEED`
+
+Python intentionally randomizes the hash seed used for some hashed objects between interpreter processes.
+
+Most well-written numerical code should not depend on hash-table iteration order.
+
+But benchmark code can contain dictionaries, sets or logic whose iteration order eventually affects later operations.
+
+I therefore remove that source of process-to-process variation by setting:
+
+```text
+PYTHONHASHSEED=0
+```
+
+This does not magically make every stochastic operation deterministic.
+
+NumPy random generators still need explicit seeds, and the forecasting program is required to fix its own random state.
+
+It simply removes one additional source of accidental variability from the runtime.
+
+---
+
+### Installing exactly the locked dependencies
+
+Both images copy:
+
+```dockerfile
+COPY requirements.lock /tmp/requirements.lock
+```
+
+and install it with:
+
+```dockerfile
+RUN pip install --no-cache-dir -r /tmp/requirements.lock
+```
+
+The lock file contains the exact NumPy, pandas and SciPy versions from File 18.
+
+So the intended dependency chain is:
+
+```text
+pinned Docker base
+        |
+        v
+Python 3.12
+        |
+        v
+requirements.lock
+        |
+        v
+exact numerical libraries
+```
+
+This is the environment reproducibility argument carried into the actual Harbor images.
+
+---
+
+### The agent image
+
+#### What the agent image contains
+
+The agent Dockerfile is deliberately simple:
+
+```dockerfile
+COPY app/ /app/
+
+WORKDIR /app
+```
+
+The packaged public task is copied under:
+
+```text
+/app/
+```
+
+and that becomes the working directory.
+
+This is where the agent sees the league data, handbook, public engine and starter solution.
+
+The image does not contain the grader's private truth files.
+
+Those belong to the verifier image.
+
+So absence is part of the security design.
+
+I do not merely tell the agent not to read the answers.
+
+The answers should not exist in its filesystem.
+
+---
+
+#### Why this is stronger than hidden filenames
+
+A weak task design could place:
+
+```text
+truth.csv
+```
+
+somewhere inside the same container and simply hope the agent does not discover it.
+
+That would turn the benchmark into a file-search security exercise.
+
+Instead, Harbor's separate verifier mode keeps the private grading data in another container.
+
+The agent cannot exploit a file it never receives.
+
+That is a much stronger boundary than obscurity.
+
+---
+
+#### Agent network access
+
+The agent image itself does not make an outside call as part of the forecasting task.
+
+The comment says:
+
+```text
+The agent's own model API is the only outside call the task needs.
+```
+
+This is consistent with the earlier Harbor configuration.
+
+The cricket data are local.
+
+The engine is local.
+
+The submitted program is ultimately required to work without network access during grading.
+
+The network capability during the interactive agent phase exists for the harness and model infrastructure, not as a data source for the benchmark.
+
+---
+
+### The verifier image
+
+#### Why the verifier is more sensitive
+
+The verifier image contains information that would completely compromise the benchmark if submitted code could read it.
+
+That includes the true fixture probabilities, the stored reference numbers and the grader implementation itself.
+
+So simply putting submitted code and `/tests` in the same container is not enough.
+
+I need an operating-system permission boundary inside the verifier.
+
+That is why I create a dedicated user.
+
+---
+
+#### Creating the `runner` user
+
+The verifier Dockerfile contains:
+
+```dockerfile
+RUN useradd --create-home --shell /bin/bash runner \
+    && mkdir -p /app /work /logs/verifier
+```
+
+The submitted forecasting program is intended to execute as:
+
+```text
+runner
+```
+
+rather than as the privileged user that owns the verifier files.
+
+This follows a basic least-privilege principle.
+
+The forecast program only needs enough permission to:
+
+```text
+read the public league
+read the public engine
+execute its code
+write its forecast output
+```
+
+It does not need permission to inspect the grader or hidden truth.
+
+So I do not give it that permission.
+
+---
+
+#### Copying the tests
+
+The verifier-specific files are copied with:
+
+```dockerfile
+COPY . /tests/
+```
+
+This directory contains the private verification machinery.
+
+In the threat model of the task, `/tests` is trusted verifier data.
+
+The submission is untrusted code.
+
+Those two should not share the same read permissions.
+
+---
+
+#### The critical permission line
+
+The main security line is:
+
+```dockerfile
+RUN chmod -R go-rwx /tests && chmod +x /tests/test.sh
+```
+
+The important part is:
+
+```text
+chmod -R go-rwx /tests
+```
+
+Unix permission classes are:
+
+```text
+u = owner
+g = group
+o = others
+```
+
+So:
+
+```text
+go-rwx
+```
+
+removes:
+
+```text
+read
+write
+execute
+```
+
+permissions from both group members and all other users.
+
+The `/tests` files therefore remain available to their owner, but an unrelated user such as:
+
+```text
+runner
+```
+
+does not have ordinary read access to them.
+
+That is the core filesystem boundary protecting the truth.
+
+---
+
+#### What I am protecting
+
+The private verifier directory can contain things such as:
+
+```text
+grader.py
+truth.csv
+reference.json
+tiers.csv
+private task metadata
+```
+
+Any of these could leak useful or decisive grading information.
+
+The most obvious attack would be reading:
+
+```text
+truth.csv
+```
+
+and simply returning those probabilities.
+
+But even reading reference forecasts could give the submission a near-perfect solution without solving the statistical problem.
+
+So the entire trusted verifier directory is protected rather than trying to classify individual files one at a time.
+
+That is a safer default.
+
+---
+
+#### Least privilege
+
+This design follows the least-privilege principle described by Saltzer and Schroeder.
+
+A program should receive only the privileges required to perform its legitimate job.
+
+The submitted forecasting program needs to make forecasts.
+
+It does not need to inspect the verifier.
+
+Therefore I run it with an identity that lacks those privileges.
+
+This is stronger than asking:
+
+> **Please do not read `/tests`.**
+
+The filesystem itself should enforce the rule.
+
+---
+
+#### Fail-safe defaults
+
+The same design also follows the idea of fail-safe defaults.
+
+Access should begin denied unless it is explicitly needed.
+
+I do not start by making the verifier files world-readable and then try to hide particular sensitive filenames.
+
+I remove access to the entire `/tests` hierarchy for untrusted users.
+
+The forecasting process gets only the access that has a reason to exist.
+
+This is much easier to reason about.
+
+---
+
+#### Why reward hacking matters here
+
+An agent benchmark has an unusual adversarial property.
+
+The model is trying to maximize the reward produced by the grader.
+
+Ideally it does that by solving the intended task.
+
+But if there is an easier path to reward through the evaluation machinery, a capable optimizer may find it.
+
+Amodei and colleagues describe this broad failure mode as reward hacking: the system exploits some unintended property of the reward mechanism rather than achieving the intended objective.
+
+Skalse and colleagues later study the concept more formally.
+
+In this benchmark, reading private truth would be the clearest possible example.
+
+The agent could obtain an apparently perfect forecasting score without forecasting anything.
+
+So verifier isolation is not an optional infrastructure detail.
+
+It is part of preserving the meaning of the reward.
+
+---
+
+#### Why the separate container is the first defence
+
+The strongest defence occurs before filesystem permissions matter.
+
+The interactive agent never sees the verifier container at all.
+
+Harbor's separate environment means the agent cannot inspect:
+
+```text
+/tests/
+```
+
+during its long-horizon problem-solving session because that directory exists only in another environment.
+
+Only declared artifacts are moved afterward.
+
+That eliminates the simplest avenue for answer leakage.
+
+The `runner` permissions then protect against the second avenue: submitted code attempting to inspect the verifier when it is later executed there.
+
+---
+
+#### Defence in depth
+
+So I have two layers:
+
+```text
+Layer 1:
+agent environment != verifier environment
+
+Layer 2:
+submitted program in verifier runs without permission to read /tests
+```
+
+If the first boundary is working correctly, the agent cannot inspect the tests interactively.
+
+If submitted code later attempts to inspect them during verification, the second boundary blocks ordinary file access.
+
+I prefer this layered design because benchmark security should not depend on one fragile assumption.
+
+---
+
+#### Why `/app`, `/work` and `/logs/verifier` exist
+
+The verifier creates:
+
+```text
+/app
+/work
+/logs/verifier
+```
+
+because the trusted grader and untrusted submission need places to exchange permitted outputs without exposing the private tests.
+
+`/app` is the expected task/application location.
+
+`/work` provides scratch space.
+
+`/logs/verifier` is where verifier results and diagnostic logs are written.
+
+Keeping logs outside `/tests` also matters because Harbor needs access to the final reward artifact.
+
+---
+
+#### Verifier working directory
+
+The verifier uses:
+
+```dockerfile
+WORKDIR /app
+```
+
+so submitted programs execute from the same application-oriented location expected by the task.
+
+Again, I try to make differences between development and grading environments deliberate rather than accidental.
+
+The security controls are different.
+
+The program interface remains familiar.
+
+---
+
+### harbor/tests/test.sh
+
+#### What `test.sh` is responsible for
+
+`test.sh` is the verifier entry point.
+
+Its responsibility is not to contain the grading logic itself.
+
+That belongs in:
+
+```text
+/tests/grader.py
+```
+
+Instead, `test.sh` launches the grader, captures diagnostics and guarantees that Harbor receives a well-formed reward file even if the grader crashes.
+
+This is another defensive boundary.
+
+A broken grader should produce an explicit zero-valued verification result.
+
+It should not leave Harbor guessing what happened.
+
+---
+
+#### Creating the verifier log directory
+
+The script begins with:
+
+```bash
+mkdir -p /logs/verifier
+```
+
+This guarantees that the location expected for reward and diagnostic files exists before the grader starts.
+
+The command is idempotent.
+
+If the directory already exists, nothing harmful happens.
+
+---
+
+#### Capturing standard output and error
+
+The grader runs as:
+
+```bash
+python /tests/grader.py \
+    > /logs/verifier/grader_stdout.txt \
+    2> /logs/verifier/grader_stderr.txt
+```
+
+I deliberately keep stdout and stderr.
+
+The final scalar reward is useful for Harbor.
+
+But when something goes wrong, the diagnostic streams are often much more useful to me.
+
+For example, the grader may fail because:
+
+```text
+forecast.csv is missing
+a required column is absent
+the submission crashed
+the engine hash changed
+a dependency failed
+```
+
+Capturing the traceback gives me a way to distinguish those cases afterward.
+
+---
+
+#### Why the wrapper checks for `reward.json`
+
+After the grader finishes, I check:
+
+```bash
+if [ ! -s /logs/verifier/reward.json ]; then
+```
+
+The `-s` test asks whether the file exists and has nonzero size.
+
+So I am not merely asking:
+
+```text
+Did grader.py exit?
+```
+
+I am asking:
+
+> **Did the verifier actually produce the artifact Harbor expects?**
+
+That is the more useful contract.
+
+A script can technically execute but fail before writing the final result.
+
+---
+
+#### The fallback reward
+
+If no valid reward file exists, I write:
+
+```json
+{
+  "overall": 0.0,
+  "functional_correctness": 0.0,
+  "constraint_satisfaction": 0.0,
+  "robustness": 0.0,
+  "artifact_quality": 0.0
+}
+```
+
+So a verifier crash becomes an explicit zero result.
+
+This guarantees that the Harbor-facing output still has the expected structure.
+
+The failure details remain available in:
+
+```text
+grader_stdout.txt
+grader_stderr.txt
+```
+
+which means the benchmark developer can still diagnose the underlying problem.
+
+---
+
+#### Why I do not let a verifier exception become ambiguous
+
+Without this wrapper, a verifier crash could be confused with several different states.
+
+It might look like:
+
+```text
+task infrastructure failure
+candidate failure
+missing reward
+Harbor parsing failure
+```
+
+depending on how the orchestration layer handles the exception.
+
+I prefer one deterministic rule:
+
+> **If the grader cannot produce its reward artifact, verification returns zeros and preserves the error logs.**
+
+That makes failure semantics explicit.
+
+---
+
+#### Printing the reward
+
+The final line is:
+
+```bash
+cat /logs/verifier/reward.json
+```
+
+so the resulting reward is also emitted to standard output.
+
+The file remains the durable artifact.
+
+The printed copy makes the result easy to see in execution logs.
+
+---
+
+#### The relationship between this and the reward-key design
+
+Earlier I deliberately separated:
+
+```text
+overall forecasting success
+functional correctness
+constraint satisfaction
+robustness
+artifact quality
+```
+
+The fallback preserves that same schema.
+
+This matters because Harbor should receive the same shape of reward object whether verification succeeds normally or fails catastrophically.
+
+A malformed infrastructure failure should not introduce a second reward format.
+
+---
+
+#### What these files protect against
+
+Together these files address several distinct failure modes.
+
+The pinned Docker digest protects against silent base-image drift.
+
+The exact dependency lock protects against numerical-library drift.
+
+`PYTHONHASHSEED=0` removes one runtime nondeterminism source.
+
+The separate verifier protects the private grader from interactive agent inspection.
+
+The `runner` account and `/tests` permissions protect private data from submitted code during verification.
+
+The wrapper protects Harbor from a missing reward artifact if the grader crashes.
+
+These are very different problems.
+
+I prefer handling each one explicitly rather than treating "containerized" as if it automatically solved all of them.
+
+---
+
+#### What these files do not claim
+
+These controls do not prove perfect sandbox security against every possible operating-system or container escape.
+
+The notes support a narrower claim.
+
+Under the intended Harbor execution model, the solver does not receive the verifier container, and the submitted program is not given ordinary filesystem permission to read `/tests`.
+
+That is the security property I rely on for the benchmark.
+
+Likewise, fixing `PYTHONHASHSEED` does not make arbitrary submitted code deterministic.
+
+The handbook still requires the solution to fix its own random seeds.
+
+The environment only removes one additional source of accidental variation.
+
+---
+
+#### Why I treat reproducibility and security together
+
+At first these may seem like separate topics.
+
+Reproducibility asks:
+
+> **Will the same benchmark run behave the same later?**
+
+Security asks:
+
+> **Can the solver obtain information it was not supposed to have?**
+
+But both are really about controlling the execution environment.
+
+I want the program to receive:
+
+```text
+the same permitted inputs
+```
+
+under:
+
+```text
+the same numerical environment
+```
+
+while preventing it from gaining:
+
+```text
+unpermitted private inputs.
+```
+
+The Dockerfiles define that boundary.
+
+---
+
+#### How this fits into the complete Harbor flow
+
+The execution path is now:
+
+```text
+                 AGENT IMAGE
+                     |
+                     v
+          public task + solution
+                     |
+                     v
+              agent modifies
+              /app/solution
+                     |
+                     v
+          declared artifacts copied
+                     |
+                     v
+               VERIFIER IMAGE
+                     |
+           +---------+---------+
+           |                   |
+           v                   v
+      submitted code       /tests private
+        as runner          grader + truth
+           |                   |
+           |     no read       |
+           +------X------------+
+           |
+           v
+      forecast output
+           |
+           v
+       grader.py
+           |
+           v
+/logs/verifier/reward.json
+           |
+           v
+         Harbor
+```
+
+This is the execution boundary that turns the statistical benchmark into a defensible agent benchmark.
+
+---
+
+#### How I think about these files
+
+I think of the two Dockerfiles and `test.sh` as the **execution trust boundary** of the task.
+
+Everything before this point defines what the benchmark means.
+
+These files determine whether that meaning survives actual execution.
+
+The agent should have everything required to solve the forecasting problem and nothing that directly reveals the answers.
+
+The verifier should have the answers and enough authority to grade the submission, while the submitted program should receive only the permissions required to generate forecasts.
+
+The central principle is:
+
+> **I make both containers reproducible from pinned software, keep the verifier physically separate from the agent, execute untrusted forecasting code with only the filesystem privileges it needs, and guarantee that verification always ends in a well-formed reward artifact whose diagnostics survive a grader failure.**
+
+### References
+
+Saltzer, J. H., & Schroeder, M. D. (1975). *The protection of information in computer systems*. **Proceedings of the IEEE, 63**(9), 1278–1308.
+Amodei, D., Olah, C., Steinhardt, J., Christiano, P., Schulman, J., & Mané, D. (2016). *Concrete problems in AI safety*. arXiv:1606.06565.
+Skalse, J., Howe, N. H. R., Krasheninnikov, D., & Krueger, D. (2022). *Defining and characterizing reward hacking*. arXiv.
+
+## 23. 
+
+# Result Notes - t20-exact-forecast
+
+## Pilots on the rebuilt task
+
+Six trials in the real Harbor harness on the task built from this repository's own constants, after `bar.json` was committed and before any model ran on it. Three of Claude Opus 4.7 under Claude Code at high reasoning effort, three of GPT-5.5 under Codex at high effort, alternating, on 23 September 2026.
+
+| Run | Model | Total regret, times the reference (bar 1.10) | Held out | Forecast most resembles | Session |
+|---|---|---|---|---|---|
+| 1 | Opus 4.7 | 1.533 | 1.492 | no shrinkage on 6 of 8 worlds | 16 min |
+| 2 | GPT-5.5 | 1.575 | 1.613 | no shrinkage on 7 of 8 | 25 min |
+| 3 | Opus 4.7 | 1.573 | 1.537 | no shrinkage on all 8 | 25 min |
+| 4 | GPT-5.5 | 1.545 | 1.543 | no shrinkage on 5, last season only on 2 | 19 min |
+| 5 | Opus 4.7 | 1.396 | 1.376 | no shrinkage on all 8 | 21 min |
+| 6 | GPT-5.5 | 1.109 | 1.117 | the reference on 7 of 8 | 20 min |
+
+Opus 4.7 passed 0 of 3 and GPT-5.5 0 of 3. No run raised an exception or came near a time limit; every run wrote a complete, valid, deterministic forecast and left the engine untouched, so every verdict is about forecast quality. The coin flip sits at 1.89 on these worlds. Five of the six forecasts carry the unshrunk fingerprint, the same failure the original pilots showed. The sixth missed the bar by 0.9 points on all eight worlds and 1.7 on the held-out seven, the closest any run on either build has come without passing; a tolerance of 1.12 would have passed it, which is the sensitivity the design document reports for the original's near miss at 1.175. Every Opus session ran under 26 minutes, the length that in the original runs went with no synthetic-league check; the programs and session logs of these six were not read, so that is an inference from the fingerprints and the session lengths, not a finding.

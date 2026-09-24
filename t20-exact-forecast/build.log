@@ -5,3 +5,4 @@ heldout_c: truth sd 0.065 | reference 0.0074  coin flip 0.0093  team ratings 0.0
 heldout_d: truth sd 0.072 | reference 0.0061  coin flip 0.0117  team ratings 0.0362  no shrinkage 0.0123  last season only 0.0134  raw head-to-head 0.0401  [183s]
 heldout_e: truth sd 0.094 | reference 0.0095  coin flip 0.0185  team ratings 0.0192  no shrinkage 0.0201  last season only 0.0081  raw head-to-head 0.0304  [185s]
 heldout_f: truth sd 0.102 | reference 0.0132  coin flip 0.0235  team ratings 0.0275  no shrinkage 0.0185  last season only 0.0186  raw head-to-head 0.0389  [185s]
+heldout_g: truth sd 0.112 | reference 0.0090  coin flip 0.0270  team ratings 0.0452  no shrinkage 0.0124  last season only 0.0193  raw head-to-head 0.0283  [184s]

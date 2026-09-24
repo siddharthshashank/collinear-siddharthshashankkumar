@@ -18,3 +18,4 @@ Do not change `/app/engine/`.
 The grader runs your program on this league and on leagues it generates the same way that you have not seen. Because the leagues are simulated, the true win probability of every fixture is known, and your forecast is graded by its expected log loss against that truth.
 No match result is used. You pass if your regret, summed over the leagues, is within the stated tolerance of a reference forecaster's sum, on all leagues together and on the unseen leagues on their own. The handbook gives the formula, the tolerance, the time limit, and the rules your program must follow.
 Only a perfect result counts as solved.
+

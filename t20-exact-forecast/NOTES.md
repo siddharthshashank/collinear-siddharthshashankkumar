@@ -18620,3 +18620,26 @@ Six trials in the real Harbor harness on the task built from this repository's o
 | 6 | GPT-5.5 | 1.109 | 1.117 | the reference on 7 of 8 | 20 min |
 
 Opus 4.7 passed 0 of 3 and GPT-5.5 0 of 3. No run raised an exception or came near a time limit; every run wrote a complete, valid, deterministic forecast and left the engine untouched, so every verdict is about forecast quality. The coin flip sits at 1.89 on these worlds. Five of the six forecasts carry the unshrunk fingerprint, the same failure the original pilots showed. The sixth missed the bar by 0.9 points on all eight worlds and 1.7 on the held-out seven, the closest any run on either build has come without passing; a tolerance of 1.12 would have passed it, which is the sensitivity the design document reports for the original's near miss at 1.175. Every Opus session ran under 26 minutes, the length that in the original runs went with no synthetic-league check; the programs and session logs of these six were not read, so that is an inference from the fingerprints and the session lengths, not a finding.
+
+---
+
+## The programs, and the ablations
+
+I read the six programs of the first round and the closing message of each session. All six fit the documented ball model by penalised likelihood with the exact gradient, build a skill book and simulate on the shipped engine. The architecture is right in every one. What differs is the prior scale: batter quality's true spread is 0.15, a ridge of 44, and the six used a ridge of 1.0 (trial 1, one ridge on every block), a prior sd of 0.75 (trial 2), ridge 1.0 (trial 3), ridge 1.2 (trial 4), ridge 4 (trial 5) and a prior sd of about 0.45 plus 0.38 (trial 6). Four of the six checked nothing about accuracy before submitting, only runtime, determinism and output shape. Trial 5 checked symmetry and range. Trial 3 built synthetic leagues with the shipped engine, scored itself at 0.34 times the coin flip, reported "0.64 to 0.67 times the estimated reference, well inside the 1.10 tolerance", and failed at 1.57: its synthetic players were spread by about 1.0, the inverse of its own ridge, against a truth of 0.15 to 0.35, so the check measured how well it recovers its own priors. Trial 6, the near miss, multiplies every finished forecast's logit by 0.90; that hedge compensates for part of the overconfidence its priors create.
+
+To confirm the cause by intervention I reran each program on held-out world c with exactly one constant changed (`dev/ablate_pilots.py`, log in `ablations.log`). The reference's regret there is 0.0074 and the coin flip sits at 1.26 times it. The "as submitted" numbers reproduce the verifier's column for that world to the last digit. Harbor redacts the env value `true` in job artifacts, so the archived programs needed `[REDACTED]` restored to `true` before they would run.
+
+| Trial | As submitted | One change | After |
+|---|---|---|---|
+| 1, Opus | 2.70 | ridge 1.0 on everything raised to 25 | 1.36 |
+| 2, GPT-5.5 | 2.55 | every prior sd multiplied by 0.33 | 1.57 |
+| 3, Opus | 2.17 | every ridge multiplied by 12 | 1.64 |
+| 4, GPT-5.5 | 2.29 | every ridge multiplied by 12 | 1.60 |
+| 5, Opus | 2.10 | the two quality ridges raised from 4 to 44 and 31 | 1.27 |
+| 6, GPT-5.5 | 1.42 | hedge removed (0.90 to 1.0) | 1.67 |
+| 6, GPT-5.5 | 1.42 | hedge deepened (0.90 to 0.75) | 1.13 |
+| 6, GPT-5.5 | 1.42 | every prior sd halved, hedge kept | 0.91 |
+
+Every change moved the regret the way the diagnosis predicted. None of the first five reaches the reference on one change, because each carries a second wrong choice that was left untouched. Trial 6 with its priors halved beats the reference on this world, so the near miss was a softened wrong answer and a correctly regularised version of that program would very likely pass. Runs 7 to 10 were not read; all four carry the unshrunk fingerprint on every world. This is also the size of the advantage the reference holds by knowing the spreads: one constant, and half or more of the excess regret.
+
+**My notes.**

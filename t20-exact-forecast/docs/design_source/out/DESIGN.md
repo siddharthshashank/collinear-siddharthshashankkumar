@@ -22,10 +22,10 @@ The brief says the primary deliverable is a clear design document, that a produc
 
 | Rubric line | Points | Where this document answers it |
 |---|---|---|
-| Harbor compliance and reproducibility | 20 | Sections 5.17 to 5.22 and 7. Pinned images by digest, locked libraries, shipped data, both gates passed, the oracle at exactly 1.000. |
-| Fairness and solvability | 20 | Sections 5.18, 5.19 and 5.23. Public structure, hidden values, a reference that uses only the agent's files, a rule committed first. |
+| Harbor compliance and reproducibility | 20 | Sections 5.17 to 5.22, 7 and 8.4. Pinned images by digest, locked libraries, shipped data, both gates passed, the oracle at exactly 1.000, 22 of 22 linter checks. |
+| Fairness and solvability | 20 | Sections 5.18, 5.19, 5.23 and 8.1. Public structure, hidden values, a reference that uses only the agent's files, a rule committed first. |
 | Verifier quality | 20 | Sections 5.7, 5.20 and 5.21. Exact grading against known truth, held-out worlds, a separate container, an unprivileged runner, no judge. |
-| Long-horizon difficulty | 15 | Section 5.24. Estimation, validation, simulation and generalisation are coupled, and an early wrong choice surfaces only in the final number. |
+| Long-horizon difficulty | 15 | Section 5.24 and 8.3. Estimation, validation, simulation and generalisation are coupled, and an early wrong choice surfaces only in the final number. |
 | Evidence of frontier-model failure | 15 | Sections 6.1 to 6.3. Both named models, native harnesses, five trials each, 0 of 5 and 0 of 5, the cause identified by fingerprint and confirmed by one-constant ablation. |
 | Originality and realism | 10 | Sections 5.1 to 5.12. Exact-truth grading of forecasts, with a simulator calibrated to a real archive and constants reproducible from raw data. |
 
@@ -439,10 +439,84 @@ Regret as a multiple of the reference's on held-out world c. Every change moved 
 | Bar analysis on eight fresh worlds | What must the tolerance absorb? | Noise up to 5.9 percent per world; coin flip beats the reference on 1 of 8; totals clean | Bar moved to the total over eight worlds at 1.10. Committed before any pilot. |
 | Calibration rebuilt from raw data | Can the constants be reproduced? | Every block within 0.0007 of an earlier build; seed 101 reproduces that build's world byte for byte with its constants | The pipeline is reproducible. The generated world is sensitive to the fourth decimal. |
 | Gates on the packaged task | Does the public path meet its own bar? | Oracle 1.000 on every key at exactly 1.000 times the reference; starter 0.000 overall | The task is solvable from the agent's files. |
+| Harbor's task linter on the packaged task | Does the package meet Harbor's own checks? | 22 of 22 pass; one comment typo in the engine noted | Left as is: changing the engine after the pilots would change the task. |
 | Pilots, five trials per model | Does a named model fail under the committed rule? | Opus 4.7 0 of 5 (1.53, 1.57, 1.40, 1.36, 1.70); GPT-5.5 0 of 5 (1.58, 1.55, 1.11, 1.36, 1.41) | Both named models fail, for the cause the ladder predicted. |
 | One-constant ablations of the six first-round programs on held-out world c | Is the fingerprint the cause? | Every program moved as predicted on one constant: 2.70 to 1.36, 2.55 to 1.57, 2.17 to 1.64, 2.29 to 1.60, 2.10 to 1.27; the near miss beat the reference at 0.91 once its priors were halved | The cause is confirmed by intervention. The near miss was a hedged wrong answer. |
 
-## 8. Risks and limitations
+## 8. Decisions, assumptions, trade-offs and validation
+
+The sections above give each of these where it arose. This section collects them so they can be read in one place and checked against the code.
+
+### 8.1 Decisions, and the alternative each one rejected
+
+| Decision | Alternative rejected | Why |
+|---|---|---|
+| Grade forecasts against the exact win probability of a world I own | Realised log loss on future match results | Result noise is about 0.014 per match, more than twice the gap between the careful and careless tiers, so luck would decide the verdict (5.1). |
+| Logarithmic regret | Brier regret, also strictly proper | It charges most for confident error, which is the failure I expected and the one every failed run showed (5.1). |
+| Ship the engine as code, with the public constants and nothing else | Describe the ball model in words; or hide the mechanics | A missed detail in a description would make an agent's simulator wrong for a reason that is not its fault. The whole difficulty then sits in inference, where it belongs (5.4, 5.9). |
+| Calibrate to the real archive, invent every player, venue and team | Use real players; or an uncalibrated toy league | The league behaves like cricket, and no outside knowledge can reveal a hidden skill (5.2, 5.10). |
+| Model only effects that repeat in independent halves of the archive | A hidden effect for every batter-bowler pair | Pairs repeat at 0.18. Modelling them would plant noise as skill and reward a fan's instinct (5.6). |
+| Separate the measured constants from the chosen ones in two classes, each value with its reason | One configuration file | A reviewer can dispute a choice without touching a measurement (5.8). |
+| A double round robin of three seasons, a quarter of players transferring, a fresh eleven each match | Fixed rosters; 109 matches of history | With 109 matches nobody beat the coin flip. Transfers make team identity weak so a player model keeps information a team model loses (5.5, 5.10). |
+| The toss winner always chases; five bowlers in fixed rotation | A captain's decision policy | Either alternative puts a hidden decision-maker in the world that the agent would have to model too (5.9). |
+| Eight graded worlds, one visible and seven held out | The visible world only | A method tuned to seed 101 must also work on seven worlds it never saw (5.15). |
+| A bar on the total regret over eight worlds, at 1.10 times the reference, applied again to the held-out seven | A bar on every world; or an absolute regret target | Per world, noise reaches 5.9 percent and the coin flip beats the reference on one world in eight. Summed, noise is 1.1 percent and the careless tiers sit at 1.30 or worse (5.16). |
+| Commit the rule before any pilot and never move it | Set the tolerance after seeing the scores | A bar that moves after a score is seen is not a bar. The near miss at 1.109 stays a failure (5.16, 6.1). |
+| Anchor the bar on a reference that uses only the agent's files, loaded through the agent's reader | A reference with access to the generator | The oracle then proves solvability rather than assuming it (5.13, 5.19). |
+| Disclose the structure of everything hidden and both traps; withhold every magnitude | Hide the model class; or disclose the spreads | Unknown quantities are allowed. Unknown rules are not (5.18). |
+| A separate verifier container, an unprivileged runner, a pristine engine for execution, the agent's engine only hashed | Grade inside the agent's container | The reward must be earned by forecasting, not by reading the answers or editing the engine (5.20, 5.21). |
+| Count run 8 and flag it | Exclude it | Its program was complete and graded; the interruption was my account's, not the model's. Excluding it changes nothing (6). |
+| Leave the engine's comment typo after the pilots | Fix it | Any change to the engine's bytes makes the shipped task differ from the one the ten runs saw (7). |
+
+### 8.2 Assumptions, and what would break each
+
+| Assumption | Why I accept it | What would break it |
+|---|---|---|
+| Six ball outcomes with an independent extras draw are enough structure for a ball | The simulated run rate by over correlates at 0.977 with the archive and the totals' mean is within a run | Nothing about grading, since the truth is computed under the same rules. Only claims about real cricket. |
+| Given the skills, an innings is Markov in the scoreboard and the striker | The published Twenty20 simulators use the same structure | Momentum or fatigue in real cricket. Irrelevant to fairness for the same reason as above. |
+| Form is a mean-reverting process with a nine-month memory, and talent is 70 percent of the variance | The pair reproduces the measured year-to-year stability of 0.78 | A real form process with regime changes rather than smooth drift. |
+| Venue, season level, dew and the pitch on the day all move outcomes along one direction | The measured era direction is the only environmental axis the archive identifies cleanly | Several distinct environmental axes in reality. Chosen over several weakly identified directions on purpose (5.7). |
+| The era trend is a straight line | Eight seasons of fitted season effects sit near a line | A rule change or a tactical shift that moves the game in a step. |
+| Truth at 100,000 copies per batting order is exact for grading | Its error is about 0.0011 per probability and a quarter of one percent of the reference's regret over 192 fixtures | Only if regret differences of that size mattered, and the bar is ten percent. |
+| The eight worlds' scores are close to independent | Separately seeded worlds; the sum's noise was measured at 1.1 percent | The truth streams are shared across worlds by fixture number, so their truth errors are not fully independent (5.10). Noted as a limitation. |
+| The native harness at high effort is a fair representation of each model | It is what the brief's command examples specify | A different harness, system prompt or effort setting. |
+| The task needs no network and the verifier makes no network calls | All data and code are local; the grader imports nothing remote | Nothing; the verifier's no-network mode is left undeclared only because Docker Desktop rejects it (9). |
+| The clip at 0.002 is outside the region an honest forecaster uses | True probabilities lie between about 0.2 and 0.8 | A world with near-certain fixtures, which this generator does not produce. |
+
+### 8.3 Trade-offs, what each gained and what it gave up
+
+| Choice | Gained | Given up |
+|---|---|---|
+| A synthetic world | Exact truth, no leakage, eight fresh worlds for free | Any claim about real cricket; knowledge of the game is worth nothing to the agent |
+| Shipping the engine | Fairness; failures attributable to inference | Difficulty from discovering the mechanics; the task tests estimation, not reverse engineering |
+| Telling the agent the coin flip's yardstick and the self-check route | An honest task, and a failure that cannot blame an undisclosed rule | An agent that uses the yardstick has an easier time; run 3 shows using it is not enough |
+| A reference-relative bar | Robust to worlds with little to predict | The bar inherits the reference's advantage: its prior scales were set knowing the truth |
+| The sum over eight worlds | Noise of 1.1 percent; no single world can veto | A method can be weak on one world and still pass |
+| Ten percent | Nine times the noise, a third of the way to the closest careless tier | A run at 1.109 fails; the verdict is sensitive at that margin |
+| A compact engine | A model that can be fitted exactly and inspected in an afternoon | Fielding, partnerships, memory beyond the scoreboard |
+| Ten pilots rather than thirty | Evidence in time for the deadline | Wide intervals: 0 of 5 allows a true pass rate of up to about 45 percent |
+| Ablations of six programs on one world, one constant each | A causal confirmation of the diagnosis in an hour | Not every run, not every world, and not a full accounting of each program's other choices |
+| Restoring Harbor's redaction of the word true in the archived programs | The reruns are of the programs the grader saw | Reliance on the fact that only one token was redacted, which the logs confirm |
+| A pinned base image and locked libraries | The same bytes next year | Rebuilding depends on the registries still serving those exact artifacts |
+
+### 8.4 Validation, what was checked and how
+
+| What | How | Result |
+|---|---|---|
+| The parser | One match against its scorecard; the archive's totals | Exact, after a dismissal-kind typo was caught |
+| The over table | The count of legal balls, 125,465 | Exact, after an off-by-one was caught |
+| The situation fit | Known coefficients and iteration count; player directions | Matched, after a gradient typo was caught |
+| The constants file | Block by block against an earlier build of the pipeline | Largest difference 0.0007, the optimizer's tolerance |
+| The engine | Over shapes; wicket and pressure responses; identical sides at 0.507; home lift at ten times gives 0.656 | Pass |
+| The world generator and file writer | Seed 101 with an earlier build's constants, compared row for row and byte for byte | Identical history and identical files |
+| League realism | Six aggregates of three simulated leagues against the archive | Mean 189.2 against 188.5; chasers 0.510 against 0.509; wickets 5.83 against 5.9; run rate by over 0.977; spread of totals 35.0 against 37.4 (5.12) |
+| The ladder | Ordering of the tiers on the visible world and summed over eight | Careless tiers at 1.50 to 4.00 times the reference; richer tiers within one percent |
+| The bar | Noise and separation on eight worlds that are never graded | Per-world rule rejected; sum rule at 1.10 adopted and committed first |
+| The task data | Truth precision; the reference fitted from the reloaded public files | Truth error a quarter of one percent of the reference's regret |
+| The package | Starter and oracle graded outside Harbor; both Harbor gates; Harbor's own linter | Starter 0.000, oracle 1.000 at exactly 1.000 times the reference; 22 of 22 linter checks pass |
+| The pilots | Ten runs; fingerprints; six programs read; one-constant ablations | 0 of 5 and 0 of 5; the cause confirmed by intervention (6) |
+
+## 9. Limitations
 
 - Five trials per model is a small sample. 0 of 5 leaves a true pass rate as high as about 45 percent inside a 95 percent interval, and one run missed by less than one point.
 - The verdicts move with the bar. At 1.12 the near miss would have passed. The rule is relative, tied to named tiers and committed first, but it remains a choice.
@@ -457,7 +531,7 @@ Regret as a multiple of the reference's on held-out world c. Every change moved 
 - The brief names two model pairs: its goal line names GPT-5.5 and Claude Opus 4.7 and its opening section names a newer pair. These runs are of the pair the goal line and the command examples name. The newer pair would need its own runs on the frozen task, under the same committed rule.
 - Harbor's log redaction replaces the literal `true` in each job's `details.json` with a placeholder, so those files need a one-word substitution before they parse; the reward files are untouched. The summaries in the run report were produced that way and say so.
 
-## 9. What comes next
+## 10. What comes next
 
 | Step | What it produces | Status |
 |---|---|---|
@@ -536,6 +610,6 @@ Seven drawings of the system as it is, generated from the repository by the scri
 
 ### Plate 7. Pilot results on the graded worlds
 
-![Left, the six first-round model runs and the ladder tiers as multiples of the reference's summed regret, against the 1.10 bar. Right, the same runs world by world. Drawn from the job records of the first round; runs 7 to 10 are in the table in Section 6.](../../figures/pilot_results.svg)
+![Left, every recorded model run and the ladder tiers as multiples of the reference's summed regret, against the 1.10 bar. Right, the same runs world by world. Generated from the job records in the repository at the time the figure was built.](../../figures/pilot_results.svg)
 
-*Left, the six first-round model runs and the ladder tiers as multiples of the reference's summed regret, against the 1.10 bar. Right, the same runs world by world. Drawn from the job records of the first round; runs 7 to 10 are in the table in Section 6.*
+*Left, every recorded model run and the ladder tiers as multiples of the reference's summed regret, against the 1.10 bar. Right, the same runs world by world. Generated from the job records in the repository at the time the figure was built.*

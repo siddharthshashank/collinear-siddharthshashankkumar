@@ -2,9 +2,11 @@
 
 A Harbor task in which an AI agent forecasts match win probabilities for a simulated Twenty20 cricket league and is graded against the exact truth.
 
+Status: complete and frozen. Task, verifier, oracle, gates, linter, eighteen model jobs and the documents, as of 25 September 2026. No changes to the task after the first pilot.
+
 ![The whole system: calibration from real data, the synthetic world, task build and packaging, the Harbor runtime, and the evidence](figures/system_overview.png)
 
-## What it is, in plain words
+## What it is
 
 The agent gets three seasons of ball-by-ball history from a made-up league, the engine that plays the matches, and next season's fixtures with their line-ups. It must write a program that says how likely the home side is to win each fixture. Because the league is generated, the true probability of every fixture is known, so a forecast is graded on how far it is from the truth, not on whether one match happened to go one way. The league was calibrated to 295,557 real IPL deliveries so it behaves like cricket, but every player, team and ground is invented, so nothing the agent knows about real cricket helps it.
 
@@ -29,10 +31,10 @@ The pass bar is 1.10 times a reference forecaster built from ordinary statistics
 | [DECISIONS.md](DECISIONS.md) | Twenty-four decisions that could have gone another way, each with the alternative, the cost and whether it stands. |
 | [RUN_REPORT.md](RUN_REPORT.md) | Environment, the rule, every run with its job identity, the exclusions, the ablations, and the commands to repeat it all. |
 | [PROVENANCE.md](PROVENANCE.md) | What is new, what is borrowed, the data licence, and the use of AI assistance. |
-| [NOTES.md](NOTES.md) | A file-by-file study of the pipeline, written while checking each part against known numbers. |
+| [NOTES.md](NOTES.md) | Notes on every file in the pipeline: what it does, how it works, what it was checked against, and what the checks caught. The full-length working notes are in `docs/NOTES_FULL.md`. |
 | `docs/DESIGN.pdf` | The extended version of the design document, with derivations and all seven drawings. |
 | `figures/` | The drawings used in the documents. |
-| `jobs/` | Every Harbor job: the two gates, the linter and all eighteen model jobs, fifteen of them completed and graded, with rewards, per-world details, agent logs and submitted programs. |
+| `jobs/` | Every Harbor job: the two gates, the linter, the sixteen graded model jobs with rewards, per-world details, agent logs and submitted programs, and the two jobs I stopped, with their agent logs. |
 
 ## Layout
 

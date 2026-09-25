@@ -1,18 +1,36 @@
 # Learning what to trust
 
-## A forecasting task for AI agents, graded against the exact truth
+*A forecasting task for AI agents, graded against the exact truth*
 
-**Author:** Siddharth Shashank Kumar
-**Task:** `collinear-siddharthshashankkumar/t20-exact-forecast`
-**Repository:** github.com/siddharthshashank/collinear-siddharthshashankkumar
+| | |
+|---|---|
+| Author | Siddharth Shashank Kumar |
+| Task | `collinear-siddharthshashankkumar/t20-exact-forecast` |
+| Repository | github.com/siddharthshashank/collinear-siddharthshashankkumar |
+| Status | Complete and frozen, 25 September 2026. No change to the task after the first pilot. |
 
----
+## Contents
 
-### In one paragraph
+1. [The question](#1-the-question)
+2. [Two experiments that were wrong before this one was right](#2-two-experiments-that-were-wrong-before-this-one-was-right)
+3. [The idea: own the truth](#3-the-idea-own-the-truth)
+4. [Why cricket, why Twenty20, why the IPL](#4-why-cricket-why-twenty20-why-the-ipl)
+5. [Building a world that behaves like cricket](#5-building-a-world-that-behaves-like-cricket)
+6. [What the agent gets, and what it must do](#6-what-the-agent-gets-and-what-it-must-do)
+7. [The measurement](#7-the-measurement)
+8. [Making the verdict trustworthy](#8-making-the-verdict-trustworthy)
+9. [The experiment](#9-the-experiment)
+10. [What the results mean](#10-what-the-results-mean)
+11. [Is it fair, and is it original?](#11-is-it-fair-and-is-it-original)
+12. [Limitations](#12-limitations)
+13. [If I had another month](#13-if-i-had-another-month)
+14. [How to run it](#14-how-to-run-it)
+
+Evidence: every factual claim carries a numbered footnote naming the file, job or calculation behind it; the footnotes and an index by kind of claim are at the end.
+
+## Summary
 
 I wanted to know whether today's AI coding agents can do the thing that separates a good forecaster from a bad one: look at a noisy history, decide how much of it to believe, and build a check that could tell them they are wrong. To measure that cleanly I built a Twenty20 cricket league that exists only inside a simulator, calibrated it to 295,557 real IPL deliveries so it behaves like cricket, hid every player's true ability, and asked the agent to forecast next season's matches from three seasons of records. Because I generated the league, I know the true probability of every match, so a forecast is graded on its distance from the truth, not on whether one match happened to go one way. The pass mark was fixed before any model ran. The two models the brief names failed ten times out of ten, all for the same reason, which I confirmed by editing their programs; the next generation of the same two model families passed four times out of five by doing exactly what the failures skipped. The bar sits between the generations, and that is the result.
-
----
 
 ## 1. The question
 
@@ -32,7 +50,6 @@ Because the usual way of grading forecasts cannot see the mistake either. If you
 
 Three things, and I committed to all three before running a model. A pass mark that a careful, ordinary statistical method clears and that hurried shortcuts do not. Evidence that if a model fails, it failed for the reason the design predicts, and not for an infrastructure reason. And the honesty to report whatever the models did, including passing.
 
----
 
 ## 2. Two experiments that were wrong before this one was right
 
@@ -44,7 +61,6 @@ This is not the first task I built for this brief. It is the third, and the firs
 
 **What the third task had to have.** Difficulty that is statistical rather than specificational: a program can be correct in every line and still be wrong, because the wrongness is in how much it believes the data. And a grade that a computer can produce without a human judging anything.
 
----
 
 ## 3. The idea: own the truth
 
@@ -56,11 +72,10 @@ Three reasons, in order of importance. First, exact truth: if I generate the lea
 
 Any claim about real cricket. The world is a statistical model of the IPL, not the IPL. I say this everywhere it matters, and the task does not depend on it: the agent is judged on inference inside a world whose rules it is given.
 
-### Isn't a synthetic world artificial in a way that makes the task easy or arbitrary?
+### Is a synthetic world artificial in a way that makes the task easy?
 
 It would be if the simulator were a toy with made-up numbers. So the effects in the world are the ones that measurably exist in fifteen years of real data, at the sizes they exist, and the things that do not exist in the data were left out. Section 5 is about how.
 
----
 
 ## 4. Why cricket, why Twenty20, why the IPL
 
@@ -88,7 +103,6 @@ The one number that shaped everything. Rank the batters by scoring rate in one h
 
 Suppose a new batter has faced forty balls and scored at a rate that would make him the best in the league. Forty balls is nothing; the honest estimate of his ability is much closer to the average than his numbers suggest, and it should move toward his numbers only as the evidence grows. Pulling estimates toward the average in proportion to how little data supports them is called shrinkage. How hard to pull is controlled by one number, the prior scale, and getting that number right is the whole task in miniature. The real data says the pull should be strong; every model that failed pulled far too weakly.
 
----
 
 ## 5. Building a world that behaves like cricket
 
@@ -131,7 +145,6 @@ On the checks I ran, yes. Three simulated seasons against the real archive: aver
 
 A dismissal label typed wrong, an off-by-one in the count of legal balls, and a wrong term in a gradient that produced plausible but wrong coefficients. Every stage was checked against a number known from somewhere else before the next stage was built. That habit is the same discipline the task later asks of the agent, and it is why I trust the constants that shipped: rebuilt from the raw archive, they match an earlier build to within 0.0007.[^12]
 
----
 
 ## 6. What the agent gets, and what it must do
 
@@ -163,7 +176,6 @@ It must give identical output twice, because a forecast that changes between run
 
 Not because a session has to be long, but because the steps depend on each other. Reading the records wrong corrupts the estimates. Over-trusting the estimates produces overconfident probabilities. A check built from the same wrong assumption approves the wrong model. And all of it has to become a program that works on leagues it has never seen. GPT-6-astra passed in 45 minutes; a short good solution is still a good solution.
 
----
 
 ## 7. The measurement
 
@@ -211,7 +223,6 @@ Because a pass mark chosen after seeing the scores is not a pass mark; it is a s
 
 The truth is an estimate from 200,000 played matches per fixture, with an error of about 0.001 per probability, a quarter of one percent of the reference's regret over 192 fixtures.[^21] That is not infinitely exact, and the document never says it is; it is far more precise than any forecast, which is what the grade needs.
 
----
 
 ## 8. Making the verdict trustworthy
 
@@ -245,11 +256,12 @@ Three ways, and one of them caught a real bug. A solution that installs the refe
 
 No verifier can prove that. What I can say is that the anti-cheating checks pass, and that in the sixteen model jobs the verifier graded, no run attempted to touch the engine or the private files.[^27]
 
----
 
 ## 9. The experiment
 
-I wrote the hypotheses down before the first run, and I state them here in the form they had then.
+### Three hypotheses, written down before the first run
+
+I state them in the form they had then.
 
 **H1.** Under the committed rule, the two named models will fail, and they will fail by trusting short histories too much. If so, their forecasts should most resemble the "no shrinkage" rung of the ladder. If they fail for other reasons, the rungs will say so; if they pass, the task is too easy and I will say that.
 
@@ -321,7 +333,6 @@ Two things, in their own words, kept in the job records. They estimated the prio
 
 Three things. First, that both newer models arrived at the same method, empirical estimation of the prior scale, which is the reference I had listed as future work; they built it themselves in an afternoon. Second, the visible world. All five newer-pair runs did worst or second-worst on the one league they could see, and F2's miss is entirely that world, 1.191 there against 1.093 on the seven it never saw.[^33] Each program seems to have done some tuning on the visible league that did not carry over. The held-out rule was written to stop a strong visible world from carrying a weak method; here it caught the reverse, a method that was fine everywhere except the world it could tune to. I did not chase the cause, and it is on the list. Third, speed: GPT-6-astra passed in the same forty-five minutes in which Opus 4.7 failed. The difference was not effort; it was knowing which question to ask.
 
----
 
 ## 10. What the results mean
 
@@ -341,7 +352,6 @@ I built this task with the help of an AI assistant from the same family as Claud
 
 Zero of five is consistent with a true pass rate as high as about 45 percent; four of five with anything from about 30 to 99 percent.[^34] What the numbers do say, without doubt, is that under an identical rule two models failed every time and their successors passed almost every time, and that the diagnosis of the failures survived being tested by intervention.
 
----
 
 ## 11. Is it fair, and is it original?
 
@@ -361,7 +371,6 @@ The task is new: a calibrated synthetic league with a public mechanism and hidde
 
 A working statistician would, in an afternoon, by the same route the newer models took. I did not run a human baseline; it is on the list, and it would make a good calibration point for the bar.
 
----
 
 ## 12. Limitations
 
@@ -375,7 +384,6 @@ A working statistician would, in an afternoon, by the same route the newer model
 - The pilots of the two earlier architectures are described from my records; their job folders are in my earlier repository, not in this one.
 - The task does not fail the newest generation. Whether that counts as a limitation depends on which pair the brief means.
 
----
 
 ## 13. If I had another month
 
@@ -386,7 +394,6 @@ A working statistician would, in an afternoon, by the same route the newer model
 5. Run a human baseline.
 6. Record the hash of the Cricsheet archive at download time, so the calibration is reproducible byte for byte from outside.
 
----
 
 ## 14. How to run it
 
@@ -405,7 +412,6 @@ harbor run -p dist/collinear-siddharthshashankkumar/t20-exact-forecast -a codex 
 
 Every job is under `jobs/`: the sixteen graded model jobs with their reward, per-world details, agent log and submitted program, and the two I stopped with their agent logs. Full commands, versions, resource limits and the ablation log are in [RUN_REPORT.md](RUN_REPORT.md).
 
----
 
 ## Evidence index
 
@@ -466,7 +472,6 @@ Every factual claim above carries a pointer. This table says where each kind of 
 [^34]: exact binomial intervals: one-sided 95 percent for 0 of 5, two-sided 95 percent for 4 of 5
 [^35]: the per-world elapsed seconds in every `details.json`; the longest was well under half the 720-second limit
 
----
 
 ## Where to read more
 

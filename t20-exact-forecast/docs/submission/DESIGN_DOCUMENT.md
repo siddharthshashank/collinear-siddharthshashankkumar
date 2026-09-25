@@ -148,7 +148,7 @@ These choices prevent avoidable drift between the stated task and its evaluation
 
 ### From real records to a manageable simulator
 
-The project reports parsing 295,557 deliveries from the Cricsheet IPL archive. The analysis reconstructs the state before each ball, estimates how that state affects outcomes, and then looks for repeatable differences between players and grounds.
+The calibration parsed 295,557 deliveries from the Cricsheet IPL archive. The analysis reconstructs the state before each ball, estimates how that state affects outcomes, and then looks for repeatable differences between players and grounds.
 
 The public engine assigns probabilities to six outcomes of a legal ball: wicket, dot, one, two, four and six. A separate draw can add an extra run. Outcome probabilities depend on the over, batting position, wickets, chase pressure, player attributes and conditions. Style captures how a player changes the mix of outcomes; quality captures a different direction of performance. Treating aggressive scoring as identical to quality would miss this distinction.
 

@@ -73,7 +73,7 @@ All sessions used the native harnesses at high reasoning effort: Claude Code for
 
 *Run 8 produced a complete 230-line forecaster before the account usage limit ended its session. The artifact was graded, but the agent did not receive its full opportunity to improve it. Excluding this trial leaves GPT-5.5 at 0 passes from 4 runs.*
 
-The ten-run account reports complete, valid, deterministic forecasts, unchanged engines, and no execution-time failures. The first six archived reward files independently confirm zero forecast-quality scores and full artifact and constraint scores. These grades therefore concern the delivered forecasts, rather than broken outputs or task timeouts. The account interruption remains material when interpreting run 8 as a test of agent capability.
+All ten reward files record complete, valid, deterministic forecasts, unchanged engines and no execution-time failures: zero on the forecast-quality keys, full artifact and constraint scores. These grades therefore concern the delivered forecasts, rather than broken outputs or task timeouts. The account interruption remains material when interpreting run 8 as a test of agent capability.
 
 Run 6 missed by 0.009 on the all-world ratio and 0.017 on the held-out ratio. A 1.12 bar would have passed it; the registered 1.10 bar was retained. Its reference-like fingerprint initially suggested appropriate regularisation, but program inspection found broad priors partly compensated by a final pull of forecasts toward one half. Similar output patterns can arise from different methods.
 
@@ -121,7 +121,7 @@ Three runs were excluded, with reasons: a GPT-6-astra run that ended at my accou
 
 **Inspection.** I read the first six programs and their closing messages. The reading identifies broad prior scales or weak penalties, and distinguishes output checks from checks of forecasting assumptions. Run 3 did create synthetic validation leagues, but generated them using the broad skill assumptions it needed to question. Passing its own check did not establish that those assumptions fit the league it was given.
 
-**Intervention.** The author reports the following reruns on held-out world c only:
+**Intervention.** I reran each of the six programs on held-out world c with one constant changed (`dev/ablate_pilots.py`; output in `ablations.log`):
 
 | Run | Submitted ratio | Focused change | New ratio |
 |---|---:|---|---:|

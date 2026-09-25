@@ -134,7 +134,7 @@ The development pooled unshrunk ratio was 1.30. Pooled variation across four re-
 
 **Trade-off.** A weak world can be compensated by others. Checking the seven held-out worlds separately prevents the visible world from masking poor held-out performance. Conversely, acceptable held-out performance does not waive the all-world requirement.
 
-**Chronology.** Development seeds differ from graded seeds. The author reports that `harbor/bar.json`, with relative tolerance 0.10 and absolute tolerance zero, was committed before the first pilot and retained through later near misses and passes. This report does not independently verify the commit hash. Retrospective diagnosis must never be described as preregistration evidence.
+**Chronology.** Development seeds differ from graded seeds. `harbor/bar.json`, with relative tolerance 0.10 and absolute tolerance zero, was committed before the first pilot (the commit "Harbor metadata, pass bar, lock file, instruction" precedes job `2026-09-23__19-48-37` in the git log) and retained through the later near misses and passes. Retrospective diagnosis is never described as preregistration evidence.
 
 ## D09 — Spend precision on the answer and separate execution from quality
 

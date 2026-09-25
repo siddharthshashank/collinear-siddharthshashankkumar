@@ -23,6 +23,11 @@ RUNS = [
     ("Run 8: GPT-5.5", "gpt", [1.523, 1.102, 1.092, 2.057, 1.969, 1.460, 1.233, 1.010], 1.362, 1.341, True),
     ("Run 9: Opus 4.7", "opus", [2.038, 1.214, 1.367, 2.803, 2.391, 1.869, 1.465, 1.366], 1.703, 1.661, False),
     ("Run 10: GPT-5.5", "gpt", [1.496, 1.308, 1.101, 2.121, 1.728, 1.437, 1.277, 1.132], 1.409, 1.398, False),
+    ("F1: Fable 5.1", "fable", [1.121, 0.959, 0.960, 1.041, 1.133, 0.900, 1.044, 1.140], 1.027, 1.015, False),
+    ("F2: Fable 5.1", "fable", [1.191, 1.054, 1.017, 1.050, 1.230, 1.101, 1.105, 1.147], 1.104, 1.093, False),
+    ("F3: Fable 5.1", "fable", [1.157, 0.941, 0.905, 0.985, 1.053, 0.959, 1.008, 1.117], 1.008, 0.989, False),
+    ("A1: GPT-6-astra", "astra", [1.109, 1.056, 0.861, 1.174, 0.943, 1.055, 1.076, 1.103], 1.054, 1.047, False),
+    ("A2: GPT-6-astra", "astra", [1.165, 1.034, 0.901, 1.134, 1.127, 1.053, 1.089, 1.104], 1.072, 1.061, False),
 ]
 # per-world regret of the reference and the tiers, from build.log; order: visible, a..g
 REF = [0.0087, 0.0167, 0.0075, 0.0074, 0.0061, 0.0095, 0.0132, 0.0090]
@@ -44,7 +49,7 @@ ABL = [
     ("Trial 6, GPT-5.5\nhedge deepened", "gpt", 1.42, 1.13, "output logit scale 0.90 to 0.75"),
     ("Trial 6, GPT-5.5\npriors halved, hedge kept", "gpt", 1.42, 0.91, "every prior sd x 0.5"),
 ]
-COL = {"opus": "#d0641c", "gpt": "#1f6fb0", "tier": "#7a7f85", "oracle": "#178a5a", "bar": "#b23a3a"}
+COL = {"opus": "#d0641c", "gpt": "#1f6fb0", "fable": "#7a3e9d", "astra": "#0f8b8d", "tier": "#7a7f85", "oracle": "#178a5a", "bar": "#b23a3a"}
 INK = "#1d2933"
 
 plt.rcParams.update({"font.family": "DejaVu Sans", "font.size": 11, "axes.edgecolor": "#8a9096", "axes.labelcolor": INK, "xtick.color": INK, "ytick.color": INK})
@@ -76,9 +81,10 @@ def draw_a(fig, ax):
     ax.set_xticks([1.0, 1.5, 2, 3, 4]); ax.set_xticklabels(["1.0", "1.5", "2", "3", "4"])
     ax.set_xlim(0.95, 5.2); ax.set_ylim(-0.7, len(rows) - 0.3)
     ax.set_xlabel("Summed regret as a multiple of the reference's summed regret (log scale)")
-    ax.set_title("(a) All ten runs and the tiers, pooled over the graded worlds", fontsize=12, color=INK, loc="left", pad=10)
+    ax.set_title("(a) Every completed run and the tiers, pooled over the graded worlds", fontsize=12, color=INK, loc="left", pad=10)
     ax.scatter([], [], color=INK, s=54, label="all 8 worlds"); ax.scatter([], [], facecolor="white", edgecolor=INK, lw=1.6, s=54, label="7 held-out worlds")
     ax.scatter([], [], color=COL["gpt"], s=54, marker="D", label="run 8: session cut short by a usage limit")
+    ax.scatter([], [], color=COL["fable"], s=54, label="Claude Fable 5.1"); ax.scatter([], [], color=COL["astra"], s=54, label="GPT-6-astra")
     ax.legend(loc="upper right", fontsize=9, frameon=False)
     ax.grid(axis="x", color="#e6e9ec", lw=0.8); ax.set_axisbelow(True)
     for sp in ("top", "right"): ax.spines[sp].set_visible(False)
@@ -126,8 +132,8 @@ def draw_c(fig, ax):
 
 
 # the combined plate
-fig = plt.figure(figsize=(21, 8.6))
-gs = fig.add_gridspec(1, 3, width_ratios=[1.0, 1.2, 0.95], wspace=0.55, left=0.1, right=0.985, top=0.9, bottom=0.2)
+fig = plt.figure(figsize=(21, 10.2))
+gs = fig.add_gridspec(1, 3, width_ratios=[1.0, 1.2, 0.95], wspace=0.55, left=0.1, right=0.985, top=0.92, bottom=0.17)
 draw_a(fig, fig.add_subplot(gs[0])); draw_b(fig, fig.add_subplot(gs[1])); draw_c(fig, fig.add_subplot(gs[2]))
 fig.text(0.1, 0.05, "Sources: jobs/*/verifier/details.json for the runs, build.log for the tiers and the reference, ablations.log for panel (c). "
          "Pooled ratios are sums of world-mean regrets; every world has 24 fixtures. The bar is 1.10 on all eight worlds and again on the seven held out.",
@@ -136,8 +142,8 @@ fig.savefig("pilot_results.svg"); fig.savefig("pilot_results.png", dpi=134)
 print("written pilot_results.svg and .png")
 
 # each panel on its own, for the paper
-for tag, draw, size, margins in [("a", draw_a, (8.2, 7.2), dict(left=0.24, right=0.97, top=0.92, bottom=0.11)),
-                                  ("b", draw_b, (8.2, 7.6), dict(left=0.17, right=0.98, top=0.92, bottom=0.2)),
+for tag, draw, size, margins in [("a", draw_a, (8.2, 8.6), dict(left=0.24, right=0.97, top=0.93, bottom=0.09)),
+                                  ("b", draw_b, (8.2, 9.0), dict(left=0.17, right=0.98, top=0.93, bottom=0.17)),
                                   ("c", draw_c, (8.2, 6.8), dict(left=0.27, right=0.97, top=0.92, bottom=0.12))]:
     f = plt.figure(figsize=size); f.subplots_adjust(**margins)
     draw(f, f.add_subplot(111))

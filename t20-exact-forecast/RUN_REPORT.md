@@ -56,6 +56,21 @@ On the eight graded worlds, total regret as a multiple of the reference's: last 
 
 Opus 4.7 0 of 5, GPT-5.5 0 of 5. No run came near a time limit; every run produced a complete, valid, deterministic forecast and left the engine untouched, so every verdict is about forecast quality. The verifier found nine of the ten forecasts closest to the unshrunk tier. Run 8 delivered a 230-line program and was then ended by my account's usage limit; the delivered program was graded, and the run is counted and flagged. Excluding it leaves GPT-5.5 at 0 of 4.
 
+The newer pair, on the same frozen task under the same committed rule:
+
+| Trial | Model | Job | Verdict | Total regret, times the reference | Held-out only | Wall time |
+|---|---|---|---|---|---|---|
+| F1 | Claude Fable 5.1 | 2026-09-24__15-33-25 | Passed | 1.027 | 1.015 | 2 h 02 |
+| F2 | Claude Fable 5.1 | 2026-09-24__20-28-49 | Failed on all eight by 0.4 points; passed on the held-out seven | 1.104 | 1.093 | 2 h 37 |
+| F3 | Claude Fable 5.1 | 2026-09-24__23-50-11 | Passed | 1.008 | 0.989 | 1 h 44 |
+| A1 | GPT-6-astra | 2026-09-24__19-42-59 | Passed | 1.054 | 1.047 | 46 min |
+| A2 | GPT-6-astra | 2026-09-24__23-05-34 | Passed | 1.072 | 1.061 | 45 min |
+| A0 | GPT-6-astra | 2026-09-24__17-35-36 | Excluded: usage limit at 5 min, no program written; the starter was graded | | | |
+| A3 | GPT-6-astra | 2026-09-25__01-34-12 | Excluded: program complete, loop stopped by me during verification | | | |
+| F4 | Claude Fable 5.1 | 2026-09-25__01-51-10 | Excluded: stopped at the start | | | |
+
+Fable 5.1 2 of 3 completed runs, GPT-6-astra 2 of 2. Every one of the five forecasts resembles the reference on every world. Their closing messages describe prior scales learned from the league by marginal likelihood, posterior-predictive simulation, and validation against leagues they generated (Fable) or a hold-out of the real league (GPT-6-astra). In all five the visible world was the worst or second-worst world; F2's miss is entirely the visible world.
+
 ## Ablations
 
 The six first-round programs were read and each rerun on held-out world c with one constant changed (`dev/ablate_pilots.py`, output in `ablations.log`). Regret as a multiple of the reference's: trial 1 from 2.70 to 1.36 (its single ridge raised from 1.0 to 25); trial 2 from 2.55 to 1.57 (every prior sd times 0.33); trial 3 from 2.17 to 1.64 (every ridge times 12); trial 4 from 2.29 to 1.60 (every ridge times 12); trial 5 from 2.10 to 1.27 (its two quality ridges raised to the true values); trial 6, the near miss, from 1.42 to 1.67 with its output hedge removed, to 1.13 with the hedge deepened, and to 0.91 with its priors halved and the hedge kept. The "as submitted" rows reproduce the verifier's column for that world to the last digit. Harbor redacts the env value `true` in job artifacts, so archived programs and `details.json` files need `[REDACTED]` restored to `true` before they run or parse; the script and the summaries do that.

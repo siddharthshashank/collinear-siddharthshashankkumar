@@ -95,7 +95,7 @@
 <rect x="177.0" y="903.0" width="1150" height="100" rx="9" fill="#dfe3e8"/>
 <rect x="175.0" y="900.0" width="1150" height="100" rx="9" fill="#fbf5e6" stroke="#a3823a" stroke-width="1.8"/>
 <text x="750" y="929.0" font-family="Helvetica, Arial, sans-serif" font-size="17" font-weight="bold" fill="#1b232b" text-anchor="middle">Evidence and documents</text>
-<text x="750" y="951.0" font-family="Helvetica, Arial, sans-serif" font-size="13.5" font-weight="normal" fill="#59636d" text-anchor="middle">jobs/: two gates, Harbor's linter, every pilot. Ten runs of the named pair, 0 of 10; the newer pair under test</text>
+<text x="750" y="951.0" font-family="Helvetica, Arial, sans-serif" font-size="13.5" font-weight="normal" fill="#59636d" text-anchor="middle">jobs/: two gates, Harbor's linter, every pilot. The named pair 0 of 10; the newer pair 4 of 5, Fable 5.1 and GPT-6-astra</text>
 <text x="750" y="969.0" font-family="Helvetica, Arial, sans-serif" font-size="13.5" font-weight="normal" fill="#59636d" text-anchor="middle">Ablations of the failed programs, figures drawn from the records, the design document, run report, decisions, notes</text>
 <line x1="1095" y1="850.0" x2="1095" y2="890.0" stroke="#1b232b" stroke-width="2.2"/>
 <polygon points="1089.5,889.0 1100.5,889.0 1095,900.0" fill="#1b232b"/>

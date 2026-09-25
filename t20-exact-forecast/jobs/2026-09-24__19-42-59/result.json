@@ -1,20 +1,63 @@
 {
     "id": "63a91c44-59f1-4004-b05a-535345a03637",
     "started_at": "2026-09-24T19:42:59.319432",
-    "updated_at": "2026-09-25T00:42:59.423437Z",
-    "finished_at": null,
+    "updated_at": "2026-09-24T20:28:48.596211",
+    "finished_at": "2026-09-24T20:28:48.596211",
     "n_total_trials": 1,
     "stats": {
-        "n_completed_trials": 0,
+        "n_completed_trials": 1,
         "n_errored_trials": 0,
-        "n_running_trials": 1,
+        "n_running_trials": 0,
         "n_pending_trials": 0,
         "n_cancelled_trials": 0,
         "n_retries": 0,
-        "evals": {},
-        "n_input_tokens": null,
-        "n_cache_tokens": null,
-        "n_output_tokens": null,
-        "cost_usd": null
+        "evals": {
+            "codex__gpt-6-astra__adhoc": {
+                "n_trials": 1,
+                "n_errors": 0,
+                "metrics": [
+                    {
+                        "artifact_quality": 1.0,
+                        "constraint_satisfaction": 1.0,
+                        "functional_correctness": 1.0,
+                        "overall": 1.0,
+                        "robustness": 1.0
+                    }
+                ],
+                "pass_at_k": {},
+                "reward_stats": {
+                    "functional_correctness": {
+                        "1.0": [
+                            "t20-exact-forecast__Hsz4sER"
+                        ]
+                    },
+                    "robustness": {
+                        "1.0": [
+                            "t20-exact-forecast__Hsz4sER"
+                        ]
+                    },
+                    "constraint_satisfaction": {
+                        "1.0": [
+                            "t20-exact-forecast__Hsz4sER"
+                        ]
+                    },
+                    "artifact_quality": {
+                        "1.0": [
+                            "t20-exact-forecast__Hsz4sER"
+                        ]
+                    },
+                    "overall": {
+                        "1.0": [
+                            "t20-exact-forecast__Hsz4sER"
+                        ]
+                    }
+                },
+                "exception_stats": {}
+            }
+        },
+        "n_input_tokens": 1880117,
+        "n_cache_tokens": 1813888,
+        "n_output_tokens": 34626,
+        "cost_usd": 4.207478000000001
     }
 }

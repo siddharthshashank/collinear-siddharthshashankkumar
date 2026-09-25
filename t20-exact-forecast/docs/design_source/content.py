@@ -21,9 +21,11 @@ BLOCKS = [
                  "The rule became a bar on the total over eight worlds (Section 5.16).",
                  "**Measured on the task.** With the rule committed before any model ran, Claude Opus 4.7 under Claude Code and GPT-5.5 under Codex, both at high "
                  "reasoning effort, each ran five times. All ten failed, at 1.11 to 1.70 times the reference's regret, nine of them with the fingerprint of a forecaster "
-                 "that believes small samples. Every run wrote a valid, deterministic forecast inside its constraints, so every verdict is about forecast quality and nothing "
-                 "else. Reading the programs found the cause in every one, prior scales set 3 to 44 times too weak without a check that could see it, and changing that one "
-                 "constant moved each program most of the way to the reference (Section 6)."]),
+                 "that believes small samples. Reading the programs found the cause in every one, prior scales set 3 to 44 times too weak without a check that could see it, "
+                 "and changing that one constant moved each program most of the way to the reference (Sections 6.1 to 6.3).",
+                 "**Measured on the task, one generation on.** The newer pair, Claude Fable 5.1 and GPT-6-astra, passed four of five completed runs, at 1.008 to 1.072, with one "
+                 "miss at 1.104 that passed on the seven held-out worlds. Every one of their forecasts resembles the reference on every world, and their programs describe the "
+                 "two things the failures lacked: prior scales learned from the data, and a check tied to the data in hand. The bar sits between the two generations (Section 6.4)."]),
     ("p", "The central principle of the whole design is this: I grade probability estimates against the hidden probability itself, not against one random realisation "
           "of that probability. This removes outcome luck from the verdict and makes unjustified confidence expensive. Everything else in the document is in service of "
           "that principle, or of making the task fair enough that a failure against it can be attributed to the agent."),
@@ -37,7 +39,7 @@ BLOCKS = [
       ["Fairness and solvability", "20", "Sections 5.18, 5.19, 5.23 and 8.1. Public structure, hidden values, a reference that uses only the agent's files, a rule committed first."],
       ["Verifier quality", "20", "Sections 5.7, 5.20 and 5.21. Exact grading against known truth, held-out worlds, a separate container, an unprivileged runner, no judge."],
       ["Long-horizon difficulty", "15", "Section 5.24 and 8.3. Estimation, validation, simulation and generalisation are coupled, and an early wrong choice surfaces only in the final number."],
-      ["Evidence of frontier-model failure", "15", "Sections 6.1 to 6.3. Both named models, native harnesses, five trials each, 0 of 5 and 0 of 5, the cause identified by fingerprint and confirmed by one-constant ablation."],
+      ["Evidence of frontier-model failure", "15", "Sections 6.1 to 6.4. The named pair, native harnesses, five trials each, 0 of 5 and 0 of 5, the cause identified by fingerprint and confirmed by one-constant ablation. The newer pair passes 4 of 5 completed runs by the route the design predicted."],
       ["Originality and realism", "10", "Sections 5.1 to 5.12. Exact-truth grading of forecasts, with a simulator calibrated to a real archive and constants reproducible from raw data."]], [0.30, 0.08, 0.62]),
     ("p", "I take hard but fair to mean four things that can each be checked."),
     ("bullets", ["A program decides pass or fail. There is no human or model judge, and no match result or other noisy outcome enters the grade.",
@@ -608,6 +610,40 @@ BLOCKS = [
           "case. Removing its hedge made it worse, deepening the hedge made it better, and correcting its priors while keeping the hedge made it beat the reference on this "
           "world. The near miss was a softened wrong answer, and a correctly regularised version of that program would very likely pass. That is the strongest statement the "
           "evidence supports about the bar: it sits where the task intended, one honest check away from a pass."),
+    ("h2", "6.4 The newer pair"),
+    ("p", "The brief names two model pairs: its goal line and its command examples name the pair above, and its opening section names Claude Fable 5.1 and GPT-6-astra. "
+          "After the ten runs I ran the newer pair on the same frozen task under the same committed rule, in the same harnesses at high effort: Fable under Claude Code, "
+          "GPT-6-astra under Codex."),
+    ("table", ["Run", "Model", "All 8 worlds", "Held-out 7", "Session", "Verdict"],
+     [["F1", "Claude Fable 5.1", "1.027", "1.015", "2 h 02", "pass"],
+      ["F2", "Claude Fable 5.1", "1.104", "1.093", "2 h 37", "fail on all eight by 0.4 points; pass on the held-out seven"],
+      ["F3", "Claude Fable 5.1", "1.008", "0.989", "1 h 44", "pass; better than the reference on the held-out worlds"],
+      ["A1", "GPT-6-astra", "1.054", "1.047", "46 min", "pass"],
+      ["A2", "GPT-6-astra", "1.072", "1.061", "45 min", "pass"]], [0.06, 0.20, 0.13, 0.13, 0.12, 0.36]),
+    ("p", "Two further GPT-6-astra runs are excluded and recorded: one ended at my account's usage limit at five minutes, before a program existed, and one had a complete "
+          "program when I stopped the loop during its verification. A fourth Fable run was stopped at its start. So the newer pair passed four of five completed runs, Fable "
+          "2 of 3 and GPT-6-astra 2 of 2, against 0 of 10 for the pair one generation older. Every one of the five forecasts resembles the reference on all eight worlds; none "
+          "carries the unshrunk fingerprint."),
+    ("p", "Their closing messages, which are in the job records, describe what the failed programs never did. Both Fable programs estimated every prior scale from the league by "
+          "marginal likelihood, Laplace-EM in their words, drew the hidden numbers from the posterior and averaged the simulated win probabilities, and built a league "
+          "generator from the handbook's description of the hidden process, with spreads set from the real league's own estimates, to score themselves against exact "
+          "truth: 0.54 of the coin flip over nine synthetic leagues, within two percent of an oracle given the true hyperparameters over eleven. F3 noticed that its "
+          "synthetic coin flip ran at 1.4 to 1.6 times its oracle against the handbook's \"a little under twice\", and reasoned about which side was off. That is the "
+          "check run 3 of the older pair aimed at the wrong world, aimed at the right one. The two GPT-6-astra programs describe hierarchical skill estimation with posterior "
+          "predictive simulation, checked their own simulator against the shipped engine, and validated on a hold-out of the real league; both said the hidden grader's "
+          "verdict remained unverified, so neither leaned on the handbook's yardstick. In short, the passing programs learned their prior scales from the data, the very "
+          "reference I had listed as future work, and the failing programs set them by hand."),
+    ("p", "One pattern runs through all five: the visible world is the worst or second-worst world for every one of them, 1.11 to 1.19 against held-out totals of 0.99 to "
+          "1.09. Something each program does with the league it can see does not carry to the leagues it cannot, and F2's miss is entirely that world. The held-out rule "
+          "was written to stop strength on the visible world from carrying a weak method; here it shows the same rule working in reverse, a run that would have passed on "
+          "the seven unseen worlds and failed on the one it could tune to. I did not ablate the cause."),
+    ("p", "What this establishes. The task separates generations, not vendors: the pair the brief's goal line names fails ten times out of ten for one diagnosed cause, "
+          "and both models of the next generation, from two labs, clear the bar on their first completed attempt by the route the design predicted. The bar therefore sits "
+          "where the design intended and one generation lower than the newest models. It also answers a question I had to ask, since the task was designed with a model of "
+          "Fable's family: a model from a different lab, reading the same handbook, passed too, and the same family's previous model, reading the same three helpful "
+          "sentences, failed five times, so the passes are not family affinity. What it does not establish is a task that fails the newest generation. If that is the pair "
+          "the brief means, the levers are in Section 10, and each needs a fresh bar analysis and a fresh committed rule before any pilot."),
+
     ("h1", "7. Experiment log"),
     ("table", ["Experiment", "Question", "Result", "Decision"],
      [["Pilots of Architecture A at 8, 24 and 48 scripts", "Does a documented rule at scale defeat the top tier?", "Opus 4.7 and GPT-5.5 scored 1.000 every time", "Keep A as a fallback. Stop scaling it."],
@@ -625,6 +661,7 @@ BLOCKS = [
       ["Gates on the packaged task", "Does the public path meet its own bar?", "Oracle 1.000 on every key at exactly 1.000 times the reference; starter 0.000 overall", "The task is solvable from the agent's files."],
       ["Harbor's task linter on the packaged task", "Does the package meet Harbor's own checks?", "22 of 22 pass; one comment typo in the engine noted", "Left as is: changing the engine after the pilots would change the task."],
       ["Pilots, five trials per model", "Does a named model fail under the committed rule?", "Opus 4.7 0 of 5 (1.53, 1.57, 1.40, 1.36, 1.70); GPT-5.5 0 of 5 (1.58, 1.55, 1.11, 1.36, 1.41)", "Both named models fail, for the cause the ladder predicted."],
+      ["Pilots of the newer pair on the frozen task", "Does the next generation clear the same rule?", "Fable 5.1 2 of 3 (1.027, 1.104, 1.008); GPT-6-astra 2 of 2 (1.054, 1.072); every forecast resembles the reference", "The bar sits between the generations. The passing programs learned their prior scales from the data."],
       ["One-constant ablations of the six first-round programs on held-out world c", "Is the fingerprint the cause?", "Every program moved as predicted on one constant: 2.70 to 1.36, 2.55 to 1.57, 2.17 to 1.64, 2.29 to 1.60, 2.10 to 1.27; the near miss beat the reference at 0.91 once its priors were halved", "The cause is confirmed by intervention. The near miss was a hedged wrong answer."]],
      [0.21, 0.25, 0.30, 0.24]),
 
@@ -647,6 +684,7 @@ BLOCKS = [
       ["Disclose the structure of everything hidden and both traps; withhold every magnitude", "Hide the model class; or disclose the spreads", "Unknown quantities are allowed. Unknown rules are not (5.18)."],
       ["A separate verifier container, an unprivileged runner, a pristine engine for execution, the agent's engine only hashed", "Grade inside the agent's container", "The reward must be earned by forecasting, not by reading the answers or editing the engine (5.20, 5.21)."],
       ["Count run 8 and flag it", "Exclude it", "Its program was complete and graded; the interruption was my account's, not the model's. Excluding it changes nothing (6)."],
+      ["Run the newer pair on the frozen task under the committed rule, and report their passes", "Leave the newer pair untested; or change the task first", "The brief names both pairs. Testing the newer one on the same task is the only way to say where the bar sits between generations, and it answered the affinity question (6.4)."],
       ["Leave the engine's comment typo after the pilots", "Fix it", "Any change to the engine's bytes makes the shipped task differ from the one the ten runs saw (7)."]],
      [0.32, 0.26, 0.42]),
     ("h2", "8.2 Assumptions, and what would break each"),
@@ -702,7 +740,9 @@ BLOCKS = [
                  "Three of the six validation checks were tuning targets, so agreement on them is by construction.",
                  "The engine has no fielding, no partnerships and no ball-to-ball memory beyond the scoreboard. The toss winner always chases and bowlers rotate in a fixed pattern. None of this affects grading, since the truth is computed under the same rules, but it bounds what the world claims about real cricket.",
                  "Docker Desktop on macOS rejects the no-network mode for the verifier, so it is left undeclared. The verifier makes no network calls. The pilots ran on one platform; the oracle was also checked on linux/amd64 and matched the stored reference to the last printed digit.",
-                 "The brief names two model pairs: its goal line names GPT-5.5 and Claude Opus 4.7 and its opening section names a newer pair. These runs are of the pair the goal line and the command examples name. The newer pair would need its own runs on the frozen task, under the same committed rule.",
+                 "The brief names two model pairs. The pair its goal line names fails 10 of 10; the pair its opening section names passes 4 of 5 completed runs. If the brief means the newer pair, the task as calibrated is not hard enough for it, and Section 10 lists the levers; each needs a fresh committed rule.",
+                 "The newer-pair sample is five completed runs. Two GPT-6-astra runs and one Fable run were excluded for harness reasons, a usage limit and my stopping the loop, and all three are recorded.",
+                 "In every newer-pair run the visible world was the worst or second-worst world. The cause was not ablated.",
                  "Harbor's log redaction replaces the literal `true` in each job's `details.json` with a placeholder, so those files need a one-word substitution before they parse; the reward files are untouched. The summaries in the run report were produced that way and say so."]),
 
     ("h1", "10. What comes next"),
@@ -712,7 +752,7 @@ BLOCKS = [
       ["A reference that learns each skill's spread from the world", "Removes the reference's advantage; needs a fresh bar analysis and a fresh committed rule before any pilot", "Measured earlier at six to seven percent lower regret. Not adopted under the current rule."],
       ["An off-season circuit with its own hidden scoring level", "A second source of evidence per player, and a league-equivalence problem an agent must solve", "Designed. On real data, a player's internationals in the year before an IPL season add five to six points of explained variance."],
       ["A fresh-clone rebuild on another machine", "Independent confirmation of the package", "Open"],
-      ["The newer model pair the brief's opening section names", "Whether the same failure holds one generation on", "Open; needs access to both harnesses"]], [0.44, 0.36, 0.20]),
+      ["A harder setting for the newer generation: the learned-spreads reference as the bar's anchor, less history, or the off-season circuit", "A rule the next generation fails for a diagnosed cause, as this one does for the previous generation", "The passing programs built the learned-spreads reference themselves; adopting it needs a fresh bar analysis and a fresh committed rule before any pilot"]], [0.44, 0.36, 0.20]),
 
     ("h1", "Appendix. Repository map, bugs the checks caught, sources"),
     ("table", ["Path", "What it holds"],
@@ -757,6 +797,6 @@ BLOCKS = [
     ("plate", "harbor_runtime", "Plate 4. The two containers and the grader's checks", "The agent sees only the public task. The verifier holds the answers, runs the submission as an unprivileged user beside a pristine engine, and applies the integrity, validity and scoring checks."),
     ("plate", "grading_rule", "Plate 5. The pass rule and the reward composition", "One rule applied twice, to all eight worlds and to the seven held-out worlds, then the constraint and artifact checks, and how the four keys combine into the overall reward."),
     ("plate", "research_ladder", "Plate 6. The experiments behind the bar", "The ladder runner across worlds, the bar analysis on eight worlds that are never graded, the quantities each measured, and the rule they produced."),
-    ("plate", "pilot_results", "Plate 7. The ten pilots, world by world, and the ablations", "Left, all ten runs and the ladder tiers as multiples of the reference's summed regret, on all eight worlds (filled) and the seven held out (hollow), against the 1.10 bar; run 8 is marked as the session cut short. Middle, every run world by world, with the values at or under the bar in bold. Right, the ablations of Section 6.3: each first-round program as submitted and after its one constant was changed, on held-out world c. Drawn from the job records, the build log and the ablation log by `figures/src/pilot_results.py`."),
+    ("plate", "pilot_results", "Plate 7. The ten pilots, world by world, and the ablations", "Left, every completed run of both generations and the ladder tiers as multiples of the reference's summed regret, on all eight worlds (filled) and the seven held out (hollow), against the 1.10 bar; run 8 is marked as the session cut short. Middle, every run world by world, with the values at or under the bar in bold. Right, the ablations of Section 6.3: each first-round program as submitted and after its one constant was changed, on held-out world c. Drawn from the job records, the build log and the ablation log by `figures/src/pilot_results.py`."),
     ("portrait",),
 ]

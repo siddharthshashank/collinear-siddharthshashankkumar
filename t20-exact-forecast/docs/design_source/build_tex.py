@@ -170,7 +170,9 @@ ABSTRACT = (
     "worlds that are never graded and committed before any model ran. Under that rule Claude Opus 4.7 and GPT-5.5, each run five times in its native harness at high "
     "reasoning effort, failed ten times out of ten, at 1.11 to 1.70 times the reference's regret, with every run producing a valid, deterministic forecast. Reading the "
     "programs found the same cause in each: prior scales set three to forty-four times too weak, with no check that could see it; changing that one constant moved each "
-    "program most of the way to the reference, and made the near miss beat it. The task, its verifier, its records and this paper are in one repository."
+    "program most of the way to the reference, and made the near miss beat it. The next generation, Claude Fable 5.1 and GPT-6-astra, passed four of five completed runs on the "
+    "same frozen task by the route the design predicted, learning the prior scales from the data and checking themselves against leagues they built; the bar sits between the two "
+    "generations. The task, its verifier, its records and this paper are in one repository."
 )
 
 REFERENCES = [

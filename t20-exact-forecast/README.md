@@ -8,12 +8,14 @@ The simulator is calibrated to 295,557 real deliveries from the Cricsheet IPL ar
 
 ## Results
 
-| Model, native harness, high reasoning effort | Runs | Passed | Total regret, times the reference |
+| Model, native harness, high reasoning effort | Completed runs | Passed | Total regret, times the reference |
 |---|---|---|---|
 | Claude Opus 4.7 (Claude Code) | 5 | 0 | 1.36 to 1.70 |
 | GPT-5.5 (Codex) | 5 | 0 | 1.11 to 1.58 |
-| Claude Fable 5.1 (Claude Code) | 1 so far | 1 | 1.027 |
-| GPT-6-astra (Codex) | first run cut short by an account usage limit; reruns in progress | | |
+| Claude Fable 5.1 (Claude Code) | 3 | 2 | 1.008, 1.027; the miss at 1.104 passed on the seven held-out worlds |
+| GPT-6-astra (Codex) | 2 | 2 | 1.054, 1.072 |
+
+Two GPT-6-astra runs and one Fable run were excluded for harness reasons and are recorded: a usage limit at five minutes, and my stopping the loop. The bar sits between the two generations: the pair the brief's goal line names fails ten times out of ten, the next generation passes four of five completed runs.
 
 Every run produced a valid, deterministic forecast inside its constraints, so every verdict is about forecast quality. Reading the ten failed programs found the same cause in each: prior scales set three to forty-four times too weak, with no check that could see it. Changing that one constant moved each program most of the way to the reference, and made the near miss beat it (`ablations.log`). The passing Fable program learned its prior scales from the data by marginal likelihood and validated on synthetic leagues it built with the shipped engine, checked against the handbook's own yardstick. The oracle, the reference forecaster installed as a solution, passes at exactly 1.000 times its stored regret; the do-nothing starter scores 0. Harbor's task linter passes 22 of 22 checks.
 

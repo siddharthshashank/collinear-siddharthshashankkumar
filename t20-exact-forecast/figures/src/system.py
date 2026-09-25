@@ -93,7 +93,7 @@ right(LX + BW/2, RX - BW/2, ROWS["run"], "artifacts|/app/solution|/app/engine")
 
 # evidence
 box(SPAN_X, ROWS["evid"], SPAN_W, BH, "Evidence and documents",
-    ["jobs/: two gates, Harbor's linter, every pilot. Ten runs of the named pair, 0 of 10; the newer pair under test", "Ablations of the failed programs, figures drawn from the records, the design document, run report, decisions, notes"], GOLD_F, GOLD)
+    ["jobs/: two gates, Harbor's linter, every pilot. The named pair 0 of 10; the newer pair 4 of 5, Fable 5.1 and GPT-6-astra", "Ablations of the failed programs, figures drawn from the records, the design document, run report, decisions, notes"], GOLD_F, GOLD)
 down(RX, ROWS["run"] + BH/2, ROWS["evid"] - BH/2, "reward.json, details.json")
 
 # legend

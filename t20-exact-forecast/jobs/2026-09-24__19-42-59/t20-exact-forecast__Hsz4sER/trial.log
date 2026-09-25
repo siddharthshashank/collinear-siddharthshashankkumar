@@ -1,9 +1,9 @@
 Skipping image OS validation for hb__5825fe9941804c8edda7a43a3f9dce8f: docker inspect returned 1
 Running command: apt-get update && apt-get install -y curl bash nodejs npm ripgrep
 Command outputs captured
-Running command: set -euo pipefail; if ldd --version 2>&1 | grep -qi musl || [ -f /etc/alpine-release ]; then  npm install -g @openai/codex@latest; else  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.2/install.sh | bash &&  export NVM_DIR="$HOME/.nvm" &&  \. "$NVM_DIR/nvm.sh" || true &&  command -v nvm &>/dev/null || { echo 'Error: NVM failed to load' >&2; exit 1; } &&  nvm install 22 && nvm alias default 22 && npm -v &&  npm install -g @openai/codex@latest; fi && codex --version
+Running command: set -euo pipefail; if ldd --version 2>&1 | grep -qi musl || [ -f /etc/alpine-release ]; then  npm install -g @openai/codex@latest; else  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.2/install.sh | bash &&  export NVM_DIR="$HOME/.nvm" &&  \. "$NVM_DIR/nvm.sh" || [REDACTED] &&  command -v nvm &>/dev/null || { echo 'Error: NVM failed to load' >&2; exit 1; } &&  nvm install 22 && nvm alias default 22 && npm -v &&  npm install -g @openai/codex@latest; fi && codex --version
 Command outputs captured
-Running command: for bin in node codex; do  BIN_PATH="$(which "$bin" 2>/dev/null || true)";  if [ -n "$BIN_PATH" ] && [ "$BIN_PATH" != "/usr/local/bin/$bin" ]; then    ln -sf "$BIN_PATH" "/usr/local/bin/$bin";  fi; done
+Running command: for bin in node codex; do  BIN_PATH="$(which "$bin" 2>/dev/null || [REDACTED])";  if [ -n "$BIN_PATH" ] && [ "$BIN_PATH" != "/usr/local/bin/$bin" ]; then    ln -sf "$BIN_PATH" "/usr/local/bin/$bin";  fi; done
 Command outputs captured
 Running command: mkdir -p "$CODEX_HOME" /tmp/codex-secrets /logs/agent
 Command outputs captured
@@ -28,7 +28,7 @@ Do not change `/app/engine/`.
 
 ## How it is graded
 
-The grader runs your program on this league and on leagues it generates the same way that you have not seen. Because the leagues are simulated, the true win probability of every fixture is known, and your forecast is graded by its expected log loss against that truth.
+The grader runs your program on this league and on leagues it generates the same way that you have not seen. Because the leagues are simulated, the [REDACTED] win probability of every fixture is known, and your forecast is graded by its expected log loss against that truth.
 No match result is used. You pass if your regret, summed over the leagues, is within the stated tolerance of a reference forecaster'"'"'s sum, on all leagues together and on the unseen leagues on their own. The handbook gives the formula, the tolerance, the time limit, and the rules your program must follow.
 Only a perfect result counts as solved.
 

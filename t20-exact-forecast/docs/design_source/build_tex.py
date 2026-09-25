@@ -19,6 +19,16 @@ MAX_SCALE = 1.3           # a drawing is never enlarged beyond 1.3 times its nat
 # How each drawing is cut into parts: (label, x0, y0, x1, y1) in the drawing's own viewBox units (1400 wide).
 # The cuts follow the zones the drawings already have, so no box or arrow is severed.
 CROPS = {
+    "dependencies": [("The archive, the parser, the two fits and the merge, with their files", 20, 130, 720, 760),
+                     ("The constants file read at import, validation, the ladder runner and the bar analysis with their import taps", 600, 130, 1330, 760),
+                     ("The library modules and their own imports, above the scripts that tap them", 660, 76, 2140, 330),
+                     ("The task-data build and the packager: what each reads, what each writes", 1180, 130, 1960, 760),
+                     ("The Harbor run, the ablations, the figures and the documents", 1780, 130, 2720, 760)],
+    "architecture": [("Calibration and the synthetic world", 20, 76, 660, 716),
+                     ("Task data and packaging", 660, 76, 1300, 716),
+                     ("The Harbor runtime", 1300, 76, 1740, 716),
+                     ("Evidence and documents, left half", 20, 728, 900, 890),
+                     ("Evidence and documents, right half", 900, 728, 1740, 890)],
     "system_overview": [("Calibration from the real archive, and the synthetic world that holds the hidden state", 8, 8, 544, 464),
                         ("Task build and packaging", 544, 8, 830, 464),
                         ("The Harbor runtime: the agent container and the separate verifier container", 830, 8, 1392, 464),
@@ -81,7 +91,8 @@ def cropped_figures(name, title, caption):
     """One drawing cut into parts, each a figure at readable scale; the parts share one figure number."""
     page = PdfReader(TEX / "figs" / f"{name}.pdf").pages[0]
     W, H = float(page.mediabox.width), float(page.mediabox.height)
-    k = W / 1400.0
+    vb = re.search(r'viewBox="0 0 ([\d.]+) ([\d.]+)"', (HERE / "figures" / f"{name}.svg").read_text())
+    k = W / float(vb.group(1))
     out = []
     for n, (label, x0, y0, x1, y1) in enumerate(CROPS[name]):
         natural = k * (x1 - x0)
@@ -93,6 +104,13 @@ def cropped_figures(name, title, caption):
                               r"\includegraphics[viewport=%s, clip, width=%.3f\textwidth]{figs/%s.pdf}" % (vp, width, name),
                               r"\caption{" + cap + "}", r"\end{figure}"]))
     return "\n\n".join(out)
+
+
+FULL = {"system"}
+def full_page(name, title, caption):
+    return "\n".join([r"\begin{landscape}", r"\begin{figure}[p]", r"\centering",
+                      r"\includegraphics[width=\linewidth,height=0.86\textheight,keepaspectratio]{figs/%s.pdf}" % name,
+                      r"\caption{\textbf{" + rich(title) + "} " + rich(caption) + "}", r"\end{figure}", r"\end{landscape}"])
 
 
 def panel_figures(name, title, caption):
@@ -125,7 +143,7 @@ def body():
             if block[1].startswith("**Sources.**"):
                 continue                                     # the paper carries a reference list instead
             if block[1].startswith("Seven drawings of the system"):
-                out.append("Seven drawings of the system, each cut along its own zones into parts that read at text size. They are generated from the repository by the scripts under \\texttt{figures/}, so they change when the code does.\n")
+                out.append("Eight drawings of the system, each cut along its own zones into parts that read at text size. They are generated from the repository by the scripts under \\texttt{figures/}, so they change when the code does.\n")
                 continue
             out.append(rich(block[1]) + "\n")
         elif kind == "bullets":
@@ -138,7 +156,7 @@ def body():
             out.append(figure(block[1], block[2]))
         elif kind == "plate":
             title = re.sub(r"^Plate \d+\.\s*", "", block[2])
-            out.append(panel_figures(block[1], title, block[3]) if block[1] in PANELS else cropped_figures(block[1], title, block[3]))
+            out.append(full_page(block[1], title, block[3]) if block[1] in FULL else panel_figures(block[1], title, block[3]) if block[1] in PANELS else cropped_figures(block[1], title, block[3]))
     return "\n\n".join(out)
 
 
@@ -224,6 +242,7 @@ PREAMBLE = r"""\documentclass[11pt,letterpaper]{article}
 \usepackage{array}
 \usepackage{booktabs}
 \usepackage{longtable}
+\usepackage{pdflscape}
 \usepackage{enumitem}
 \usepackage{listings}
 \usepackage{caption}

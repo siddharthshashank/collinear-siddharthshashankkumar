@@ -8,6 +8,7 @@
 \usepackage{array}
 \usepackage{booktabs}
 \usepackage{longtable}
+\usepackage{pdflscape}
 \usepackage{enumitem}
 \usepackage{listings}
 \usepackage{caption}
@@ -889,37 +890,75 @@ this document & a validation table from before the wear constant changed & rerun
 
 \section{Drawings of the system}
 
-Seven drawings of the system, each cut along its own zones into parts that read at text size. They are generated from the repository by the scripts under \texttt{figures/}, so they change when the code does.
+Eight drawings of the system, each cut along its own zones into parts that read at text size. They are generated from the repository by the scripts under \texttt{figures/}, so they change when the code does.
 
+
+\begin{landscape}
+\begin{figure}[p]
+\centering
+\includegraphics[width=\linewidth,height=0.86\textheight,keepaspectratio]{figs/system.pdf}
+\caption{\textbf{The system} Two columns and five rows. The left column is what the agent sees, the right what only the generator and the verifier hold; the rows are build, data, package, run and evidence. Every arrow carries the name of the script or step that moves the data.}
+\end{figure}
+\end{landscape}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[viewport=15.0 175.5 495.0 655.5, clip, width=1.000\textwidth]{figs/architecture.pdf}
+\caption{\textbf{The project in six lanes} Six lanes from the real archive to the documents. Blue nodes are what the agent sees, red what only the generator and the verifier hold. Every arrow is a data flow; the dashed ones are the oracle's install and the validation loop. (a) Calibration and the synthetic world.}
+\end{figure}
+
+\begin{figure}[htbp]\ContinuedFloat
+\centering
+\includegraphics[viewport=495.0 175.5 975.0 655.5, clip, width=1.000\textwidth]{figs/architecture.pdf}
+\caption{The project in six lanes, continued. (b) Task data and packaging.}
+\end{figure}
+
+\begin{figure}[htbp]\ContinuedFloat
+\centering
+\includegraphics[viewport=975.0 175.5 1305.0 655.5, clip, width=0.917\textwidth]{figs/architecture.pdf}
+\caption{The project in six lanes, continued. (c) The Harbor runtime.}
+\end{figure}
+
+\begin{figure}[htbp]\ContinuedFloat
+\centering
+\includegraphics[viewport=15.0 45.0 675.0 166.5, clip, width=1.000\textwidth]{figs/architecture.pdf}
+\caption{The project in six lanes, continued. (d) Evidence and documents, left half.}
+\end{figure}
+
+\begin{figure}[htbp]\ContinuedFloat
+\centering
+\includegraphics[viewport=675.0 45.0 1305.0 166.5, clip, width=1.000\textwidth]{figs/architecture.pdf}
+\caption{The project in six lanes, continued. (e) Evidence and documents, right half.}
+\end{figure}
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[viewport=6.0 138.0 408.0 480.0, clip, width=1.000\textwidth]{figs/system_overview.pdf}
-\caption{\textbf{The whole system} Five zones: calibration from the real archive, the synthetic world that holds the hidden state, the task build and packaging, the Harbor runtime with its separate agent and verifier containers, and the research evidence behind the pass bar. (a) Calibration from the real archive, and the synthetic world that holds the hidden state.}
+\caption{\textbf{The whole system, as drawn from the repository} Five zones: calibration from the real archive, the synthetic world that holds the hidden state, the task build and packaging, the Harbor runtime with its separate agent and verifier containers, and the research evidence behind the pass bar. (a) Calibration from the real archive, and the synthetic world that holds the hidden state.}
 \end{figure}
 
 \begin{figure}[htbp]\ContinuedFloat
 \centering
 \includegraphics[viewport=408.0 138.0 622.5 480.0, clip, width=0.596\textwidth]{figs/system_overview.pdf}
-\caption{The whole system, continued. (b) Task build and packaging.}
+\caption{The whole system, as drawn from the repository, continued. (b) Task build and packaging.}
 \end{figure}
 
 \begin{figure}[htbp]\ContinuedFloat
 \centering
 \includegraphics[viewport=622.5 138.0 1044.0 480.0, clip, width=1.000\textwidth]{figs/system_overview.pdf}
-\caption{The whole system, continued. (c) The Harbor runtime: the agent container and the separate verifier container.}
+\caption{The whole system, as drawn from the repository, continued. (c) The Harbor runtime: the agent container and the separate verifier container.}
 \end{figure}
 
 \begin{figure}[htbp]\ContinuedFloat
 \centering
 \includegraphics[viewport=6.0 33.0 528.8 135.0, clip, width=1.000\textwidth]{figs/system_overview.pdf}
-\caption{The whole system, continued. (d) Research evidence and the pass bar, left half.}
+\caption{The whole system, as drawn from the repository, continued. (d) Research evidence and the pass bar, left half.}
 \end{figure}
 
 \begin{figure}[htbp]\ContinuedFloat
 \centering
 \includegraphics[viewport=528.8 33.0 1044.0 135.0, clip, width=1.000\textwidth]{figs/system_overview.pdf}
-\caption{The whole system, continued. (e) Research evidence and the pass bar, right half.}
+\caption{The whole system, as drawn from the repository, continued. (e) Research evidence and the pass bar, right half.}
 \end{figure}
 
 \begin{figure}[htbp]

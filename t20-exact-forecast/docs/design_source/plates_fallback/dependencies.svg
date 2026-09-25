@@ -1,0 +1,277 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2740 850" width="2740" height="850" font-family="Helvetica, Arial, sans-serif">
+<defs><marker id="head" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#1b232b"/></marker><marker id="headblue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#3d76b3"/></marker></defs>
+<rect width="2740" height="850" fill="#ffffff"/>
+<text x="30" y="38" font-family="Helvetica, Arial, sans-serif" font-size="20" font-weight="bold" fill="#1b232b" text-anchor="start">t20-exact-forecast: every module, script and file, and what depends on what</text>
+<text x="30" y="60" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#5a646e" text-anchor="start">Read from the code. Blue rails carry imports; black lines carry files. Columns are stages, left to right.</text>
+<rect x="30" y="150" width="2680" height="72" rx="8" fill="#f7f8f9" stroke="#e3e7ea"/>
+<text x="40" y="164" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="bold" fill="#5a646e" text-anchor="start">modules (library, imported)</text>
+<rect x="30" y="336" width="2680" height="72" rx="8" fill="#f7f8f9" stroke="#e3e7ea"/>
+<text x="40" y="350" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="bold" fill="#5a646e" text-anchor="start">scripts and runs</text>
+<rect x="30" y="492" width="2680" height="248" rx="8" fill="#f7f8f9" stroke="#e3e7ea"/>
+<text x="40" y="506" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="bold" fill="#5a646e" text-anchor="start">files</text>
+<rect x="673.0" y="159.0" width="214" height="54" rx="5" fill="#eef2f7" stroke="#3a4a5c" stroke-width="1.3"/>
+<text x="780" y="170" font-family="Menlo, Consolas, monospace" font-size="10.5" font-weight="bold" fill="#1b232b" text-anchor="middle">league/calibration.py</text>
+<text x="780" y="184.0" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">Calibration (measured), Design (chosen)</text>
+<text x="780" y="195.5" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">reads league/calibration.json</text>
+<rect x="923.0" y="159.0" width="214" height="54" rx="5" fill="#eef2f7" stroke="#3a4a5c" stroke-width="1.3"/>
+<text x="1030" y="170" font-family="Menlo, Consolas, monospace" font-size="10.5" font-weight="bold" fill="#1b232b" text-anchor="middle">league/world.py</text>
+<text x="1030" y="184.0" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">League(seed), TruthEngine</text>
+<text x="1030" y="195.5" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">imports calibration, engine</text>
+<rect x="1173.0" y="159.0" width="214" height="54" rx="5" fill="#eef2f7" stroke="#3a4a5c" stroke-width="1.3"/>
+<text x="1280" y="170" font-family="Menlo, Consolas, monospace" font-size="10.5" font-weight="bold" fill="#1b232b" text-anchor="middle">league/engine.py</text>
+<text x="1280" y="184.0" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">BallModel, InningsSimulator, MatchSimulator,</text>
+<text x="1280" y="195.5" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">SkillBook, PublicConstants; reads public.json</text>
+<rect x="1423.0" y="159.0" width="214" height="54" rx="5" fill="#eef2f7" stroke="#3a4a5c" stroke-width="1.3"/>
+<text x="1530" y="170" font-family="Menlo, Consolas, monospace" font-size="10.5" font-weight="bold" fill="#1b232b" text-anchor="middle">forecasters/ladder.py</text>
+<text x="1530" y="184.0" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">CoinFlip, TeamRatings, BallModelForecaster</text>
+<text x="1530" y="195.5" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">imports engine</text>
+<rect x="1673.0" y="159.0" width="214" height="54" rx="5" fill="#eef2f7" stroke="#3a4a5c" stroke-width="1.3"/>
+<text x="1780" y="170" font-family="Menlo, Consolas, monospace" font-size="10.5" font-weight="bold" fill="#1b232b" text-anchor="middle">league/league_io.py</text>
+<text x="1780" y="184.0" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">save_league, load_league</text>
+<text x="1780" y="195.5" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">imports engine (either package layout)</text>
+<rect x="1923.0" y="159.0" width="214" height="54" rx="5" fill="#eef2f7" stroke="#3a4a5c" stroke-width="1.3"/>
+<text x="2030" y="170" font-family="Menlo, Consolas, monospace" font-size="10.5" font-weight="bold" fill="#1b232b" text-anchor="middle">scoring/exact.py</text>
+<text x="2030" y="184.0" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">ExactScorer: regret, skill, slope</text>
+<text x="2030" y="195.5" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">no project imports</text>
+<path d="M 923.0,186 L 887.0,186" fill="none" stroke="#3d76b3" stroke-width="1.2" marker-end="url(#headblue)"/>
+<path d="M 1137.0,186 L 1173.0,186" fill="none" stroke="#3d76b3" stroke-width="1.2" marker-end="url(#headblue)"/>
+<path d="M 1423.0,186 L 1387.0,186" fill="none" stroke="#3d76b3" stroke-width="1.2" marker-end="url(#headblue)"/>
+<path d="M 1780,159.0 L 1780,140 L 1280,140 L 1280,159.0" fill="none" stroke="#3d76b3" stroke-width="1.2" marker-end="url(#headblue)"/>
+<path d="M 780,213.0 L 780,248" fill="none" stroke="#3d76b3" stroke-width="1.2"/>
+<circle cx="780" cy="248" r="3.2" fill="#3d76b3"/>
+<text x="58" y="251" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#3d76b3" text-anchor="start">imports calibration</text>
+<path d="M 1030,213.0 L 1030,260" fill="none" stroke="#3d76b3" stroke-width="1.2"/>
+<circle cx="1030" cy="260" r="3.2" fill="#3d76b3"/>
+<text x="58" y="263" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#3d76b3" text-anchor="start">imports world</text>
+<path d="M 1280,213.0 L 1280,272" fill="none" stroke="#3d76b3" stroke-width="1.2"/>
+<circle cx="1280" cy="272" r="3.2" fill="#3d76b3"/>
+<text x="58" y="275" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#3d76b3" text-anchor="start">imports engine</text>
+<path d="M 1530,213.0 L 1530,284" fill="none" stroke="#3d76b3" stroke-width="1.2"/>
+<circle cx="1530" cy="284" r="3.2" fill="#3d76b3"/>
+<text x="58" y="287" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#3d76b3" text-anchor="start">imports ladder</text>
+<path d="M 1780,213.0 L 1780,296" fill="none" stroke="#3d76b3" stroke-width="1.2"/>
+<circle cx="1780" cy="296" r="3.2" fill="#3d76b3"/>
+<text x="58" y="299" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#3d76b3" text-anchor="start">imports league_io</text>
+<path d="M 2030,213.0 L 2030,308" fill="none" stroke="#3d76b3" stroke-width="1.2"/>
+<circle cx="2030" cy="308" r="3.2" fill="#3d76b3"/>
+<text x="58" y="311" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#3d76b3" text-anchor="start">imports exact</text>
+<rect x="213.0" y="341.0" width="158" height="62" rx="5" fill="#ffffff" stroke="#2c3640" stroke-width="1.3"/>
+<text x="292" y="356" font-family="Menlo, Consolas, monospace" font-size="10.5" font-weight="bold" fill="#1b232b" text-anchor="middle">dev/parse_archive.py</text>
+<text x="292" y="370.0" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">1,243 YAML files to one table</text>
+<text x="292" y="381.5" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">no project imports</text>
+<rect x="387.0" y="341.0" width="158" height="62" rx="5" fill="#ffffff" stroke="#2c3640" stroke-width="1.3"/>
+<text x="466" y="356" font-family="Menlo, Consolas, monospace" font-size="10.5" font-weight="bold" fill="#1b232b" text-anchor="middle">dev/explore_*.py</text>
+<text x="466" y="370.0" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">overs table; split-half reliability</text>
+<text x="466" y="381.5" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">print only</text>
+<rect x="561.0" y="341.0" width="158" height="62" rx="5" fill="#ffffff" stroke="#2c3640" stroke-width="1.3"/>
+<text x="640" y="356" font-family="Menlo, Consolas, monospace" font-size="10.5" font-weight="bold" fill="#1b232b" text-anchor="middle">dev/fit_state.py</text>
+<text x="640" y="370.0" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">situation model, player directions</text>
+<text x="640" y="381.5" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">L-BFGS on 125,465 balls</text>
+<rect x="735.0" y="341.0" width="158" height="62" rx="5" fill="#ffffff" stroke="#2c3640" stroke-width="1.3"/>
+<text x="814" y="356" font-family="Menlo, Consolas, monospace" font-size="10.5" font-weight="bold" fill="#1b232b" text-anchor="middle">dev/fit_constants.py</text>
+<text x="814" y="370.0" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">extras, reliability, venues,</text>
+<text x="814" y="381.5" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">interactions, real targets</text>
+<rect x="909.0" y="341.0" width="158" height="62" rx="5" fill="#ffffff" stroke="#2c3640" stroke-width="1.3"/>
+<text x="988" y="356" font-family="Menlo, Consolas, monospace" font-size="10.5" font-weight="bold" fill="#1b232b" text-anchor="middle">dev/build_calibration.py</text>
+<text x="988" y="370.0" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">merge, standardise, cricket units</text>
+<text x="988" y="381.5" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">optional compare with another file</text>
+<rect x="1083.0" y="341.0" width="158" height="62" rx="5" fill="#ffffff" stroke="#2c3640" stroke-width="1.3"/>
+<text x="1162" y="356" font-family="Menlo, Consolas, monospace" font-size="10.5" font-weight="bold" fill="#1b232b" text-anchor="middle">dev/validate_world.py</text>
+<text x="1162" y="370.0" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">three leagues vs the real targets</text>
+<text x="1162" y="381.5" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">prints; loop closed by hand</text>
+<rect x="1257.0" y="341.0" width="158" height="62" rx="5" fill="#ffffff" stroke="#2c3640" stroke-width="1.3"/>
+<text x="1336" y="356" font-family="Menlo, Consolas, monospace" font-size="10.5" font-weight="bold" fill="#1b232b" text-anchor="middle">dev/run_ladder.py</text>
+<text x="1336" y="370.0" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">8 tiers on chosen seeds</text>
+<text x="1336" y="381.5" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">truth at 10,000 copies</text>
+<rect x="1431.0" y="341.0" width="158" height="62" rx="5" fill="#ffffff" stroke="#2c3640" stroke-width="1.3"/>
+<text x="1510" y="356" font-family="Menlo, Consolas, monospace" font-size="10.5" font-weight="bold" fill="#1b232b" text-anchor="middle">dev/bar_analysis.py</text>
+<text x="1510" y="370.0" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">noise and separation, seeds 1001+</text>
+<text x="1510" y="381.5" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">prints; rule committed by hand</text>
+<rect x="1605.0" y="341.0" width="158" height="62" rx="5" fill="#ffffff" stroke="#2c3640" stroke-width="1.3"/>
+<text x="1684" y="356" font-family="Menlo, Consolas, monospace" font-size="10.5" font-weight="bold" fill="#1b232b" text-anchor="middle">dev/make_task_data.py</text>
+<text x="1684" y="370.0" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">8 worlds; truth at 100,000 per order;</text>
+<text x="1684" y="381.5" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">reloads the public files, fits 6 tiers</text>
+<rect x="1779.0" y="341.0" width="158" height="62" rx="5" fill="#ffffff" stroke="#2c3640" stroke-width="1.3"/>
+<text x="1858" y="356" font-family="Menlo, Consolas, monospace" font-size="10.5" font-weight="bold" fill="#1b232b" text-anchor="middle">package_task.py</text>
+<text x="1858" y="370.0" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">copies harbor/, task_src/, task_data/;</text>
+<text x="1858" y="381.5" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">writes public.json; copies engine, ladder</text>
+<rect x="1953.0" y="341.0" width="158" height="62" rx="5" fill="#ffffff" stroke="#2c3640" stroke-width="1.3"/>
+<text x="2032" y="356" font-family="Menlo, Consolas, monospace" font-size="10.5" font-weight="bold" fill="#1b232b" text-anchor="middle">harbor run</text>
+<text x="2032" y="370.0" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">agent container, then verifier:</text>
+<text x="2032" y="381.5" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">tests/grader.py (no project imports)</text>
+<rect x="2127.0" y="341.0" width="158" height="62" rx="5" fill="#ffffff" stroke="#2c3640" stroke-width="1.3"/>
+<text x="2206" y="356" font-family="Menlo, Consolas, monospace" font-size="10.5" font-weight="bold" fill="#1b232b" text-anchor="middle">dev/ablate_pilots.py</text>
+<text x="2206" y="370.0" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">reruns archived programs with</text>
+<text x="2206" y="381.5" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">one constant changed</text>
+<rect x="2301.0" y="341.0" width="158" height="62" rx="5" fill="#ffffff" stroke="#2c3640" stroke-width="1.3"/>
+<text x="2380" y="356" font-family="Menlo, Consolas, monospace" font-size="10.5" font-weight="bold" fill="#1b232b" text-anchor="middle">figures/src/*.py</text>
+<text x="2380" y="370.0" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">pilot_results.py, architecture.py</text>
+<text x="2380" y="381.5" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">numbers transcribed from the records</text>
+<rect x="2475.0" y="341.0" width="158" height="62" rx="5" fill="#ffffff" stroke="#2c3640" stroke-width="1.3"/>
+<text x="2554" y="356" font-family="Menlo, Consolas, monospace" font-size="9.2" font-weight="bold" fill="#1b232b" text-anchor="middle">docs/design_source/build_*.py</text>
+<text x="2554" y="370.0" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">content.py to ReportLab PDF</text>
+<text x="2554" y="381.5" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">and to LaTeX</text>
+<path d="M 1162,341.0 L 1162,248" fill="none" stroke="#3d76b3" stroke-width="1.2"/>
+<circle cx="1162" cy="248" r="3.2" fill="#3d76b3"/>
+<circle cx="1162" cy="260" r="3.2" fill="#3d76b3"/>
+<path d="M 1336,341.0 L 1336,260" fill="none" stroke="#3d76b3" stroke-width="1.2"/>
+<circle cx="1336" cy="284" r="3.2" fill="#3d76b3"/>
+<circle cx="1336" cy="260" r="3.2" fill="#3d76b3"/>
+<circle cx="1336" cy="308" r="3.2" fill="#3d76b3"/>
+<path d="M 1510,341.0 L 1510,260" fill="none" stroke="#3d76b3" stroke-width="1.2"/>
+<circle cx="1510" cy="284" r="3.2" fill="#3d76b3"/>
+<circle cx="1510" cy="260" r="3.2" fill="#3d76b3"/>
+<circle cx="1510" cy="308" r="3.2" fill="#3d76b3"/>
+<path d="M 1684,341.0 L 1684,260" fill="none" stroke="#3d76b3" stroke-width="1.2"/>
+<circle cx="1684" cy="284" r="3.2" fill="#3d76b3"/>
+<circle cx="1684" cy="296" r="3.2" fill="#3d76b3"/>
+<circle cx="1684" cy="260" r="3.2" fill="#3d76b3"/>
+<circle cx="1684" cy="308" r="3.2" fill="#3d76b3"/>
+<path d="M 1858,341.0 L 1858,248" fill="none" stroke="#3d76b3" stroke-width="1.2"/>
+<circle cx="1858" cy="248" r="3.2" fill="#3d76b3"/>
+<circle cx="1858" cy="272" r="3.2" fill="#3d76b3"/>
+<path d="M 2206,341.0 L 2206,308" fill="none" stroke="#3d76b3" stroke-width="1.2"/>
+<circle cx="2206" cy="308" r="3.2" fill="#3d76b3"/>
+<path d="M 780,248 L 1858,248" fill="none" stroke="#3d76b3" stroke-width="1.2"/>
+<path d="M 1030,260 L 1684,260" fill="none" stroke="#3d76b3" stroke-width="1.2"/>
+<path d="M 1280,272 L 1858,272" fill="none" stroke="#3d76b3" stroke-width="1.2"/>
+<path d="M 1336,284 L 1684,284" fill="none" stroke="#3d76b3" stroke-width="1.2"/>
+<path d="M 1684,296 L 1780,296" fill="none" stroke="#3d76b3" stroke-width="1.2"/>
+<path d="M 1336,308 L 2206,308" fill="none" stroke="#3d76b3" stroke-width="1.2"/>
+<rect x="39.0" y="498.0" width="158" height="60" rx="5" fill="#f1f1f1" stroke="#8b949c" stroke-width="1.3"/>
+<text x="118" y="512" font-family="Menlo, Consolas, monospace" font-size="10.5" font-weight="bold" fill="#1b232b" text-anchor="middle">data/raw/ipl/*.yaml</text>
+<text x="118" y="526.0" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">Cricsheet archive, ODC-BY 1.0</text>
+<text x="118" y="537.5" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">not tracked</text>
+<rect x="213.0" y="498.0" width="158" height="60" rx="5" fill="#f1f1f1" stroke="#8b949c" stroke-width="1.3"/>
+<text x="292" y="512" font-family="Menlo, Consolas, monospace" font-size="10.5" font-weight="bold" fill="#1b232b" text-anchor="middle">data/balls.pkl</text>
+<text x="292" y="526.0" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">one row per delivery</text>
+<text x="292" y="537.5" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">not tracked</text>
+<rect x="561.0" y="498.0" width="158" height="60" rx="5" fill="#f1f1f1" stroke="#8b949c" stroke-width="1.3"/>
+<text x="640" y="512" font-family="Menlo, Consolas, monospace" font-size="10.5" font-weight="bold" fill="#1b232b" text-anchor="middle">data/state_fit.json</text>
+<text x="640" y="526.0" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">coefficients, season effects,</text>
+<text x="640" y="537.5" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">player directions; not tracked</text>
+<rect x="735.0" y="498.0" width="158" height="60" rx="5" fill="#f1f1f1" stroke="#8b949c" stroke-width="1.3"/>
+<text x="814" y="512" font-family="Menlo, Consolas, monospace" font-size="10.5" font-weight="bold" fill="#1b232b" text-anchor="middle">data/constants_fit.json</text>
+<text x="814" y="526.0" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">extras, spreads, interaction</text>
+<text x="814" y="537.5" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">repeats, real targets; not tracked</text>
+<rect x="909.0" y="498.0" width="158" height="60" rx="5" fill="#fbf5e6" stroke="#a3823a" stroke-width="1.3"/>
+<text x="988" y="512" font-family="Menlo, Consolas, monospace" font-size="10.5" font-weight="bold" fill="#1b232b" text-anchor="middle">league/calibration.json</text>
+<text x="988" y="526.0" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">aggregates only, with attribution</text>
+<text x="988" y="537.5" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">tracked</text>
+<rect x="1083.0" y="498.0" width="158" height="60" rx="5" fill="#ffffff" stroke="#8b949c" stroke-width="1.3" stroke-dasharray="5,3"/>
+<text x="1162" y="512" font-family="Menlo, Consolas, monospace" font-size="10.5" font-weight="bold" fill="#1b232b" text-anchor="middle">task_src/</text>
+<text x="1162" y="526.0" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">docs/handbook.md (3 placeholders)</text>
+<text x="1162" y="537.5" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">solution/forecast.py (starter)</text>
+<rect x="1083.0" y="586.0" width="158" height="60" rx="5" fill="#ffffff" stroke="#8b949c" stroke-width="1.3" stroke-dasharray="5,3"/>
+<text x="1162" y="600" font-family="Menlo, Consolas, monospace" font-size="10.5" font-weight="bold" fill="#1b232b" text-anchor="middle">harbor/</text>
+<text x="1162" y="614.0" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">task.toml, instruction.md, Dockerfiles,</text>
+<text x="1162" y="625.5" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">tests/grader.py, solution/solve.sh</text>
+<rect x="1257.0" y="498.0" width="158" height="60" rx="5" fill="#fbf5e6" stroke="#a3823a" stroke-width="1.3"/>
+<text x="1336" y="512" font-family="Menlo, Consolas, monospace" font-size="10.5" font-weight="bold" fill="#1b232b" text-anchor="middle">results/ladder_v2.jsonl</text>
+<text x="1336" y="526.0" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">seed, tier, skill, regret</text>
+<text x="1336" y="537.5" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">append-only</text>
+<rect x="1431.0" y="498.0" width="158" height="60" rx="5" fill="#fbe9e7" stroke="#b8483d" stroke-width="1.3"/>
+<text x="1510" y="512" font-family="Menlo, Consolas, monospace" font-size="10.5" font-weight="bold" fill="#1b232b" text-anchor="middle">harbor/bar.json</text>
+<text x="1510" y="526.0" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">1.10, clip 0.002, the rule in words</text>
+<text x="1510" y="537.5" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">committed before any pilot</text>
+<rect x="1605.0" y="498.0" width="158" height="60" rx="5" fill="#e8f1fa" stroke="#3d76b3" stroke-width="1.3"/>
+<text x="1684" y="512" font-family="Menlo, Consolas, monospace" font-size="10.5" font-weight="bold" fill="#1b232b" text-anchor="middle">task_data/leagues/WORLD/</text>
+<text x="1684" y="526.0" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">8 public folders:</text>
+<text x="1684" y="537.5" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">7 CSV files and meta.json</text>
+<rect x="1605.0" y="586.0" width="158" height="60" rx="5" fill="#fbe9e7" stroke="#b8483d" stroke-width="1.3"/>
+<text x="1684" y="600" font-family="Menlo, Consolas, monospace" font-size="10.5" font-weight="bold" fill="#1b232b" text-anchor="middle">task_data/private/WORLD/</text>
+<text x="1684" y="614.0" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">truth.csv, reference.json,</text>
+<text x="1684" y="625.5" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">tiers.csv</text>
+<rect x="1779.0" y="498.0" width="158" height="60" rx="5" fill="#e8f1fa" stroke="#3d76b3" stroke-width="1.3"/>
+<text x="1858" y="512" font-family="Menlo, Consolas, monospace" font-size="9.2" font-weight="bold" fill="#1b232b" text-anchor="middle">dist/.../environment/app/</text>
+<text x="1858" y="526.0" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">engine/ (model.py, league_io.py,</text>
+<text x="1858" y="537.5" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">public.json), league/, docs/, solution/</text>
+<rect x="1779.0" y="586.0" width="158" height="60" rx="5" fill="#fbe9e7" stroke="#b8483d" stroke-width="1.3"/>
+<text x="1858" y="600" font-family="Menlo, Consolas, monospace" font-size="10.5" font-weight="bold" fill="#1b232b" text-anchor="middle">dist/.../tests/</text>
+<text x="1858" y="614.0" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">grader.py, test.sh, pristine/engine/,</text>
+<text x="1858" y="625.5" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">leagues/ (8), private/ (truth, ref, bar)</text>
+<rect x="1779.0" y="674.0" width="158" height="60" rx="5" fill="#ffffff" stroke="#2c3640" stroke-width="1.3"/>
+<text x="1858" y="688" font-family="Menlo, Consolas, monospace" font-size="10.5" font-weight="bold" fill="#1b232b" text-anchor="middle">dist/.../solution/</text>
+<text x="1858" y="702.0" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">solve.sh, forecast.py,</text>
+<text x="1858" y="713.5" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">reference_forecaster.py = ladder.py</text>
+<rect x="1953.0" y="498.0" width="158" height="60" rx="5" fill="#fbf5e6" stroke="#a3823a" stroke-width="1.3"/>
+<text x="2032" y="512" font-family="Menlo, Consolas, monospace" font-size="10.5" font-weight="bold" fill="#1b232b" text-anchor="middle">jobs/JOB/</text>
+<text x="2032" y="526.0" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">reward.json, details.json, agent log,</text>
+<text x="2032" y="537.5" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">artifacts/app/solution, /engine</text>
+<rect x="2127.0" y="498.0" width="158" height="60" rx="5" fill="#fbf5e6" stroke="#a3823a" stroke-width="1.3"/>
+<text x="2206" y="512" font-family="Menlo, Consolas, monospace" font-size="10.5" font-weight="bold" fill="#1b232b" text-anchor="middle">ablations.log</text>
+<text x="2206" y="526.0" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">as submitted and after one change,</text>
+<text x="2206" y="537.5" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">per program, on held-out c</text>
+<rect x="2301.0" y="498.0" width="158" height="60" rx="5" fill="#fbf5e6" stroke="#a3823a" stroke-width="1.3"/>
+<text x="2380" y="512" font-family="Menlo, Consolas, monospace" font-size="10.5" font-weight="bold" fill="#1b232b" text-anchor="middle">figures/</text>
+<text x="2380" y="526.0" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">*.svg, *.png, pilot_*.pdf,</text>
+<text x="2380" y="537.5" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">architecture.*</text>
+<rect x="2475.0" y="498.0" width="158" height="60" rx="5" fill="#fbf5e6" stroke="#a3823a" stroke-width="1.3"/>
+<text x="2554" y="512" font-family="Menlo, Consolas, monospace" font-size="10.5" font-weight="bold" fill="#1b232b" text-anchor="middle">docs/DESIGN.pdf</text>
+<text x="2554" y="526.0" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">and docs/design_source/out/DESIGN.md</text>
+<text x="2554" y="537.5" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="normal" fill="#5a646e" text-anchor="middle">from the same content.py</text>
+<path d="M 320,403.0 L 320,498.0" fill="none" stroke="#1b232b" stroke-width="1.4" marker-end="url(#head)"/>
+<path d="M 668,403.0 L 668,498.0" fill="none" stroke="#1b232b" stroke-width="1.4" marker-end="url(#head)"/>
+<path d="M 842,403.0 L 842,498.0" fill="none" stroke="#1b232b" stroke-width="1.4" marker-end="url(#head)"/>
+<path d="M 1016,403.0 L 1016,498.0" fill="none" stroke="#1b232b" stroke-width="1.4" marker-end="url(#head)"/>
+<path d="M 1364,403.0 L 1364,498.0" fill="none" stroke="#1b232b" stroke-width="1.4" marker-end="url(#head)"/>
+<path d="M 1538,403.0 L 1538,498.0" fill="none" stroke="#1b232b" stroke-width="1.4" stroke-dasharray="5,4" marker-end="url(#head)"/>
+<path d="M 1712,403.0 L 1712,429.0 L 1777.0,429.0 L 1777.0,616" fill="none" stroke="#1b232b" stroke-width="1.4"/>
+<path d="M 1777.0,528 L 1763.0,528" fill="none" stroke="#1b232b" stroke-width="1.4" marker-end="url(#head)"/>
+<path d="M 1777.0,616 L 1763.0,616" fill="none" stroke="#1b232b" stroke-width="1.4" marker-end="url(#head)"/>
+<path d="M 1886,403.0 L 1886,429.0 L 1951.0,429.0 L 1951.0,704" fill="none" stroke="#1b232b" stroke-width="1.4"/>
+<path d="M 1951.0,528 L 1937.0,528" fill="none" stroke="#1b232b" stroke-width="1.4" marker-end="url(#head)"/>
+<path d="M 1951.0,616 L 1937.0,616" fill="none" stroke="#1b232b" stroke-width="1.4" marker-end="url(#head)"/>
+<path d="M 1951.0,704 L 1937.0,704" fill="none" stroke="#1b232b" stroke-width="1.4" marker-end="url(#head)"/>
+<path d="M 2060,403.0 L 2060,498.0" fill="none" stroke="#1b232b" stroke-width="1.4" marker-end="url(#head)"/>
+<path d="M 2234,403.0 L 2234,498.0" fill="none" stroke="#1b232b" stroke-width="1.4" marker-end="url(#head)"/>
+<path d="M 2408,403.0 L 2408,498.0" fill="none" stroke="#1b232b" stroke-width="1.4" marker-end="url(#head)"/>
+<path d="M 2582,403.0 L 2582,498.0" fill="none" stroke="#1b232b" stroke-width="1.4" marker-end="url(#head)"/>
+<path d="M 118,498.0 L 118,434 L 264,434 L 264,403.0" fill="none" stroke="#1b232b" stroke-width="1.4" marker-end="url(#head)"/>
+<path d="M 292,498.0 L 292,434 L 438,434 L 438,403.0" fill="none" stroke="#1b232b" stroke-width="1.4" marker-end="url(#head)"/>
+<path d="M 292,498.0 L 292,434 L 612,434 L 612,403.0" fill="none" stroke="#1b232b" stroke-width="1.4" marker-end="url(#head)"/>
+<path d="M 292,498.0 L 292,434 L 786,434 L 786,403.0" fill="none" stroke="#1b232b" stroke-width="1.4" marker-end="url(#head)"/>
+<path d="M 640,498.0 L 640,446 L 960,446 L 960,403.0" fill="none" stroke="#1b232b" stroke-width="1.4" marker-end="url(#head)"/>
+<path d="M 814,498.0 L 814,446 L 960,446 L 960,403.0" fill="none" stroke="#1b232b" stroke-width="1.4" marker-end="url(#head)"/>
+<path d="M 1656,498.0 L 1656,403.0" fill="none" stroke="#1b232b" stroke-width="1.4" marker-end="url(#head)"/>
+<path d="M 1162,498.0 L 1162,458 L 1830,458 L 1830,403.0" fill="none" stroke="#1b232b" stroke-width="1.4" marker-end="url(#head)"/>
+<path d="M 1083.0,616 L 1069.0,616 L 1069.0,458 L 1830,458 L 1830,403.0" fill="none" stroke="#1b232b" stroke-width="1.4" marker-end="url(#head)"/>
+<path d="M 1510,498.0 L 1510,458 L 1830,458 L 1830,403.0" fill="none" stroke="#1b232b" stroke-width="1.4" marker-end="url(#head)"/>
+<path d="M 1684,498.0 L 1684,458 L 1830,458 L 1830,403.0" fill="none" stroke="#1b232b" stroke-width="1.4" marker-end="url(#head)"/>
+<path d="M 1605.0,616 L 1591.0,616 L 1591.0,458 L 1830,458 L 1830,403.0" fill="none" stroke="#1b232b" stroke-width="1.4" marker-end="url(#head)"/>
+<path d="M 1858,498.0 L 1858,470 L 2004,470 L 2004,403.0" fill="none" stroke="#1b232b" stroke-width="1.4" marker-end="url(#head)"/>
+<path d="M 1779.0,616 L 1765.0,616 L 1765.0,470 L 2004,470 L 2004,403.0" fill="none" stroke="#1b232b" stroke-width="1.4" marker-end="url(#head)"/>
+<path d="M 1779.0,704 L 1753.0,704 L 1753.0,470 L 2004,470 L 2004,403.0" fill="none" stroke="#1b232b" stroke-width="1.4" stroke-dasharray="5,4" marker-end="url(#head)"/>
+<path d="M 1605.0,616 L 1591.0,616 L 1591.0,446 L 2178,446 L 2178,403.0" fill="none" stroke="#1b232b" stroke-width="1.4" marker-end="url(#head)"/>
+<path d="M 1858,498.0 L 1858,434 L 2178,434 L 2178,403.0" fill="none" stroke="#1b232b" stroke-width="1.4" marker-end="url(#head)"/>
+<path d="M 2032,498.0 L 2032,458 L 2178,458 L 2178,403.0" fill="none" stroke="#1b232b" stroke-width="1.4" marker-end="url(#head)"/>
+<path d="M 2032,498.0 L 2032,470 L 2352,470 L 2352,403.0" fill="none" stroke="#1b232b" stroke-width="1.4" marker-end="url(#head)"/>
+<path d="M 2206,498.0 L 2206,470 L 2352,470 L 2352,403.0" fill="none" stroke="#1b232b" stroke-width="1.4" marker-end="url(#head)"/>
+<path d="M 2380,498.0 L 2380,470 L 2526,470 L 2526,403.0" fill="none" stroke="#1b232b" stroke-width="1.4" marker-end="url(#head)"/>
+<path d="M 1083.0,498.0 L 1083.0,232 L 820,232 L 820,215.0" fill="none" stroke="#3d76b3" stroke-width="1.2" stroke-dasharray="5,4" marker-end="url(#headblue)"/>
+<text x="1089.0" y="418" font-family="Helvetica, Arial, sans-serif" font-size="8.5" font-weight="normal" fill="#3d76b3" text-anchor="start">read at import</text>
+<text x="1918" y="750" font-family="Helvetica, Arial, sans-serif" font-size="8.5" font-weight="normal" fill="#5a646e" text-anchor="middle">environment/app/engine/model.py is league/engine.py; league_io.py is copied; public.json is PublicConstants.from_calibration(Calibration.load()).</text>
+<text x="1918" y="762" font-family="Helvetica, Arial, sans-serif" font-size="8.5" font-weight="normal" fill="#5a646e" text-anchor="middle">solution/reference_forecaster.py is forecasters/ladder.py with one import rewritten. tests/pristine/engine/ is a second copy of the same engine.</text>
+<text x="1918" y="774" font-family="Helvetica, Arial, sans-serif" font-size="8.5" font-weight="normal" fill="#5a646e" text-anchor="middle">At grading, the verifier hashes the agent's /app/engine against tests/pristine/engine and runs /app/solution beside the pristine copy, never beside the agent's.</text>
+<rect x="40" y="801" width="22" height="14" rx="3" fill="#eef2f7" stroke="#3a4a5c" stroke-width="1.2"/>
+<text x="70" y="812" font-family="Helvetica, Arial, sans-serif" font-size="10.5" font-weight="normal" fill="#5a646e" text-anchor="start">library module</text>
+<rect x="255" y="801" width="22" height="14" rx="3" fill="#ffffff" stroke="#2c3640" stroke-width="1.2"/>
+<text x="285" y="812" font-family="Helvetica, Arial, sans-serif" font-size="10.5" font-weight="normal" fill="#5a646e" text-anchor="start">script or run</text>
+<rect x="470" y="801" width="22" height="14" rx="3" fill="#e8f1fa" stroke="#3d76b3" stroke-width="1.2"/>
+<text x="500" y="812" font-family="Helvetica, Arial, sans-serif" font-size="10.5" font-weight="normal" fill="#5a646e" text-anchor="start">public file: the agent sees it</text>
+<rect x="685" y="801" width="22" height="14" rx="3" fill="#fbe9e7" stroke="#b8483d" stroke-width="1.2"/>
+<text x="715" y="812" font-family="Helvetica, Arial, sans-serif" font-size="10.5" font-weight="normal" fill="#5a646e" text-anchor="start">private file</text>
+<rect x="900" y="801" width="22" height="14" rx="3" fill="#fbf5e6" stroke="#a3823a" stroke-width="1.2"/>
+<text x="930" y="812" font-family="Helvetica, Arial, sans-serif" font-size="10.5" font-weight="normal" fill="#5a646e" text-anchor="start">record, output or document</text>
+<rect x="1115" y="801" width="22" height="14" rx="3" fill="#f1f1f1" stroke="#8b949c" stroke-width="1.2"/>
+<text x="1145" y="812" font-family="Helvetica, Arial, sans-serif" font-size="10.5" font-weight="normal" fill="#5a646e" text-anchor="start">not tracked</text>
+<rect x="1330" y="801" width="22" height="14" rx="3" fill="#ffffff" stroke="#8b949c" stroke-width="1.2" stroke-dasharray="5,3"/>
+<text x="1360" y="812" font-family="Helvetica, Arial, sans-serif" font-size="10.5" font-weight="normal" fill="#5a646e" text-anchor="start">written by hand</text>
+<path d="M 1560,808 L 1600,808" stroke="#1b232b" stroke-width="1.4" marker-end="url(#head)"/>
+<text x="1608" y="812" font-family="Helvetica, Arial, sans-serif" font-size="10.5" font-weight="normal" fill="#5a646e" text-anchor="start">writes or reads a file</text>
+<path d="M 1770,808 L 1810,808" stroke="#3d76b3" stroke-width="1.2"/>
+<circle cx="1790" cy="808" r="3.2" fill="#3d76b3"/>
+<text x="1818" y="812" font-family="Helvetica, Arial, sans-serif" font-size="10.5" font-weight="normal" fill="#5a646e" text-anchor="start">imports (dot = tap on that module's rail)</text>
+<path d="M 2100,808 L 2140,808" stroke="#1b232b" stroke-width="1.4" stroke-dasharray="5,4" marker-end="url(#head)"/>
+<text x="2148" y="812" font-family="Helvetica, Arial, sans-serif" font-size="10.5" font-weight="normal" fill="#5a646e" text-anchor="start">by hand, or the oracle gate only</text>
+</svg>

@@ -1,0 +1,115 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 1080" width="1500" height="1080" font-family="Helvetica, Arial, sans-serif">
+<rect width="1500" height="1080" fill="#ffffff"/>
+<text x="60" y="52" font-family="Helvetica, Arial, sans-serif" font-size="26" font-weight="bold" fill="#1b232b" text-anchor="start">t20-exact-forecast</text>
+<text x="60" y="80" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" fill="#59636d" text-anchor="start">A forecasting task graded against the exact truth of a world it owns. The agent sees the left column; it never sees the right.</text>
+<rect x="60" y="160" width="1380" height="248" rx="12" fill="#f6f7f9"/>
+<text x="78" y="184" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="bold" fill="#59636d" text-anchor="start">BUILD</text>
+<rect x="60" y="442" width="1380" height="116" rx="12" fill="#f6f7f9"/>
+<text x="78" y="466" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="bold" fill="#59636d" text-anchor="start">DATA</text>
+<rect x="60" y="592" width="1380" height="116" rx="12" fill="#f6f7f9"/>
+<text x="78" y="616" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="bold" fill="#59636d" text-anchor="start">PACKAGE</text>
+<rect x="60" y="742" width="1380" height="116" rx="12" fill="#f6f7f9"/>
+<text x="78" y="766" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="bold" fill="#59636d" text-anchor="start">RUN</text>
+<rect x="60" y="892" width="1380" height="116" rx="12" fill="#f6f7f9"/>
+<text x="78" y="916" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="bold" fill="#59636d" text-anchor="start">EVIDENCE</text>
+<text x="405" y="138" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" fill="#2f6fb2" text-anchor="middle">PUBLIC</text>
+<text x="405" y="155" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#59636d" text-anchor="middle">what the agent sees</text>
+<text x="1095" y="138" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="bold" fill="#b7423a" text-anchor="middle">PRIVATE</text>
+<text x="1095" y="155" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#59636d" text-anchor="middle">what only the generator and the verifier hold</text>
+<rect x="177.0" y="171.0" width="1150" height="100" rx="9" fill="#dfe3e8"/>
+<rect x="175.0" y="168.0" width="1150" height="100" rx="9" fill="#f0f2f4" stroke="#6a737c" stroke-width="1.8"/>
+<text x="750" y="197.0" font-family="Helvetica, Arial, sans-serif" font-size="17" font-weight="bold" fill="#1b232b" text-anchor="middle">Calibration from the real archive</text>
+<text x="750" y="219.0" font-family="Helvetica, Arial, sans-serif" font-size="13.5" font-weight="normal" fill="#59636d" text-anchor="middle">295,557 Cricsheet IPL deliveries, parsed, measured and fitted by six scripts under dev/</text>
+<text x="750" y="237.0" font-family="Helvetica, Arial, sans-serif" font-size="13.5" font-weight="normal" fill="#59636d" text-anchor="middle">Only what repeats in independent halves is kept; the result is one constants file of aggregates</text>
+<rect x="177.0" y="303.0" width="1150" height="100" rx="9" fill="#dfe3e8"/>
+<rect x="175.0" y="300.0" width="1150" height="100" rx="9" fill="#f0f2f4" stroke="#6a737c" stroke-width="1.8"/>
+<text x="750" y="329.0" font-family="Helvetica, Arial, sans-serif" font-size="17" font-weight="bold" fill="#1b232b" text-anchor="middle">World generator and shared engine</text>
+<text x="750" y="351.0" font-family="Helvetica, Arial, sans-serif" font-size="13.5" font-weight="normal" fill="#59636d" text-anchor="middle">league/world.py builds a league from one seed: invented players, hidden skills, drifting form, transfers, three seasons</text>
+<text x="750" y="369.0" font-family="Helvetica, Arial, sans-serif" font-size="13.5" font-weight="normal" fill="#59636d" text-anchor="middle">league/engine.py plays every ball; the truth and every forecaster use this same engine with different skill books</text>
+<line x1="750" y1="268.0" x2="750" y2="290.0" stroke="#1b232b" stroke-width="2.2"/>
+<polygon points="744.5,289.0 755.5,289.0 750,300.0" fill="#1b232b"/>
+<rect x="551.9375" y="273.0" width="396.12500000000006" height="20" rx="10" fill="#ffffff" stroke="#d5dadf" stroke-width="1"/>
+<text x="750" y="288.0" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#59636d" text-anchor="middle">league/calibration.json and the chosen design constants</text>
+<rect x="172.0" y="453.0" width="470" height="100" rx="9" fill="#dfe3e8"/>
+<rect x="170.0" y="450.0" width="470" height="100" rx="9" fill="#e9f1fb" stroke="#2f6fb2" stroke-width="1.8"/>
+<text x="405" y="479.0" font-family="Helvetica, Arial, sans-serif" font-size="17" font-weight="bold" fill="#1b232b" text-anchor="middle">History and fixtures</text>
+<text x="405" y="501.0" font-family="Helvetica, Arial, sans-serif" font-size="13.5" font-weight="normal" fill="#59636d" text-anchor="middle">Three seasons of balls, matches and line-ups</text>
+<text x="405" y="519.0" font-family="Helvetica, Arial, sans-serif" font-size="13.5" font-weight="normal" fill="#59636d" text-anchor="middle">24 fixtures with their elevens; 7 CSV files per world</text>
+<rect x="862.0" y="453.0" width="470" height="100" rx="9" fill="#dfe3e8"/>
+<rect x="860.0" y="450.0" width="470" height="100" rx="9" fill="#fcecea" stroke="#b7423a" stroke-width="1.8"/>
+<text x="1095" y="479.0" font-family="Helvetica, Arial, sans-serif" font-size="17" font-weight="bold" fill="#1b232b" text-anchor="middle">Exact truth, reference, pass rule</text>
+<text x="1095" y="501.0" font-family="Helvetica, Arial, sans-serif" font-size="13.5" font-weight="normal" fill="#59636d" text-anchor="middle">TruthEngine: 100,000 copies per batting order per fixture</text>
+<text x="1095" y="519.0" font-family="Helvetica, Arial, sans-serif" font-size="13.5" font-weight="normal" fill="#59636d" text-anchor="middle">Reference regret and tier forecasts; bar.json committed before any pilot</text>
+<line x1="405" y1="400.0" x2="405" y2="440.0" stroke="#1b232b" stroke-width="2.2"/>
+<polygon points="399.5,439.0 410.5,439.0 405,450.0" fill="#1b232b"/>
+<rect x="303.1875" y="414.0" width="203.62500000000003" height="20" rx="10" fill="#ffffff" stroke="#d5dadf" stroke-width="1"/>
+<text x="405" y="429.0" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#59636d" text-anchor="middle">make_task_data.py, 8 worlds</text>
+<line x1="1095" y1="400.0" x2="1095" y2="440.0" stroke="#1b232b" stroke-width="2.2"/>
+<polygon points="1089.5,439.0 1100.5,439.0 1095,450.0" fill="#1b232b"/>
+<rect x="965.6875" y="414.0" width="258.625" height="20" rx="10" fill="#ffffff" stroke="#d5dadf" stroke-width="1"/>
+<text x="1095" y="429.0" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#59636d" text-anchor="middle">hidden SkillBook, never written out</text>
+<rect x="172.0" y="603.0" width="470" height="100" rx="9" fill="#dfe3e8"/>
+<rect x="170.0" y="600.0" width="470" height="100" rx="9" fill="#e9f1fb" stroke="#2f6fb2" stroke-width="1.8"/>
+<text x="405" y="629.0" font-family="Helvetica, Arial, sans-serif" font-size="17" font-weight="bold" fill="#1b232b" text-anchor="middle">Agent image</text>
+<text x="405" y="651.0" font-family="Helvetica, Arial, sans-serif" font-size="13.5" font-weight="normal" fill="#59636d" text-anchor="middle">Engine as code with public constants only</text>
+<text x="405" y="669.0" font-family="Helvetica, Arial, sans-serif" font-size="13.5" font-weight="normal" fill="#59636d" text-anchor="middle">The visible world, the handbook, a starter that says 0.5</text>
+<rect x="862.0" y="603.0" width="470" height="100" rx="9" fill="#dfe3e8"/>
+<rect x="860.0" y="600.0" width="470" height="100" rx="9" fill="#fcecea" stroke="#b7423a" stroke-width="1.8"/>
+<text x="1095" y="629.0" font-family="Helvetica, Arial, sans-serif" font-size="17" font-weight="bold" fill="#1b232b" text-anchor="middle">Verifier image and oracle</text>
+<text x="1095" y="651.0" font-family="Helvetica, Arial, sans-serif" font-size="13.5" font-weight="normal" fill="#59636d" text-anchor="middle">grader.py, a pristine engine, all 8 worlds, the private files</text>
+<text x="1095" y="669.0" font-family="Helvetica, Arial, sans-serif" font-size="13.5" font-weight="normal" fill="#59636d" text-anchor="middle">solution/: the reference forecaster, installed for the oracle gate</text>
+<line x1="405" y1="550.0" x2="405" y2="590.0" stroke="#1b232b" stroke-width="2.2"/>
+<polygon points="399.5,589.0 410.5,589.0 405,600.0" fill="#1b232b"/>
+<rect x="275.6875" y="564.0" width="258.625" height="20" rx="10" fill="#ffffff" stroke="#d5dadf" stroke-width="1"/>
+<text x="405" y="579.0" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#59636d" text-anchor="middle">package_task.py, visible world only</text>
+<line x1="1095" y1="550.0" x2="1095" y2="590.0" stroke="#1b232b" stroke-width="2.2"/>
+<polygon points="1089.5,589.0 1100.5,589.0 1095,600.0" fill="#1b232b"/>
+<rect x="972.5625" y="564.0" width="244.87500000000003" height="20" rx="10" fill="#ffffff" stroke="#d5dadf" stroke-width="1"/>
+<text x="1095" y="579.0" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#59636d" text-anchor="middle">package_task.py, all eight worlds</text>
+<rect x="172.0" y="753.0" width="470" height="100" rx="9" fill="#dfe3e8"/>
+<rect x="170.0" y="750.0" width="470" height="100" rx="9" fill="#e9f1fb" stroke="#2f6fb2" stroke-width="1.8"/>
+<text x="405" y="779.0" font-family="Helvetica, Arial, sans-serif" font-size="17" font-weight="bold" fill="#1b232b" text-anchor="middle">Agent container</text>
+<text x="405" y="801.0" font-family="Helvetica, Arial, sans-serif" font-size="13.5" font-weight="normal" fill="#59636d" text-anchor="middle">Claude Code or Codex writes solution/forecast.py</text>
+<text x="405" y="819.0" font-family="Helvetica, Arial, sans-serif" font-size="13.5" font-weight="normal" fill="#59636d" text-anchor="middle">three hours; network for the model API only</text>
+<rect x="862.0" y="753.0" width="470" height="100" rx="9" fill="#dfe3e8"/>
+<rect x="860.0" y="750.0" width="470" height="100" rx="9" fill="#fcecea" stroke="#b7423a" stroke-width="1.8"/>
+<text x="1095" y="779.0" font-family="Helvetica, Arial, sans-serif" font-size="17" font-weight="bold" fill="#1b232b" text-anchor="middle">Verifier container</text>
+<text x="1095" y="801.0" font-family="Helvetica, Arial, sans-serif" font-size="13.5" font-weight="normal" fill="#59636d" text-anchor="middle">Runs the program as an unprivileged user, 8 worlds x 12 minutes</text>
+<text x="1095" y="819.0" font-family="Helvetica, Arial, sans-serif" font-size="13.5" font-weight="normal" fill="#59636d" text-anchor="middle">Regret against the truth; pooled rule twice; determinism; engine hash</text>
+<line x1="405" y1="700.0" x2="405" y2="740.0" stroke="#1b232b" stroke-width="2.2"/>
+<polygon points="399.5,739.0 410.5,739.0 405,750.0" fill="#1b232b"/>
+<rect x="361.625" y="714.0" width="86.75000000000001" height="20" rx="10" fill="#ffffff" stroke="#d5dadf" stroke-width="1"/>
+<text x="405" y="729.0" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#59636d" text-anchor="middle">harbor run</text>
+<line x1="1095" y1="700.0" x2="1095" y2="740.0" stroke="#1b232b" stroke-width="2.2"/>
+<polygon points="1089.5,739.0 1100.5,739.0 1095,750.0" fill="#1b232b"/>
+<rect x="1024.125" y="714.0" width="141.75" height="20" rx="10" fill="#ffffff" stroke="#d5dadf" stroke-width="1"/>
+<text x="1095" y="729.0" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#59636d" text-anchor="middle">separate container</text>
+<line x1="640.0" y1="800" x2="850.0" y2="800" stroke="#1b232b" stroke-width="2.2"/>
+<polygon points="849.0,794.5 849.0,805.5 860.0,800" fill="#1b232b"/>
+<rect x="710.0625" y="729" width="79.875" height="20" rx="10" fill="#ffffff" stroke="#d5dadf" stroke-width="1"/>
+<text x="750.0" y="744" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#59636d" text-anchor="middle">artifacts</text>
+<rect x="696.3125" y="751" width="107.37500000000001" height="20" rx="10" fill="#ffffff" stroke="#d5dadf" stroke-width="1"/>
+<text x="750.0" y="766" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#59636d" text-anchor="middle">/app/solution</text>
+<rect x="703.1875" y="773" width="93.62500000000001" height="20" rx="10" fill="#ffffff" stroke="#d5dadf" stroke-width="1"/>
+<text x="750.0" y="788" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#59636d" text-anchor="middle">/app/engine</text>
+<rect x="177.0" y="903.0" width="1150" height="100" rx="9" fill="#dfe3e8"/>
+<rect x="175.0" y="900.0" width="1150" height="100" rx="9" fill="#fbf5e6" stroke="#a3823a" stroke-width="1.8"/>
+<text x="750" y="929.0" font-family="Helvetica, Arial, sans-serif" font-size="17" font-weight="bold" fill="#1b232b" text-anchor="middle">Evidence and documents</text>
+<text x="750" y="951.0" font-family="Helvetica, Arial, sans-serif" font-size="13.5" font-weight="normal" fill="#59636d" text-anchor="middle">jobs/: two gates, Harbor's linter, every pilot. Ten runs of the named pair, 0 of 10; the newer pair under test</text>
+<text x="750" y="969.0" font-family="Helvetica, Arial, sans-serif" font-size="13.5" font-weight="normal" fill="#59636d" text-anchor="middle">Ablations of the failed programs, figures drawn from the records, the design document, run report, decisions, notes</text>
+<line x1="1095" y1="850.0" x2="1095" y2="890.0" stroke="#1b232b" stroke-width="2.2"/>
+<polygon points="1089.5,889.0 1100.5,889.0 1095,900.0" fill="#1b232b"/>
+<rect x="1000.0625" y="864.0" width="189.87500000000003" height="20" rx="10" fill="#ffffff" stroke="#d5dadf" stroke-width="1"/>
+<text x="1095" y="879.0" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#59636d" text-anchor="middle">reward.json, details.json</text>
+<rect x="60" y="1034" width="26" height="16" rx="4" fill="#e9f1fb" stroke="#2f6fb2" stroke-width="1.6"/>
+<text x="94" y="1047" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#59636d" text-anchor="start">public</text>
+<rect x="290" y="1034" width="26" height="16" rx="4" fill="#fcecea" stroke="#b7423a" stroke-width="1.6"/>
+<text x="324" y="1047" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#59636d" text-anchor="start">private</text>
+<rect x="520" y="1034" width="26" height="16" rx="4" fill="#f0f2f4" stroke="#6a737c" stroke-width="1.6"/>
+<text x="554" y="1047" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#59636d" text-anchor="start">build time, both sides</text>
+<rect x="750" y="1034" width="26" height="16" rx="4" fill="#fbf5e6" stroke="#a3823a" stroke-width="1.6"/>
+<text x="784" y="1047" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#59636d" text-anchor="start">records and documents</text>
+<line x1="1000" y1="1042" x2="1046" y2="1042" stroke="#1b232b" stroke-width="2.2"/>
+<polygon points="1045,1036.5 1045,1047.5 1056,1042" fill="#1b232b"/>
+<text x="1066" y="1047" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="normal" fill="#59636d" text-anchor="start">data flow, labelled with the script or step that carries it</text>
+</svg>

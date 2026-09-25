@@ -12,9 +12,9 @@ The one fact that matters most for reading it: the pass rule was committed befor
 
 **What I decided.** To build a forecasting task with hidden statistical quantities, instead of continuing with my first task, a repository of backtests that silently used revised data.
 
-**Why.** The backtest task came from a real problem in my work and I built it properly: forty-eight scripts, one written rule, a verifier. Then Claude Opus 4.7 and GPT-5.5 solved it at every size. Adding more files added work, not difficulty. The lesson was that a capable agent implements anything it can read. What it cannot read is how much to trust a number.
+**Why.** The backtest task came from a real problem in my work and I built it properly: forty-eight scripts, one written rule, a verifier. Then Claude Opus 4.7 and GPT-5.5 solved it at every size. (evidence: the audit task's records, in my earlier repository) Adding more files added work, not difficulty. The lesson was that a capable agent implements anything it can read. What it cannot read is how much to trust a number.
 
-**What else I could have done.** I also built a small ingest service under a declared fault model, with 27,710 fault schedules and five planted defects. It had a good verifier and a tight fix-and-test loop, and I judged that loop would be closed by the top models too. I did not pilot it; that was a judgement call.
+**What else I could have done.** I also built a small ingest service under a declared fault model, with 27,710 fault schedules and five planted defects. (evidence: the ingest prototype's records, in my earlier repository) It had a good verifier and a tight fix-and-test loop, and I judged that loop would be closed by the top models too. I did not pilot it; that was a judgement call.
 
 **What it cost.** Two weeks of work on the other two tasks became design evidence rather than a submission.
 
@@ -24,7 +24,7 @@ The one fact that matters most for reading it: the pass rule was committed befor
 
 **Why cricket.** Small matches that simulate fast, rich ball-level records, players who recur but never enough to be sure, and an outcome everyone understands.
 
-**Why the IPL archive.** Cricsheet publishes every ball since 2008 under an open licence; I could measure real behaviour instead of inventing it. The key measurement, that only about half of a batter's season-to-season difference is real, is the trap at the centre of the task.
+**Why the IPL archive.** Cricsheet publishes every ball since 2008 under an open licence; I could measure real behaviour instead of inventing it. The key measurement, that only about half of a batter's season-to-season difference is real, is the trap at the centre of the task. (evidence: `dev/explore_reliability.py`; `league/calibration.json`)
 
 **Why invented players and grounds.** Knowing a real player's reputation would substitute memory for inference. In the world, only statistics survive from reality; no name does.
 
@@ -38,7 +38,7 @@ The one fact that matters most for reading it: the pass rule was committed befor
 
 **What I decided.** For every fixture the grader holds the true home-win probability, computed on the same engine with the hidden values, and scores a forecast by its distance from that truth.
 
-**Why.** A result is one noisy draw. On 192 fixtures the noise from results alone is about twice the gap between a careful and a careless forecaster. Grading against the truth removes luck from the grade entirely.
+**Why.** A result is one noisy draw. On 192 fixtures the noise from results alone is about twice the gap between a careful and a careless forecaster. (evidence: NOTES.md, the scorer section) Grading against the truth removes luck from the grade entirely.
 
 **What it cost.** The world has to be synthetic, which is D2's cost again.
 
@@ -48,7 +48,7 @@ The one fact that matters most for reading it: the pass rule was committed befor
 
 **Why logarithmic rather than squared error.** Both are honest scores. The logarithmic one charges most for confident mistakes, and confident mistakes were the failure I expected and the one every failed run showed.
 
-**Why clip at 0.002.** So that one reckless zero cannot give an infinite penalty. True probabilities sit between about 0.2 and 0.8, so the clip never touches an honest forecast.
+**Why clip at 0.002.** So that one reckless zero cannot give an infinite penalty. True probabilities sit between about 0.2 and 0.8, so the clip never touches an honest forecast. (evidence: `task_data/private/*/truth.csv`)
 
 **Why report skill but not grade it.** A skill score is a ratio of two honest scores, and a ratio is not itself honest. It is printed for readers only.
 
@@ -78,7 +78,7 @@ The one fact that matters most for reading it: the pass rule was committed befor
 
 ## D7. Only effects that repeat in independent halves of the archive
 
-**What I decided.** An effect enters the world only if it shows up again when the archive is split in two. Grounds repeat (0.71): in. Batter at a ground repeats weakly (0.19): in, small. Bowler at a ground repeats at about zero: out. A specific batter against a specific bowler repeats at 0.18 on the best-sampled pairs: out, replaced by one pace-versus-spin tendency per batter.
+**What I decided.** An effect enters the world only if it shows up again when the archive is split in two. Grounds repeat (0.71): in. Batter at a ground repeats weakly (0.19): in, small. Bowler at a ground repeats at about zero: out. A specific batter against a specific bowler repeats at 0.18 on the best-sampled pairs: out, replaced by one pace-versus-spin tendency per batter. (evidence: `dev/fit_constants.py`; the interaction block of `league/calibration.json`)
 
 **Why.** Every plausible cricket effect can be written into a simulator. The question is which ones exist. Putting a fan's intuition in would plant noise and call it skill.
 
@@ -106,7 +106,7 @@ The one fact that matters most for reading it: the pass rule was committed befor
 
 ## D10. Three seasons, a quarter of players transferring, a fresh eleven each match
 
-**Why three seasons.** The first ladder ran on 109 matches of history and nobody, careful or careless, beat the coin flip. 270 matches is where good methods separate from careless ones without the task becoming a parameter-recovery exercise.
+**Why three seasons.** The first ladder ran on 109 matches of history and nobody, careful or careless, beat the coin flip. (evidence: `results/ladder_v2.jsonl`, the first entries) 270 matches is where good methods separate from careless ones without the task becoming a parameter-recovery exercise.
 
 **Why transfers and changing elevens.** So a team's name is weak evidence and the agent has to model players. The team-ratings rung is worse than a coin flip as a result.
 
@@ -126,7 +126,7 @@ The one fact that matters most for reading it: the pass rule was committed befor
 
 **What changed my mind.** I ran the reference on eight development worlds that are never graded, re-simulating it four times to measure its own noise, and fitting the two nearest careless methods to measure separation. Noise reached 5.9 percent on one world; the careless "no shrinkage" method was only 6 to 7 percent above the reference on two; on one world a coin flip beat the reference. No single tolerance could absorb the noise and exclude the careless methods.
 
-**What I decided instead.** Add the world regrets before applying the tolerance, and apply the same rule to the seven held-out worlds on their own. Summed, the noise is about 1.1 percent (the spread of the four re-simulated repeats summed across the eight worlds) and the careless methods sit at 1.30, 1.93 and 1.90 times the reference.
+**What I decided instead.** Add the world regrets before applying the tolerance, and apply the same rule to the seven held-out worlds on their own. Summed, the noise is about 1.1 percent (the spread of the four re-simulated repeats summed across the eight worlds) and the careless methods sit at 1.30, 1.93 and 1.90 times the reference. (evidence: `bar.log`; NOTES.md, the bar analysis section)
 
 **What it cost.** A method can be weak on one world and still pass. The second application of the rule stops a strong visible world from carrying a weak method, and Fable's second run showed it working in reverse: a pass on the seven unseen worlds, a fail on all eight because of the one it could see.
 
@@ -136,7 +136,7 @@ The one fact that matters most for reading it: the pass rule was committed befor
 
 **Why ten.** About nine times the summed noise, a third of the way to the nearest careless method. A choice, tied to two measured numbers.
 
-**Why commit first.** A bar chosen in sight of the scores is not a bar. `harbor/bar.json` was committed before the first pilot job, the handbook's numbers are filled from it at packaging, and it has not changed through a near miss at 1.109, a nearer one at 1.104, and the newer pair's passes. A tolerance of 1.12 would have passed the first near miss; I report that and do not act on it.
+**Why commit first.** A bar chosen in sight of the scores is not a bar. `harbor/bar.json` was committed before the first pilot job, the handbook's numbers are filled from it at packaging, and it has not changed through a near miss at 1.109, a nearer one at 1.104, and the newer pair's passes. (evidence: `harbor/bar.json`; the git log) A tolerance of 1.12 would have passed the first near miss; I report that and do not act on it.
 
 **Stands.**
 
@@ -144,7 +144,7 @@ The one fact that matters most for reading it: the pass rule was committed befor
 
 **What I decided.** The bar's denominator is the careful forecaster from the ladder, loaded through the agent's own reader and fitted from the reloaded public files, so it sees nothing the agent cannot. Its prior scales were set by me, knowing the true spreads. That advantage is stated in the design document.
 
-**What else I could have done.** A reference that learns its spreads from the data. I measured one later at six to seven percent lower regret and did not adopt it, because adopting it needs a fresh bar analysis and a fresh committed rule before any pilot, and the ten pilots had already run under the current one.
+**What else I could have done.** A reference that learns its spreads from the data. I measured one later at six to seven percent lower regret and did not adopt it, (evidence: NOTES.md, the reference section) because adopting it needs a fresh bar analysis and a fresh committed rule before any pilot, and the ten pilots had already run under the current one.
 
 **What it cost.** The tolerance softens the advantage; it does not remove it. The ablations put its worth at about half of a careless program's excess error. The passing programs removed it themselves by learning the spreads, which is the strongest reason to make that the next reference.
 
@@ -152,7 +152,7 @@ The one fact that matters most for reading it: the pass rule was committed befor
 
 ## D15. Truth at 100,000 copies per batting order, stored
 
-**Why so many.** The answer used to judge a forecast should be far more precise than the forecast. 200,000 played matches per fixture put the truth's error at about 0.001 per probability, a quarter of one percent of the reference's regret. Spending it once at build time keeps every grading run cheap and deterministic.
+**Why so many.** The answer used to judge a forecast should be far more precise than the forecast. 200,000 played matches per fixture put the truth's error at about 0.001 per probability, a quarter of one percent of the reference's regret. (evidence: `dev/make_task_data.py`; NOTES.md, the task-data section) Spending it once at build time keeps every grading run cheap and deterministic.
 
 **What it cost.** Twenty-five minutes of build time, and one caveat: the random streams behind the truth are shared across worlds by fixture number, so the worlds' tiny truth errors are not fully independent. Recorded as future work.
 
@@ -160,7 +160,7 @@ The one fact that matters most for reading it: the pass rule was committed befor
 
 ## D16. A separate verifier, an unprivileged runner, a pristine engine
 
-**Why.** The reward has to be earned by forecasting. The truth lives in a container the agent never sees; the program runs as a user that cannot read the private files; it runs beside a pristine engine while the agent's engine is only hashed. Harbor's linter passed all 22 checks, including the anti-cheating ones.
+**Why.** The reward has to be earned by forecasting. The truth lives in a container the agent never sees; the program runs as a user that cannot read the private files; it runs beside a pristine engine while the agent's engine is only hashed. Harbor's linter passed all 22 checks, including the anti-cheating ones. (evidence: job `2026-09-24__12-21-19`)
 
 **What it cost.** A laptop run of the grader has no such boundary, which is the intended difference between a local check and the real gate.
 
@@ -188,7 +188,7 @@ The one fact that matters most for reading it: the pass rule was committed befor
 
 ## D20. Count the interrupted run and flag it
 
-**What happened.** GPT-5.5's fourth run wrote a complete program, then Codex reported my account's usage limit and the session ended at 13 minutes. The program was graded: 1.362, same fingerprint as the others.
+**What happened.** GPT-5.5's fourth run wrote a complete program, then Codex reported my account's usage limit and the session ended at 13 minutes. The program was graded: 1.362, same fingerprint as the others. (evidence: job `2026-09-24__00-10-13`)
 
 **Why count it.** The verdict is a valid observation of that program. The interruption was my account's, not the model's, so the run is weaker evidence about what the model could have done with its full budget; it is flagged everywhere it appears. Excluding it changes no conclusion.
 
@@ -196,7 +196,7 @@ The one fact that matters most for reading it: the pass rule was committed befor
 
 ## D21. Read the programs, then intervene, rather than trust the fingerprints
 
-**Why.** A fingerprint, which ladder rung a forecast most resembles, is a lead, not a cause. Reading the six first-round programs found prior scales 3 to 44 times too weak and no accuracy checks. Changing that one constant per program and re-grading on one world confirmed it: every program moved most of the way to the reference, four of five by more than half their excess, the fifth by 45 percent, and the near miss beat the reference once its priors were halved.
+**Why.** A fingerprint, which ladder rung a forecast most resembles, is a lead, not a cause. Reading the six first-round programs found prior scales 3 to 44 times too weak and no accuracy checks. Changing that one constant per program and re-grading on one world confirmed it: every program moved most of the way to the reference, four of five by more than half their excess, the fifth by 45 percent, and the near miss beat the reference once its priors were halved. (evidence: `ablations.log`)
 
 **What it cost.** One world, six programs. Runs 7 to 10 are attributed by resemblance only.
 
@@ -204,7 +204,7 @@ The one fact that matters most for reading it: the pass rule was committed befor
 
 ## D22. Run the newer pair on the frozen task, and report their passes
 
-**Why.** The brief names two pairs. Running the newer one on the same task under the same rule is the only way to say where the bar sits between generations. It also settled a question I owed the reader: since I built the task with an assistant from Fable's family, a pass by Fable alone could be affinity. GPT-6-astra passing too, and Opus 4.7 failing five times reading the same handbook, closes that.
+**Why.** The brief names two pairs. Running the newer one on the same task under the same rule is the only way to say where the bar sits between generations. It also settled a question I owed the reader: since I built the task with an assistant from Fable's family, a pass by Fable alone could be affinity. GPT-6-astra passing too, and Opus 4.7 failing five times reading the same handbook, closes that. (evidence: jobs `2026-09-24__19-42-59` and `2026-09-24__23-05-34`; the five Opus jobs in RUN_REPORT.md)
 
 **What I would not do.** Change the task to turn those passes into failures without a new version, a new bar analysis and a new committed rule.
 

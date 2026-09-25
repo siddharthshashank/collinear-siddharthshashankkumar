@@ -153,7 +153,32 @@ Model runs need the corresponding provider access; the oracle, the control and t
 
 ---
 
-## 9. Evidence integrity
+## 9. Why this is a real task, and worth money
+
+The job the agent is asked to do is the job of a quantitative analyst at a sportsbook, a fantasy platform or a broadcaster's analytics desk: turn a ball-by-ball archive into calibrated match probabilities for the coming fixtures, delivered as a program that runs again every season on new data. Those desks exist, they pay for this work, and the mistake the task catches, treating a short history as a settled fact, is the mistake that costs them. The same skill, with the same failure mode, is what a forecaster does with conversion rates, equipment failures, disease counts or demand: decide how much of a small sample to believe. The cricket is the setting; the capability is general.
+
+The task is economically viable to run as a benchmark too. The world builds in 25 minutes once, the truth is stored so grading is deterministic and cheap, a full verification of eight worlds takes under five minutes, and the agent's session is the only cost that scales with the number of runs.
+
+## 10. Verifier design
+
+The verifier is a separate container that the agent never sees. It holds the eight worlds, the stored truth, the reference's regrets, the ladder's forecasts and the rule. It copies the agent's `solution/` and hashes the agent's `engine/` against a pristine copy, then runs the program once on each world, and a second time on the visible world, as an unprivileged user beside the pristine engine, with the private files unreadable and a 720-second limit per world. It scores each forecast by clipped logarithmic regret against the truth, applies the pooled rule on all eight worlds and again on the seven held out, and writes `/logs/verifier/reward.json` with four keys plus per-world details, including which ladder rung each forecast most resembles. `tests/test.sh` is the entrypoint; it runs `grader.py` and, if the grader itself fails, writes a zero reward rather than nothing, so an infrastructure failure never looks like a pass.
+
+A shallow solution cannot pass it. The starter scores zero. Team ratings, last season only, unshrunk player estimates and head-to-head tables are all on the ladder and all sit at 1.50 times the reference or worse; the bar is 1.10. Copying the visible world's answers is impossible because the truth never enters the agent's container, and tuning to the visible world is caught by the held-out rule.
+
+## 11. Fairness audit
+
+| Question | Answer |
+|---|---|
+| Is everything the grader checks stated to the agent? | Yes: the score, the clip, the tolerance, both applications of the rule, the time limit, the determinism check and the engine check are in the handbook, whose numbers are filled from `bar.json` at packaging |
+| Can the reference see anything the agent cannot? | At run time, no: it is fitted from the same seven files through the same reader. Its prior scales were set by me knowing the true spreads; this advantage is stated and measured (Section 7) |
+| Is the task solvable through the agent's interface? | Yes: the oracle installs the reference forecaster as a submission and scores 1.000 on every key |
+| Did any run fail for an infrastructure reason? | No: every graded run produced a valid, deterministic forecast inside its limits; the one packaging error in the record is the first oracle attempt, kept and labelled |
+| Were the models run as intended? | Native harnesses, high reasoning effort, three-hour sessions, the same frozen task for all four models |
+| Was the rule fixed before the runs? | Yes: `bar.json` was committed before the first pilot job and has not changed |
+| Could the task favour one model family? | It was designed with an assistant of Fable's family; the same family's previous model failed five times on the same handbook, and a model from another lab passed, so the passes are not family affinity |
+| What is the task not fair about? | Nothing known. Its known limitation is on the other side: as calibrated, it does not fail the newest generation |
+
+## 12. Evidence integrity
 
 Every graded job under `jobs/` holds its reward, per-world details, agent log, config and the submitted program; the two jobs I stopped (`2026-09-25__01-34-12`, which has its complete program, and `2026-09-25__01-51-10`) hold their agent logs and config only. Harbor redacts the value of every environment variable passed on the command line, and one such value was the word `true`, so every literal `true` in the archived files reads `[REDACTED]`; that breaks `details.json` parsing and `action="store_true"` in two archived programs. The summaries and the ablation script restore the token in memory and leave the archived files untouched; the restored programs reproduce the verifier's numbers to the last digit.
 

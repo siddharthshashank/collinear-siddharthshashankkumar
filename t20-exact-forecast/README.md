@@ -21,6 +21,8 @@ The hard part is not writing the code. It is deciding how much of a player's sho
 | Claude Fable 5.1 (Claude Code) | 3 | 2 | 1.008 and 1.027; the miss at 1.104 passed on the seven held-out worlds |
 | GPT-6-astra (Codex) | 2 | 2 | 1.054 and 1.072 |
 
+![Every completed run, by model, as a multiple of the reference's regret](figures/model_results.png)
+
 The pass bar is 1.10 times a reference forecaster built from ordinary statistics. The pair the brief's goal line names failed ten times out of ten, all for the same reason: they took players' short histories at face value and had no check that could see it; changing that one number in each program moved it most of the way to the reference. The next generation passed four of five completed runs by doing exactly what the failures skipped. So the bar sits between the two generations. Three further runs were cut short for account or operator reasons and are recorded as excluded, not as failures. Every number in this table is in a job folder under `jobs/`; the ids are in RUN_REPORT.md, and every claim in DESIGN_DOCUMENT.md carries a pointer to its evidence.
 
 ## Where to read

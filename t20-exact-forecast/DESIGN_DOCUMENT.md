@@ -297,6 +297,8 @@ For each of the six programs I changed that one number and re-graded the program
 
 Every change moved the score the way the reading predicted. Four of the five programs cut their excess error by more than half on one number; the fifth cut it by 45 percent. None reaches the reference on one change, because each also carries a second wrong choice I left alone on purpose. H2 held.[^30] Run 6, the near miss, is the most instructive: it looked like the reference on seven worlds, but its priors were still too loose and it had softened every output toward 0.5 to compensate. Take the softening away and it gets worse; deepen it and it gets better; fix the priors and it beats the reference. The near miss was a hedged wrong answer, not a nearly right one.
 
+![Every completed run of both generations, by model, against the bar and the nearest careless tiers](figures/model_results.png)
+
 ### The pair the brief's opening section names
 
 Having measured the previous generation, I ran the newer one on the same frozen task, under the same rule, in the same harnesses.

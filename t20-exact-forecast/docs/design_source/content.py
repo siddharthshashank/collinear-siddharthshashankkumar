@@ -604,8 +604,8 @@ BLOCKS = [
       ["6, GPT-5.5", "1.42", "the output hedge removed (logit scale 0.90 to 1.0)", "1.67"],
       ["6, GPT-5.5", "1.42", "the output hedge deepened (0.90 to 0.75)", "1.13"],
       ["6, GPT-5.5", "1.42", "every prior spread halved, hedge kept", "0.91"]], [0.14, 0.14, 0.52, 0.20]),
-    ("p", "Regret as a multiple of the reference's on held-out world c. Every change moved the number the way the diagnosis predicted, and by a lot: five programs "
-          "cut their excess regret by half or more on the strength of one constant. None of the five reaches the reference on one change, because each also carries a "
+    ("p", "Regret as a multiple of the reference's on held-out world c. Every change moved the number the way the diagnosis predicted, and by a lot: four of the five programs "
+          "cut their excess regret by more than half on the strength of one constant, and the fifth, trial 3, by 45 percent. None of the five reaches the reference on one change, because each also carries a "
           "second wrong choice, an unshrunk day spread, a recency weight, a form block, wear folded away, and those were left untouched on purpose. Trial 6 is the clean "
           "case. Removing its hedge made it worse, deepening the hedge made it better, and correcting its priors while keeping the hedge made it beat the reference on this "
           "world. The near miss was a softened wrong answer, and a correctly regularised version of that program would very likely pass. That is the strongest statement the "

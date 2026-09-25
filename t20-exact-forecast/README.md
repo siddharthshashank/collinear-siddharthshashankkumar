@@ -4,6 +4,8 @@ A Harbor task in which an AI agent forecasts match win probabilities for a simul
 
 The simulator is calibrated to 295,557 real deliveries from the Cricsheet IPL archive and contains only effects that repeat in independent halves of that archive. Every player, team and venue is invented, and only aggregate constants ship. The pass rule, regret summed over eight worlds at most 1.10 times a reference forecaster built from ordinary regularised statistics, was chosen on worlds that are never graded and committed before any model ran.
 
+![The system: public against private, build to evidence](figures/system.png)
+
 ## Results
 
 | Model, native harness, high reasoning effort | Runs | Passed | Total regret, times the reference |

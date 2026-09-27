@@ -1,0 +1,131 @@
+{
+  "batch_id": "replication-20260927",
+  "created_at_utc": "2026-09-27T08:58:56.506318+00:00",
+  "task_version": "0.1.1",
+  "relative_tolerance": 0.1,
+  "planned_trials": 8,
+  "runtime_freeze_commit": "e83f9972f310c8e66f1ea916eb5c75db70f9b5bf",
+  "task_source_commit": "60923946d060714f2b7cc941c08a972570f5d033",
+  "task_digest": "sha256:a2fd25c5b1ddc00864363e47c9a7bacde3afed776896dbff9fe11938948a016a",
+  "harbor_version": "0.23.0",
+  "slots": [
+    {
+      "trial_id": "gpt55-r1",
+      "model": "GPT-5.5",
+      "harness": "Codex",
+      "agent": "codex",
+      "model_slug": "openai/gpt-5.5",
+      "replicate": 1,
+      "job_name": "replication-20260927-gpt55-r1",
+      "reasoning_effort": "high",
+      "version": "0.157.1"
+    },
+    {
+      "trial_id": "gpt55-r2",
+      "model": "GPT-5.5",
+      "harness": "Codex",
+      "agent": "codex",
+      "model_slug": "openai/gpt-5.5",
+      "replicate": 2,
+      "job_name": "replication-20260927-gpt55-r2",
+      "reasoning_effort": "high",
+      "version": "0.157.1"
+    },
+    {
+      "trial_id": "astra-r1",
+      "model": "GPT-6-astra",
+      "harness": "Codex",
+      "agent": "codex",
+      "model_slug": "openai/gpt-6-astra",
+      "replicate": 1,
+      "job_name": "replication-20260927-astra-r1",
+      "reasoning_effort": "high",
+      "version": "0.157.1"
+    },
+    {
+      "trial_id": "astra-r2",
+      "model": "GPT-6-astra",
+      "harness": "Codex",
+      "agent": "codex",
+      "model_slug": "openai/gpt-6-astra",
+      "replicate": 2,
+      "job_name": "replication-20260927-astra-r2",
+      "reasoning_effort": "high",
+      "version": "0.157.1"
+    },
+    {
+      "trial_id": "fable-r1",
+      "model": "Claude Fable 5.1",
+      "harness": "Claude Code",
+      "agent": "claude-code",
+      "model_slug": "anthropic/claude-fable-5-1",
+      "replicate": 1,
+      "job_name": "replication-20260927-fable-r1",
+      "reasoning_effort": "high",
+      "version": "2.1.274"
+    },
+    {
+      "trial_id": "fable-r2",
+      "model": "Claude Fable 5.1",
+      "harness": "Claude Code",
+      "agent": "claude-code",
+      "model_slug": "anthropic/claude-fable-5-1",
+      "replicate": 2,
+      "job_name": "replication-20260927-fable-r2",
+      "reasoning_effort": "high",
+      "version": "2.1.274"
+    },
+    {
+      "trial_id": "opus-r1",
+      "model": "Claude Opus 4.7",
+      "harness": "Claude Code",
+      "agent": "claude-code",
+      "model_slug": "anthropic/claude-opus-4-7",
+      "replicate": 1,
+      "job_name": "replication-20260927-opus-r1",
+      "reasoning_effort": "high",
+      "version": "2.1.274"
+    },
+    {
+      "trial_id": "opus-r2",
+      "model": "Claude Opus 4.7",
+      "harness": "Claude Code",
+      "agent": "claude-code",
+      "model_slug": "anthropic/claude-opus-4-7",
+      "replicate": 2,
+      "job_name": "replication-20260927-opus-r2",
+      "reasoning_effort": "high",
+      "version": "2.1.274"
+    }
+  ],
+  "execution_order": [
+    "fable-r1",
+    "astra-r1",
+    "opus-r1",
+    "fable-r2",
+    "astra-r2",
+    "gpt55-r1",
+    "opus-r2",
+    "gpt55-r2"
+  ],
+  "max_concurrent": 3,
+  "resources_per_trial": {
+    "cpus": 2,
+    "memory_mb": 4096,
+    "storage_mb": 10240,
+    "agent_timeout_sec": 10800,
+    "verifier_timeout_sec": 10800,
+    "per_world_timeout_sec": 720
+  },
+  "host_snapshot": {
+    "docker_cpus": 16,
+    "docker_memory_bytes": 16747192320,
+    "host_memory_bytes": 51539607552,
+    "docker_version": "29.2.1"
+  },
+  "stopping_rule": "Run the eight declared slots irrespective of observed passes or failures. Do not tune the task, bar, prompt or oracle during the batch. The earlier revision-gpt55-high attempt remains separate.",
+  "retry_policy": "Preserve every attempt. Retry operational failures only after diagnosis, with a new linked attempt ID; never replace an unfavorable completed model outcome. Account/provider interruptions are not clean model failures.",
+  "credential_policy": "User-supplied Claude OAuth is held only in a private temporary file and process environment; Codex uses the existing native sign-in. Neither credential is part of task artifacts. Completed evidence is checked for credential leakage before publication.",
+  "harness_policy": "Native CLI versions pinned to the recorded versions used in the earlier evaluations. Reasoning effort explicitly high. No extra task hints or follow-up prompts.",
+  "interpretation": "Two new trials per model are replication observations, not population pass-rate estimates or a controlled ranking."
+}

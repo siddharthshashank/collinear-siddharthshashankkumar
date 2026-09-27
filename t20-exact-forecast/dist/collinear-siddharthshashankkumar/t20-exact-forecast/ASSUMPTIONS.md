@@ -21,7 +21,7 @@ These assumptions let me move from an ambiguous brief to a runnable experiment. 
 
 The reference advantage and simulation uncertainty matter most to the fairness argument. I would measure both before tightening the task. An oracle pass proves that one solution works through the interface; it does not prove that the threshold is equally fair to every sound method.
 
-The brief's model conflict is separate from task quality. The current record supports clear failures of the goal-line pair. It does not establish a clean failure of the newer pair named elsewhere in the brief. I would not use the borderline Fable result to hide that distinction.
+The brief's model conflict is separate from task quality. The record supports clear failures of the goal-line pair. It does not establish a clean failure of the newer pair named elsewhere in the brief: both fresh Astra trials and both fresh Fable trials passed. I would not use the historical borderline Fable miss, or a code defect in a passing program, to claim the missing outcome.
 
 ## What a revision can and cannot establish
 

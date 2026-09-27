@@ -1,0 +1,59 @@
+{
+  "observed_at_utc": "2026-09-27T09:44:50.223935+00:00",
+  "trial_id": "fable-r1",
+  "job_name": "replication-20260927-fable-r1",
+  "trial_name": "task__gZoWu3L",
+  "scope": "Read-only observation during the ongoing agent phase, after the model reported killed parallel self-tests. Container memory.events records cgroup OOM kills; this does not itself establish the final model outcome.",
+  "records": [
+    {
+      "command": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Name}} cpus={{.HostConfig.NanoCpus}} memory={{.HostConfig.Memory}} network={{.HostConfig.NetworkMode}} oomKilled={{.State.OOMKilled}} running={{.State.Running}}",
+        "67923d5e6e6d"
+      ],
+      "exit_code": 0,
+      "stdout": "/task__gzowu3l__env-main-1 cpus=2000000000 memory=4294967296 network=task__gzowu3l__env_default oomKilled=true running=true\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "docker",
+        "exec",
+        "67923d5e6e6d",
+        "cat",
+        "/sys/fs/cgroup/memory.events",
+        "/sys/fs/cgroup/memory.max",
+        "/sys/fs/cgroup/memory.peak"
+      ],
+      "exit_code": 0,
+      "stdout": "low 0\nhigh 0\nmax 2592\noom 13\noom_kill 4\noom_group_kill 0\n4294967296\n4294967296\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "docker",
+        "info",
+        "--format",
+        "CPUs={{.NCPU}} MemoryBytes={{.MemTotal}}"
+      ],
+      "exit_code": 0,
+      "stdout": "CPUs=16 MemoryBytes=16747192320\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "docker",
+        "stats",
+        "--no-stream",
+        "--format",
+        "{{.Name}} memory={{.MemUsage}} cpu={{.CPUPerc}}"
+      ],
+      "exit_code": 0,
+      "stdout": "task__5m64xsc__verifier__trial-main-1 memory=106.5MiB / 4GiB cpu=101.94%\ntask__8yzfvqv__env-main-1 memory=279.6MiB / 4GiB cpu=0.25%\ntask__gzowu3l__env-main-1 memory=2.369GiB / 4GiB cpu=201.56%\n",
+      "stderr": "",
+      "stdout_filter": "Retain only evaluation-container lines beginning task__; unrelated host-service names omitted."
+    }
+  ]
+}

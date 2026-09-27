@@ -19,5 +19,8 @@ audit:
 	$(PY) dev/test_verifier_contract.py
 	$(PY) dev/test_verifier_hardening.py
 	$(PY) dev/audit_revision.py
+	$(PY) dev/audit_fable_matchups.py
+	$(PY) dev/test_replication_audit.py
+	$(PY) dev/audit_replication.py --require-settled --check-package
 submission: package audit
 	$(PY) dev/build_submission.py

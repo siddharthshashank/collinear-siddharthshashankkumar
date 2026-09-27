@@ -1,0 +1,19 @@
+{
+    "task": {
+        "path": "/private/tmp/collinear-replication-20260927/task"
+    },
+    "trial_name": "task__gZoWu3L",
+    "trials_dir": "/Users/siddharthshashank/Documents/Interview/collinear-siddharthshashankkumar/t20-exact-forecast/validation/jobs/replication-20260927-fable-r1",
+    "agent": {
+        "name": "claude-code",
+        "model_name": "anthropic/claude-fable-5-1",
+        "kwargs": {
+            "reasoning_effort": "high",
+            "version": "2.1.274"
+        },
+        "env": {
+            "CLAUDE_CODE_OAUTH_TOKEN": "${CLAUDE_CODE_OAUTH_TOKEN}"
+        }
+    },
+    "job_id": "7eadc046-d610-4877-914e-0426a7c23a92"
+}

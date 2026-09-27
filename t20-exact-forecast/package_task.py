@@ -32,7 +32,7 @@ def assemble(task):
                 path = data / side / name / filename
                 if not path.is_file() or path.stat().st_size == 0:
                     sys.exit(f"Missing or empty task input: {path.relative_to(ROOT)}")
-    docs = ("RUN_REPORT.md", "DESIGN_DOCUMENT.md", "DECISIONS.md", "ASSUMPTIONS.md", "NOTES.md", "PROVENANCE.md", "ASSIGNMENT_BRIEF.md", "VALIDATION.md", "ablations.log", "bar.log")
+    docs = ("RUN_REPORT.md", "REPLICATION_REPORT.md", "DESIGN_DOCUMENT.md", "DECISIONS.md", "ASSUMPTIONS.md", "NOTES.md", "PROVENANCE.md", "ASSIGNMENT_BRIEF.md", "VALIDATION.md", "ablations.log", "bar.log")
     for name in (*docs, "docs/TASK_README.md", "validation/task-runtime.json"):
         if not (ROOT / name).is_file():
             sys.exit(f"Missing reviewer artifact: {name}")
@@ -77,7 +77,8 @@ def assemble(task):
     for name in ("architecture.py", "render.cjs"):
         shutil.copy(ROOT / "figures" / "src" / name, task / "figures" / "src" / name)
     (task / "reviewer_tools").mkdir()
-    shutil.copy(ROOT / "dev/regrade_archived.py", task / "reviewer_tools/regrade_archived.py")
+    for name in ("regrade_archived.py", "plot_replication.py", "audit_fable_matchups.py"):
+        shutil.copy(ROOT / "dev" / name, task / "reviewer_tools" / name)
     for name in ("jobs", "validation"):
         shutil.copytree(ROOT / name, task / name, ignore=shutil.ignore_patterns("sessions", "__pycache__", "*.pyc", ".DS_Store"))
     verify_runtime(task)

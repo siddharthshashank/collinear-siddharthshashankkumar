@@ -1,0 +1,63 @@
+{
+    "id": "ddc96bee-c842-479d-9806-1bcb572431a3",
+    "started_at": "2026-09-27T04:42:39.682235",
+    "updated_at": "2026-09-27T05:54:33.661651",
+    "finished_at": "2026-09-27T05:54:33.661651",
+    "n_total_trials": 1,
+    "stats": {
+        "n_completed_trials": 1,
+        "n_errored_trials": 0,
+        "n_running_trials": 0,
+        "n_pending_trials": 0,
+        "n_cancelled_trials": 0,
+        "n_retries": 0,
+        "evals": {
+            "claude-code__claude-fable-5-1__adhoc": {
+                "n_trials": 1,
+                "n_errors": 0,
+                "metrics": [
+                    {
+                        "artifact_quality": 1.0,
+                        "constraint_satisfaction": 1.0,
+                        "functional_correctness": 1.0,
+                        "overall": 1.0,
+                        "robustness": 1.0
+                    }
+                ],
+                "pass_at_k": {},
+                "reward_stats": {
+                    "functional_correctness": {
+                        "1.0": [
+                            "task__8YZFvqv"
+                        ]
+                    },
+                    "robustness": {
+                        "1.0": [
+                            "task__8YZFvqv"
+                        ]
+                    },
+                    "constraint_satisfaction": {
+                        "1.0": [
+                            "task__8YZFvqv"
+                        ]
+                    },
+                    "artifact_quality": {
+                        "1.0": [
+                            "task__8YZFvqv"
+                        ]
+                    },
+                    "overall": {
+                        "1.0": [
+                            "task__8YZFvqv"
+                        ]
+                    }
+                },
+                "exception_stats": {}
+            }
+        },
+        "n_input_tokens": 5365683,
+        "n_cache_tokens": 5237735,
+        "n_output_tokens": 93312,
+        "cost_usd": 8.51883375
+    }
+}

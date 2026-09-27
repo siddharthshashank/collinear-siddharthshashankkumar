@@ -1,0 +1,21 @@
+{
+ "sd_style": 0.3787,
+ "sd_talent": 0.1341,
+ "sd_form": 0.1333,
+ "rho_w": 0.8796,
+ "rho_o": 0.6088,
+ "sd_split": 0.0999,
+ "sd_kind": 0.15,
+ "sd_btalent": 0.003,
+ "sd_bform": 0.1927,
+ "rho_bw": 0.9406,
+ "rho_bo": 0.7758,
+ "sd_venue": 0.0169,
+ "sd_era": 0.1699,
+ "sd_chase": 0.0283,
+ "sd_day": 0.2905,
+ "sd_aff": 0.0978,
+ "sd_type": 0.009,
+ "sd_pitch": 0.0223,
+ "sd_fixed": 3.0
+}

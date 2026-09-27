@@ -1,0 +1,79 @@
+{
+ "bar": {
+  "relative_tolerance": 0.1,
+  "absolute_tolerance": 0.0,
+  "clip": 0.002,
+  "rule": "total regret over the graded leagues at most the reference's total times 1.10",
+  "status": "Pre-registered. See DECISIONS.md. Fixed before any model pilot."
+ },
+ "leagues": {
+  "heldout_a": {
+   "seconds": 174,
+   "regret": 0.018,
+   "reference_regret": 0.016681,
+   "times_reference": 1.079,
+   "most_like": "reference"
+  },
+  "heldout_b": {
+   "seconds": 178,
+   "regret": 0.00755,
+   "reference_regret": 0.007466,
+   "times_reference": 1.011,
+   "most_like": "reference"
+  },
+  "heldout_c": {
+   "seconds": 177,
+   "regret": 0.00871,
+   "reference_regret": 0.007394,
+   "times_reference": 1.178,
+   "most_like": "reference"
+  },
+  "heldout_d": {
+   "seconds": 189,
+   "regret": 0.00693,
+   "reference_regret": 0.006084,
+   "times_reference": 1.139,
+   "most_like": "reference"
+  },
+  "heldout_e": {
+   "seconds": 192,
+   "regret": 0.00853,
+   "reference_regret": 0.009477,
+   "times_reference": 0.9,
+   "most_like": "reference"
+  },
+  "heldout_f": {
+   "seconds": 176,
+   "regret": 0.01347,
+   "reference_regret": 0.013189,
+   "times_reference": 1.021,
+   "most_like": "reference"
+  },
+  "heldout_g": {
+   "seconds": 183,
+   "regret": 0.00961,
+   "reference_regret": 0.008954,
+   "times_reference": 1.073,
+   "most_like": "reference"
+  },
+  "visible": {
+   "seconds": 177,
+   "regret": 0.00916,
+   "reference_regret": 0.008709,
+   "times_reference": 1.052,
+   "most_like": "reference"
+  }
+ },
+ "total_regret_as_a_multiple_of_the_reference": {
+  "all_leagues": 1.051,
+  "held_out_leagues": 1.051,
+  "coin_flip_for_comparison": 1.891
+ },
+ "repeat": {
+  "seconds": 194,
+  "process_succeeded": true,
+  "problem": "ture 10008: 0.489197\nfixture 10009: 0.540253\nfixture 10010: 0.503582\nfixture 10011: 0.520943\nfixture 10012: 0.519505\nfixture 10013: 0.519176\nfixture 10014: 0.613411\nfixture 10015: 0.580086\nfixture 10016: 0.600342\nfixture 10017: 0.633873\nfixture 10018: 0.491718\nfixture 10019: 0.500092\nfixture 10020: 0.527466\nfixture 10021: 0.488777\nfixture 10022: 0.561432\nfixture 10023: 0.367439\nFinished in 193.4s"
+ },
+ "engine_untouched": true,
+ "deterministic": true
+}

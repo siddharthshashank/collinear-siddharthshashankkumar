@@ -1,0 +1,23 @@
+{
+    "job_name": "replication-20260927-opus-r1",
+    "jobs_dir": "/Users/siddharthshashank/Documents/Interview/collinear-siddharthshashankkumar/t20-exact-forecast/validation/jobs",
+    "n_concurrent_trials": 1,
+    "agents": [
+        {
+            "name": "claude-code",
+            "model_name": "anthropic/claude-opus-4-7",
+            "kwargs": {
+                "reasoning_effort": "high",
+                "version": "2.1.274"
+            },
+            "env": {
+                "CLAUDE_CODE_OAUTH_TOKEN": "${CLAUDE_CODE_OAUTH_TOKEN}"
+            }
+        }
+    ],
+    "tasks": [
+        {
+            "path": "/private/tmp/collinear-replication-20260927/task"
+        }
+    ]
+}

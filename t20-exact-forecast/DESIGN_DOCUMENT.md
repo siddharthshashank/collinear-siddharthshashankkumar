@@ -147,7 +147,7 @@ The original **v0.1.0** series contains five Claude Opus 4.7 trials in Claude Co
 | GPT-5.5 | 0/5 passes; ratios 1.109–1.575 | One borderline result and one interrupted session are flagged |
 | Supplementary models | Fable 5.1: 2/3; GPT-6-astra: 2/2 | Independently written solutions to v0.1.0 |
 
-The full brief names GPT-5.5-high / Opus 4.7 in its goal and explicit run requirement, and the newer pair in its target-outcome paragraph. I prioritize the repeated goal/run requirement and report the newer pair separately. If the newer-pair outcome is mandatory, the historical series does not establish a clean failure. That ambiguity is not resolved by relabeling a borderline miss.
+The full brief names GPT-5.5-high / Opus 4.7 in its goal and explicit run requirement, and the newer pair in its target-outcome paragraph. I prioritize the repeated goal/run requirement and report the newer pair separately. If the newer-pair outcome is mandatory, the historical series does not establish a clean failure. The [current-version replication](REPLICATION_REPORT.md) also has four newer-pair passes out of four: two Astra and two Fable. That ambiguity is not resolved by relabeling a borderline miss or a defect in a passing program.
 
 The [run report](RUN_REPORT.md) gives every trial identity and the excluded jobs. GPT-5.5 run 2 is a useful starting point: **1.575×** total regret and **1.613×** held-out regret, with all validity and constraint checks satisfied. This is a substantive forecasting miss, well away from the threshold.
 

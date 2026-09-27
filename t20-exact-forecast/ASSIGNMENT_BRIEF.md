@@ -6,7 +6,7 @@ The full text below was supplied for this revision. It replaces the earlier exce
 
 The goal and explicit model-run requirement name **GPT-5.5-high or Claude Opus 4.7**. The target-outcome paragraph instead names **GPT-6-astra-high or Claude Fable 5.1**. I treat the repeated goal/run requirement as the primary target and report the other pair separately. This is my interpretation, not a clarification received from Collinear.
 
-Both pairs were evaluated. The current evidence shows clear failures of the goal-line pair. It does not establish a clean failure of the newer pair: four of five completed trials pass, and the remaining miss is borderline. If that newer-pair requirement controls, a new evaluated version is needed. See [DECISIONS.md](DECISIONS.md#12-i-reported-the-passes-and-the-interruptions-as-part-of-the-result).
+Both pairs were evaluated. The evidence shows clear failures of the goal-line pair. It does not establish a clean failure of the newer pair: four of five historical trials pass, the historical miss is borderline, and all four fresh newer-pair trials pass in the [current-version replication](REPLICATION_REPORT.md). If that newer-pair requirement controls, this submitted record does not satisfy it. See [DECISIONS.md](DECISIONS.md#12-i-reported-the-passes-and-the-interruptions-as-part-of-the-result).
 
 The brief also emphasizes the candidate's approach, assumptions, resolution of ambiguity and ownership. [DECISIONS.md](DECISIONS.md), [ASSUMPTIONS.md](ASSUMPTIONS.md) and [NOTES.md](NOTES.md) explain those choices using the recorded work. The architecture figures support those explanations rather than replace the runnable artifacts.
 

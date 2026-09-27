@@ -1,0 +1,1932 @@
+{
+  "schema_version": 1,
+  "batch_id": "replication-20260927",
+  "collected_at_utc": "2026-09-27T11:19:11.656356+00:00",
+  "task_version": "0.1.1",
+  "relative_tolerance": 0.1,
+  "planned_trials": 8,
+  "task_digest": "sha256:fa2f9f25281666c9829e355bbc598a36feb81f44049fb1ef38a4de573435cb0a",
+  "digest_correction": {
+    "planned_historical_task_digest": "sha256:a2fd25c5b1ddc00864363e47c9a7bacde3afed776896dbff9fe11938948a016a",
+    "snapshot_task_digest": "sha256:fa2f9f25281666c9829e355bbc598a36feb81f44049fb1ef38a4de573435cb0a",
+    "binding_sha256": "db9e8df161cd97d6a49b6b35f8f345467a10fa607ceec461e4bb8a075f104b43",
+    "runtime_files_matching_frozen_contract": 119,
+    "note": "Original plan digest retained. The executed snapshot differs only in reviewer README.md; both package digests reconstruct from the recorded hashes. The 119 runtime files match the frozen contract."
+  },
+  "runtime_freeze_commit": "e83f9972f310c8e66f1ea916eb5c75db70f9b5bf",
+  "plan_sha256": "1450dd1f3bb3ade54a84e8597449d05d4b5050e58f9a93cbc3f07e010d5992f8",
+  "trials": [
+    {
+      "trial_id": "gpt55-r1",
+      "model": "GPT-5.5",
+      "harness": "Codex",
+      "model_slug": "openai/gpt-5.5",
+      "reasoning_effort": "high",
+      "replicate": 1,
+      "attempt_id": "replication-20260927-gpt55-r1",
+      "job_name": "replication-20260927-gpt55-r1",
+      "job_path": "validation/jobs/replication-20260927-gpt55-r1",
+      "status": "completed",
+      "classification": "forecast_quality_failure",
+      "all_world_ratio": 1.233,
+      "held_out_ratio": 1.242,
+      "overall_reward": 0.0,
+      "rewards": {
+        "functional_correctness": 0.0,
+        "robustness": 0.0,
+        "constraint_satisfaction": 1.0,
+        "artifact_quality": 1.0,
+        "overall": 0.0
+      },
+      "artifact_graded": true,
+      "counts_as_model_outcome": true,
+      "settled_under_fixed_budget": true,
+      "agent_budget_exhausted": false,
+      "launcher_exit_code": 0,
+      "credential_scan_matches": 0,
+      "launcher_started_at_utc": "2026-09-27T10:39:50.679161+00:00",
+      "launcher_finished_at_utc": "2026-09-27T11:01:48.123497+00:00",
+      "note": "",
+      "evidence_issues": [],
+      "terminal_event": {
+        "state": "completed",
+        "category": null,
+        "line": 77,
+        "evidence": "validation/jobs/replication-20260927-gpt55-r1/task__Z9uA3EF/agent/codex.txt"
+      },
+      "worlds": {
+        "heldout_a": {
+          "seconds": 80,
+          "regret": 0.01603,
+          "reference_regret": 0.016681,
+          "most_like": "no shrinkage"
+        },
+        "heldout_b": {
+          "seconds": 84,
+          "regret": 0.00918,
+          "reference_regret": 0.007466,
+          "most_like": "no shrinkage"
+        },
+        "heldout_c": {
+          "seconds": 90,
+          "regret": 0.01374,
+          "reference_regret": 0.007394,
+          "most_like": "no shrinkage"
+        },
+        "heldout_d": {
+          "seconds": 80,
+          "regret": 0.00937,
+          "reference_regret": 0.006084,
+          "most_like": "no shrinkage"
+        },
+        "heldout_e": {
+          "seconds": 80,
+          "regret": 0.01223,
+          "reference_regret": 0.009477,
+          "most_like": "no shrinkage"
+        },
+        "heldout_f": {
+          "seconds": 88,
+          "regret": 0.01678,
+          "reference_regret": 0.013189,
+          "most_like": "no shrinkage"
+        },
+        "heldout_g": {
+          "seconds": 79,
+          "regret": 0.00869,
+          "reference_regret": 0.008954,
+          "most_like": "reference"
+        },
+        "visible": {
+          "seconds": 78,
+          "regret": 0.01014,
+          "reference_regret": 0.008709,
+          "most_like": "no shrinkage"
+        }
+      },
+      "trial_path": "validation/jobs/replication-20260927-gpt55-r1/task__Z9uA3EF",
+      "evidence_sha256": {
+        "lock.json": "bad579643ce208105963efc2f6a3f4f07b565c6057746c075071ca6b5803a634",
+        "config.json": "e64fadca3b593bc84f2d198b905633796a4d4a90e841d2b342afa9ebc8dcaaa2",
+        "result.json": "ebf9ac757a4b14c3525b20bd79a91c25b5dbd5c6adbaf54c7d716de02090fcf4",
+        "agent/trajectory.json": "8c7ffd64c450d976023c6935f67a420d8efff3e58ca8b789278ff325583f64d4",
+        "verifier/reward.json": "0415edd92ab25e1045e9e72c2f2922738a987e1feef9841261f37659ef3c7a01",
+        "verifier/details.json": "d0a1ac5fcbc75297bfee6c6f96730311f633320d8281999201ab0aa648905c8b",
+        "artifacts/app/solution/forecast.py": "44b9ee6e590741883e48e680b4055f038f4c35f8e8e0bc6103368259e2cb9a8d",
+        "agent/codex.txt": "c611e085fc4b2de597c2cf4e7be3d1770bce333358a41a5f400965c208728673"
+      },
+      "forecast_matches_starter": false,
+      "task_version": "0.1.1",
+      "task_digest": "sha256:fa2f9f25281666c9829e355bbc598a36feb81f44049fb1ef38a4de573435cb0a",
+      "usage": {
+        "n_input_tokens": 726642,
+        "n_cache_tokens": 678784,
+        "n_output_tokens": 20432,
+        "cost_usd": 1.1916420000000003
+      },
+      "seconds": {
+        "trial": 1316.486,
+        "agent_setup": 51.304,
+        "agent_execution": 517.072,
+        "verifier": 741.185
+      },
+      "started_at": "2026-09-27T10:39:51.271681Z",
+      "finished_at": "2026-09-27T11:01:47.757318Z",
+      "actual_harness_version": "0.157.1",
+      "harness_version": "0.157.1",
+      "selected_attempt_id": "replication-20260927-gpt55-r1",
+      "attempt_ids": [
+        "replication-20260927-gpt55-r1"
+      ]
+    },
+    {
+      "trial_id": "gpt55-r2",
+      "model": "GPT-5.5",
+      "harness": "Codex",
+      "model_slug": "openai/gpt-5.5",
+      "reasoning_effort": "high",
+      "replicate": 2,
+      "attempt_id": "replication-20260927-gpt55-r2",
+      "job_name": "replication-20260927-gpt55-r2",
+      "job_path": "validation/jobs/replication-20260927-gpt55-r2",
+      "status": "completed",
+      "classification": "pass",
+      "all_world_ratio": 1.067,
+      "held_out_ratio": 1.079,
+      "overall_reward": 1.0,
+      "rewards": {
+        "functional_correctness": 1.0,
+        "robustness": 1.0,
+        "constraint_satisfaction": 1.0,
+        "artifact_quality": 1.0,
+        "overall": 1.0
+      },
+      "artifact_graded": true,
+      "counts_as_model_outcome": true,
+      "settled_under_fixed_budget": true,
+      "agent_budget_exhausted": false,
+      "launcher_exit_code": 0,
+      "credential_scan_matches": 0,
+      "launcher_started_at_utc": "2026-09-27T10:56:42.467476+00:00",
+      "launcher_finished_at_utc": "2026-09-27T11:14:03.577979+00:00",
+      "note": "",
+      "evidence_issues": [],
+      "terminal_event": {
+        "state": "completed",
+        "category": null,
+        "line": 86,
+        "evidence": "validation/jobs/replication-20260927-gpt55-r2/task__aJVVf4j/agent/codex.txt"
+      },
+      "worlds": {
+        "heldout_a": {
+          "seconds": 44,
+          "regret": 0.01555,
+          "reference_regret": 0.016681,
+          "most_like": "no shrinkage"
+        },
+        "heldout_b": {
+          "seconds": 43,
+          "regret": 0.00817,
+          "reference_regret": 0.007466,
+          "most_like": "reference"
+        },
+        "heldout_c": {
+          "seconds": 43,
+          "regret": 0.01061,
+          "reference_regret": 0.007394,
+          "most_like": "reference"
+        },
+        "heldout_d": {
+          "seconds": 44,
+          "regret": 0.00829,
+          "reference_regret": 0.006084,
+          "most_like": "reference"
+        },
+        "heldout_e": {
+          "seconds": 44,
+          "regret": 0.00897,
+          "reference_regret": 0.009477,
+          "most_like": "reference"
+        },
+        "heldout_f": {
+          "seconds": 44,
+          "regret": 0.01503,
+          "reference_regret": 0.013189,
+          "most_like": "reference"
+        },
+        "heldout_g": {
+          "seconds": 45,
+          "regret": 0.00807,
+          "reference_regret": 0.008954,
+          "most_like": "reference"
+        },
+        "visible": {
+          "seconds": 44,
+          "regret": 0.00848,
+          "reference_regret": 0.008709,
+          "most_like": "reference"
+        }
+      },
+      "trial_path": "validation/jobs/replication-20260927-gpt55-r2/task__aJVVf4j",
+      "evidence_sha256": {
+        "lock.json": "bad579643ce208105963efc2f6a3f4f07b565c6057746c075071ca6b5803a634",
+        "config.json": "d9c3e95e896e147901f7bccb33b0a00c64938534e2d37832a0d64d037c3e0640",
+        "result.json": "13494b4543f430c6ea8e0da6bcb5676338fdc2d6f6a21d59070e7c31bec93b04",
+        "agent/trajectory.json": "75c8e25ede4e1caa6eca971d88103d559ab40f8ed10ab279ce0b2fa756fa345e",
+        "verifier/reward.json": "be03550556b39e35d904e53d1a1dac1193d52c655df19ff126579e3fef4eddcd",
+        "verifier/details.json": "2996d6c2100e006f6b73e2f9e47fbdcd3cca03adec637da9ea9d9496216811f4",
+        "artifacts/app/solution/forecast.py": "4ac25637676c6bb0be958e66657b9f1afcb5f16460a744f0a66afb8e08e76fbf",
+        "agent/codex.txt": "f5b0f311230b5931fad80f4d6d0c9687877147ada46dd2f31f0e5a9c88d1a123"
+      },
+      "forecast_matches_starter": false,
+      "task_version": "0.1.1",
+      "task_digest": "sha256:fa2f9f25281666c9829e355bbc598a36feb81f44049fb1ef38a4de573435cb0a",
+      "usage": {
+        "n_input_tokens": 828845,
+        "n_cache_tokens": 765184,
+        "n_output_tokens": 21001,
+        "cost_usd": 1.3309270000000002
+      },
+      "seconds": {
+        "trial": 1040.252,
+        "agent_setup": 62.848,
+        "agent_execution": 570.084,
+        "verifier": 400.444
+      },
+      "started_at": "2026-09-27T10:56:43.022353Z",
+      "finished_at": "2026-09-27T11:14:03.274192Z",
+      "actual_harness_version": "0.157.1",
+      "harness_version": "0.157.1",
+      "selected_attempt_id": "replication-20260927-gpt55-r2",
+      "attempt_ids": [
+        "replication-20260927-gpt55-r2"
+      ]
+    },
+    {
+      "trial_id": "astra-r1",
+      "model": "GPT-6-astra",
+      "harness": "Codex",
+      "model_slug": "openai/gpt-6-astra",
+      "reasoning_effort": "high",
+      "replicate": 1,
+      "attempt_id": "replication-20260927-astra-r1",
+      "job_name": "replication-20260927-astra-r1",
+      "job_path": "validation/jobs/replication-20260927-astra-r1",
+      "status": "completed",
+      "classification": "pass",
+      "all_world_ratio": 1.051,
+      "held_out_ratio": 1.051,
+      "overall_reward": 1.0,
+      "rewards": {
+        "functional_correctness": 1.0,
+        "robustness": 1.0,
+        "constraint_satisfaction": 1.0,
+        "artifact_quality": 1.0,
+        "overall": 1.0
+      },
+      "artifact_graded": true,
+      "counts_as_model_outcome": true,
+      "settled_under_fixed_budget": true,
+      "agent_budget_exhausted": false,
+      "launcher_exit_code": 0,
+      "credential_scan_matches": 0,
+      "launcher_started_at_utc": "2026-09-27T09:01:40.783972+00:00",
+      "launcher_finished_at_utc": "2026-09-27T09:42:38.825119+00:00",
+      "note": "",
+      "evidence_issues": [],
+      "terminal_event": {
+        "state": "completed",
+        "category": null,
+        "line": 71,
+        "evidence": "validation/jobs/replication-20260927-astra-r1/task__yKvhvAB/agent/codex.txt"
+      },
+      "worlds": {
+        "heldout_a": {
+          "seconds": 174,
+          "regret": 0.018,
+          "reference_regret": 0.016681,
+          "most_like": "reference"
+        },
+        "heldout_b": {
+          "seconds": 178,
+          "regret": 0.00755,
+          "reference_regret": 0.007466,
+          "most_like": "reference"
+        },
+        "heldout_c": {
+          "seconds": 177,
+          "regret": 0.00871,
+          "reference_regret": 0.007394,
+          "most_like": "reference"
+        },
+        "heldout_d": {
+          "seconds": 189,
+          "regret": 0.00693,
+          "reference_regret": 0.006084,
+          "most_like": "reference"
+        },
+        "heldout_e": {
+          "seconds": 192,
+          "regret": 0.00853,
+          "reference_regret": 0.009477,
+          "most_like": "reference"
+        },
+        "heldout_f": {
+          "seconds": 176,
+          "regret": 0.01347,
+          "reference_regret": 0.013189,
+          "most_like": "reference"
+        },
+        "heldout_g": {
+          "seconds": 183,
+          "regret": 0.00961,
+          "reference_regret": 0.008954,
+          "most_like": "reference"
+        },
+        "visible": {
+          "seconds": 177,
+          "regret": 0.00916,
+          "reference_regret": 0.008709,
+          "most_like": "reference"
+        }
+      },
+      "trial_path": "validation/jobs/replication-20260927-astra-r1/task__yKvhvAB",
+      "evidence_sha256": {
+        "lock.json": "6ccccf3570a722e4505fad4b32c47811353ba5f190061fc21b13d85135d6ff52",
+        "config.json": "62738b7300a4cadf3eaecd037c1fd423a5a989545d934dbdf238e9ff0f2bbb32",
+        "result.json": "f5f354781d63085e49dfc991ba24b9a1ae62067e08e1e299e4950ba70fada86e",
+        "agent/trajectory.json": "999a9cdcf7b86f94b60efc0e5a9321f89a291f282b68ffae2a351d9a33293feb",
+        "verifier/reward.json": "be03550556b39e35d904e53d1a1dac1193d52c655df19ff126579e3fef4eddcd",
+        "verifier/details.json": "142b38e5b0afb7284bc12ed14b67ed1063f21d7e42d5a0e1050da952ee65f4a4",
+        "artifacts/app/solution/forecast.py": "d1205631bc56f343f537432ae7fb66172d059214857d12b8ed340d56ae2a9a9d",
+        "agent/codex.txt": "7ca91ed71b0aca3040adf0c3686279fa08730e99def8aba453ae97b0e4fd3f32"
+      },
+      "forecast_matches_starter": false,
+      "task_version": "0.1.1",
+      "task_digest": "sha256:fa2f9f25281666c9829e355bbc598a36feb81f44049fb1ef38a4de573435cb0a",
+      "usage": {
+        "n_input_tokens": 1272047,
+        "n_cache_tokens": 1221888,
+        "n_output_tokens": 20526,
+        "cost_usd": 2.7497779999999987
+      },
+      "seconds": {
+        "trial": 2456.248,
+        "agent_setup": 69.914,
+        "agent_execution": 729.889,
+        "verifier": 1646.078
+      },
+      "started_at": "2026-09-27T09:01:42.098285Z",
+      "finished_at": "2026-09-27T09:42:38.346560Z",
+      "actual_harness_version": "0.157.1",
+      "harness_version": "0.157.1",
+      "selected_attempt_id": "replication-20260927-astra-r1",
+      "attempt_ids": [
+        "replication-20260927-astra-r1"
+      ]
+    },
+    {
+      "trial_id": "astra-r2",
+      "model": "GPT-6-astra",
+      "harness": "Codex",
+      "model_slug": "openai/gpt-6-astra",
+      "reasoning_effort": "high",
+      "replicate": 2,
+      "attempt_id": "replication-20260927-astra-r2",
+      "job_name": "replication-20260927-astra-r2",
+      "job_path": "validation/jobs/replication-20260927-astra-r2",
+      "status": "completed",
+      "classification": "pass",
+      "all_world_ratio": 1.072,
+      "held_out_ratio": 1.06,
+      "overall_reward": 1.0,
+      "rewards": {
+        "functional_correctness": 1.0,
+        "robustness": 1.0,
+        "constraint_satisfaction": 1.0,
+        "artifact_quality": 1.0,
+        "overall": 1.0
+      },
+      "artifact_graded": true,
+      "counts_as_model_outcome": true,
+      "settled_under_fixed_budget": true,
+      "agent_budget_exhausted": false,
+      "launcher_exit_code": 0,
+      "credential_scan_matches": 0,
+      "launcher_started_at_utc": "2026-09-27T09:48:42.352691+00:00",
+      "launcher_finished_at_utc": "2026-09-27T10:39:50.624709+00:00",
+      "note": "",
+      "evidence_issues": [],
+      "terminal_event": {
+        "state": "completed",
+        "category": null,
+        "line": 85,
+        "evidence": "validation/jobs/replication-20260927-astra-r2/task__NdS9y3D/agent/codex.txt"
+      },
+      "worlds": {
+        "heldout_a": {
+          "seconds": 209,
+          "regret": 0.01817,
+          "reference_regret": 0.016681,
+          "most_like": "reference"
+        },
+        "heldout_b": {
+          "seconds": 218,
+          "regret": 0.00717,
+          "reference_regret": 0.007466,
+          "most_like": "reference"
+        },
+        "heldout_c": {
+          "seconds": 206,
+          "regret": 0.00776,
+          "reference_regret": 0.007394,
+          "most_like": "reference"
+        },
+        "heldout_d": {
+          "seconds": 205,
+          "regret": 0.00653,
+          "reference_regret": 0.006084,
+          "most_like": "reference"
+        },
+        "heldout_e": {
+          "seconds": 215,
+          "regret": 0.00996,
+          "reference_regret": 0.009477,
+          "most_like": "reference"
+        },
+        "heldout_f": {
+          "seconds": 212,
+          "regret": 0.01344,
+          "reference_regret": 0.013189,
+          "most_like": "reference"
+        },
+        "heldout_g": {
+          "seconds": 206,
+          "regret": 0.01038,
+          "reference_regret": 0.008954,
+          "most_like": "reference"
+        },
+        "visible": {
+          "seconds": 217,
+          "regret": 0.01011,
+          "reference_regret": 0.008709,
+          "most_like": "reference"
+        }
+      },
+      "trial_path": "validation/jobs/replication-20260927-astra-r2/task__NdS9y3D",
+      "evidence_sha256": {
+        "lock.json": "6ccccf3570a722e4505fad4b32c47811353ba5f190061fc21b13d85135d6ff52",
+        "config.json": "0f7277645b9d99f5c9071e0f8b723ac6e1676eb4232c2277149589e74123c0f1",
+        "result.json": "177247c4d4d3c4a98e60c6807c97edad15529fbcb1f20f63048aa0514b294b40",
+        "agent/trajectory.json": "382c183b2f85238975a20e39fddd9f1fbeac003c70621b1e743c173eb4e69641",
+        "verifier/reward.json": "be03550556b39e35d904e53d1a1dac1193d52c655df19ff126579e3fef4eddcd",
+        "verifier/details.json": "7063ca8b093e1869761a88e306d0c5b48ac1bfd2f412fec7c6f446254cc29362",
+        "artifacts/app/solution/forecast.py": "3c78d2f2c6ed620bdfb4b7e1d0eb29296b5006bbcb0e077b33c1bc89ab988c91",
+        "agent/codex.txt": "400e7097046e9d04e91cd5d167792c7a400471cb2f8430e423c30dd11cedb0d1"
+      },
+      "forecast_matches_starter": false,
+      "task_version": "0.1.1",
+      "task_digest": "sha256:fa2f9f25281666c9829e355bbc598a36feb81f44049fb1ef38a4de573435cb0a",
+      "usage": {
+        "n_input_tokens": 1568761,
+        "n_cache_tokens": 1503872,
+        "n_output_tokens": 30271,
+        "cost_usd": 3.666312
+      },
+      "seconds": {
+        "trial": 3067.027,
+        "agent_setup": 103.218,
+        "agent_execution": 1048.797,
+        "verifier": 1907.787
+      },
+      "started_at": "2026-09-27T09:48:43.193797Z",
+      "finished_at": "2026-09-27T10:39:50.220808Z",
+      "actual_harness_version": "0.157.1",
+      "harness_version": "0.157.1",
+      "selected_attempt_id": "replication-20260927-astra-r2",
+      "attempt_ids": [
+        "replication-20260927-astra-r2"
+      ]
+    },
+    {
+      "trial_id": "fable-r1",
+      "model": "Claude Fable 5.1",
+      "harness": "Claude Code",
+      "model_slug": "anthropic/claude-fable-5-1",
+      "reasoning_effort": "high",
+      "replicate": 1,
+      "attempt_id": "replication-20260927-fable-r1",
+      "job_name": "replication-20260927-fable-r1",
+      "job_path": "validation/jobs/replication-20260927-fable-r1",
+      "status": "completed",
+      "classification": "pass",
+      "all_world_ratio": 1.023,
+      "held_out_ratio": 1.015,
+      "overall_reward": 1.0,
+      "rewards": {
+        "functional_correctness": 1.0,
+        "robustness": 1.0,
+        "constraint_satisfaction": 1.0,
+        "artifact_quality": 1.0,
+        "overall": 1.0
+      },
+      "artifact_graded": true,
+      "counts_as_model_outcome": true,
+      "settled_under_fixed_budget": true,
+      "agent_budget_exhausted": false,
+      "launcher_exit_code": 0,
+      "credential_scan_matches": 0,
+      "launcher_started_at_utc": "2026-09-27T09:01:40.787662+00:00",
+      "launcher_finished_at_utc": "2026-09-27T10:56:42.412732+00:00",
+      "note": "",
+      "evidence_issues": [],
+      "terminal_event": {
+        "state": "completed",
+        "category": null,
+        "line": 1389,
+        "evidence": "validation/jobs/replication-20260927-fable-r1/task__gZoWu3L/agent/claude-code.txt"
+      },
+      "worlds": {
+        "heldout_a": {
+          "seconds": 190,
+          "regret": 0.01695,
+          "reference_regret": 0.016681,
+          "most_like": "reference"
+        },
+        "heldout_b": {
+          "seconds": 203,
+          "regret": 0.0067,
+          "reference_regret": 0.007466,
+          "most_like": "reference"
+        },
+        "heldout_c": {
+          "seconds": 193,
+          "regret": 0.00702,
+          "reference_regret": 0.007394,
+          "most_like": "reference"
+        },
+        "heldout_d": {
+          "seconds": 190,
+          "regret": 0.0074,
+          "reference_regret": 0.006084,
+          "most_like": "reference"
+        },
+        "heldout_e": {
+          "seconds": 185,
+          "regret": 0.00896,
+          "reference_regret": 0.009477,
+          "most_like": "reference"
+        },
+        "heldout_f": {
+          "seconds": 188,
+          "regret": 0.01337,
+          "reference_regret": 0.013189,
+          "most_like": "reference"
+        },
+        "heldout_g": {
+          "seconds": 204,
+          "regret": 0.00991,
+          "reference_regret": 0.008954,
+          "most_like": "reference"
+        },
+        "visible": {
+          "seconds": 190,
+          "regret": 0.00945,
+          "reference_regret": 0.008709,
+          "most_like": "reference"
+        }
+      },
+      "trial_path": "validation/jobs/replication-20260927-fable-r1/task__gZoWu3L",
+      "evidence_sha256": {
+        "lock.json": "539950e5d078679e9c9186cbb9701056dab1e290fd555a63af9d9f2435c7e098",
+        "config.json": "56f253253663e5f56126653a92dbd0190e4c4f80299128df64a1b91b259a0e86",
+        "result.json": "ab286f86cef14b31c445d180a4e39e3939207cec69180bf03b3861cfcf4f7b2d",
+        "agent/trajectory.json": "82e99f00a5b5de4c552ff6d21951b66685b0be05cd34f8bf16ba054ceb5aed2a",
+        "verifier/reward.json": "be03550556b39e35d904e53d1a1dac1193d52c655df19ff126579e3fef4eddcd",
+        "verifier/details.json": "8953793c85b93f5945c3ec77102f793695bdfa103e3eaa2b290ad830d0cc782c",
+        "artifacts/app/solution/forecast.py": "e36d4af9612321fa51fc2cad961339bd13da0f6f092f2ab4fe2297bc436b601e",
+        "agent/claude-code.txt": "ac40213b0ecfa1235ae2d79dad4ce83eb09d9f5cc6856e15fdc9cfc2f5d892e4"
+      },
+      "forecast_matches_starter": false,
+      "task_version": "0.1.1",
+      "task_digest": "sha256:fa2f9f25281666c9829e355bbc598a36feb81f44049fb1ef38a4de573435cb0a",
+      "usage": {
+        "n_input_tokens": 7790735,
+        "n_cache_tokens": 7628964,
+        "n_output_tokens": 103630,
+        "cost_usd": 10.304541000000004
+      },
+      "seconds": {
+        "trial": 6899.928,
+        "agent_setup": 92.974,
+        "agent_execution": 5041.694,
+        "verifier": 1755.644
+      },
+      "started_at": "2026-09-27T09:01:42.097933Z",
+      "finished_at": "2026-09-27T10:56:42.026134Z",
+      "actual_harness_version": "2.1.274",
+      "harness_version": "2.1.274",
+      "selected_attempt_id": "replication-20260927-fable-r1",
+      "attempt_ids": [
+        "replication-20260927-fable-r1"
+      ]
+    },
+    {
+      "trial_id": "fable-r2",
+      "model": "Claude Fable 5.1",
+      "harness": "Claude Code",
+      "model_slug": "anthropic/claude-fable-5-1",
+      "reasoning_effort": "high",
+      "replicate": 2,
+      "attempt_id": "replication-20260927-fable-r2",
+      "job_name": "replication-20260927-fable-r2",
+      "job_path": "validation/jobs/replication-20260927-fable-r2",
+      "status": "completed",
+      "classification": "pass",
+      "all_world_ratio": 1.067,
+      "held_out_ratio": 1.055,
+      "overall_reward": 1.0,
+      "rewards": {
+        "functional_correctness": 1.0,
+        "robustness": 1.0,
+        "constraint_satisfaction": 1.0,
+        "artifact_quality": 1.0,
+        "overall": 1.0
+      },
+      "artifact_graded": true,
+      "counts_as_model_outcome": true,
+      "settled_under_fixed_budget": true,
+      "agent_budget_exhausted": false,
+      "launcher_exit_code": 0,
+      "credential_scan_matches": 0,
+      "launcher_started_at_utc": "2026-09-27T09:42:38.899386+00:00",
+      "launcher_finished_at_utc": "2026-09-27T10:54:34.104482+00:00",
+      "note": "",
+      "evidence_issues": [],
+      "terminal_event": {
+        "state": "completed",
+        "category": null,
+        "line": 1121,
+        "evidence": "validation/jobs/replication-20260927-fable-r2/task__8YZFvqv/agent/claude-code.txt"
+      },
+      "worlds": {
+        "heldout_a": {
+          "seconds": 61,
+          "regret": 0.01583,
+          "reference_regret": 0.016681,
+          "most_like": "reference"
+        },
+        "heldout_b": {
+          "seconds": 61,
+          "regret": 0.00982,
+          "reference_regret": 0.007466,
+          "most_like": "reference"
+        },
+        "heldout_c": {
+          "seconds": 61,
+          "regret": 0.00753,
+          "reference_regret": 0.007394,
+          "most_like": "reference"
+        },
+        "heldout_d": {
+          "seconds": 61,
+          "regret": 0.0078,
+          "reference_regret": 0.006084,
+          "most_like": "reference"
+        },
+        "heldout_e": {
+          "seconds": 62,
+          "regret": 0.00879,
+          "reference_regret": 0.009477,
+          "most_like": "reference"
+        },
+        "heldout_f": {
+          "seconds": 64,
+          "regret": 0.01265,
+          "reference_regret": 0.013189,
+          "most_like": "reference"
+        },
+        "heldout_g": {
+          "seconds": 62,
+          "regret": 0.01064,
+          "reference_regret": 0.008954,
+          "most_like": "reference"
+        },
+        "visible": {
+          "seconds": 62,
+          "regret": 0.01013,
+          "reference_regret": 0.008709,
+          "most_like": "reference"
+        }
+      },
+      "trial_path": "validation/jobs/replication-20260927-fable-r2/task__8YZFvqv",
+      "evidence_sha256": {
+        "lock.json": "539950e5d078679e9c9186cbb9701056dab1e290fd555a63af9d9f2435c7e098",
+        "config.json": "aa3d71892a4cbc809403758108cf652d83f7b86c8a6763fef57dab59e45a3a47",
+        "result.json": "17690affecf37c9947bac480941a7413fe4d569ba1f16538cd7c1d83165d093d",
+        "agent/trajectory.json": "efae11205792ee12c58b13ef687069f38ab65c58f5cfa6f99b7d454ca3059e86",
+        "verifier/reward.json": "be03550556b39e35d904e53d1a1dac1193d52c655df19ff126579e3fef4eddcd",
+        "verifier/details.json": "b24d69d41384db99ab6ccba85bdbfde1597f03f3913d2c2ff6e8f96aac87b700",
+        "artifacts/app/solution/forecast.py": "4cb00da22220968c7be728c6824b6949d17fcd7172c81541e4b14f164fa2e739",
+        "agent/claude-code.txt": "faecf6b4597d2dfd37fbe300f5450bc706ef04e5c4203c1224abb6e779594f8c"
+      },
+      "forecast_matches_starter": false,
+      "task_version": "0.1.1",
+      "task_digest": "sha256:fa2f9f25281666c9829e355bbc598a36feb81f44049fb1ef38a4de573435cb0a",
+      "usage": {
+        "n_input_tokens": 5365683,
+        "n_cache_tokens": 5237735,
+        "n_output_tokens": 93312,
+        "cost_usd": 8.51883375
+      },
+      "seconds": {
+        "trial": 4313.888,
+        "agent_setup": 76.529,
+        "agent_execution": 3669.799,
+        "verifier": 560.068
+      },
+      "started_at": "2026-09-27T09:42:39.758832Z",
+      "finished_at": "2026-09-27T10:54:33.646688Z",
+      "actual_harness_version": "2.1.274",
+      "harness_version": "2.1.274",
+      "selected_attempt_id": "replication-20260927-fable-r2",
+      "attempt_ids": [
+        "replication-20260927-fable-r2"
+      ]
+    },
+    {
+      "trial_id": "opus-r1",
+      "model": "Claude Opus 4.7",
+      "harness": "Claude Code",
+      "model_slug": "anthropic/claude-opus-4-7",
+      "reasoning_effort": "high",
+      "replicate": 1,
+      "attempt_id": "replication-20260927-opus-r1",
+      "job_name": "replication-20260927-opus-r1",
+      "job_path": "validation/jobs/replication-20260927-opus-r1",
+      "status": "completed",
+      "classification": "forecast_quality_failure",
+      "all_world_ratio": 1.267,
+      "held_out_ratio": 1.245,
+      "overall_reward": 0.0,
+      "rewards": {
+        "functional_correctness": 0.0,
+        "robustness": 0.0,
+        "constraint_satisfaction": 1.0,
+        "artifact_quality": 1.0,
+        "overall": 0.0
+      },
+      "artifact_graded": true,
+      "counts_as_model_outcome": true,
+      "settled_under_fixed_budget": true,
+      "agent_budget_exhausted": false,
+      "launcher_exit_code": 0,
+      "credential_scan_matches": 0,
+      "launcher_started_at_utc": "2026-09-27T09:01:40.787893+00:00",
+      "launcher_finished_at_utc": "2026-09-27T09:48:42.279514+00:00",
+      "note": "",
+      "evidence_issues": [],
+      "terminal_event": {
+        "state": "completed",
+        "category": null,
+        "line": 710,
+        "evidence": "validation/jobs/replication-20260927-opus-r1/task__5M64xsc/agent/claude-code.txt"
+      },
+      "worlds": {
+        "heldout_a": {
+          "seconds": 41,
+          "regret": 0.01823,
+          "reference_regret": 0.016681,
+          "most_like": "no shrinkage"
+        },
+        "heldout_b": {
+          "seconds": 40,
+          "regret": 0.00668,
+          "reference_regret": 0.007466,
+          "most_like": "no shrinkage"
+        },
+        "heldout_c": {
+          "seconds": 39,
+          "regret": 0.01436,
+          "reference_regret": 0.007394,
+          "most_like": "no shrinkage"
+        },
+        "heldout_d": {
+          "seconds": 38,
+          "regret": 0.00926,
+          "reference_regret": 0.006084,
+          "most_like": "no shrinkage"
+        },
+        "heldout_e": {
+          "seconds": 39,
+          "regret": 0.01317,
+          "reference_regret": 0.009477,
+          "most_like": "reference"
+        },
+        "heldout_f": {
+          "seconds": 38,
+          "regret": 0.01597,
+          "reference_regret": 0.013189,
+          "most_like": "no shrinkage"
+        },
+        "heldout_g": {
+          "seconds": 38,
+          "regret": 0.00856,
+          "reference_regret": 0.008954,
+          "most_like": "reference"
+        },
+        "visible": {
+          "seconds": 38,
+          "regret": 0.01251,
+          "reference_regret": 0.008709,
+          "most_like": "no shrinkage"
+        }
+      },
+      "trial_path": "validation/jobs/replication-20260927-opus-r1/task__5M64xsc",
+      "evidence_sha256": {
+        "lock.json": "f4473a87de95caeaa3d8c366f60f58cee022cfaca0c0190d78ff5ae2c95bc3b0",
+        "config.json": "10cf65e9cf95603ce9226947e3a3482649038bef2beb8bc9283f4eec27799792",
+        "result.json": "968cad7707c52f427a72f4dc527fddfa144649b79046d7d6ae69479f01a15b96",
+        "agent/trajectory.json": "412aa80412f5ddaa01b9100f7883620bc04a0ee1faf7ba51d639cd9b46b300be",
+        "verifier/reward.json": "0415edd92ab25e1045e9e72c2f2922738a987e1feef9841261f37659ef3c7a01",
+        "verifier/details.json": "138a3c942a645cbc393d4605c3e59f12a330b09719ccf1460fecf1c56514e48a",
+        "artifacts/app/solution/forecast.py": "0b645d2cf3fd2305e6f444a2a4f42431f5e5d4614aba5659f3d2176f3f1aa21e",
+        "agent/claude-code.txt": "5f921e1010e3a1a7a25772e18b22210d774a98df3cd1a40792e1a33416e9ced9"
+      },
+      "forecast_matches_starter": false,
+      "task_version": "0.1.1",
+      "task_digest": "sha256:fa2f9f25281666c9829e355bbc598a36feb81f44049fb1ef38a4de573435cb0a",
+      "usage": {
+        "n_input_tokens": 3813530,
+        "n_cache_tokens": 3683756,
+        "n_output_tokens": 73098,
+        "cost_usd": 4.9668480000000015
+      },
+      "seconds": {
+        "trial": 2819.591,
+        "agent_setup": 103.109,
+        "agent_execution": 2350.522,
+        "verifier": 354.93
+      },
+      "started_at": "2026-09-27T09:01:42.098332Z",
+      "finished_at": "2026-09-27T09:48:41.688839Z",
+      "actual_harness_version": "2.1.274",
+      "harness_version": "2.1.274",
+      "selected_attempt_id": "replication-20260927-opus-r1",
+      "attempt_ids": [
+        "replication-20260927-opus-r1"
+      ]
+    },
+    {
+      "trial_id": "opus-r2",
+      "model": "Claude Opus 4.7",
+      "harness": "Claude Code",
+      "model_slug": "anthropic/claude-opus-4-7",
+      "reasoning_effort": "high",
+      "replicate": 2,
+      "attempt_id": "replication-20260927-opus-r2",
+      "job_name": "replication-20260927-opus-r2",
+      "job_path": "validation/jobs/replication-20260927-opus-r2",
+      "status": "completed",
+      "classification": "forecast_quality_failure",
+      "all_world_ratio": 1.499,
+      "held_out_ratio": 1.479,
+      "overall_reward": 0.0,
+      "rewards": {
+        "functional_correctness": 0.0,
+        "robustness": 0.0,
+        "constraint_satisfaction": 1.0,
+        "artifact_quality": 1.0,
+        "overall": 0.0
+      },
+      "artifact_graded": true,
+      "counts_as_model_outcome": true,
+      "settled_under_fixed_budget": true,
+      "agent_budget_exhausted": false,
+      "launcher_exit_code": 0,
+      "credential_scan_matches": 0,
+      "launcher_started_at_utc": "2026-09-27T10:54:34.157967+00:00",
+      "launcher_finished_at_utc": "2026-09-27T11:17:21.325865+00:00",
+      "note": "",
+      "evidence_issues": [],
+      "terminal_event": {
+        "state": "completed",
+        "category": null,
+        "line": 565,
+        "evidence": "validation/jobs/replication-20260927-opus-r2/task__GQqqirW/agent/claude-code.txt"
+      },
+      "worlds": {
+        "heldout_a": {
+          "seconds": 29,
+          "regret": 0.02182,
+          "reference_regret": 0.016681,
+          "most_like": "no shrinkage"
+        },
+        "heldout_b": {
+          "seconds": 29,
+          "regret": 0.00832,
+          "reference_regret": 0.007466,
+          "most_like": "no shrinkage"
+        },
+        "heldout_c": {
+          "seconds": 29,
+          "regret": 0.01716,
+          "reference_regret": 0.007394,
+          "most_like": "no shrinkage"
+        },
+        "heldout_d": {
+          "seconds": 29,
+          "regret": 0.01198,
+          "reference_regret": 0.006084,
+          "most_like": "no shrinkage"
+        },
+        "heldout_e": {
+          "seconds": 32,
+          "regret": 0.01687,
+          "reference_regret": 0.009477,
+          "most_like": "no shrinkage"
+        },
+        "heldout_f": {
+          "seconds": 32,
+          "regret": 0.0152,
+          "reference_regret": 0.013189,
+          "most_like": "no shrinkage"
+        },
+        "heldout_g": {
+          "seconds": 32,
+          "regret": 0.01105,
+          "reference_regret": 0.008954,
+          "most_like": "no shrinkage"
+        },
+        "visible": {
+          "seconds": 32,
+          "regret": 0.01448,
+          "reference_regret": 0.008709,
+          "most_like": "no shrinkage"
+        }
+      },
+      "trial_path": "validation/jobs/replication-20260927-opus-r2/task__GQqqirW",
+      "evidence_sha256": {
+        "lock.json": "f4473a87de95caeaa3d8c366f60f58cee022cfaca0c0190d78ff5ae2c95bc3b0",
+        "config.json": "4ac2372ffb9c76d8f72553cd70abb534a8627d4624bbb78339576420f290f324",
+        "result.json": "21363c5706e939df40e59b4fff7f0b257b4866f90cc0600ee20805009aa8ee46",
+        "agent/trajectory.json": "5859763e4ec3b55f332f8afea7123bf436e993991b9c6fa7be2da4e30cfc70d5",
+        "verifier/reward.json": "0415edd92ab25e1045e9e72c2f2922738a987e1feef9841261f37659ef3c7a01",
+        "verifier/details.json": "b7eef48fa5f8e720f24698b3e5201f5b465098f99adf2c1de854c3478855c413",
+        "artifacts/app/solution/forecast.py": "d515bf130df2261985b1f1ea142ab7d443b78cd4fe278496a1e44dae67946e7b",
+        "agent/claude-code.txt": "4c6d26ed4ef8bcbfe6df6028b75d99f3866bc4fac5173243b6c51dcbcf76db6d"
+      },
+      "forecast_matches_starter": false,
+      "task_version": "0.1.1",
+      "task_digest": "sha256:fa2f9f25281666c9829e355bbc598a36feb81f44049fb1ef38a4de573435cb0a",
+      "usage": {
+        "n_input_tokens": 2365901,
+        "n_cache_tokens": 2251592,
+        "n_output_tokens": 62171,
+        "cost_usd": 3.822981000000001
+      },
+      "seconds": {
+        "trial": 1366.312,
+        "agent_setup": 53.768,
+        "agent_execution": 1024.327,
+        "verifier": 281.715
+      },
+      "started_at": "2026-09-27T10:54:34.746699Z",
+      "finished_at": "2026-09-27T11:17:21.059177Z",
+      "actual_harness_version": "2.1.274",
+      "harness_version": "2.1.274",
+      "selected_attempt_id": "replication-20260927-opus-r2",
+      "attempt_ids": [
+        "replication-20260927-opus-r2"
+      ]
+    }
+  ],
+  "attempts": [
+    {
+      "trial_id": "gpt55-r1",
+      "attempt_id": "replication-20260927-gpt55-r1",
+      "job_name": "replication-20260927-gpt55-r1",
+      "job_path": "validation/jobs/replication-20260927-gpt55-r1",
+      "status": "completed",
+      "classification": "forecast_quality_failure",
+      "all_world_ratio": 1.233,
+      "held_out_ratio": 1.242,
+      "overall_reward": 0.0,
+      "rewards": {
+        "functional_correctness": 0.0,
+        "robustness": 0.0,
+        "constraint_satisfaction": 1.0,
+        "artifact_quality": 1.0,
+        "overall": 0.0
+      },
+      "artifact_graded": true,
+      "counts_as_model_outcome": true,
+      "settled_under_fixed_budget": true,
+      "agent_budget_exhausted": false,
+      "launcher_exit_code": 0,
+      "credential_scan_matches": 0,
+      "launcher_started_at_utc": "2026-09-27T10:39:50.679161+00:00",
+      "launcher_finished_at_utc": "2026-09-27T11:01:48.123497+00:00",
+      "note": "",
+      "evidence_issues": [],
+      "terminal_event": {
+        "state": "completed",
+        "category": null,
+        "line": 77,
+        "evidence": "validation/jobs/replication-20260927-gpt55-r1/task__Z9uA3EF/agent/codex.txt"
+      },
+      "worlds": {
+        "heldout_a": {
+          "seconds": 80,
+          "regret": 0.01603,
+          "reference_regret": 0.016681,
+          "most_like": "no shrinkage"
+        },
+        "heldout_b": {
+          "seconds": 84,
+          "regret": 0.00918,
+          "reference_regret": 0.007466,
+          "most_like": "no shrinkage"
+        },
+        "heldout_c": {
+          "seconds": 90,
+          "regret": 0.01374,
+          "reference_regret": 0.007394,
+          "most_like": "no shrinkage"
+        },
+        "heldout_d": {
+          "seconds": 80,
+          "regret": 0.00937,
+          "reference_regret": 0.006084,
+          "most_like": "no shrinkage"
+        },
+        "heldout_e": {
+          "seconds": 80,
+          "regret": 0.01223,
+          "reference_regret": 0.009477,
+          "most_like": "no shrinkage"
+        },
+        "heldout_f": {
+          "seconds": 88,
+          "regret": 0.01678,
+          "reference_regret": 0.013189,
+          "most_like": "no shrinkage"
+        },
+        "heldout_g": {
+          "seconds": 79,
+          "regret": 0.00869,
+          "reference_regret": 0.008954,
+          "most_like": "reference"
+        },
+        "visible": {
+          "seconds": 78,
+          "regret": 0.01014,
+          "reference_regret": 0.008709,
+          "most_like": "no shrinkage"
+        }
+      },
+      "trial_path": "validation/jobs/replication-20260927-gpt55-r1/task__Z9uA3EF",
+      "evidence_sha256": {
+        "lock.json": "bad579643ce208105963efc2f6a3f4f07b565c6057746c075071ca6b5803a634",
+        "config.json": "e64fadca3b593bc84f2d198b905633796a4d4a90e841d2b342afa9ebc8dcaaa2",
+        "result.json": "ebf9ac757a4b14c3525b20bd79a91c25b5dbd5c6adbaf54c7d716de02090fcf4",
+        "agent/trajectory.json": "8c7ffd64c450d976023c6935f67a420d8efff3e58ca8b789278ff325583f64d4",
+        "verifier/reward.json": "0415edd92ab25e1045e9e72c2f2922738a987e1feef9841261f37659ef3c7a01",
+        "verifier/details.json": "d0a1ac5fcbc75297bfee6c6f96730311f633320d8281999201ab0aa648905c8b",
+        "artifacts/app/solution/forecast.py": "44b9ee6e590741883e48e680b4055f038f4c35f8e8e0bc6103368259e2cb9a8d",
+        "agent/codex.txt": "c611e085fc4b2de597c2cf4e7be3d1770bce333358a41a5f400965c208728673"
+      },
+      "forecast_matches_starter": false,
+      "task_version": "0.1.1",
+      "task_digest": "sha256:fa2f9f25281666c9829e355bbc598a36feb81f44049fb1ef38a4de573435cb0a",
+      "usage": {
+        "n_input_tokens": 726642,
+        "n_cache_tokens": 678784,
+        "n_output_tokens": 20432,
+        "cost_usd": 1.1916420000000003
+      },
+      "seconds": {
+        "trial": 1316.486,
+        "agent_setup": 51.304,
+        "agent_execution": 517.072,
+        "verifier": 741.185
+      },
+      "started_at": "2026-09-27T10:39:51.271681Z",
+      "finished_at": "2026-09-27T11:01:47.757318Z",
+      "actual_harness_version": "0.157.1"
+    },
+    {
+      "trial_id": "gpt55-r2",
+      "attempt_id": "replication-20260927-gpt55-r2",
+      "job_name": "replication-20260927-gpt55-r2",
+      "job_path": "validation/jobs/replication-20260927-gpt55-r2",
+      "status": "completed",
+      "classification": "pass",
+      "all_world_ratio": 1.067,
+      "held_out_ratio": 1.079,
+      "overall_reward": 1.0,
+      "rewards": {
+        "functional_correctness": 1.0,
+        "robustness": 1.0,
+        "constraint_satisfaction": 1.0,
+        "artifact_quality": 1.0,
+        "overall": 1.0
+      },
+      "artifact_graded": true,
+      "counts_as_model_outcome": true,
+      "settled_under_fixed_budget": true,
+      "agent_budget_exhausted": false,
+      "launcher_exit_code": 0,
+      "credential_scan_matches": 0,
+      "launcher_started_at_utc": "2026-09-27T10:56:42.467476+00:00",
+      "launcher_finished_at_utc": "2026-09-27T11:14:03.577979+00:00",
+      "note": "",
+      "evidence_issues": [],
+      "terminal_event": {
+        "state": "completed",
+        "category": null,
+        "line": 86,
+        "evidence": "validation/jobs/replication-20260927-gpt55-r2/task__aJVVf4j/agent/codex.txt"
+      },
+      "worlds": {
+        "heldout_a": {
+          "seconds": 44,
+          "regret": 0.01555,
+          "reference_regret": 0.016681,
+          "most_like": "no shrinkage"
+        },
+        "heldout_b": {
+          "seconds": 43,
+          "regret": 0.00817,
+          "reference_regret": 0.007466,
+          "most_like": "reference"
+        },
+        "heldout_c": {
+          "seconds": 43,
+          "regret": 0.01061,
+          "reference_regret": 0.007394,
+          "most_like": "reference"
+        },
+        "heldout_d": {
+          "seconds": 44,
+          "regret": 0.00829,
+          "reference_regret": 0.006084,
+          "most_like": "reference"
+        },
+        "heldout_e": {
+          "seconds": 44,
+          "regret": 0.00897,
+          "reference_regret": 0.009477,
+          "most_like": "reference"
+        },
+        "heldout_f": {
+          "seconds": 44,
+          "regret": 0.01503,
+          "reference_regret": 0.013189,
+          "most_like": "reference"
+        },
+        "heldout_g": {
+          "seconds": 45,
+          "regret": 0.00807,
+          "reference_regret": 0.008954,
+          "most_like": "reference"
+        },
+        "visible": {
+          "seconds": 44,
+          "regret": 0.00848,
+          "reference_regret": 0.008709,
+          "most_like": "reference"
+        }
+      },
+      "trial_path": "validation/jobs/replication-20260927-gpt55-r2/task__aJVVf4j",
+      "evidence_sha256": {
+        "lock.json": "bad579643ce208105963efc2f6a3f4f07b565c6057746c075071ca6b5803a634",
+        "config.json": "d9c3e95e896e147901f7bccb33b0a00c64938534e2d37832a0d64d037c3e0640",
+        "result.json": "13494b4543f430c6ea8e0da6bcb5676338fdc2d6f6a21d59070e7c31bec93b04",
+        "agent/trajectory.json": "75c8e25ede4e1caa6eca971d88103d559ab40f8ed10ab279ce0b2fa756fa345e",
+        "verifier/reward.json": "be03550556b39e35d904e53d1a1dac1193d52c655df19ff126579e3fef4eddcd",
+        "verifier/details.json": "2996d6c2100e006f6b73e2f9e47fbdcd3cca03adec637da9ea9d9496216811f4",
+        "artifacts/app/solution/forecast.py": "4ac25637676c6bb0be958e66657b9f1afcb5f16460a744f0a66afb8e08e76fbf",
+        "agent/codex.txt": "f5b0f311230b5931fad80f4d6d0c9687877147ada46dd2f31f0e5a9c88d1a123"
+      },
+      "forecast_matches_starter": false,
+      "task_version": "0.1.1",
+      "task_digest": "sha256:fa2f9f25281666c9829e355bbc598a36feb81f44049fb1ef38a4de573435cb0a",
+      "usage": {
+        "n_input_tokens": 828845,
+        "n_cache_tokens": 765184,
+        "n_output_tokens": 21001,
+        "cost_usd": 1.3309270000000002
+      },
+      "seconds": {
+        "trial": 1040.252,
+        "agent_setup": 62.848,
+        "agent_execution": 570.084,
+        "verifier": 400.444
+      },
+      "started_at": "2026-09-27T10:56:43.022353Z",
+      "finished_at": "2026-09-27T11:14:03.274192Z",
+      "actual_harness_version": "0.157.1"
+    },
+    {
+      "trial_id": "astra-r1",
+      "attempt_id": "replication-20260927-astra-r1",
+      "job_name": "replication-20260927-astra-r1",
+      "job_path": "validation/jobs/replication-20260927-astra-r1",
+      "status": "completed",
+      "classification": "pass",
+      "all_world_ratio": 1.051,
+      "held_out_ratio": 1.051,
+      "overall_reward": 1.0,
+      "rewards": {
+        "functional_correctness": 1.0,
+        "robustness": 1.0,
+        "constraint_satisfaction": 1.0,
+        "artifact_quality": 1.0,
+        "overall": 1.0
+      },
+      "artifact_graded": true,
+      "counts_as_model_outcome": true,
+      "settled_under_fixed_budget": true,
+      "agent_budget_exhausted": false,
+      "launcher_exit_code": 0,
+      "credential_scan_matches": 0,
+      "launcher_started_at_utc": "2026-09-27T09:01:40.783972+00:00",
+      "launcher_finished_at_utc": "2026-09-27T09:42:38.825119+00:00",
+      "note": "",
+      "evidence_issues": [],
+      "terminal_event": {
+        "state": "completed",
+        "category": null,
+        "line": 71,
+        "evidence": "validation/jobs/replication-20260927-astra-r1/task__yKvhvAB/agent/codex.txt"
+      },
+      "worlds": {
+        "heldout_a": {
+          "seconds": 174,
+          "regret": 0.018,
+          "reference_regret": 0.016681,
+          "most_like": "reference"
+        },
+        "heldout_b": {
+          "seconds": 178,
+          "regret": 0.00755,
+          "reference_regret": 0.007466,
+          "most_like": "reference"
+        },
+        "heldout_c": {
+          "seconds": 177,
+          "regret": 0.00871,
+          "reference_regret": 0.007394,
+          "most_like": "reference"
+        },
+        "heldout_d": {
+          "seconds": 189,
+          "regret": 0.00693,
+          "reference_regret": 0.006084,
+          "most_like": "reference"
+        },
+        "heldout_e": {
+          "seconds": 192,
+          "regret": 0.00853,
+          "reference_regret": 0.009477,
+          "most_like": "reference"
+        },
+        "heldout_f": {
+          "seconds": 176,
+          "regret": 0.01347,
+          "reference_regret": 0.013189,
+          "most_like": "reference"
+        },
+        "heldout_g": {
+          "seconds": 183,
+          "regret": 0.00961,
+          "reference_regret": 0.008954,
+          "most_like": "reference"
+        },
+        "visible": {
+          "seconds": 177,
+          "regret": 0.00916,
+          "reference_regret": 0.008709,
+          "most_like": "reference"
+        }
+      },
+      "trial_path": "validation/jobs/replication-20260927-astra-r1/task__yKvhvAB",
+      "evidence_sha256": {
+        "lock.json": "6ccccf3570a722e4505fad4b32c47811353ba5f190061fc21b13d85135d6ff52",
+        "config.json": "62738b7300a4cadf3eaecd037c1fd423a5a989545d934dbdf238e9ff0f2bbb32",
+        "result.json": "f5f354781d63085e49dfc991ba24b9a1ae62067e08e1e299e4950ba70fada86e",
+        "agent/trajectory.json": "999a9cdcf7b86f94b60efc0e5a9321f89a291f282b68ffae2a351d9a33293feb",
+        "verifier/reward.json": "be03550556b39e35d904e53d1a1dac1193d52c655df19ff126579e3fef4eddcd",
+        "verifier/details.json": "142b38e5b0afb7284bc12ed14b67ed1063f21d7e42d5a0e1050da952ee65f4a4",
+        "artifacts/app/solution/forecast.py": "d1205631bc56f343f537432ae7fb66172d059214857d12b8ed340d56ae2a9a9d",
+        "agent/codex.txt": "7ca91ed71b0aca3040adf0c3686279fa08730e99def8aba453ae97b0e4fd3f32"
+      },
+      "forecast_matches_starter": false,
+      "task_version": "0.1.1",
+      "task_digest": "sha256:fa2f9f25281666c9829e355bbc598a36feb81f44049fb1ef38a4de573435cb0a",
+      "usage": {
+        "n_input_tokens": 1272047,
+        "n_cache_tokens": 1221888,
+        "n_output_tokens": 20526,
+        "cost_usd": 2.7497779999999987
+      },
+      "seconds": {
+        "trial": 2456.248,
+        "agent_setup": 69.914,
+        "agent_execution": 729.889,
+        "verifier": 1646.078
+      },
+      "started_at": "2026-09-27T09:01:42.098285Z",
+      "finished_at": "2026-09-27T09:42:38.346560Z",
+      "actual_harness_version": "0.157.1"
+    },
+    {
+      "trial_id": "astra-r2",
+      "attempt_id": "replication-20260927-astra-r2",
+      "job_name": "replication-20260927-astra-r2",
+      "job_path": "validation/jobs/replication-20260927-astra-r2",
+      "status": "completed",
+      "classification": "pass",
+      "all_world_ratio": 1.072,
+      "held_out_ratio": 1.06,
+      "overall_reward": 1.0,
+      "rewards": {
+        "functional_correctness": 1.0,
+        "robustness": 1.0,
+        "constraint_satisfaction": 1.0,
+        "artifact_quality": 1.0,
+        "overall": 1.0
+      },
+      "artifact_graded": true,
+      "counts_as_model_outcome": true,
+      "settled_under_fixed_budget": true,
+      "agent_budget_exhausted": false,
+      "launcher_exit_code": 0,
+      "credential_scan_matches": 0,
+      "launcher_started_at_utc": "2026-09-27T09:48:42.352691+00:00",
+      "launcher_finished_at_utc": "2026-09-27T10:39:50.624709+00:00",
+      "note": "",
+      "evidence_issues": [],
+      "terminal_event": {
+        "state": "completed",
+        "category": null,
+        "line": 85,
+        "evidence": "validation/jobs/replication-20260927-astra-r2/task__NdS9y3D/agent/codex.txt"
+      },
+      "worlds": {
+        "heldout_a": {
+          "seconds": 209,
+          "regret": 0.01817,
+          "reference_regret": 0.016681,
+          "most_like": "reference"
+        },
+        "heldout_b": {
+          "seconds": 218,
+          "regret": 0.00717,
+          "reference_regret": 0.007466,
+          "most_like": "reference"
+        },
+        "heldout_c": {
+          "seconds": 206,
+          "regret": 0.00776,
+          "reference_regret": 0.007394,
+          "most_like": "reference"
+        },
+        "heldout_d": {
+          "seconds": 205,
+          "regret": 0.00653,
+          "reference_regret": 0.006084,
+          "most_like": "reference"
+        },
+        "heldout_e": {
+          "seconds": 215,
+          "regret": 0.00996,
+          "reference_regret": 0.009477,
+          "most_like": "reference"
+        },
+        "heldout_f": {
+          "seconds": 212,
+          "regret": 0.01344,
+          "reference_regret": 0.013189,
+          "most_like": "reference"
+        },
+        "heldout_g": {
+          "seconds": 206,
+          "regret": 0.01038,
+          "reference_regret": 0.008954,
+          "most_like": "reference"
+        },
+        "visible": {
+          "seconds": 217,
+          "regret": 0.01011,
+          "reference_regret": 0.008709,
+          "most_like": "reference"
+        }
+      },
+      "trial_path": "validation/jobs/replication-20260927-astra-r2/task__NdS9y3D",
+      "evidence_sha256": {
+        "lock.json": "6ccccf3570a722e4505fad4b32c47811353ba5f190061fc21b13d85135d6ff52",
+        "config.json": "0f7277645b9d99f5c9071e0f8b723ac6e1676eb4232c2277149589e74123c0f1",
+        "result.json": "177247c4d4d3c4a98e60c6807c97edad15529fbcb1f20f63048aa0514b294b40",
+        "agent/trajectory.json": "382c183b2f85238975a20e39fddd9f1fbeac003c70621b1e743c173eb4e69641",
+        "verifier/reward.json": "be03550556b39e35d904e53d1a1dac1193d52c655df19ff126579e3fef4eddcd",
+        "verifier/details.json": "7063ca8b093e1869761a88e306d0c5b48ac1bfd2f412fec7c6f446254cc29362",
+        "artifacts/app/solution/forecast.py": "3c78d2f2c6ed620bdfb4b7e1d0eb29296b5006bbcb0e077b33c1bc89ab988c91",
+        "agent/codex.txt": "400e7097046e9d04e91cd5d167792c7a400471cb2f8430e423c30dd11cedb0d1"
+      },
+      "forecast_matches_starter": false,
+      "task_version": "0.1.1",
+      "task_digest": "sha256:fa2f9f25281666c9829e355bbc598a36feb81f44049fb1ef38a4de573435cb0a",
+      "usage": {
+        "n_input_tokens": 1568761,
+        "n_cache_tokens": 1503872,
+        "n_output_tokens": 30271,
+        "cost_usd": 3.666312
+      },
+      "seconds": {
+        "trial": 3067.027,
+        "agent_setup": 103.218,
+        "agent_execution": 1048.797,
+        "verifier": 1907.787
+      },
+      "started_at": "2026-09-27T09:48:43.193797Z",
+      "finished_at": "2026-09-27T10:39:50.220808Z",
+      "actual_harness_version": "0.157.1"
+    },
+    {
+      "trial_id": "fable-r1",
+      "attempt_id": "replication-20260927-fable-r1",
+      "job_name": "replication-20260927-fable-r1",
+      "job_path": "validation/jobs/replication-20260927-fable-r1",
+      "status": "completed",
+      "classification": "pass",
+      "all_world_ratio": 1.023,
+      "held_out_ratio": 1.015,
+      "overall_reward": 1.0,
+      "rewards": {
+        "functional_correctness": 1.0,
+        "robustness": 1.0,
+        "constraint_satisfaction": 1.0,
+        "artifact_quality": 1.0,
+        "overall": 1.0
+      },
+      "artifact_graded": true,
+      "counts_as_model_outcome": true,
+      "settled_under_fixed_budget": true,
+      "agent_budget_exhausted": false,
+      "launcher_exit_code": 0,
+      "credential_scan_matches": 0,
+      "launcher_started_at_utc": "2026-09-27T09:01:40.787662+00:00",
+      "launcher_finished_at_utc": "2026-09-27T10:56:42.412732+00:00",
+      "note": "",
+      "evidence_issues": [],
+      "terminal_event": {
+        "state": "completed",
+        "category": null,
+        "line": 1389,
+        "evidence": "validation/jobs/replication-20260927-fable-r1/task__gZoWu3L/agent/claude-code.txt"
+      },
+      "worlds": {
+        "heldout_a": {
+          "seconds": 190,
+          "regret": 0.01695,
+          "reference_regret": 0.016681,
+          "most_like": "reference"
+        },
+        "heldout_b": {
+          "seconds": 203,
+          "regret": 0.0067,
+          "reference_regret": 0.007466,
+          "most_like": "reference"
+        },
+        "heldout_c": {
+          "seconds": 193,
+          "regret": 0.00702,
+          "reference_regret": 0.007394,
+          "most_like": "reference"
+        },
+        "heldout_d": {
+          "seconds": 190,
+          "regret": 0.0074,
+          "reference_regret": 0.006084,
+          "most_like": "reference"
+        },
+        "heldout_e": {
+          "seconds": 185,
+          "regret": 0.00896,
+          "reference_regret": 0.009477,
+          "most_like": "reference"
+        },
+        "heldout_f": {
+          "seconds": 188,
+          "regret": 0.01337,
+          "reference_regret": 0.013189,
+          "most_like": "reference"
+        },
+        "heldout_g": {
+          "seconds": 204,
+          "regret": 0.00991,
+          "reference_regret": 0.008954,
+          "most_like": "reference"
+        },
+        "visible": {
+          "seconds": 190,
+          "regret": 0.00945,
+          "reference_regret": 0.008709,
+          "most_like": "reference"
+        }
+      },
+      "trial_path": "validation/jobs/replication-20260927-fable-r1/task__gZoWu3L",
+      "evidence_sha256": {
+        "lock.json": "539950e5d078679e9c9186cbb9701056dab1e290fd555a63af9d9f2435c7e098",
+        "config.json": "56f253253663e5f56126653a92dbd0190e4c4f80299128df64a1b91b259a0e86",
+        "result.json": "ab286f86cef14b31c445d180a4e39e3939207cec69180bf03b3861cfcf4f7b2d",
+        "agent/trajectory.json": "82e99f00a5b5de4c552ff6d21951b66685b0be05cd34f8bf16ba054ceb5aed2a",
+        "verifier/reward.json": "be03550556b39e35d904e53d1a1dac1193d52c655df19ff126579e3fef4eddcd",
+        "verifier/details.json": "8953793c85b93f5945c3ec77102f793695bdfa103e3eaa2b290ad830d0cc782c",
+        "artifacts/app/solution/forecast.py": "e36d4af9612321fa51fc2cad961339bd13da0f6f092f2ab4fe2297bc436b601e",
+        "agent/claude-code.txt": "ac40213b0ecfa1235ae2d79dad4ce83eb09d9f5cc6856e15fdc9cfc2f5d892e4"
+      },
+      "forecast_matches_starter": false,
+      "task_version": "0.1.1",
+      "task_digest": "sha256:fa2f9f25281666c9829e355bbc598a36feb81f44049fb1ef38a4de573435cb0a",
+      "usage": {
+        "n_input_tokens": 7790735,
+        "n_cache_tokens": 7628964,
+        "n_output_tokens": 103630,
+        "cost_usd": 10.304541000000004
+      },
+      "seconds": {
+        "trial": 6899.928,
+        "agent_setup": 92.974,
+        "agent_execution": 5041.694,
+        "verifier": 1755.644
+      },
+      "started_at": "2026-09-27T09:01:42.097933Z",
+      "finished_at": "2026-09-27T10:56:42.026134Z",
+      "actual_harness_version": "2.1.274"
+    },
+    {
+      "trial_id": "fable-r2",
+      "attempt_id": "replication-20260927-fable-r2",
+      "job_name": "replication-20260927-fable-r2",
+      "job_path": "validation/jobs/replication-20260927-fable-r2",
+      "status": "completed",
+      "classification": "pass",
+      "all_world_ratio": 1.067,
+      "held_out_ratio": 1.055,
+      "overall_reward": 1.0,
+      "rewards": {
+        "functional_correctness": 1.0,
+        "robustness": 1.0,
+        "constraint_satisfaction": 1.0,
+        "artifact_quality": 1.0,
+        "overall": 1.0
+      },
+      "artifact_graded": true,
+      "counts_as_model_outcome": true,
+      "settled_under_fixed_budget": true,
+      "agent_budget_exhausted": false,
+      "launcher_exit_code": 0,
+      "credential_scan_matches": 0,
+      "launcher_started_at_utc": "2026-09-27T09:42:38.899386+00:00",
+      "launcher_finished_at_utc": "2026-09-27T10:54:34.104482+00:00",
+      "note": "",
+      "evidence_issues": [],
+      "terminal_event": {
+        "state": "completed",
+        "category": null,
+        "line": 1121,
+        "evidence": "validation/jobs/replication-20260927-fable-r2/task__8YZFvqv/agent/claude-code.txt"
+      },
+      "worlds": {
+        "heldout_a": {
+          "seconds": 61,
+          "regret": 0.01583,
+          "reference_regret": 0.016681,
+          "most_like": "reference"
+        },
+        "heldout_b": {
+          "seconds": 61,
+          "regret": 0.00982,
+          "reference_regret": 0.007466,
+          "most_like": "reference"
+        },
+        "heldout_c": {
+          "seconds": 61,
+          "regret": 0.00753,
+          "reference_regret": 0.007394,
+          "most_like": "reference"
+        },
+        "heldout_d": {
+          "seconds": 61,
+          "regret": 0.0078,
+          "reference_regret": 0.006084,
+          "most_like": "reference"
+        },
+        "heldout_e": {
+          "seconds": 62,
+          "regret": 0.00879,
+          "reference_regret": 0.009477,
+          "most_like": "reference"
+        },
+        "heldout_f": {
+          "seconds": 64,
+          "regret": 0.01265,
+          "reference_regret": 0.013189,
+          "most_like": "reference"
+        },
+        "heldout_g": {
+          "seconds": 62,
+          "regret": 0.01064,
+          "reference_regret": 0.008954,
+          "most_like": "reference"
+        },
+        "visible": {
+          "seconds": 62,
+          "regret": 0.01013,
+          "reference_regret": 0.008709,
+          "most_like": "reference"
+        }
+      },
+      "trial_path": "validation/jobs/replication-20260927-fable-r2/task__8YZFvqv",
+      "evidence_sha256": {
+        "lock.json": "539950e5d078679e9c9186cbb9701056dab1e290fd555a63af9d9f2435c7e098",
+        "config.json": "aa3d71892a4cbc809403758108cf652d83f7b86c8a6763fef57dab59e45a3a47",
+        "result.json": "17690affecf37c9947bac480941a7413fe4d569ba1f16538cd7c1d83165d093d",
+        "agent/trajectory.json": "efae11205792ee12c58b13ef687069f38ab65c58f5cfa6f99b7d454ca3059e86",
+        "verifier/reward.json": "be03550556b39e35d904e53d1a1dac1193d52c655df19ff126579e3fef4eddcd",
+        "verifier/details.json": "b24d69d41384db99ab6ccba85bdbfde1597f03f3913d2c2ff6e8f96aac87b700",
+        "artifacts/app/solution/forecast.py": "4cb00da22220968c7be728c6824b6949d17fcd7172c81541e4b14f164fa2e739",
+        "agent/claude-code.txt": "faecf6b4597d2dfd37fbe300f5450bc706ef04e5c4203c1224abb6e779594f8c"
+      },
+      "forecast_matches_starter": false,
+      "task_version": "0.1.1",
+      "task_digest": "sha256:fa2f9f25281666c9829e355bbc598a36feb81f44049fb1ef38a4de573435cb0a",
+      "usage": {
+        "n_input_tokens": 5365683,
+        "n_cache_tokens": 5237735,
+        "n_output_tokens": 93312,
+        "cost_usd": 8.51883375
+      },
+      "seconds": {
+        "trial": 4313.888,
+        "agent_setup": 76.529,
+        "agent_execution": 3669.799,
+        "verifier": 560.068
+      },
+      "started_at": "2026-09-27T09:42:39.758832Z",
+      "finished_at": "2026-09-27T10:54:33.646688Z",
+      "actual_harness_version": "2.1.274"
+    },
+    {
+      "trial_id": "opus-r1",
+      "attempt_id": "replication-20260927-opus-r1",
+      "job_name": "replication-20260927-opus-r1",
+      "job_path": "validation/jobs/replication-20260927-opus-r1",
+      "status": "completed",
+      "classification": "forecast_quality_failure",
+      "all_world_ratio": 1.267,
+      "held_out_ratio": 1.245,
+      "overall_reward": 0.0,
+      "rewards": {
+        "functional_correctness": 0.0,
+        "robustness": 0.0,
+        "constraint_satisfaction": 1.0,
+        "artifact_quality": 1.0,
+        "overall": 0.0
+      },
+      "artifact_graded": true,
+      "counts_as_model_outcome": true,
+      "settled_under_fixed_budget": true,
+      "agent_budget_exhausted": false,
+      "launcher_exit_code": 0,
+      "credential_scan_matches": 0,
+      "launcher_started_at_utc": "2026-09-27T09:01:40.787893+00:00",
+      "launcher_finished_at_utc": "2026-09-27T09:48:42.279514+00:00",
+      "note": "",
+      "evidence_issues": [],
+      "terminal_event": {
+        "state": "completed",
+        "category": null,
+        "line": 710,
+        "evidence": "validation/jobs/replication-20260927-opus-r1/task__5M64xsc/agent/claude-code.txt"
+      },
+      "worlds": {
+        "heldout_a": {
+          "seconds": 41,
+          "regret": 0.01823,
+          "reference_regret": 0.016681,
+          "most_like": "no shrinkage"
+        },
+        "heldout_b": {
+          "seconds": 40,
+          "regret": 0.00668,
+          "reference_regret": 0.007466,
+          "most_like": "no shrinkage"
+        },
+        "heldout_c": {
+          "seconds": 39,
+          "regret": 0.01436,
+          "reference_regret": 0.007394,
+          "most_like": "no shrinkage"
+        },
+        "heldout_d": {
+          "seconds": 38,
+          "regret": 0.00926,
+          "reference_regret": 0.006084,
+          "most_like": "no shrinkage"
+        },
+        "heldout_e": {
+          "seconds": 39,
+          "regret": 0.01317,
+          "reference_regret": 0.009477,
+          "most_like": "reference"
+        },
+        "heldout_f": {
+          "seconds": 38,
+          "regret": 0.01597,
+          "reference_regret": 0.013189,
+          "most_like": "no shrinkage"
+        },
+        "heldout_g": {
+          "seconds": 38,
+          "regret": 0.00856,
+          "reference_regret": 0.008954,
+          "most_like": "reference"
+        },
+        "visible": {
+          "seconds": 38,
+          "regret": 0.01251,
+          "reference_regret": 0.008709,
+          "most_like": "no shrinkage"
+        }
+      },
+      "trial_path": "validation/jobs/replication-20260927-opus-r1/task__5M64xsc",
+      "evidence_sha256": {
+        "lock.json": "f4473a87de95caeaa3d8c366f60f58cee022cfaca0c0190d78ff5ae2c95bc3b0",
+        "config.json": "10cf65e9cf95603ce9226947e3a3482649038bef2beb8bc9283f4eec27799792",
+        "result.json": "968cad7707c52f427a72f4dc527fddfa144649b79046d7d6ae69479f01a15b96",
+        "agent/trajectory.json": "412aa80412f5ddaa01b9100f7883620bc04a0ee1faf7ba51d639cd9b46b300be",
+        "verifier/reward.json": "0415edd92ab25e1045e9e72c2f2922738a987e1feef9841261f37659ef3c7a01",
+        "verifier/details.json": "138a3c942a645cbc393d4605c3e59f12a330b09719ccf1460fecf1c56514e48a",
+        "artifacts/app/solution/forecast.py": "0b645d2cf3fd2305e6f444a2a4f42431f5e5d4614aba5659f3d2176f3f1aa21e",
+        "agent/claude-code.txt": "5f921e1010e3a1a7a25772e18b22210d774a98df3cd1a40792e1a33416e9ced9"
+      },
+      "forecast_matches_starter": false,
+      "task_version": "0.1.1",
+      "task_digest": "sha256:fa2f9f25281666c9829e355bbc598a36feb81f44049fb1ef38a4de573435cb0a",
+      "usage": {
+        "n_input_tokens": 3813530,
+        "n_cache_tokens": 3683756,
+        "n_output_tokens": 73098,
+        "cost_usd": 4.9668480000000015
+      },
+      "seconds": {
+        "trial": 2819.591,
+        "agent_setup": 103.109,
+        "agent_execution": 2350.522,
+        "verifier": 354.93
+      },
+      "started_at": "2026-09-27T09:01:42.098332Z",
+      "finished_at": "2026-09-27T09:48:41.688839Z",
+      "actual_harness_version": "2.1.274"
+    },
+    {
+      "trial_id": "opus-r2",
+      "attempt_id": "replication-20260927-opus-r2",
+      "job_name": "replication-20260927-opus-r2",
+      "job_path": "validation/jobs/replication-20260927-opus-r2",
+      "status": "completed",
+      "classification": "forecast_quality_failure",
+      "all_world_ratio": 1.499,
+      "held_out_ratio": 1.479,
+      "overall_reward": 0.0,
+      "rewards": {
+        "functional_correctness": 0.0,
+        "robustness": 0.0,
+        "constraint_satisfaction": 1.0,
+        "artifact_quality": 1.0,
+        "overall": 0.0
+      },
+      "artifact_graded": true,
+      "counts_as_model_outcome": true,
+      "settled_under_fixed_budget": true,
+      "agent_budget_exhausted": false,
+      "launcher_exit_code": 0,
+      "credential_scan_matches": 0,
+      "launcher_started_at_utc": "2026-09-27T10:54:34.157967+00:00",
+      "launcher_finished_at_utc": "2026-09-27T11:17:21.325865+00:00",
+      "note": "",
+      "evidence_issues": [],
+      "terminal_event": {
+        "state": "completed",
+        "category": null,
+        "line": 565,
+        "evidence": "validation/jobs/replication-20260927-opus-r2/task__GQqqirW/agent/claude-code.txt"
+      },
+      "worlds": {
+        "heldout_a": {
+          "seconds": 29,
+          "regret": 0.02182,
+          "reference_regret": 0.016681,
+          "most_like": "no shrinkage"
+        },
+        "heldout_b": {
+          "seconds": 29,
+          "regret": 0.00832,
+          "reference_regret": 0.007466,
+          "most_like": "no shrinkage"
+        },
+        "heldout_c": {
+          "seconds": 29,
+          "regret": 0.01716,
+          "reference_regret": 0.007394,
+          "most_like": "no shrinkage"
+        },
+        "heldout_d": {
+          "seconds": 29,
+          "regret": 0.01198,
+          "reference_regret": 0.006084,
+          "most_like": "no shrinkage"
+        },
+        "heldout_e": {
+          "seconds": 32,
+          "regret": 0.01687,
+          "reference_regret": 0.009477,
+          "most_like": "no shrinkage"
+        },
+        "heldout_f": {
+          "seconds": 32,
+          "regret": 0.0152,
+          "reference_regret": 0.013189,
+          "most_like": "no shrinkage"
+        },
+        "heldout_g": {
+          "seconds": 32,
+          "regret": 0.01105,
+          "reference_regret": 0.008954,
+          "most_like": "no shrinkage"
+        },
+        "visible": {
+          "seconds": 32,
+          "regret": 0.01448,
+          "reference_regret": 0.008709,
+          "most_like": "no shrinkage"
+        }
+      },
+      "trial_path": "validation/jobs/replication-20260927-opus-r2/task__GQqqirW",
+      "evidence_sha256": {
+        "lock.json": "f4473a87de95caeaa3d8c366f60f58cee022cfaca0c0190d78ff5ae2c95bc3b0",
+        "config.json": "4ac2372ffb9c76d8f72553cd70abb534a8627d4624bbb78339576420f290f324",
+        "result.json": "21363c5706e939df40e59b4fff7f0b257b4866f90cc0600ee20805009aa8ee46",
+        "agent/trajectory.json": "5859763e4ec3b55f332f8afea7123bf436e993991b9c6fa7be2da4e30cfc70d5",
+        "verifier/reward.json": "0415edd92ab25e1045e9e72c2f2922738a987e1feef9841261f37659ef3c7a01",
+        "verifier/details.json": "b7eef48fa5f8e720f24698b3e5201f5b465098f99adf2c1de854c3478855c413",
+        "artifacts/app/solution/forecast.py": "d515bf130df2261985b1f1ea142ab7d443b78cd4fe278496a1e44dae67946e7b",
+        "agent/claude-code.txt": "4c6d26ed4ef8bcbfe6df6028b75d99f3866bc4fac5173243b6c51dcbcf76db6d"
+      },
+      "forecast_matches_starter": false,
+      "task_version": "0.1.1",
+      "task_digest": "sha256:fa2f9f25281666c9829e355bbc598a36feb81f44049fb1ef38a4de573435cb0a",
+      "usage": {
+        "n_input_tokens": 2365901,
+        "n_cache_tokens": 2251592,
+        "n_output_tokens": 62171,
+        "cost_usd": 3.822981000000001
+      },
+      "seconds": {
+        "trial": 1366.312,
+        "agent_setup": 53.768,
+        "agent_execution": 1024.327,
+        "verifier": 281.715
+      },
+      "started_at": "2026-09-27T10:54:34.746699Z",
+      "finished_at": "2026-09-27T11:17:21.059177Z",
+      "actual_harness_version": "2.1.274"
+    }
+  ],
+  "status_counts": {
+    "completed": 8
+  },
+  "model_outcomes": {
+    "Claude Fable 5.1": {
+      "pass": 2
+    },
+    "Claude Opus 4.7": {
+      "forecast_quality_failure": 2
+    },
+    "GPT-5.5": {
+      "forecast_quality_failure": 1,
+      "pass": 1
+    },
+    "GPT-6-astra": {
+      "pass": 2
+    }
+  },
+  "settled_trials": 8,
+  "budget_outcomes": {},
+  "evidence_issues": [],
+  "interpretation": "Two predeclared trials per model. Normal completions and agent budget exhaustion settle slots; neither permits a retry. Clean-completion outcomes and budget outcomes are reported separately, with interrupted artifact grades preserved. Provider/account, operator, and infrastructure interruptions remain unsettled. Earlier trials are outside this batch."
+}

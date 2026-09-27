@@ -1,0 +1,19 @@
+{
+    "task": {
+        "path": "/private/tmp/collinear-replication-20260927/task"
+    },
+    "trial_name": "task__aJVVf4j",
+    "trials_dir": "/Users/siddharthshashank/Documents/Interview/collinear-siddharthshashankkumar/t20-exact-forecast/validation/jobs/replication-20260927-gpt55-r2",
+    "agent": {
+        "name": "codex",
+        "model_name": "openai/gpt-5.5",
+        "kwargs": {
+            "reasoning_effort": "high",
+            "version": "0.157.1"
+        },
+        "env": {
+            "CODEX_AUTH_JSON_PATH": "/Use****son"
+        }
+    },
+    "job_id": "7ec74985-d7a5-4dd8-9519-ada5c21bfb85"
+}

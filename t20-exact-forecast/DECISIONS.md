@@ -163,7 +163,7 @@ For example, raising Opus run 1's common ridge penalty from 1 to 25 reduced its 
 
 The full brief names GPT-5.5-high / Opus 4.7 in its goal and run requirement, and GPT-6-astra-high / Fable 5.1 in its target-outcome paragraph. The development record includes both pairs.
 
-I treat the explicit goal and run requirement as the primary target, while reporting the other pair separately. That is an interpretation, not a resolution supplied by Collinear. Under the stricter reading that requires a clean newer-pair failure, this version does not establish the requested result: four of five completed newer-pair trials pass, and the remaining miss is borderline.
+I treat the explicit goal and run requirement as the primary target, while reporting the other pair separately. That is an interpretation, not a resolution supplied by Collinear. Under the stricter reading that requires a clean newer-pair failure, this version does not establish the requested result: four of five historical newer-pair trials pass, the remaining miss is borderline, and all four fresh newer-pair trials pass. The replication strengthens the solvability evidence; it does not supply the missing failure.
 
 I also distinguish a graded submission from an uninterrupted session. GPT-5.5 run 8 wrote its program before an account limit ended the session. Its score is evidence about that artifact, but weaker evidence about what the model could do with the full budget. The report gives the count with and without it. Four other interrupted jobs are excluded and listed.
 
@@ -180,6 +180,28 @@ I separate those responsibilities now: preserve the original v0.1.0 jobs as obse
 The same discipline applies to the explanation. Correcting the account of the GPT programs' validation makes the report more accurate; it does not strengthen their recorded failure margins.
 
 **Evidence.** [Review responses](RUN_REPORT.md#13-independent-review), [runtime hashes and checks](VALIDATION.md), and [figure provenance](PROVENANCE.md#drawings-and-independent-review).
+
+## 14. I chose a fixed replication batch instead of an open-ended search for failures
+
+The repaired task had a clean GPT-5.5 failure, but one fresh attempt did not tell me how often that result would repeat. The older model records also could not answer what agents would do with the corrected handbook. I therefore committed to two new trials for each of the four models named across the assignment, with high reasoning effort and the same task budgets.
+
+Two trials per model is a coverage choice, not a statistically precise sample. I wanted to see repeated attempts from both named pairs before spending the remaining time on more depth for one model. Every slot stays in the report. A passing attempt is useful evidence about solvability; an interrupted session is a limitation of the experiment, not a clean forecasting failure.
+
+That choice changed the story. GPT-5.5's second replicate passed, using fixed priors, a real forward backtest and probability shrinkage. Its first replicate failed after explicitly skipping its proposed backtest. This does not prove that the backtest caused the pass, but it rules out presenting the historical failures as a universal limitation. The four fresh Astra and Fable passes also leave the brief's stricter newer-pair failure requirement unmet.
+
+**Tradeoff.** More trials consume subscriptions and wall-clock time. They are worthwhile here because the evaluated task version changed. Repeating the original task indefinitely, or extending only a favorable model's sample, would be less informative. The task, bar and prompt stay fixed throughout this batch.
+
+**Evidence.** [Replication protocol and results](REPLICATION_REPORT.md), including the plan committed before the batch and the separately recorded package-hash correction.
+
+## 15. I checked the connection between estimation and simulation separately
+
+The first Fable replicate exposed a useful blind spot. It checked numerical derivatives, covariance calculations and forecasts on its own synthetic worlds, yet its batting cards selected style effects using its own bowlers rather than the opposition's. Its simulation then paired those cards with the opposition's bowling coefficients. Numerical correctness inside each part did not establish that the parts described the same match.
+
+I wrote a small diagnostic around the submitted methods and the public engine. Six deliberately different matchups expose the error; six equal-style controls agree. I kept that check separate from grading: a reachable implementation defect does not tell me its effect on the final regret, and a program that passes the declared rule must still be reported as passing.
+
+**Lesson.** I would add a direct card-level comparison before relying on large synthetic forecast experiments. The synthetic benchmark and its comparator can share the same feature wiring, allowing the error to survive both. This is also a reason to preserve successful checks in a failure analysis instead of saying that the agent skipped verification.
+
+**Evidence.** [Diagnostic and reproduction instructions](VALIDATION.md#a-check-of-fables-first-submitted-card-builder) and [the replication analysis](REPLICATION_REPORT.md).
 
 ## What I would do differently
 

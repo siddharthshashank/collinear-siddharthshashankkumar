@@ -23,6 +23,22 @@ All current runs use Harbor 0.23.0, Linux containers under Docker Engine 29.2.1 
 
 The oracle completed in 5 minutes 13 seconds including setup and cleanup; no-op completed in 41 seconds. The archived-program replay completed in 21 minutes and reproduced the original rewards and rounded regret ratios exactly. The fresh model trial completed in 32 minutes 4 seconds, including 18 minutes 4 seconds of agent execution and 12 minutes 42 seconds of verification. Each initial forecast run took 75–87 seconds, below the 720-second per-world limit; the successful repeat took 84 seconds. These are observations on this host, not performance guarantees. Docker can reuse image layers. This is local container validation, not a claim that a second clean machine was tested.
 
+## Eight-trial replication
+
+The [replication report](REPLICATION_REPORT.md) records a separate fixed batch of eight new attempts, with two slots per requested model. The [plan](validation/replication-20260927/plan.json) was committed before the batch began. Its [snapshot binding](validation/replication-20260927/snapshot-binding.json) explains the reviewer-README-only package-hash change while checking the unchanged 119 runtime files. These runs do not replace the control, replay or first fresh model records above.
+
+All eight completed normally, with **five passes and three forecasting failures**: GPT-5.5 **1/2** passes, Opus **0/2**, Astra **2/2**, and Fable **2/2**. There were no retries or infrastructure exceptions. The [complete evidence audit](validation/replication-20260927/audit.json) checks native completion, declared model/effort/version, task identity, rewards, per-world scores, exact published copies and the result figure's input binding. A model pass is accepted by the audit; it does not require failures. Every launcher credential scan returned zero matches.
+
+The evidence collector also has [15 passing accounting regressions](validation/replication-20260927/accounting-tests.json), separate from the 24 verifier tests below. They check that passes and failures are both accepted as completed observations, provider interruptions remain distinct, missing identity or grading evidence is rejected, and neither a completed failure nor an exhausted agent budget can be replaced by a later passing attempt. These tests use constructed native-event records and archived grading fixtures; they do not run models or establish container isolation. From the source directory, `python3 dev/test_replication_audit.py` reproduces them.
+
+### A check of Fable's first submitted card builder
+
+The [matchup diagnostic](validation/replication-20260927/fable-r1-matchup-audit.json) checks a specific implementation finding: the first Fable program chooses batting style adjustments from its own bowlers, then simulates against the opposition's bowlers. The public engine chooses both from the opposition. Six constructed cases reproduce the mismatch; six equal-style controls agree. Different opposing style vectors occur in 185 of the 192 shipped fixtures, so the discrepancy can be reached by the task's inputs.
+
+The diagnostic executes only the reviewed card-building method bodies, with source hashes checked first. It does not train a model, run a forecast or use hidden probability labels. It establishes the feature-selection error, not how much it changes the aggregate score. The verifier determines whether the submitted program passes despite that error.
+
+From the source directory, run `.venv/bin/python dev/audit_fable_matchups.py` using the pinned task dependencies. From the extracted submission, run `python reviewer_tools/audit_fable_matchups.py`. Both layouts produce the same evidence record; the publication audit binds that record to the helper, three archived source files and the 24 public world-data files it inspects.
+
 ## What the deeper audit caught
 
 | Problem in v0.1.0 | v0.1.1 behavior | Verification |

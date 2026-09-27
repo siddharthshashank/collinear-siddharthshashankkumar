@@ -35,7 +35,7 @@ def audit():
     require('network_mode: "none"' in (TASK / "tests/docker-compose.yaml").read_text(), "Verifier Docker network isolation missing")
     for name in ("solution/solve.sh", "tests/test.sh"):
         require((TASK / name).stat().st_mode & 0o111, f"Not executable: {name}")
-    reviewer_docs = ("README.md", "RUN_REPORT.md", "DESIGN_DOCUMENT.md", "DECISIONS.md", "ASSUMPTIONS.md", "NOTES.md", "PROVENANCE.md", "ASSIGNMENT_BRIEF.md", "VALIDATION.md", "figures/README.md")
+    reviewer_docs = ("README.md", "RUN_REPORT.md", "REPLICATION_REPORT.md", "DESIGN_DOCUMENT.md", "DECISIONS.md", "ASSUMPTIONS.md", "NOTES.md", "PROVENANCE.md", "ASSIGNMENT_BRIEF.md", "VALIDATION.md", "figures/README.md")
     for name in reviewer_docs:
         require((TASK / name).is_file(), f"Missing packaged document: {name}")
         source = ROOT / ("docs/TASK_README.md" if name == "README.md" else name)

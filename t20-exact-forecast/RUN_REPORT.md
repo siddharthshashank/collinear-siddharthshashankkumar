@@ -4,11 +4,11 @@
 
 This report separates three things: what the task checks, what the recorded trials show, and what remains uncertain. The [full assignment](ASSIGNMENT_BRIEF.md) names GPT-5.5-high / Opus 4.7 in the goal and explicit run requirement, but GPT-6-astra-high / Fable 5.1 in the target-outcome paragraph. I treat the repeated goal/run requirement as primary and report the other pair separately. That is an interpretation; this version does not establish a clean failure under the stricter newer-pair reading. [DECISIONS.md](DECISIONS.md) and [ASSUMPTIONS.md](ASSUMPTIONS.md) explain the approach and remaining uncertainty.
 
-The current submission is **v0.1.1**. It hardens the verifier, clarifies the agent-facing contract, and locks the existing dependency versions. The engine, data, oracle, reference regrets and scoring rule are unchanged. The original **v0.1.0** evaluation and review are labeled separately below. Current controls and the artifact replay are recorded in [VALIDATION.md](VALIDATION.md); the fresh model attempt has its own subsection in Section 5.
+The current submission is **v0.1.1**. It hardens the verifier, clarifies the agent-facing contract, and locks the existing dependency versions. The engine, data, oracle, reference regrets and scoring rule are unchanged. The original **v0.1.0** evaluation and review are labeled separately below. Current controls and the artifact replay are recorded in [VALIDATION.md](VALIDATION.md). Section 5 separates the first fresh model attempt from the later fixed eight-trial batch in [REPLICATION_REPORT.md](REPLICATION_REPORT.md).
 
 ## 1. Result at a glance
 
-**Current v0.1.1:** the oracle passes all five components, no-op fails overall, and one fresh GPT-5.5-high attempt fails forecast quality with **1.230×** total and **1.246×** held-out regret. Its constraints and artifact scores are **1.0**, with no infrastructure exception. [Current trial analysis](#fresh-v011-trial) and [validation records](VALIDATION.md) document this separate result.
+**Current v0.1.1 controls and first model trial:** the oracle passes all five components, no-op fails overall, and the first fresh GPT-5.5-high attempt fails forecast quality with **1.230×** total and **1.246×** held-out regret. Its constraints and artifact scores are **1.0**, with no infrastructure exception. [Current trial analysis](#fresh-v011-trial) and [validation records](VALIDATION.md) document this separate result. The later [replication batch](REPLICATION_REPORT.md) adds two fresh attempts per model; both Astra and both Fable submissions pass the current task.
 
 The original oracle passed every reward component at **1.0**, and the no-op starter scored **0.0 overall**. All ten archived submissions from the required models missed the forecasting rule: five Opus 4.7 and five GPT-5.5 submissions, using their native harnesses with high reasoning effort.
 
@@ -127,6 +127,10 @@ This agent fitted a regularized ball-level likelihood and used the public simula
 Those are meaningful checks. They do not directly establish performance against stored probability estimates or the stronger reference on unseen leagues. The delivered program retains fixed prior scales, recency weighting and future-effect assumptions; the transcript shows no prior-scale search or uncertainty analysis. These are possible sources of error, not a demonstrated causal diagnosis of this new artifact. No intervention on it has been run. Its final response claims implementation and interface verification, not that it passed a hidden verifier.
 
 Evidence: [transcript](validation/jobs/revision-gpt55-high/t20-exact-forecast__7VMTU5v/agent/codex.txt), lines 45, 51, 54, 63–64, 71, 76, 86 and 96–97; [delivered program](validation/jobs/revision-gpt55-high/t20-exact-forecast__7VMTU5v/artifacts/app/solution/forecast.py), especially the prior settings, optimization and simulation sections. The small outcome-loss differences are observations from two noisy historical splits; they are not significance claims.
+
+### Fixed eight-trial replication batch
+
+A separate, predeclared batch adds two new high-effort attempts per model on the current task: GPT-5.5 and GPT-6-astra through Codex, and Opus 4.7 and Fable 5.1 through Claude Code. All eight completed normally without retries. Passes were **GPT-5.5 1/2, Opus 4.7 0/2, GPT-6-astra 2/2 and Fable 5.1 2/2**. The three failures missed both forecast gates while receiving full artifact and constraint scores. Its [protocol, individual results and analysis](REPLICATION_REPORT.md) retain every slot, including the passing GPT-5.5 program. The earlier v0.1.1 GPT-5.5 trial above remains outside that batch. The v0.1.0 tables below also remain separate.
 
 ## 6. Supplementary trials and exclusions
 
@@ -281,7 +285,7 @@ There are remaining boundaries to the assurance. Repeatability is tested on the 
 | Question | Assessment |
 |---|---|
 | Are the task contract and scoring rule available? | The prompt and handbook state the schemas, formula, tolerances, runtime, determinism and engine constraints. The original wording overstated precision and understated the reference advantage; v0.1.1 corrects both without revealing private parameters. |
-| Can the task be solved through the agent's interface? | On v0.1.0, the oracle and four supplementary submissions pass. The v0.1.1 oracle also passes; its fresh model attempt is tracked in VALIDATION.md. These support solvability, not equal information at design time. |
+| Can the task be solved through the agent's interface? | On v0.1.0, the oracle and four supplementary submissions pass. The v0.1.1 oracle, both fresh Astra submissions and both fresh Fable submissions also pass. These support solvability, not equal information at design time. |
 | Does the reference have an advantage? | Yes. It reads public inputs at runtime, but its base prior scales were chosen with knowledge of the generating spreads. The size of that advantage is not directly measured. |
 | Do near-threshold failures count as strong evidence? | No. The fixed-rule verdict is retained, but the two borderline failures are flagged. Clear v0.1.0 failures support the historical target-model evidence; the revised contract has a separate fresh attempt in VALIDATION.md. |
 | Were infrastructure failures separated? | The first oracle error and four excluded model jobs are listed separately. GPT run 8 is counted with an interruption flag and an exclusion sensitivity count. |

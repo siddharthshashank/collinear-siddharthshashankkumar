@@ -16,7 +16,11 @@ The setting is a simulated Twenty20 cricket league. The agent gets three seasons
 
 The submitted package is **v0.1.1**. A deeper audit found artifact-boundary defects that documentation alone could not fix. This version rejects symbolic links and unsafe forecast files, validates complete fixture coverage and repeatability by fixture ID, cleans up child processes, and clears stale rewards before grading. The verifier runs with Docker networking disabled.
 
-The prompt now describes Monte Carlo precision and the reference's designer-informed priors accurately. The same five Python distributions are pinned by version and distribution hash. Data, engine, oracle and numerical scoring remain unchanged. The fresh **v0.1.1** oracle passes all components. A new **GPT-5.5-high** attempt fails forecast quality at **1.230×** total / **1.246×** held-out reference regret, while passing artifact and constraint checks, with no infrastructure exception. [VALIDATION.md](VALIDATION.md) contains those results and the archived-program replay; the table below is the original **v0.1.0** series.
+The prompt now describes Monte Carlo precision and the reference's designer-informed priors accurately. The same five Python distributions are pinned by version and distribution hash. Data, engine, oracle and numerical scoring remain unchanged. The fresh **v0.1.1** oracle passes all components. The first current-version **GPT-5.5-high** attempt fails forecast quality at **1.230×** total / **1.246×** held-out reference regret, while passing artifact and constraint checks, with no infrastructure exception. [VALIDATION.md](VALIDATION.md) contains those results and the archived-program replay.
+
+A separate [eight-trial replication](REPLICATION_REPORT.md) is complete. With two high-effort native-harness attempts each, passes were **GPT-5.5 1/2, Opus 4.7 0/2, GPT-6-astra 2/2 and Fable 5.1 2/2**. All sessions finished normally with no retries. These current-version observations stay separate from the historical table below; they demonstrate a GPT-5.5 solution as well as failures.
+
+[REPLICATION_REPORT.md](REPLICATION_REPORT.md) tracks the subsequent predeclared v0.1.1 batch across both model pairs. Its slot and attempt records keep passes, task failures and operational problems distinguishable. The earlier v0.1.1 attempt above is not pooled into that batch; the table below is the original **v0.1.0** series.
 
 | Model and harness | Graded submissions | Passes | Total regret / reference |
 |---|---:|---:|---:|
@@ -68,7 +72,8 @@ make submission
 
 1. [Decisions](DECISIONS.md): the reasoning, alternatives and evidence behind the design.
 2. [Run report](RUN_REPORT.md): historical trials, failure analysis and current-version boundaries.
-3. [Validation](VALIDATION.md): checks actually run and the status of current model evaluation.
+3. [Replication](REPLICATION_REPORT.md): the fixed plan, attempt records and results of the separate current-version batch.
+4. [Validation](VALIDATION.md): controls, verifier checks and the earlier v0.1.1 model attempt.
 
 [Assumptions](ASSUMPTIONS.md) and [engineering notes](NOTES.md) support the reasoning. [Design](DESIGN_DOCUMENT.md) explains the architecture and economic relevance; [figure sources](figures/README.md) make the diagrams editable; [provenance](PROVENANCE.md) identifies external work and assistance.
 

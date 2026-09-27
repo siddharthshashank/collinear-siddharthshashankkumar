@@ -30,6 +30,26 @@ npm run --prefix figures render
 
 SVG generation needs only Python's standard library. PNG rendering uses `sharp` 0.35.4 with a committed npm lockfile for its dependency graph. Fonts and platform rasterization can affect exact PNG bytes; the editable SVG is the canonical drawing. These are reviewer-tooling dependencies and do not change the task environment. The committed SVGs and PNGs are sufficient to read the submission without installing anything.
 
+## Reproduce the replication chart
+
+The separate chart for [the current-version batch](../REPLICATION_REPORT.md) reads its published `results.json`; it does not launch models or collect new results. It shows each declared trial, both regret ratios and the recorded disposition. Unscored and interrupted slots remain visible.
+
+From the source checkout's `t20-exact-forecast/` directory:
+
+```sh
+npm ci --prefix figures
+NODE_PATH="$PWD/figures/node_modules" python3 dev/plot_replication.py --png
+```
+
+From the extracted zip's `collinear-siddharthshashankkumar/t20-exact-forecast/` directory:
+
+```sh
+npm ci --prefix figures
+NODE_PATH="$PWD/figures/node_modules" python3 reviewer_tools/plot_replication.py --png
+```
+
+Both commands read `validation/replication-20260927/results.json` and write `replication-results.svg` and `replication-results.png` beside it. For SVG only, omit `--png`; Python's standard library is sufficient and the npm installation is unnecessary. The SVG includes the input hash and regenerates exactly from the published JSON and bundled helper. PNG dimensions are twice the SVG canvas; fonts and platform rasterization can change its bytes.
+
 ## Attribution and scope
 
 The six original architecture drawings were by Rutvikk Kharod, used with permission. These replacements were redrawn from the repository and their existing organization with Codex assistance; the earlier drawings remain in Git history and the historical PDF. The task-selection diagram is new.

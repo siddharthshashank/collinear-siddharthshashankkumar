@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1153" viewBox="0 0 1600 1153" role="img" aria-labelledby="title description">
+<title id="title">Eight fresh model trials, shown individually</title>
+<desc id="description">Eight declared trial slots for task v0.1.1, two per model. Filled blue dots show the all-eight-world regret ratio; hollow purple dots show the held-out-seven ratio. Both accuracy gates require ratios at most 1.10. A full pass also requires the other verifier checks. Missing scores are not plotted. Interrupted and infrastructure outcomes remain explicitly labeled. gpt55-r1: completed; all-world ratio 1.233; held-out ratio 1.242; reward 0.0. gpt55-r2: completed; all-world ratio 1.067; held-out ratio 1.079; reward 1.0. astra-r1: completed; all-world ratio 1.051; held-out ratio 1.051; reward 1.0. astra-r2: completed; all-world ratio 1.072; held-out ratio 1.06; reward 1.0. fable-r1: completed; all-world ratio 1.023; held-out ratio 1.015; reward 1.0. fable-r2: completed; all-world ratio 1.067; held-out ratio 1.055; reward 1.0. opus-r1: completed; all-world ratio 1.267; held-out ratio 1.245; reward 0.0. opus-r2: completed; all-world ratio 1.499; held-out ratio 1.479; reward 0.0.</desc>
+<rect width="1600" height="1153" fill="#FFFFFF"/>
+<text x="56.00" y="64.00" font-family="Arial, Helvetica, sans-serif" font-size="40" font-weight="700" fill="#172A3A" text-anchor="start">Eight fresh trials, shown individually</text>
+<text x="56.00" y="104.00" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="400" fill="#516477" text-anchor="start">Each row is one declared trial slot. Lower regret relative to the reference is better.</text>
+<text x="56.00" y="146.00" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="400" fill="#516477" text-anchor="start">Task v0.1.1  ·  Two trials per model  ·  Fixed accuracy limit: 1.10×</text>
+<circle cx="65.00" cy="198.00" r="8" fill="#2164A6" stroke="#2164A6" stroke-width="3"/>
+<text x="86.00" y="206.00" font-family="Arial, Helvetica, sans-serif" font-size="23" font-weight="400" fill="#172A3A" text-anchor="start">All 8 worlds</text>
+<circle cx="304.00" cy="198.00" r="8" fill="white" stroke="#735395" stroke-width="3"/>
+<text x="325.00" y="206.00" font-family="Arial, Helvetica, sans-serif" font-size="23" font-weight="400" fill="#172A3A" text-anchor="start">Held-out 7</text>
+<line x1="546.00" y1="198.00" x2="597.00" y2="198.00" stroke="#A34435" stroke-width="3" stroke-dasharray="8 7"/>
+<text x="610.00" y="206.00" font-family="Arial, Helvetica, sans-serif" font-size="23" font-weight="400" fill="#172A3A" text-anchor="start">1.10× limit</text>
+<text x="980.00" y="206.00" font-family="Arial, Helvetica, sans-serif" font-size="23" font-weight="400" fill="#516477" text-anchor="start">Missing scores stay unplotted</text>
+<text x="56.00" y="261.00" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" fill="#516477" text-anchor="start">MODEL / TRIAL</text>
+<text x="390.00" y="261.00" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" fill="#516477" text-anchor="start">REGRET / REFERENCE</text>
+<text x="1092.00" y="261.00" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" fill="#516477" text-anchor="start">ALL 8 / HELD 7</text>
+<text x="1358.00" y="261.00" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" fill="#516477" text-anchor="start">DISPOSITION</text>
+<rect x="40" y="283" width="1520" height="142" rx="10" fill="#F7F9FC"/>
+<rect x="40" y="451" width="1520" height="142" rx="10" fill="white"/>
+<rect x="40" y="619" width="1520" height="142" rx="10" fill="#F7F9FC"/>
+<rect x="40" y="787" width="1520" height="142" rx="10" fill="white"/>
+<rect x="390" y="280" width="188.87" height="655" fill="#EAF5F2" fill-opacity="0.65"/>
+<line x1="473.94" y1="280.00" x2="473.94" y2="935.00" stroke="#D9E1E9" stroke-width="1.4"/>
+<text x="473.94" y="969.00" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="400" fill="#516477" text-anchor="middle">1.00</text>
+<line x1="683.80" y1="280.00" x2="683.80" y2="935.00" stroke="#D9E1E9" stroke-width="1.4"/>
+<text x="683.80" y="969.00" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="400" fill="#516477" text-anchor="middle">1.20</text>
+<line x1="893.66" y1="280.00" x2="893.66" y2="935.00" stroke="#D9E1E9" stroke-width="1.4"/>
+<text x="893.66" y="969.00" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="400" fill="#516477" text-anchor="middle">1.40</text>
+<line x1="473.94" y1="280.00" x2="473.94" y2="935.00" stroke="#95A3B1" stroke-width="1.6" stroke-dasharray="8 7"/>
+<line x1="578.87" y1="280.00" x2="578.87" y2="935.00" stroke="#A34435" stroke-width="3" stroke-dasharray="8 7"/>
+<line x1="390.00" y1="935.00" x2="1050.00" y2="935.00" stroke="#A8B5C1" stroke-width="1.4"/>
+<text x="56.00" y="310.00" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="700" fill="#172A3A" text-anchor="start">GPT-5.5 · 1</text>
+<text x="56.00" y="338.00" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="400" fill="#516477" text-anchor="start">Codex · high</text>
+<line x1="718.43" y1="302.00" x2="727.87" y2="318.00" stroke="#9AA8B5" stroke-width="2"/>
+<circle cx="718.43" cy="302.00" r="8" fill="#2164A6" stroke="#2164A6" stroke-width="3"/>
+<circle cx="727.87" cy="318.00" r="8" fill="white" stroke="#735395" stroke-width="3"/>
+<text x="1092.00" y="317.00" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="400" fill="#172A3A" text-anchor="start">1.233 / 1.242</text>
+<text x="1358.00" y="312.00" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" fill="#895610" text-anchor="start">NO FULL PASS</text>
+<text x="1358.00" y="338.00" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="400" fill="#516477" text-anchor="start">reward 0.000</text>
+<text x="56.00" y="386.00" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="700" fill="#172A3A" text-anchor="start">GPT-5.5 · 2</text>
+<text x="56.00" y="414.00" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="400" fill="#516477" text-anchor="start">Codex · high</text>
+<line x1="544.24" y1="378.00" x2="556.84" y2="394.00" stroke="#9AA8B5" stroke-width="2"/>
+<circle cx="544.24" cy="378.00" r="8" fill="#2164A6" stroke="#2164A6" stroke-width="3"/>
+<circle cx="556.84" cy="394.00" r="8" fill="white" stroke="#735395" stroke-width="3"/>
+<text x="1092.00" y="393.00" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="400" fill="#172A3A" text-anchor="start">1.067 / 1.079</text>
+<text x="1358.00" y="388.00" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" fill="#16766F" text-anchor="start">PASS</text>
+<text x="1358.00" y="414.00" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="400" fill="#516477" text-anchor="start">reward 1.000</text>
+<text x="56.00" y="478.00" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="700" fill="#172A3A" text-anchor="start">GPT-6-astra · 1</text>
+<text x="56.00" y="506.00" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="400" fill="#516477" text-anchor="start">Codex · high</text>
+<line x1="527.46" y1="470.00" x2="527.46" y2="486.00" stroke="#9AA8B5" stroke-width="2"/>
+<circle cx="527.46" cy="470.00" r="8" fill="#2164A6" stroke="#2164A6" stroke-width="3"/>
+<circle cx="527.46" cy="486.00" r="8" fill="white" stroke="#735395" stroke-width="3"/>
+<text x="1092.00" y="485.00" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="400" fill="#172A3A" text-anchor="start">1.051 / 1.051</text>
+<text x="1358.00" y="480.00" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" fill="#16766F" text-anchor="start">PASS</text>
+<text x="1358.00" y="506.00" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="400" fill="#516477" text-anchor="start">reward 1.000</text>
+<text x="56.00" y="554.00" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="700" fill="#172A3A" text-anchor="start">GPT-6-astra · 2</text>
+<text x="56.00" y="582.00" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="400" fill="#516477" text-anchor="start">Codex · high</text>
+<line x1="549.49" y1="546.00" x2="536.90" y2="562.00" stroke="#9AA8B5" stroke-width="2"/>
+<circle cx="549.49" cy="546.00" r="8" fill="#2164A6" stroke="#2164A6" stroke-width="3"/>
+<circle cx="536.90" cy="562.00" r="8" fill="white" stroke="#735395" stroke-width="3"/>
+<text x="1092.00" y="561.00" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="400" fill="#172A3A" text-anchor="start">1.072 / 1.060</text>
+<text x="1358.00" y="556.00" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" fill="#16766F" text-anchor="start">PASS</text>
+<text x="1358.00" y="582.00" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="400" fill="#516477" text-anchor="start">reward 1.000</text>
+<text x="56.00" y="646.00" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="700" fill="#172A3A" text-anchor="start">Claude Fable 5.1 · 1</text>
+<text x="56.00" y="674.00" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="400" fill="#516477" text-anchor="start">Claude Code · high</text>
+<line x1="498.08" y1="638.00" x2="489.68" y2="654.00" stroke="#9AA8B5" stroke-width="2"/>
+<circle cx="498.08" cy="638.00" r="8" fill="#2164A6" stroke="#2164A6" stroke-width="3"/>
+<circle cx="489.68" cy="654.00" r="8" fill="white" stroke="#735395" stroke-width="3"/>
+<text x="1092.00" y="653.00" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="400" fill="#172A3A" text-anchor="start">1.023 / 1.015</text>
+<text x="1358.00" y="648.00" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" fill="#16766F" text-anchor="start">PASS</text>
+<text x="1358.00" y="674.00" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="400" fill="#516477" text-anchor="start">reward 1.000</text>
+<text x="56.00" y="722.00" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="700" fill="#172A3A" text-anchor="start">Claude Fable 5.1 · 2</text>
+<text x="56.00" y="750.00" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="400" fill="#516477" text-anchor="start">Claude Code · high</text>
+<line x1="544.24" y1="714.00" x2="531.65" y2="730.00" stroke="#9AA8B5" stroke-width="2"/>
+<circle cx="544.24" cy="714.00" r="8" fill="#2164A6" stroke="#2164A6" stroke-width="3"/>
+<circle cx="531.65" cy="730.00" r="8" fill="white" stroke="#735395" stroke-width="3"/>
+<text x="1092.00" y="729.00" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="400" fill="#172A3A" text-anchor="start">1.067 / 1.055</text>
+<text x="1358.00" y="724.00" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" fill="#16766F" text-anchor="start">PASS</text>
+<text x="1358.00" y="750.00" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="400" fill="#516477" text-anchor="start">reward 1.000</text>
+<text x="56.00" y="814.00" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="700" fill="#172A3A" text-anchor="start">Claude Opus 4.7 · 1</text>
+<text x="56.00" y="842.00" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="400" fill="#516477" text-anchor="start">Claude Code · high</text>
+<line x1="754.10" y1="806.00" x2="731.02" y2="822.00" stroke="#9AA8B5" stroke-width="2"/>
+<circle cx="754.10" cy="806.00" r="8" fill="#2164A6" stroke="#2164A6" stroke-width="3"/>
+<circle cx="731.02" cy="822.00" r="8" fill="white" stroke="#735395" stroke-width="3"/>
+<text x="1092.00" y="821.00" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="400" fill="#172A3A" text-anchor="start">1.267 / 1.245</text>
+<text x="1358.00" y="816.00" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" fill="#895610" text-anchor="start">NO FULL PASS</text>
+<text x="1358.00" y="842.00" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="400" fill="#516477" text-anchor="start">reward 0.000</text>
+<text x="56.00" y="890.00" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="700" fill="#172A3A" text-anchor="start">Claude Opus 4.7 · 2</text>
+<text x="56.00" y="918.00" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="400" fill="#516477" text-anchor="start">Claude Code · high</text>
+<line x1="997.54" y1="882.00" x2="976.55" y2="898.00" stroke="#9AA8B5" stroke-width="2"/>
+<circle cx="997.54" cy="882.00" r="8" fill="#2164A6" stroke="#2164A6" stroke-width="3"/>
+<circle cx="976.55" cy="898.00" r="8" fill="white" stroke="#735395" stroke-width="3"/>
+<text x="1092.00" y="897.00" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="400" fill="#172A3A" text-anchor="start">1.499 / 1.479</text>
+<text x="1358.00" y="892.00" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" fill="#895610" text-anchor="start">NO FULL PASS</text>
+<text x="1358.00" y="918.00" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="400" fill="#516477" text-anchor="start">reward 0.000</text>
+<text x="56.00" y="1023.00" font-family="Arial, Helvetica, sans-serif" font-size="23" font-weight="400" fill="#516477" text-anchor="start">Shading marks the accuracy limit. A complete pass also requires all constraint and output checks.</text>
+<text x="56.00" y="1057.00" font-family="Arial, Helvetica, sans-serif" font-size="23" font-weight="400" fill="#516477" text-anchor="start">These eight rows describe this batch; they are not a population pass-rate estimate.</text>
+<text x="56.00" y="1091.00" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="400" fill="#516477" text-anchor="start">Source: validation/replication-20260927/results.json · 8 attempt records retained</text>
+<text x="56.00" y="1119.00" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="400" fill="#516477" text-anchor="start">Input SHA-256: c876dd793fb427aa6c5a…  ·  Recorded slot dispositions; source JSON and linked jobs retain attempt-level evidence.</text>
+</svg>

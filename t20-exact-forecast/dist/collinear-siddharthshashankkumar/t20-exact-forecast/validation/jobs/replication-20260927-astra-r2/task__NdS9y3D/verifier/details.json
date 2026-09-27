@@ -1,0 +1,79 @@
+{
+ "bar": {
+  "relative_tolerance": 0.1,
+  "absolute_tolerance": 0.0,
+  "clip": 0.002,
+  "rule": "total regret over the graded leagues at most the reference's total times 1.10",
+  "status": "Pre-registered. See DECISIONS.md. Fixed before any model pilot."
+ },
+ "leagues": {
+  "heldout_a": {
+   "seconds": 209,
+   "regret": 0.01817,
+   "reference_regret": 0.016681,
+   "times_reference": 1.089,
+   "most_like": "reference"
+  },
+  "heldout_b": {
+   "seconds": 218,
+   "regret": 0.00717,
+   "reference_regret": 0.007466,
+   "times_reference": 0.961,
+   "most_like": "reference"
+  },
+  "heldout_c": {
+   "seconds": 206,
+   "regret": 0.00776,
+   "reference_regret": 0.007394,
+   "times_reference": 1.05,
+   "most_like": "reference"
+  },
+  "heldout_d": {
+   "seconds": 205,
+   "regret": 0.00653,
+   "reference_regret": 0.006084,
+   "times_reference": 1.074,
+   "most_like": "reference"
+  },
+  "heldout_e": {
+   "seconds": 215,
+   "regret": 0.00996,
+   "reference_regret": 0.009477,
+   "times_reference": 1.051,
+   "most_like": "reference"
+  },
+  "heldout_f": {
+   "seconds": 212,
+   "regret": 0.01344,
+   "reference_regret": 0.013189,
+   "times_reference": 1.019,
+   "most_like": "reference"
+  },
+  "heldout_g": {
+   "seconds": 206,
+   "regret": 0.01038,
+   "reference_regret": 0.008954,
+   "times_reference": 1.16,
+   "most_like": "reference"
+  },
+  "visible": {
+   "seconds": 217,
+   "regret": 0.01011,
+   "reference_regret": 0.008709,
+   "times_reference": 1.161,
+   "most_like": "reference"
+  }
+ },
+ "total_regret_as_a_multiple_of_the_reference": {
+  "all_leagues": 1.072,
+  "held_out_leagues": 1.06,
+  "coin_flip_for_comparison": 1.891
+ },
+ "repeat": {
+  "seconds": 214,
+  "process_succeeded": true,
+  "problem": "Fitted ball model in 122.4s\nSimulated 6/24 fixtures\nSimulated 12/24 fixtures\nSimulated 18/24 fixtures\nSimulated 24/24 fixtures\nFinished in 213.9s"
+ },
+ "engine_untouched": true,
+ "deterministic": true
+}

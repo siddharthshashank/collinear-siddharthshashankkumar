@@ -1,0 +1,63 @@
+{
+    "id": "10bcd5d8-bd03-46d2-a577-fa96093d7d0c",
+    "started_at": "2026-09-27T04:01:42.019758",
+    "updated_at": "2026-09-27T04:48:41.712147",
+    "finished_at": "2026-09-27T04:48:41.712147",
+    "n_total_trials": 1,
+    "stats": {
+        "n_completed_trials": 1,
+        "n_errored_trials": 0,
+        "n_running_trials": 0,
+        "n_pending_trials": 0,
+        "n_cancelled_trials": 0,
+        "n_retries": 0,
+        "evals": {
+            "claude-code__claude-opus-4-7__adhoc": {
+                "n_trials": 1,
+                "n_errors": 0,
+                "metrics": [
+                    {
+                        "artifact_quality": 1.0,
+                        "constraint_satisfaction": 1.0,
+                        "functional_correctness": 0.0,
+                        "overall": 0.0,
+                        "robustness": 0.0
+                    }
+                ],
+                "pass_at_k": {},
+                "reward_stats": {
+                    "functional_correctness": {
+                        "0.0": [
+                            "task__5M64xsc"
+                        ]
+                    },
+                    "robustness": {
+                        "0.0": [
+                            "task__5M64xsc"
+                        ]
+                    },
+                    "constraint_satisfaction": {
+                        "1.0": [
+                            "task__5M64xsc"
+                        ]
+                    },
+                    "artifact_quality": {
+                        "1.0": [
+                            "task__5M64xsc"
+                        ]
+                    },
+                    "overall": {
+                        "0.0": [
+                            "task__5M64xsc"
+                        ]
+                    }
+                },
+                "exception_stats": {}
+            }
+        },
+        "n_input_tokens": 3813530,
+        "n_cache_tokens": 3683756,
+        "n_output_tokens": 73098,
+        "cost_usd": 4.9668480000000015
+    }
+}

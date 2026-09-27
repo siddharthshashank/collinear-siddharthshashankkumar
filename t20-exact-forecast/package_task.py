@@ -1,4 +1,4 @@
-import json, shutil, sys
+import hashlib, json, shutil, sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
@@ -19,8 +19,22 @@ def write_engine(folder):
 
 def main():
     data = ROOT / "task_data"
-    if not (data / "private" / "visible" / "truth.csv").is_file():
-        sys.exit("task_data/ is missing. Run: python dev/make_task_data.py")
+    # Check every world before replacing an existing package. A partial data build
+    # must not silently become a smaller, easier task.
+    names = {"visible", *(f"heldout_{letter}" for letter in "abcdefg")}
+    public_files = ("balls.csv", "matches.csv", "lineups.csv", "players.csv", "venues.csv", "fixtures.csv", "fixture_lineups.csv", "meta.json")
+    for side in ("leagues", "private"):
+        if not (data / side).is_dir() or {p.name for p in (data / side).iterdir() if p.is_dir()} != names:
+            sys.exit(f"task_data/{side} must contain exactly the eight graded worlds")
+        for name in sorted(names):
+            for filename in public_files if side == "leagues" else ("truth.csv", "reference.json", "tiers.csv"):
+                path = data / side / name / filename
+                if not path.is_file() or path.stat().st_size == 0:
+                    sys.exit(f"Missing or empty task input: {path.relative_to(ROOT)}")
+    docs = ("RUN_REPORT.md", "DESIGN_DOCUMENT.md", "PROVENANCE.md", "ASSIGNMENT_BRIEF.md", "VALIDATION.md", "ablations.log", "bar.log")
+    for name in (*docs, "docs/TASK_README.md", "validation/task-runtime.json"):
+        if not (ROOT / name).is_file():
+            sys.exit(f"Missing reviewer artifact: {name}")
     # start from harbor/ (instruction, task.toml, Dockerfiles, test.sh, grader, solution), leaving bar.json for the private side
     shutil.rmtree(TASK, ignore_errors=True)
     shutil.copytree(ROOT / "harbor", TASK, ignore=shutil.ignore_patterns("bar.json", "__pycache__"))
@@ -47,6 +61,20 @@ def main():
     # the oracle's forecaster is the ladder file, with its import pointed at the task's engine package
     reference = (ROOT / "forecasters" / "ladder.py").read_text().replace("from league.engine import", "from engine.model import")
     (TASK / "solution" / "reference_forecaster.py").write_text(reference)
+    # Documents and evidence stay outside both Docker build contexts: agents see
+    # no oracle, private truth, reviewer analysis or archived model solutions.
+    shutil.copy(ROOT / "docs" / "TASK_README.md", TASK / "README.md")
+    for name in docs:
+        shutil.copy(ROOT / name, TASK / name)
+    (TASK / "figures").mkdir()
+    for name in ("system_overview", "calibration_pipeline", "grading_rule", "harbor_runtime"):
+        shutil.copy(ROOT / "figures" / f"{name}.png", TASK / "figures" / f"{name}.png")
+    for name in ("jobs", "validation"):
+        shutil.copytree(ROOT / name, TASK / name, ignore=shutil.ignore_patterns("sessions", "__pycache__", "*.pyc", ".DS_Store"))
+    manifest = json.loads((ROOT / "validation" / "task-runtime.json").read_text())
+    for name, expected in manifest["files"].items():
+        if hashlib.sha256((TASK / name).read_bytes()).hexdigest() != expected:
+            sys.exit(f"Evaluated runtime changed during packaging: {name}")
     print(f"task directory: {TASK.relative_to(ROOT)}  | leagues: {sorted(p.name for p in (data / 'leagues').iterdir())} | bar: {bar['relative_tolerance']:.0%} + {bar['absolute_tolerance']}")
 
 if __name__ == "__main__":

@@ -1,0 +1,11 @@
+{
+    "task": {
+        "path": "dist/collinear-siddharthshashankkumar/t20-exact-forecast"
+    },
+    "trial_name": "t20-exact-forecast__MJLLrfe",
+    "trials_dir": "jobs/2026-09-23__19-33-46",
+    "agent": {
+        "name": "nop"
+    },
+    "job_id": "258a99d3-88ef-405c-8c73-e5b37068a37a"
+}

@@ -1,0 +1,18 @@
+{
+    "task": {
+        "path": "dist/collinear-siddharthshashankkumar/t20-exact-forecast"
+    },
+    "trial_name": "t20-exact-forecast__MteQG7J",
+    "trials_dir": "jobs/2026-09-23__20-04-36",
+    "agent": {
+        "name": "codex",
+        "model_name": "openai/gpt-5.5",
+        "kwargs": {
+            "reasoning_effort": "high"
+        },
+        "env": {
+            "CODEX_FORCE_AUTH_JSON": "****"
+        }
+    },
+    "job_id": "419f70d5-fe6b-408f-8376-d83a1786bf64"
+}

@@ -1,68 +1,74 @@
 # t20-exact-forecast
 
-A Harbor task in which an AI agent forecasts match win probabilities for a simulated Twenty20 cricket league and is graded against the exact truth.
+**Can an agent tell how much of a player's recent form is real?**
 
-Status: complete and frozen. Task, verifier, oracle, gates, linter, nineteen model jobs and the documents, as of 25 September 2026; independently reviewed on 26 September (see RUN_REPORT.md, Section 13). No changes to the task after the first pilot.
+I built this task around a common forecasting mistake: treating a short, noisy record as a reliable estimate of ability. A program can run cleanly and still make that mistake. The task asks an agent to discover it, correct for it, and deliver a forecaster that works on leagues it has never seen.
 
-![The whole system: calibration from real data, the synthetic world, task build and packaging, the Harbor runtime, and the evidence](figures/system_overview.png)
+The setting is a simulated Twenty20 cricket league. The agent gets three seasons of ball-by-ball history, the public match engine, and next season's fixtures and line-ups. It writes `solution/forecast.py`, which returns a home-win probability for each fixture. The verifier evaluates those probabilities across eight leagues against stored estimates generated using the hidden simulation state.
 
-## What it is
+“Exact” in the task name refers to evaluating expected loss against probabilities rather than scoring a single match result. The probabilities themselves are Monte Carlo estimates, not closed-form truth. That distinction matters near the pass threshold.
 
-The agent gets three seasons of ball-by-ball history from a made-up league, the engine that plays the matches, and next season's fixtures with their line-ups. It must write a program that says how likely the home side is to win each fixture. Because the league is generated, the true probability of every fixture is known, so a forecast is graded on how far it is from the truth, not on whether one match happened to go one way. The league was calibrated to 295,557 real IPL deliveries so it behaves like cricket, but every player, team and ground is invented, so nothing the agent knows about real cricket helps it.
+![From calibration and task packaging to Harbor execution and evidence](figures/system_overview.png)
 
-The hard part is not writing the code. It is deciding how much of a player's short history to believe, and building a check that could tell you if you have got that wrong. The pass mark was fixed and committed before any model tried the task.
+*Architecture drawing by Rutvikk Kharod, used with permission; see [provenance](PROVENANCE.md).*
 
-## Results
+## What the runs show
 
-| Model, native harness, high reasoning effort | Completed runs | Passed | Total regret, times the reference |
-|---|---:|---:|---|
-| Claude Opus 4.7 (Claude Code) | 5 | 0 | 1.36 to 1.70 |
-| GPT-5.5 (Codex) | 5 | 0 | 1.11 to 1.58 |
-| Claude Fable 5.1 (Claude Code) | 3 | 2 | 1.008 and 1.027; the miss at 1.104 passed on the seven held-out worlds |
-| GPT-6-astra (Codex) | 2 | 2 | 1.054 and 1.072 |
+| Model and harness | Graded submissions | Passes | Total regret / reference |
+|---|---:|---:|---:|
+| Claude Opus 4.7 · Claude Code · high effort | 5 | 0 | 1.364–1.703 |
+| GPT-5.5 · Codex · high effort | 5 | 0 | 1.109–1.575 |
+| Claude Fable 5.1 · Claude Code · high effort, supplementary | 3 | 2 | 1.008–1.104 |
+| GPT-6-astra · Codex · high effort, supplementary | 2 | 2 | 1.054–1.072 |
 
-![Every completed run, by model, as a multiple of the reference's regret](figures/model_results.png)
+The pass limit is **1.10×** the reference's regret, applied to all eight worlds and separately to the seven held-out worlds. A complete pass also requires valid output and the constraint checks. The limit was fixed before model trials.
 
-The pass bar is 1.10 times a reference forecaster built from ordinary statistics. The pair the brief's goal line names failed ten times out of ten, all for the same reason: they took players' short histories at face value and had no check that could see it; changing that one number in each program moved it most of the way to the reference. The next generation passed four of five completed runs by doing exactly what the failures skipped. So the bar sits between the two generations. Four further runs were cut short for account or operator reasons and are recorded as excluded, not as failures. Two verdicts, 1.104 and 1.109, sit inside the reference's own simulation noise; the rule's verdicts stand as written, but as measurements those two are indeterminate (RUN_REPORT.md, Section 2). Every number in this table is in a job folder under `jobs/`; the ids are in RUN_REPORT.md, and every claim in DESIGN_DOCUMENT.md carries a pointer to its evidence.
+The ten required-model submissions all missed the recorded rule. GPT-5.5's 1.109 result is borderline given uncertainty in the reference; a different GPT-5.5 session hit an account limit after writing its program. Excluding that interrupted session leaves 0/4 GPT-5.5 passes. The report accounts for four other excluded jobs, including one where the verifier graded the unchanged starter. These are not counted as substantive model failures.
 
-## Where to read
+For the first six submissions, inspection and one-constant interventions support a specific diagnosis: the programs gave short player histories too much weight, and their checks did not catch it. The interventions cover one world; they do not show that one edit would pass the full task. [Read the evidence and limitations](RUN_REPORT.md).
 
-| File | What it is |
+## Run the packaged task
+
+Prerequisites: Docker with a running daemon, and **Harbor 0.23.0**, the version used for the archived jobs. Model trials also need access through the relevant harness/provider. Oracle and no-op runs do not need model credentials. Harbor's optional `check` command uses a language model and does need access.
+
+From the **Git repository root**:
+
+```sh
+cd t20-exact-forecast
+harbor run -p ./dist/collinear-siddharthshashankkumar/t20-exact-forecast -a oracle
+harbor run -p ./dist/collinear-siddharthshashankkumar/t20-exact-forecast -a nop
+harbor run -p ./dist/collinear-siddharthshashankkumar/t20-exact-forecast -a codex -m openai/gpt-5.5 --ak reasoning_effort=high
+# Alternatively, use the other model allowed by the brief:
+harbor run -p ./dist/collinear-siddharthshashankkumar/t20-exact-forecast -a claude-code -m anthropic/claude-opus-4-7 --ak reasoning_effort=high
+harbor view ./jobs
+```
+
+Expect `overall = 1.0` for the oracle and `overall = 0.0` for no-op. Inspect each trial's `verifier/reward.json`, `verifier/details.json` and `result.json`; a zero caused by a grader error is not evidence of model failure. Existing data and the packaged task are committed, so no calibration download or data regeneration is needed to run them.
+
+## Rebuild and prepare the handoff
+
+From this directory, with Python 3.12 available:
+
+```sh
+make venv PYTHON=python3.12
+make package
+make audit
+make submission
+```
+
+`make submission` writes `submission/collinear-siddharthshashankkumar.zip` and a SHA-256 checksum. The archive contains exactly one Harbor task directory, with its documentation, original evidence and validation records. It does not include the `harbor/` development templates as a second task. The package's README has commands for running after extraction.
+
+`make data` is only for regenerating the synthetic data; it is not a prerequisite for reviewing or running this submission. Its cache does not track every input, so a changed simulator needs an intentional fresh data build. Rebuilding the original calibration additionally needs the untracked Cricsheet archive, whose download hash was not recorded.
+
+## Read further
+
+| Document | Purpose |
 |---|---|
-| [DESIGN_DOCUMENT.md](DESIGN_DOCUMENT.md) | The design in plain English: what the task measures, why cricket, why a simulated league, how it is built, how it is graded, how cheating is prevented, what the models did, and what it all means. Start here. |
-| [DECISIONS.md](DECISIONS.md) | Twenty-four decisions that could have gone another way, each with the alternative, the cost and whether it stands. |
-| [RUN_REPORT.md](RUN_REPORT.md) | Environment, the rule, every run with its job identity, the exclusions, the ablations, and the commands to repeat it all. |
-| [PROVENANCE.md](PROVENANCE.md) | What is new, what is borrowed, the data licence, and the use of AI assistance. |
-| [NOTES.md](NOTES.md) | Notes on every file in the pipeline: what it does, how it works, what it was checked against, and what the checks caught. The full-length working notes are in `docs/NOTES_FULL.md`. |
-| `docs/DESIGN.pdf` | The extended version of the design document, with derivations and all seven drawings. |
-| `figures/` | The drawings used in the documents. Six architecture drawings are by Rutvikk Kharod, drawn from this repository at commit `c768e58` and used with his permission; the results chart and the grid diagram are mine, with their scripts under `figures/src/`. |
-| `jobs/` | Every Harbor job: the two gates, the linter, the sixteen graded model jobs with rewards, per-world details, agent logs and submitted programs, and the three stopped jobs with their agent logs. |
+| [Design](DESIGN_DOCUMENT.md) | Task idea, economic relevance, design choices and long-horizon difficulty |
+| [Run report](RUN_REPORT.md) | Rules, trial identities, failure analysis, fairness audit and known verifier weaknesses |
+| [Validation](VALIDATION.md) | Fresh checks and evidence added during this documentation revision |
+| [Provenance](PROVENANCE.md) | Original work, data, licenses, drawings and AI assistance |
+| [Decision record](DECISIONS.md) | Historical alternatives and tradeoffs |
+| [Implementation notes](NOTES.md) | Detailed working notes; not the current submission checklist |
 
-## Layout
-
-    dev/            calibration from the archive, validation, the ladder, the bar analysis, the task-data build, the ablations
-    league/         the constants, the engine, the world generator and truth engine, the public file reader and writer
-    forecasters/    the reference ladder: coin flip, team ratings, unshrunk, last season only, head-to-head, reference
-    scoring/        the exact scorer
-    task_data/      the eight worlds: public league folders, and the private truth, reference numbers and ladder forecasts
-    task_src/       what the agent sees: the handbook template and the starter program
-    harbor/         task.toml, bar.json, the two Dockerfiles, the verifier, the oracle
-    package_task.py assembles dist/collinear-siddharthshashankkumar/t20-exact-forecast/, the one directory Harbor runs
-    dist/           the packaged task
-
-## Running it
-
-    make venv
-    make data                      # eight worlds and their truths, about 25 minutes
-    make package
-    harbor run -p dist/collinear-siddharthshashankkumar/t20-exact-forecast -a oracle     # expect 1.000
-    harbor run -p dist/collinear-siddharthshashankkumar/t20-exact-forecast -a nop        # expect 0.000
-    harbor check dist/collinear-siddharthshashankkumar/t20-exact-forecast              # 11 of 11
-    harbor run -p dist/collinear-siddharthshashankkumar/t20-exact-forecast -a claude-code -m anthropic/claude-opus-4-7 --ak reasoning_effort=high
-    harbor run -p dist/collinear-siddharthshashankkumar/t20-exact-forecast -a codex -m openai/gpt-5.5 --ak reasoning_effort=high
-
-Rebuilding the calibration itself needs the Cricsheet IPL archive under `data/raw/ipl/`, which is not tracked. Everything else rebuilds from a fresh clone.
-
-## Provenance
-
-Calibration constants derived from data sourced from Cricsheet (cricsheet.org), maintained by Stephen Rushe, under the Open Data Commons Attribution License 1.0. Aggregates only; no Cricsheet row is shipped. Task, verifier, documents and records by Siddharth Shashank Kumar, September 2026, built with AI assistance as described in PROVENANCE.md.
+The canonical assignment is reproduced in [ASSIGNMENT_BRIEF.md](ASSIGNMENT_BRIEF.md). Current Markdown documentation takes precedence over the earlier `docs/DESIGN.pdf`, which is retained as a historical design artifact.

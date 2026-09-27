@@ -1,0 +1,67 @@
+{
+    "id": "c42737f0-64b8-427c-a6ff-b2864eb3702f",
+    "started_at": "2026-09-24T17:35:36.137373",
+    "updated_at": "2026-09-24T17:40:29.085092",
+    "finished_at": "2026-09-24T17:40:29.085092",
+    "n_total_trials": 1,
+    "stats": {
+        "n_completed_trials": 1,
+        "n_errored_trials": 1,
+        "n_running_trials": 0,
+        "n_pending_trials": 0,
+        "n_cancelled_trials": 0,
+        "n_retries": 0,
+        "evals": {
+            "codex__gpt-6-astra__adhoc": {
+                "n_trials": 1,
+                "n_errors": 1,
+                "metrics": [
+                    {
+                        "artifact_quality": 1.0,
+                        "constraint_satisfaction": 1.0,
+                        "functional_correctness": 0.0,
+                        "overall": 0.0,
+                        "robustness": 0.0
+                    }
+                ],
+                "pass_at_k": {},
+                "reward_stats": {
+                    "functional_correctness": {
+                        "0.0": [
+                            "t20-exact-forecast__aaXanxn"
+                        ]
+                    },
+                    "robustness": {
+                        "0.0": [
+                            "t20-exact-forecast__aaXanxn"
+                        ]
+                    },
+                    "constraint_satisfaction": {
+                        "1.0": [
+                            "t20-exact-forecast__aaXanxn"
+                        ]
+                    },
+                    "artifact_quality": {
+                        "1.0": [
+                            "t20-exact-forecast__aaXanxn"
+                        ]
+                    },
+                    "overall": {
+                        "0.0": [
+                            "t20-exact-forecast__aaXanxn"
+                        ]
+                    }
+                },
+                "exception_stats": {
+                    "NonZeroAgentExitCodeError": [
+                        "t20-exact-forecast__aaXanxn"
+                    ]
+                }
+            }
+        },
+        "n_input_tokens": 165860,
+        "n_cache_tokens": 145792,
+        "n_output_tokens": 6134,
+        "cost_usd": 0.6531720000000001
+    }
+}

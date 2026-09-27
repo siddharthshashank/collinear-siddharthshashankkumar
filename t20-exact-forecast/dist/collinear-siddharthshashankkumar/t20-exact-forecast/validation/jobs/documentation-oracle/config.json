@@ -1,0 +1,9 @@
+{
+    "job_name": "documentation-oracle",
+    "jobs_dir": "validation/jobs",
+    "tasks": [
+        {
+            "path": "dist/collinear-siddharthshashankkumar/t20-exact-forecast"
+        }
+    ]
+}

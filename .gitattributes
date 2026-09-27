@@ -7,3 +7,6 @@ Makefile text eol=lf
 *.toml text eol=lf
 *.json text eol=lf
 *.md text eol=lf
+# The assembled task repeats source documents and preserved evidence for handoff.
+t20-exact-forecast/dist/** linguist-generated=true
+t20-exact-forecast/validation/jobs/** linguist-generated=true

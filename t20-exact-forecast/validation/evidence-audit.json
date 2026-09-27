@@ -1,0 +1,175 @@
+{
+  "status": "passed",
+  "baseline_commit": "3c28a5511713bd69df2d43165e754c3abf86daf3",
+  "runtime_files_unchanged": 118,
+  "task_directories": 1,
+  "historical_model_jobs": 19,
+  "graded_model_jobs_including_excluded_starter": 16,
+  "included_model_submissions": 15,
+  "local_document_links_checked": 130,
+  "evidence_note": "Known literal true redaction restored only in memory; rounded regrets checked within 0.002 ratio tolerance.",
+  "trials": [
+    {
+      "job": "2026-09-23__19-48-37",
+      "model": "anthropic/claude-opus-4-7",
+      "excluded": false,
+      "graded": true,
+      "overall": 0.0,
+      "total_ratio": 1.533,
+      "heldout_ratio": 1.492
+    },
+    {
+      "job": "2026-09-23__20-04-36",
+      "model": "openai/gpt-5.5",
+      "excluded": false,
+      "graded": true,
+      "overall": 0.0,
+      "total_ratio": 1.575,
+      "heldout_ratio": 1.613
+    },
+    {
+      "job": "2026-09-23__20-29-40",
+      "model": "anthropic/claude-opus-4-7",
+      "excluded": false,
+      "graded": true,
+      "overall": 0.0,
+      "total_ratio": 1.573,
+      "heldout_ratio": 1.537
+    },
+    {
+      "job": "2026-09-23__20-54-41",
+      "model": "openai/gpt-5.5",
+      "excluded": false,
+      "graded": true,
+      "overall": 0.0,
+      "total_ratio": 1.545,
+      "heldout_ratio": 1.543
+    },
+    {
+      "job": "2026-09-23__21-13-35",
+      "model": "anthropic/claude-opus-4-7",
+      "excluded": false,
+      "graded": true,
+      "overall": 0.0,
+      "total_ratio": 1.396,
+      "heldout_ratio": 1.376
+    },
+    {
+      "job": "2026-09-23__21-34-46",
+      "model": "openai/gpt-5.5",
+      "excluded": false,
+      "graded": true,
+      "overall": 0.0,
+      "total_ratio": 1.109,
+      "heldout_ratio": 1.117
+    },
+    {
+      "job": "2026-09-23__23-47-55",
+      "model": "anthropic/claude-opus-4-7",
+      "excluded": false,
+      "graded": true,
+      "overall": 0.0,
+      "total_ratio": 1.364,
+      "heldout_ratio": 1.345
+    },
+    {
+      "job": "2026-09-24__00-10-13",
+      "model": "openai/gpt-5.5",
+      "excluded": false,
+      "graded": true,
+      "overall": 0.0,
+      "total_ratio": 1.362,
+      "heldout_ratio": 1.341
+    },
+    {
+      "job": "2026-09-24__00-23-00",
+      "model": "anthropic/claude-opus-4-7",
+      "excluded": false,
+      "graded": true,
+      "overall": 0.0,
+      "total_ratio": 1.703,
+      "heldout_ratio": 1.661
+    },
+    {
+      "job": "2026-09-24__00-45-36",
+      "model": "openai/gpt-5.5",
+      "excluded": false,
+      "graded": true,
+      "overall": 0.0,
+      "total_ratio": 1.409,
+      "heldout_ratio": 1.398
+    },
+    {
+      "job": "2026-09-24__15-33-25",
+      "model": "anthropic/claude-fable-5-1",
+      "excluded": false,
+      "graded": true,
+      "overall": 1.0,
+      "total_ratio": 1.027,
+      "heldout_ratio": 1.015
+    },
+    {
+      "job": "2026-09-24__17-35-36",
+      "model": "openai/gpt-6-astra",
+      "excluded": true,
+      "graded": true,
+      "overall": 0.0,
+      "total_ratio": 1.891,
+      "heldout_ratio": 1.828
+    },
+    {
+      "job": "2026-09-24__19-41-42",
+      "model": "anthropic/claude-fable-5-1",
+      "excluded": true,
+      "graded": false
+    },
+    {
+      "job": "2026-09-24__19-42-59",
+      "model": "openai/gpt-6-astra",
+      "excluded": false,
+      "graded": true,
+      "overall": 1.0,
+      "total_ratio": 1.054,
+      "heldout_ratio": 1.047
+    },
+    {
+      "job": "2026-09-24__20-28-49",
+      "model": "anthropic/claude-fable-5-1",
+      "excluded": false,
+      "graded": true,
+      "overall": 0.0,
+      "total_ratio": 1.104,
+      "heldout_ratio": 1.093
+    },
+    {
+      "job": "2026-09-24__23-05-34",
+      "model": "openai/gpt-6-astra",
+      "excluded": false,
+      "graded": true,
+      "overall": 1.0,
+      "total_ratio": 1.072,
+      "heldout_ratio": 1.061
+    },
+    {
+      "job": "2026-09-24__23-50-11",
+      "model": "anthropic/claude-fable-5-1",
+      "excluded": false,
+      "graded": true,
+      "overall": 1.0,
+      "total_ratio": 1.008,
+      "heldout_ratio": 0.989
+    },
+    {
+      "job": "2026-09-25__01-34-12",
+      "model": "openai/gpt-6-astra",
+      "excluded": true,
+      "graded": false
+    },
+    {
+      "job": "2026-09-25__01-51-10",
+      "model": "anthropic/claude-fable-5-1",
+      "excluded": true,
+      "graded": false
+    }
+  ]
+}

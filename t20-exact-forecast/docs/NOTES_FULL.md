@@ -1,3 +1,5 @@
+> Historical development record. The current README, RUN_REPORT.md and ASSIGNMENT_BRIEF.md govern this submission; older brief interpretations and broad claims below are retained as history.
+
 # Project Notes - t20-exact-forecast
 
 ## 1. scoring/exact.py

@@ -2,7 +2,7 @@
 
 **t20-exact-forecast · Siddharth Shashank Kumar · September 2026**
 
-This report separates three things: what the task checks, what the recorded trials show, and what remains uncertain. The canonical requirements are the supplied [assignment sections 4–9](ASSIGNMENT_BRIEF.md). They require GPT-5.5-high or Claude Opus 4.7 evidence; the other model trials below are supplementary.
+This report separates three things: what the task checks, what the recorded trials show, and what remains uncertain. The [full assignment](ASSIGNMENT_BRIEF.md) names GPT-5.5-high / Opus 4.7 in the goal and explicit run requirement, but GPT-6-astra-high / Fable 5.1 in the target-outcome paragraph. I treat the repeated goal/run requirement as primary and report the other pair separately. That is an interpretation; this version does not establish a clean failure under the stricter newer-pair reading. [DECISIONS.md](DECISIONS.md) and [ASSUMPTIONS.md](ASSUMPTIONS.md) explain the approach and remaining uncertainty.
 
 The evaluated prompt, engine, data, oracle and verifier are preserved. Reviewer documentation and packaging have been revised. Fresh validation is recorded separately in [VALIDATION.md](VALIDATION.md).
 
@@ -118,7 +118,7 @@ All ten received 1.0 for artifact quality and constraints. Their overall failure
 
 ## 6. Supplementary trials and exclusions
 
-These trials are useful solvability evidence but are not required by the canonical brief.
+These trials address the newer pair named in the brief's target-outcome paragraph. They are reported separately from the repeated goal/run requirement. Their passes and one borderline miss do not establish a clean newer-pair failure.
 
 | Run | Model | Job | Total / reference | Held-out / reference | Session | Recorded verdict |
 |---|---|---|---:|---:|---|---|

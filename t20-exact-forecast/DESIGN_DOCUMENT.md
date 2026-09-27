@@ -14,7 +14,7 @@ That is the question behind this task. An agent gets three seasons of a simulate
 
 I wanted a task where writing working code was only part of the job. Forecasting also requires deciding what the data can support. A plausible model can overfit short player histories, produce confident probabilities, and pass every format and runtime check. Detecting that mistake takes a useful statistical check, not just a successful execution.
 
-The deliverable is one runnable Harbor task, with an oracle, a programmatic verifier, seed data and model-run evidence. The canonical assignment is [sections 4–9 supplied for this submission](ASSIGNMENT_BRIEF.md). The design document explains the work; it is not a substitute for the runnable artifacts.
+The deliverable is one runnable Harbor task, with an oracle, a programmatic verifier, seed data and model-run evidence. The [full assignment](ASSIGNMENT_BRIEF.md) emphasizes approach, assumptions and ownership as well as the runnable artifacts. Its model-name conflict and my interpretation are recorded explicitly. [DECISIONS.md](DECISIONS.md) explains the alternatives, accepted costs and changes of mind; [ASSUMPTIONS.md](ASSUMPTIONS.md) states what remains uncertain. The design document explains the work; it is not a substitute for the runnable artifacts.
 
 ## What the agent actually does
 
@@ -62,7 +62,7 @@ Invented identities also remove a source of leakage. An agent cannot rely on a f
 
 Cricket offers repeated observations of individual players within a clear match structure. Twenty20 bounds a normal innings at 120 legal balls, which makes repeated simulation affordable. The public Cricsheet archive supplied a useful calibration source.
 
-The development pipeline used 1,243 IPL matches and 295,557 deliveries to estimate aggregate patterns. Six architecture drawings explain the pipeline; they are by Rutvikk Kharod and are used with permission.
+The development pipeline used 1,243 IPL matches and 295,557 deliveries to estimate aggregate patterns. The architecture drawings have been redesigned for this revision, with editable sources and PNG exports. They draw on the repository and the earlier six drawings by Rutvikk Kharod, used with permission; see [figure provenance](PROVENANCE.md#drawings-and-independent-review).
 
 ![Calibration from real deliveries to simulation constants](figures/calibration_pipeline.png)
 
@@ -143,7 +143,7 @@ Five Claude Opus 4.7 trials used Claude Code, and five GPT-5.5 trials used Codex
 | GPT-5.5 | 0/5 passes; ratios 1.109–1.575 | One borderline result and one interrupted session are flagged |
 | Supplementary models | Fable 5.1: 2/3; GPT-6-astra: 2/2 | Evidence that other agents can solve this version |
 
-The canonical brief names GPT-5.5-high or Opus 4.7. The supplementary trials provide context; they do not change that requirement.
+The full brief names GPT-5.5-high / Opus 4.7 in its goal and explicit run requirement, and the newer pair in its target-outcome paragraph. I prioritize the repeated goal/run requirement and report the newer pair separately. If the newer-pair outcome is mandatory, this version does not establish a clean failure. That ambiguity is not resolved by relabeling a borderline miss.
 
 The [run report](RUN_REPORT.md) gives every trial identity and the excluded jobs. GPT-5.5 run 2 is a useful starting point: **1.575×** total regret and **1.613×** held-out regret, with all validity and constraint checks satisfied. This is a substantive forecasting miss, well away from the threshold.
 
@@ -192,7 +192,7 @@ For this documentation revision, the scoring rule and all 118 runnable task file
 
 Use the [README](README.md) for commands appropriate to the source checkout or extracted task, and the [run report](RUN_REPORT.md) for exact job identities, reward calculations and failure evidence.
 
-The development code remains organized as follows:
+The linked subgoals are inspection, estimation, hypothesis testing and delivery of a reusable program; the [engineering notes](NOTES.md) show what was checked at each boundary. The development code remains organized as follows:
 
 | Source | Responsibility |
 |---|---|

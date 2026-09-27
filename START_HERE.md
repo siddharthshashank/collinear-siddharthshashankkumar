@@ -6,7 +6,7 @@ This is Siddharth Shashank Kumar's Collinear take-home submission. The task asks
 
 ## A short review route
 
-Read the [overview](t20-exact-forecast/README.md), then the [run report](t20-exact-forecast/RUN_REPORT.md). For a concrete failure, start with GPT-5.5 run 2: its program met the format, timing, engine-integrity and determinism checks, but incurred **1.575×** the reference's total regret against a **1.10×** limit. The report links its config, reward, per-world results, submitted code and transcript.
+Start with [DECISIONS.md](t20-exact-forecast/DECISIONS.md) for how I chose and revised the approach, [ASSUMPTIONS.md](t20-exact-forecast/ASSUMPTIONS.md) for uncertainty and ambiguity, and [NOTES.md](t20-exact-forecast/NOTES.md) for how I checked the implementation. Then read the [overview](t20-exact-forecast/README.md) and [run report](t20-exact-forecast/RUN_REPORT.md). For a concrete failure, start with GPT-5.5 run 2: its program met the format, timing, engine-integrity and determinism checks, but incurred **1.575×** the reference's total regret against a **1.10×** limit. The report links its config, reward, per-world results, submitted code and transcript.
 
 The [design document](t20-exact-forecast/DESIGN_DOCUMENT.md) explains why the task is useful and where its conclusions stop. The [validation record](t20-exact-forecast/VALIDATION.md) separates checks performed for this documentation revision from the historical model trials.
 
@@ -24,7 +24,9 @@ Paths in the second column are relative to the packaged task directory.
 | Functional grading logic and fixtures | `tests/grader.py`, `tests/leagues/`, `tests/private/`, `tests/pristine/` |
 | Executable passing oracle | `solution/solve.sh`; original passing job and fresh validation evidence in the report |
 | Seed files | Public engine, starter, seven CSVs and handbook under `environment/app/` |
+| Candidate reasoning, assumptions and iteration | `DECISIONS.md`, `ASSUMPTIONS.md`, `NOTES.md`; choices tied to evidence rather than a reconstructed diary |
 | Explanation, realism, fairness, limitations and reproduction | `README.md`, `DESIGN_DOCUMENT.md`, `RUN_REPORT.md` |
+| Model-name ambiguity | `ASSIGNMENT_BRIEF.md` preserves the full wording; the decision record explains the interpretation and the unmet stricter reading |
 | Requested model failure, native harness, high effort | Five archived Opus 4.7 trials and five GPT-5.5 trials; commands and caveats in `RUN_REPORT.md` |
 | Substantive failure analysis | Program inspection and one-constant interventions for six programs on one world; remaining four diagnoses are tentative |
 | Net-new work, sources and licenses | `PROVENANCE.md`; no existing benchmark task or public issue was ported |

@@ -31,7 +31,7 @@ def main():
                 path = data / side / name / filename
                 if not path.is_file() or path.stat().st_size == 0:
                     sys.exit(f"Missing or empty task input: {path.relative_to(ROOT)}")
-    docs = ("RUN_REPORT.md", "DESIGN_DOCUMENT.md", "PROVENANCE.md", "ASSIGNMENT_BRIEF.md", "VALIDATION.md", "ablations.log", "bar.log")
+    docs = ("RUN_REPORT.md", "DESIGN_DOCUMENT.md", "DECISIONS.md", "ASSUMPTIONS.md", "NOTES.md", "PROVENANCE.md", "ASSIGNMENT_BRIEF.md", "VALIDATION.md", "ablations.log", "bar.log")
     for name in (*docs, "docs/TASK_README.md", "validation/task-runtime.json"):
         if not (ROOT / name).is_file():
             sys.exit(f"Missing reviewer artifact: {name}")
@@ -67,8 +67,15 @@ def main():
     for name in docs:
         shutil.copy(ROOT / name, TASK / name)
     (TASK / "figures").mkdir()
-    for name in ("system_overview", "calibration_pipeline", "grading_rule", "harbor_runtime"):
-        shutil.copy(ROOT / "figures" / f"{name}.png", TASK / "figures" / f"{name}.png")
+    figures = json.loads((ROOT / "figures" / "architecture-manifest.json").read_text())["figures"]
+    for name in figures:
+        for suffix in ("svg", "png"):
+            shutil.copy(ROOT / "figures" / f"{name}.{suffix}", TASK / "figures" / f"{name}.{suffix}")
+    for name in ("README.md", "architecture-manifest.json", "package.json"):
+        shutil.copy(ROOT / "figures" / name, TASK / "figures" / name)
+    (TASK / "figures" / "src").mkdir()
+    for name in ("architecture.py", "render.cjs"):
+        shutil.copy(ROOT / "figures" / "src" / name, TASK / "figures" / "src" / name)
     for name in ("jobs", "validation"):
         shutil.copytree(ROOT / name, TASK / name, ignore=shutil.ignore_patterns("sessions", "__pycache__", "*.pyc", ".DS_Store"))
     manifest = json.loads((ROOT / "validation" / "task-runtime.json").read_text())

@@ -11,8 +11,9 @@ The task is runnable, with an oracle, a programmatic verifier, and archived mode
 1. [Start here](START_HERE.md) maps the canonical assignment requirements to the deliverables.
 2. [Task overview](t20-exact-forecast/README.md) explains the idea and gives the run commands.
 3. [Run report](t20-exact-forecast/RUN_REPORT.md) links the evidence, diagnoses the failures, and states the fairness and verifier limitations.
-4. [Design document](t20-exact-forecast/DESIGN_DOCUMENT.md) explains the choices behind the task; [provenance](t20-exact-forecast/PROVENANCE.md) identifies original work and external sources.
+4. [Decision record](t20-exact-forecast/DECISIONS.md) explains my choices, rejected alternatives and changes of mind; [assumptions](t20-exact-forecast/ASSUMPTIONS.md) separates what is supported from what I still need to test.
+5. [Design document](t20-exact-forecast/DESIGN_DOCUMENT.md) and redesigned architecture figures explain the system; [provenance](t20-exact-forecast/PROVENANCE.md) identifies sources and assistance.
 
 The runnable task is [here](t20-exact-forecast/dist/collinear-siddharthshashankkumar/t20-exact-forecast/). For handoff, `make submission` from `t20-exact-forecast/` creates a zip containing exactly one task directory, including its report and evidence. The development templates elsewhere in this repository are not additional submissions.
 
-The supplied assignment sections 4–9 are the source of truth. Additional model trials are reported as context, not as replacements for the required GPT-5.5-high or Opus 4.7 evidence.
+The [full assignment](t20-exact-forecast/ASSIGNMENT_BRIEF.md) names two model pairs. The documents explain my interpretation and report both: this version establishes clear failures for the goal-line GPT-5.5 / Opus 4.7 pair, but does not establish a clean newer-pair failure.

@@ -10,7 +10,7 @@ The setting is a simulated Twenty20 cricket league. The agent gets three seasons
 
 ![From calibration and task packaging to Harbor execution and evidence](figures/system_overview.png)
 
-*Architecture drawing by Rutvikk Kharod, used with permission; see [provenance](PROVENANCE.md).*
+*Redrawn with Codex assistance from the repository and the earlier architecture by Rutvikk Kharod; [editable sources](figures/README.md) and [provenance](PROVENANCE.md).*
 
 ## What the runs show
 
@@ -64,11 +64,13 @@ make submission
 
 | Document | Purpose |
 |---|---|
-| [Design](DESIGN_DOCUMENT.md) | Task idea, economic relevance, design choices and long-horizon difficulty |
+| [Decisions](DECISIONS.md) | Why I chose this task, alternatives rejected, evidence that changed the design and accepted costs |
+| [Assumptions](ASSUMPTIONS.md) | How I resolved ambiguity, what is supported, and what would make me revisit a choice |
+| [Design](DESIGN_DOCUMENT.md) | Task idea, economic relevance, architecture and long-horizon difficulty |
 | [Run report](RUN_REPORT.md) | Rules, trial identities, failure analysis, fairness audit and known verifier weaknesses |
 | [Validation](VALIDATION.md) | Fresh checks and evidence added during this documentation revision |
 | [Provenance](PROVENANCE.md) | Original work, data, licenses, drawings and AI assistance |
-| [Decision record](DECISIONS.md) | Historical alternatives and tradeoffs |
-| [Implementation notes](NOTES.md) | Detailed working notes; not the current submission checklist |
+| [Engineering notes](NOTES.md) | How I checked each important boundary and what those checks caught |
+| [Architecture figures](figures/README.md) | Seven consistent, editable diagrams with reproduction commands |
 
-The canonical assignment is reproduced in [ASSIGNMENT_BRIEF.md](ASSIGNMENT_BRIEF.md). Current Markdown documentation takes precedence over the earlier `docs/DESIGN.pdf`, which is retained as a historical design artifact.
+The full assignment is reproduced in [ASSIGNMENT_BRIEF.md](ASSIGNMENT_BRIEF.md), including the conflicting model names and my explicit interpretation. Current Markdown documentation takes precedence over the earlier `docs/DESIGN.pdf`, which is retained as a historical design artifact.

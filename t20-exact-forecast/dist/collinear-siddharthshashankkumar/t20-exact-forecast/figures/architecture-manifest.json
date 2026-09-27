@@ -1,0 +1,17 @@
+{
+  "figures": [
+    "system_overview",
+    "calibration_pipeline",
+    "task_build_and_packaging",
+    "harbor_runtime",
+    "grading_rule",
+    "research_ladder",
+    "decision_path"
+  ],
+  "canvas": [
+    1600,
+    960
+  ],
+  "source": "src/architecture.py",
+  "runtime_changed": false
+}

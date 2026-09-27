@@ -59,3 +59,11 @@ The archive builder verifies that the zip contains one task directory, preserves
 No fresh paid target-model trial or Harbor LLM review was added. The original target-model evidence is retained and indexed in [RUN_REPORT.md](RUN_REPORT.md). The synthetic worlds and original calibration were not regenerated, and the old independent review was not repeated in full.
 
 The runtime preservation is deliberate: changing the grading rule, reference or agent-facing handbook would need a new evaluation. Known fairness, isolation and reproducibility limitations remain visible in the report.
+
+## Decision-document and architecture revision
+
+The full brief supplied in the follow-up is preserved in ASSIGNMENT_BRIEF.md. DECISIONS.md, ASSUMPTIONS.md and NOTES.md now explain the candidate's choices, unresolved assumptions and validation work, and are included in the one-task package.
+
+Seven architecture diagrams were redrawn as editable SVGs with 2400 × 1440 PNG exports. The figures distinguish the public image, separate verifier, oracle route, grading gates and pre-pilot research. Their wording reflects the frozen runtime's actual limitations. The source and reproduction steps are in [figures/README.md](figures/README.md).
+
+This revision rechecks the package, document links, figure artifacts and runtime hashes. It does not rerun paid model trials or change the evaluated task. The fresh control runs above remain the validation evidence for that unchanged runtime.

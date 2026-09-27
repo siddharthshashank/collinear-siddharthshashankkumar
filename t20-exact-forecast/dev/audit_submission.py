@@ -4,6 +4,8 @@ import json
 import math
 import re
 import sys
+import struct
+import xml.etree.ElementTree as ET
 from collections import Counter
 from pathlib import Path
 
@@ -36,8 +38,17 @@ def audit():
     require(actual_runtime == set(manifest["files"]), "Unexpected runtime file inventory")
     for name in ("solution/solve.sh", "tests/test.sh"):
         require((TASK / name).stat().st_mode & 0o111, f"Not executable: {name}")
-    for name in ("README.md", "RUN_REPORT.md", "DESIGN_DOCUMENT.md", "PROVENANCE.md", "ASSIGNMENT_BRIEF.md", "VALIDATION.md"):
+    reviewer_docs = ("README.md", "RUN_REPORT.md", "DESIGN_DOCUMENT.md", "DECISIONS.md", "ASSUMPTIONS.md", "NOTES.md", "PROVENANCE.md", "ASSIGNMENT_BRIEF.md", "VALIDATION.md", "figures/README.md")
+    for name in reviewer_docs:
         require((TASK / name).is_file(), f"Missing packaged document: {name}")
+    figures = json.loads((TASK / "figures/architecture-manifest.json").read_text())["figures"]
+    require(len(figures) == 7 and len(set(figures)) == 7, "Expected seven architecture figures")
+    for name in figures:
+        svg = TASK / "figures" / f"{name}.svg"
+        png = TASK / "figures" / f"{name}.png"
+        require(ET.parse(svg).getroot().get("viewBox") == "0 0 1600 960", f"Invalid SVG canvas: {name}")
+        data = png.read_bytes()
+        require(data[:8] == b"\x89PNG\r\n\x1a\n" and struct.unpack(">II", data[16:24]) == (2400, 1440), f"Invalid PNG export: {name}")
     names = {"visible", *(f"heldout_{letter}" for letter in "abcdefg")}
     require({p.name for p in (TASK / "tests/leagues").iterdir()} == names, "Expected eight worlds")
     require(len(list(TASK.rglob("task.toml"))) == 1, "Package contains more than one task")
@@ -88,10 +99,11 @@ def audit():
     # Check current reviewer links, not historical notes with external context.
     link_count = 0
     current_docs = [ROOT.parent / "README.md", ROOT.parent / "START_HERE.md"]
-    current_docs += [ROOT / p for p in ("README.md", "RUN_REPORT.md", "DESIGN_DOCUMENT.md", "PROVENANCE.md", "VALIDATION.md")]
-    current_docs += [TASK / p for p in ("README.md", "RUN_REPORT.md", "DESIGN_DOCUMENT.md", "PROVENANCE.md", "VALIDATION.md")]
+    current_docs += [ROOT / p for p in reviewer_docs]
+    current_docs += [TASK / p for p in reviewer_docs]
     for document in current_docs:
         for target in re.findall(r'!?\[[^\]]*\]\(([^)]+)\)', document.read_text()):
+            target = target.strip()
             if target.startswith(("https://", "http://", "#")):
                 continue
             target = target.split("#", 1)[0]
@@ -104,7 +116,7 @@ def audit():
 
     return {"status": "passed", "baseline_commit": manifest["baseline_commit"], "runtime_files_unchanged": len(manifest["files"]), "task_directories": 1,
             "historical_model_jobs": len(rows), "graded_model_jobs_including_excluded_starter": sum(r["graded"] for r in rows),
-            "included_model_submissions": sum(not r["excluded"] for r in rows), "local_document_links_checked": link_count,
+            "included_model_submissions": sum(not r["excluded"] for r in rows), "local_document_links_checked": link_count, "architecture_figures_checked": len(figures),
             "evidence_note": "Known literal true redaction restored only in memory; rounded regrets checked within 0.002 ratio tolerance.",
             "trials": rows}
 

@@ -1,0 +1,83 @@
+{
+  "status": "passed",
+  "tests": 15,
+  "failures": 0,
+  "errors": 0,
+  "scope": "Synthetic Harbor/native-event accounting records with archived oracle/failing grade fixtures. Checks classification, fixed-budget settlement, missing evidence, and attempt retention. Does not execute models, regrade forecasts, or test container isolation.",
+  "helper_sha256": {
+    "dev/test_replication_audit.py": "3018b244c05eea82396eb4836f96643cfdd2601cbe642094591d4ff04895c2d3",
+    "dev/collect_replication.py": "8873ca717983625194f6f187a7867d6bd2beed6b370364e1d159f423506e4c31",
+    "dev/audit_replication.py": "a1f6c8a3a6c294fcd82af04f73e6e64b598d4a4f4e9036b1e1aac81f77609f64",
+    "dev/audit_revision.py": "fc156ac126d24b2fa7421c5fecc66d498a453286bbe5acd25819dbc20d5aacf8",
+    "dev/runtime_contract.py": "c3a74b5ceabe1f0362e2adfa494264b19a7d1410d2d66c702577f862c267daf5"
+  },
+  "fixture_sha256": {
+    "validation/replication-20260927/plan.json": "1450dd1f3bb3ade54a84e8597449d05d4b5050e58f9a93cbc3f07e010d5992f8",
+    "validation/jobs/revision-oracle/t20-exact-forecast__MNAWuQF/verifier/reward.json": "be03550556b39e35d904e53d1a1dac1193d52c655df19ff126579e3fef4eddcd",
+    "validation/jobs/revision-oracle/t20-exact-forecast__MNAWuQF/verifier/details.json": "a1f472ce50710cc2b477da1c6da415ad62be09f9532a7c29ae88cbdc3d08961d",
+    "validation/jobs/revision-gpt55-high/t20-exact-forecast__7VMTU5v/verifier/reward.json": "0415edd92ab25e1045e9e72c2f2922738a987e1feef9841261f37659ef3c7a01",
+    "validation/jobs/revision-gpt55-high/t20-exact-forecast__7VMTU5v/verifier/details.json": "6f1839e2093ebc64b7282e91fde865406ff9e112075df41d608201fb3d8800f5"
+  },
+  "test_results": [
+    {
+      "name": "test_budget_exhaustion_cannot_be_replaced_by_passing_retry",
+      "outcome": "passed"
+    },
+    {
+      "name": "test_budget_outcome_requires_grading_evidence",
+      "outcome": "passed"
+    },
+    {
+      "name": "test_completed_execution_requires_model_identity",
+      "outcome": "passed"
+    },
+    {
+      "name": "test_completed_failure_cannot_be_replaced_by_passing_retry",
+      "outcome": "passed"
+    },
+    {
+      "name": "test_completed_failure_is_an_outcome_not_an_operational_error",
+      "outcome": "passed"
+    },
+    {
+      "name": "test_completed_passes_are_accepted",
+      "outcome": "passed"
+    },
+    {
+      "name": "test_later_verifier_error_does_not_reauthorize_budget_retry",
+      "outcome": "passed"
+    },
+    {
+      "name": "test_launcher_only_retry_is_retained",
+      "outcome": "passed"
+    },
+    {
+      "name": "test_missing_terminal_result_cannot_settle",
+      "outcome": "passed"
+    },
+    {
+      "name": "test_native_context_budget_settles",
+      "outcome": "passed"
+    },
+    {
+      "name": "test_operator_cancellation_does_not_settle",
+      "outcome": "passed"
+    },
+    {
+      "name": "test_provider_interruption_retains_grade_but_does_not_settle",
+      "outcome": "passed"
+    },
+    {
+      "name": "test_recovered_provider_error_does_not_override_later_completion",
+      "outcome": "passed"
+    },
+    {
+      "name": "test_time_budget_settles_but_is_not_normal_completion",
+      "outcome": "passed"
+    },
+    {
+      "name": "test_verifier_failure_does_not_settle",
+      "outcome": "passed"
+    }
+  ]
+}

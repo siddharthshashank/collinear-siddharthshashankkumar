@@ -1,0 +1,1898 @@
+{
+  "audit_script": {
+    "path": "reviewer_tools/audit_fable_matchups.py",
+    "sha256": "c946497704e441efa46b3e697448fc166cf86b1f012235bc5dbe7b3688b2bc94"
+  },
+  "call_sites": [
+    {
+      "lines": [
+        55,
+        56
+      ],
+      "path": "validation/jobs/replication-20260927-fable-r1/task__gZoWu3L/artifacts/app/solution/simulate.py"
+    },
+    {
+      "lines": [
+        200,
+        201
+      ],
+      "path": "validation/jobs/replication-20260927-fable-r1/task__gZoWu3L/artifacts/app/engine/model.py"
+    }
+  ],
+  "causal_limit": "This proves incorrect, reachable card feature selection. It does not measure its contribution to aggregate regret or explain the trial's final grading outcome.",
+  "commands": {
+    "extracted_task": "python reviewer_tools/audit_fable_matchups.py",
+    "source": ".venv/bin/python dev/audit_fable_matchups.py"
+  },
+  "conclusion": "Delivered batting cards select split, hand/style and pitch/style effects using own-side bowling styles instead of the opponent's. Six constructed mismatches and six equal-style controls behave as expected. Opposing style vectors differ in 185/192 shipped fixtures (162/168 held-out).",
+  "differential_cases": [
+    {
+      "away_bowlers_style": "pace",
+      "batting_side": "home",
+      "candidate_first_batter_by_bowling_slot": [
+        -0.5,
+        -0.5,
+        -0.5,
+        -0.5,
+        -0.5
+      ],
+      "case": "unit_split",
+      "equal_style_control": false,
+      "field": "quality",
+      "home_bowlers_style": "spin",
+      "matches_public": false,
+      "public_first_batter_by_bowling_slot": [
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "away_bowlers_style": "pace",
+      "batting_side": "away",
+      "candidate_first_batter_by_bowling_slot": [
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5
+      ],
+      "case": "unit_split",
+      "equal_style_control": false,
+      "field": "quality",
+      "home_bowlers_style": "spin",
+      "matches_public": false,
+      "public_first_batter_by_bowling_slot": [
+        -0.5,
+        -0.5,
+        -0.5,
+        -0.5,
+        -0.5
+      ]
+    },
+    {
+      "away_bowlers_style": "pace",
+      "batting_side": "home",
+      "candidate_first_batter_by_bowling_slot": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "case": "unit_hand_by_pace",
+      "equal_style_control": false,
+      "field": "conditions",
+      "home_bowlers_style": "spin",
+      "matches_public": false,
+      "public_first_batter_by_bowling_slot": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "away_bowlers_style": "pace",
+      "batting_side": "away",
+      "candidate_first_batter_by_bowling_slot": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "case": "unit_hand_by_pace",
+      "equal_style_control": false,
+      "field": "conditions",
+      "home_bowlers_style": "spin",
+      "matches_public": false,
+      "public_first_batter_by_bowling_slot": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "away_bowlers_style": "pace",
+      "batting_side": "home",
+      "candidate_first_batter_by_bowling_slot": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "case": "unit_pace_pitch_help",
+      "equal_style_control": false,
+      "field": "conditions",
+      "home_bowlers_style": "spin",
+      "matches_public": false,
+      "public_first_batter_by_bowling_slot": [
+        -1.0,
+        -1.0,
+        -1.0,
+        -1.0,
+        -1.0
+      ]
+    },
+    {
+      "away_bowlers_style": "pace",
+      "batting_side": "away",
+      "candidate_first_batter_by_bowling_slot": [
+        -1.0,
+        -1.0,
+        -1.0,
+        -1.0,
+        -1.0
+      ],
+      "case": "unit_pace_pitch_help",
+      "equal_style_control": false,
+      "field": "conditions",
+      "home_bowlers_style": "spin",
+      "matches_public": false,
+      "public_first_batter_by_bowling_slot": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "away_bowlers_style": "pace",
+      "batting_side": "home",
+      "candidate_first_batter_by_bowling_slot": [
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5
+      ],
+      "case": "unit_split",
+      "equal_style_control": true,
+      "field": "quality",
+      "home_bowlers_style": "pace",
+      "matches_public": true,
+      "public_first_batter_by_bowling_slot": [
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "away_bowlers_style": "pace",
+      "batting_side": "away",
+      "candidate_first_batter_by_bowling_slot": [
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5
+      ],
+      "case": "unit_split",
+      "equal_style_control": true,
+      "field": "quality",
+      "home_bowlers_style": "pace",
+      "matches_public": true,
+      "public_first_batter_by_bowling_slot": [
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "away_bowlers_style": "pace",
+      "batting_side": "home",
+      "candidate_first_batter_by_bowling_slot": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "case": "unit_hand_by_pace",
+      "equal_style_control": true,
+      "field": "conditions",
+      "home_bowlers_style": "pace",
+      "matches_public": true,
+      "public_first_batter_by_bowling_slot": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "away_bowlers_style": "pace",
+      "batting_side": "away",
+      "candidate_first_batter_by_bowling_slot": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "case": "unit_hand_by_pace",
+      "equal_style_control": true,
+      "field": "conditions",
+      "home_bowlers_style": "pace",
+      "matches_public": true,
+      "public_first_batter_by_bowling_slot": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "away_bowlers_style": "pace",
+      "batting_side": "home",
+      "candidate_first_batter_by_bowling_slot": [
+        -1.0,
+        -1.0,
+        -1.0,
+        -1.0,
+        -1.0
+      ],
+      "case": "unit_pace_pitch_help",
+      "equal_style_control": true,
+      "field": "conditions",
+      "home_bowlers_style": "pace",
+      "matches_public": true,
+      "public_first_batter_by_bowling_slot": [
+        -1.0,
+        -1.0,
+        -1.0,
+        -1.0,
+        -1.0
+      ]
+    },
+    {
+      "away_bowlers_style": "pace",
+      "batting_side": "away",
+      "candidate_first_batter_by_bowling_slot": [
+        -1.0,
+        -1.0,
+        -1.0,
+        -1.0,
+        -1.0
+      ],
+      "case": "unit_pace_pitch_help",
+      "equal_style_control": true,
+      "field": "conditions",
+      "home_bowlers_style": "pace",
+      "matches_public": true,
+      "public_first_batter_by_bowling_slot": [
+        -1.0,
+        -1.0,
+        -1.0,
+        -1.0,
+        -1.0
+      ]
+    }
+  ],
+  "executed_methods": [
+    {
+      "end_line": 151,
+      "method": "Spec.cards",
+      "path": "validation/jobs/replication-20260927-fable-r1/task__gZoWu3L/artifacts/app/solution/spec.py",
+      "start_line": 118
+    },
+    {
+      "end_line": 116,
+      "method": "Spec.block",
+      "path": "validation/jobs/replication-20260927-fable-r1/task__gZoWu3L/artifacts/app/solution/spec.py",
+      "start_line": 114
+    },
+    {
+      "end_line": 173,
+      "method": "SkillBook.cards",
+      "path": "validation/jobs/replication-20260927-fable-r1/task__gZoWu3L/artifacts/app/engine/model.py",
+      "start_line": 164
+    }
+  ],
+  "execution_boundary": "Only source-hash-bound Spec.cards, Spec.block and SkillBook.cards bodies were compiled; dataclass result containers were replaced with attribute-only SimpleNamespace containers. No archived module top-level code was imported.",
+  "fixture_audit": [
+    {
+      "differing_bowling_slots": 56,
+      "differing_fixtures": [
+        {
+          "differing_slots": [
+            0,
+            2
+          ],
+          "fixture": 10000
+        },
+        {
+          "differing_slots": [
+            0,
+            1,
+            3
+          ],
+          "fixture": 10001
+        },
+        {
+          "differing_slots": [
+            0,
+            1,
+            3
+          ],
+          "fixture": 10002
+        },
+        {
+          "differing_slots": [
+            2,
+            3
+          ],
+          "fixture": 10004
+        },
+        {
+          "differing_slots": [
+            0
+          ],
+          "fixture": 10005
+        },
+        {
+          "differing_slots": [
+            2,
+            4
+          ],
+          "fixture": 10006
+        },
+        {
+          "differing_slots": [
+            3,
+            4
+          ],
+          "fixture": 10007
+        },
+        {
+          "differing_slots": [
+            0,
+            2,
+            3
+          ],
+          "fixture": 10008
+        },
+        {
+          "differing_slots": [
+            1,
+            3,
+            4
+          ],
+          "fixture": 10009
+        },
+        {
+          "differing_slots": [
+            0,
+            1,
+            3
+          ],
+          "fixture": 10010
+        },
+        {
+          "differing_slots": [
+            2
+          ],
+          "fixture": 10011
+        },
+        {
+          "differing_slots": [
+            1,
+            3
+          ],
+          "fixture": 10012
+        },
+        {
+          "differing_slots": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "fixture": 10013
+        },
+        {
+          "differing_slots": [
+            2,
+            3
+          ],
+          "fixture": 10014
+        },
+        {
+          "differing_slots": [
+            1,
+            3
+          ],
+          "fixture": 10015
+        },
+        {
+          "differing_slots": [
+            0
+          ],
+          "fixture": 10016
+        },
+        {
+          "differing_slots": [
+            0,
+            4
+          ],
+          "fixture": 10017
+        },
+        {
+          "differing_slots": [
+            0,
+            1,
+            3,
+            4
+          ],
+          "fixture": 10018
+        },
+        {
+          "differing_slots": [
+            0,
+            1,
+            4
+          ],
+          "fixture": 10019
+        },
+        {
+          "differing_slots": [
+            0,
+            1,
+            3,
+            4
+          ],
+          "fixture": 10020
+        },
+        {
+          "differing_slots": [
+            4
+          ],
+          "fixture": 10021
+        },
+        {
+          "differing_slots": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "fixture": 10022
+        },
+        {
+          "differing_slots": [
+            0,
+            4
+          ],
+          "fixture": 10023
+        }
+      ],
+      "fixtures_with_differing_style_vectors": 23,
+      "league": "visible",
+      "source_files": [
+        {
+          "path": "tests/leagues/visible/players.csv",
+          "sha256": "12eb732bdeb6ad22bec0689948b2bd419a36726893d08273f001e05b59af047b"
+        },
+        {
+          "path": "tests/leagues/visible/fixtures.csv",
+          "sha256": "dd9543b8069d490523c67095689bbcb72e8247a8204ec1696ba39b878e5cd061"
+        },
+        {
+          "path": "tests/leagues/visible/fixture_lineups.csv",
+          "sha256": "2f6c53d180daf65952bb27920effafc6ebe5b05bba67219ac4ce818bf2858b4d"
+        }
+      ],
+      "total_fixtures": 24
+    },
+    {
+      "differing_bowling_slots": 48,
+      "differing_fixtures": [
+        {
+          "differing_slots": [
+            1,
+            3
+          ],
+          "fixture": 10001
+        },
+        {
+          "differing_slots": [
+            0,
+            1,
+            2,
+            4
+          ],
+          "fixture": 10002
+        },
+        {
+          "differing_slots": [
+            3,
+            4
+          ],
+          "fixture": 10003
+        },
+        {
+          "differing_slots": [
+            2,
+            3
+          ],
+          "fixture": 10004
+        },
+        {
+          "differing_slots": [
+            0,
+            2
+          ],
+          "fixture": 10005
+        },
+        {
+          "differing_slots": [
+            2
+          ],
+          "fixture": 10006
+        },
+        {
+          "differing_slots": [
+            4
+          ],
+          "fixture": 10007
+        },
+        {
+          "differing_slots": [
+            0,
+            4
+          ],
+          "fixture": 10008
+        },
+        {
+          "differing_slots": [
+            2
+          ],
+          "fixture": 10009
+        },
+        {
+          "differing_slots": [
+            3
+          ],
+          "fixture": 10010
+        },
+        {
+          "differing_slots": [
+            0,
+            1
+          ],
+          "fixture": 10011
+        },
+        {
+          "differing_slots": [
+            1,
+            4
+          ],
+          "fixture": 10012
+        },
+        {
+          "differing_slots": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "fixture": 10013
+        },
+        {
+          "differing_slots": [
+            2
+          ],
+          "fixture": 10014
+        },
+        {
+          "differing_slots": [
+            2,
+            3
+          ],
+          "fixture": 10016
+        },
+        {
+          "differing_slots": [
+            1,
+            2,
+            4
+          ],
+          "fixture": 10017
+        },
+        {
+          "differing_slots": [
+            2,
+            4
+          ],
+          "fixture": 10018
+        },
+        {
+          "differing_slots": [
+            0,
+            1,
+            4
+          ],
+          "fixture": 10019
+        },
+        {
+          "differing_slots": [
+            2,
+            3
+          ],
+          "fixture": 10020
+        },
+        {
+          "differing_slots": [
+            2,
+            3,
+            4
+          ],
+          "fixture": 10021
+        },
+        {
+          "differing_slots": [
+            2
+          ],
+          "fixture": 10022
+        },
+        {
+          "differing_slots": [
+            0,
+            2,
+            3,
+            4
+          ],
+          "fixture": 10023
+        }
+      ],
+      "fixtures_with_differing_style_vectors": 22,
+      "league": "heldout_a",
+      "source_files": [
+        {
+          "path": "tests/leagues/heldout_a/players.csv",
+          "sha256": "413eca13cc554f7db1a6781ddfb38edcf57d4822991b72593d880033ef9e7530"
+        },
+        {
+          "path": "tests/leagues/heldout_a/fixtures.csv",
+          "sha256": "00f15cf20c0640e04c45547dccdbe9cb07754295c76b687ad084ae49c8e939d1"
+        },
+        {
+          "path": "tests/leagues/heldout_a/fixture_lineups.csv",
+          "sha256": "47596af1ae358821dd4738486d942e2bf4f16839a2fe2bdd490b9788e9fd68a6"
+        }
+      ],
+      "total_fixtures": 24
+    },
+    {
+      "differing_bowling_slots": 62,
+      "differing_fixtures": [
+        {
+          "differing_slots": [
+            2,
+            3
+          ],
+          "fixture": 10000
+        },
+        {
+          "differing_slots": [
+            0,
+            1,
+            3
+          ],
+          "fixture": 10001
+        },
+        {
+          "differing_slots": [
+            0,
+            1
+          ],
+          "fixture": 10002
+        },
+        {
+          "differing_slots": [
+            1,
+            2
+          ],
+          "fixture": 10003
+        },
+        {
+          "differing_slots": [
+            1,
+            2,
+            4
+          ],
+          "fixture": 10004
+        },
+        {
+          "differing_slots": [
+            0,
+            1,
+            3,
+            4
+          ],
+          "fixture": 10005
+        },
+        {
+          "differing_slots": [
+            0,
+            1,
+            3
+          ],
+          "fixture": 10006
+        },
+        {
+          "differing_slots": [
+            0,
+            1,
+            2
+          ],
+          "fixture": 10007
+        },
+        {
+          "differing_slots": [
+            2,
+            3
+          ],
+          "fixture": 10008
+        },
+        {
+          "differing_slots": [
+            0,
+            3,
+            4
+          ],
+          "fixture": 10009
+        },
+        {
+          "differing_slots": [
+            1,
+            3,
+            4
+          ],
+          "fixture": 10010
+        },
+        {
+          "differing_slots": [
+            0
+          ],
+          "fixture": 10011
+        },
+        {
+          "differing_slots": [
+            0,
+            2,
+            3,
+            4
+          ],
+          "fixture": 10012
+        },
+        {
+          "differing_slots": [
+            0,
+            2,
+            3
+          ],
+          "fixture": 10013
+        },
+        {
+          "differing_slots": [
+            0,
+            4
+          ],
+          "fixture": 10014
+        },
+        {
+          "differing_slots": [
+            2,
+            3,
+            4
+          ],
+          "fixture": 10016
+        },
+        {
+          "differing_slots": [
+            0,
+            2,
+            3,
+            4
+          ],
+          "fixture": 10017
+        },
+        {
+          "differing_slots": [
+            3,
+            4
+          ],
+          "fixture": 10018
+        },
+        {
+          "differing_slots": [
+            0,
+            3,
+            4
+          ],
+          "fixture": 10019
+        },
+        {
+          "differing_slots": [
+            0
+          ],
+          "fixture": 10020
+        },
+        {
+          "differing_slots": [
+            2,
+            4
+          ],
+          "fixture": 10021
+        },
+        {
+          "differing_slots": [
+            0,
+            1,
+            3
+          ],
+          "fixture": 10022
+        },
+        {
+          "differing_slots": [
+            0,
+            1,
+            2,
+            4
+          ],
+          "fixture": 10023
+        }
+      ],
+      "fixtures_with_differing_style_vectors": 23,
+      "league": "heldout_b",
+      "source_files": [
+        {
+          "path": "tests/leagues/heldout_b/players.csv",
+          "sha256": "8521b2e66d6ecd0f815f235d0e5751c7c70226698a543005018f4ac516e1cd89"
+        },
+        {
+          "path": "tests/leagues/heldout_b/fixtures.csv",
+          "sha256": "f6636d06dcc1fd662b4c243acbcbf2cf804a4f31d66b22af30ffd1c50a0296d2"
+        },
+        {
+          "path": "tests/leagues/heldout_b/fixture_lineups.csv",
+          "sha256": "2aed0dbd4530734a82802e084f65a591164e92c9e7e28cf0c00a2bb6bb0fbbaa"
+        }
+      ],
+      "total_fixtures": 24
+    },
+    {
+      "differing_bowling_slots": 62,
+      "differing_fixtures": [
+        {
+          "differing_slots": [
+            0,
+            2,
+            3,
+            4
+          ],
+          "fixture": 10000
+        },
+        {
+          "differing_slots": [
+            0,
+            1,
+            2,
+            4
+          ],
+          "fixture": 10001
+        },
+        {
+          "differing_slots": [
+            0,
+            1,
+            3,
+            4
+          ],
+          "fixture": 10002
+        },
+        {
+          "differing_slots": [
+            1,
+            2
+          ],
+          "fixture": 10003
+        },
+        {
+          "differing_slots": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "fixture": 10004
+        },
+        {
+          "differing_slots": [
+            3,
+            4
+          ],
+          "fixture": 10005
+        },
+        {
+          "differing_slots": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "fixture": 10006
+        },
+        {
+          "differing_slots": [
+            0,
+            1,
+            4
+          ],
+          "fixture": 10007
+        },
+        {
+          "differing_slots": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "fixture": 10008
+        },
+        {
+          "differing_slots": [
+            2,
+            3,
+            4
+          ],
+          "fixture": 10009
+        },
+        {
+          "differing_slots": [
+            1,
+            2
+          ],
+          "fixture": 10010
+        },
+        {
+          "differing_slots": [
+            2,
+            3
+          ],
+          "fixture": 10011
+        },
+        {
+          "differing_slots": [
+            1,
+            2
+          ],
+          "fixture": 10012
+        },
+        {
+          "differing_slots": [
+            0,
+            1
+          ],
+          "fixture": 10013
+        },
+        {
+          "differing_slots": [
+            2,
+            3
+          ],
+          "fixture": 10014
+        },
+        {
+          "differing_slots": [
+            2,
+            3
+          ],
+          "fixture": 10015
+        },
+        {
+          "differing_slots": [
+            2,
+            3
+          ],
+          "fixture": 10016
+        },
+        {
+          "differing_slots": [
+            4
+          ],
+          "fixture": 10017
+        },
+        {
+          "differing_slots": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "fixture": 10018
+        },
+        {
+          "differing_slots": [
+            1,
+            3
+          ],
+          "fixture": 10019
+        },
+        {
+          "differing_slots": [
+            2,
+            3
+          ],
+          "fixture": 10020
+        },
+        {
+          "differing_slots": [
+            0
+          ],
+          "fixture": 10021
+        },
+        {
+          "differing_slots": [
+            1,
+            2
+          ],
+          "fixture": 10022
+        },
+        {
+          "differing_slots": [
+            1,
+            2
+          ],
+          "fixture": 10023
+        }
+      ],
+      "fixtures_with_differing_style_vectors": 24,
+      "league": "heldout_c",
+      "source_files": [
+        {
+          "path": "tests/leagues/heldout_c/players.csv",
+          "sha256": "8de902b09ba498ac4c379844f6ce6e48ef86cdf70abc316ca9d2aad3223b29a9"
+        },
+        {
+          "path": "tests/leagues/heldout_c/fixtures.csv",
+          "sha256": "839d601a350bcbe7f0579153674e686b1149aac26e610e0401dbb60353917590"
+        },
+        {
+          "path": "tests/leagues/heldout_c/fixture_lineups.csv",
+          "sha256": "eae4f842addbff866eb4685807f851e6cbb95eaff3e2001219abe0c53c07273f"
+        }
+      ],
+      "total_fixtures": 24
+    },
+    {
+      "differing_bowling_slots": 55,
+      "differing_fixtures": [
+        {
+          "differing_slots": [
+            2,
+            3,
+            4
+          ],
+          "fixture": 10000
+        },
+        {
+          "differing_slots": [
+            0,
+            1,
+            3,
+            4
+          ],
+          "fixture": 10001
+        },
+        {
+          "differing_slots": [
+            1,
+            3
+          ],
+          "fixture": 10002
+        },
+        {
+          "differing_slots": [
+            2
+          ],
+          "fixture": 10003
+        },
+        {
+          "differing_slots": [
+            0,
+            2,
+            4
+          ],
+          "fixture": 10004
+        },
+        {
+          "differing_slots": [
+            0,
+            1,
+            2
+          ],
+          "fixture": 10005
+        },
+        {
+          "differing_slots": [
+            0,
+            1,
+            3
+          ],
+          "fixture": 10006
+        },
+        {
+          "differing_slots": [
+            1,
+            2,
+            4
+          ],
+          "fixture": 10007
+        },
+        {
+          "differing_slots": [
+            0,
+            2
+          ],
+          "fixture": 10008
+        },
+        {
+          "differing_slots": [
+            0,
+            3
+          ],
+          "fixture": 10009
+        },
+        {
+          "differing_slots": [
+            2,
+            4
+          ],
+          "fixture": 10011
+        },
+        {
+          "differing_slots": [
+            1,
+            2,
+            4
+          ],
+          "fixture": 10012
+        },
+        {
+          "differing_slots": [
+            2,
+            3,
+            4
+          ],
+          "fixture": 10013
+        },
+        {
+          "differing_slots": [
+            0
+          ],
+          "fixture": 10014
+        },
+        {
+          "differing_slots": [
+            0,
+            2,
+            3,
+            4
+          ],
+          "fixture": 10015
+        },
+        {
+          "differing_slots": [
+            0,
+            1
+          ],
+          "fixture": 10016
+        },
+        {
+          "differing_slots": [
+            0,
+            2,
+            3
+          ],
+          "fixture": 10017
+        },
+        {
+          "differing_slots": [
+            3
+          ],
+          "fixture": 10018
+        },
+        {
+          "differing_slots": [
+            0,
+            3
+          ],
+          "fixture": 10019
+        },
+        {
+          "differing_slots": [
+            1
+          ],
+          "fixture": 10020
+        },
+        {
+          "differing_slots": [
+            0,
+            3,
+            4
+          ],
+          "fixture": 10021
+        },
+        {
+          "differing_slots": [
+            0,
+            1,
+            4
+          ],
+          "fixture": 10022
+        },
+        {
+          "differing_slots": [
+            0
+          ],
+          "fixture": 10023
+        }
+      ],
+      "fixtures_with_differing_style_vectors": 23,
+      "league": "heldout_d",
+      "source_files": [
+        {
+          "path": "tests/leagues/heldout_d/players.csv",
+          "sha256": "d4bcc5af1651c087764b17109c1d18ed2ac79a886775f30b94172fee7930ee91"
+        },
+        {
+          "path": "tests/leagues/heldout_d/fixtures.csv",
+          "sha256": "882aeb1342ed2444076f3ee0de878ddb0bae5ce6ad4b6b8021f259ba475a11a1"
+        },
+        {
+          "path": "tests/leagues/heldout_d/fixture_lineups.csv",
+          "sha256": "d56aa6f9d0cd9ed9a25fcf9d83960823dc710ecc42135b65ceaf228fb46b5fd9"
+        }
+      ],
+      "total_fixtures": 24
+    },
+    {
+      "differing_bowling_slots": 49,
+      "differing_fixtures": [
+        {
+          "differing_slots": [
+            1,
+            3,
+            4
+          ],
+          "fixture": 10000
+        },
+        {
+          "differing_slots": [
+            1,
+            4
+          ],
+          "fixture": 10001
+        },
+        {
+          "differing_slots": [
+            1,
+            2
+          ],
+          "fixture": 10002
+        },
+        {
+          "differing_slots": [
+            1,
+            2
+          ],
+          "fixture": 10003
+        },
+        {
+          "differing_slots": [
+            1,
+            3
+          ],
+          "fixture": 10004
+        },
+        {
+          "differing_slots": [
+            2
+          ],
+          "fixture": 10005
+        },
+        {
+          "differing_slots": [
+            0,
+            2,
+            3,
+            4
+          ],
+          "fixture": 10006
+        },
+        {
+          "differing_slots": [
+            2,
+            4
+          ],
+          "fixture": 10008
+        },
+        {
+          "differing_slots": [
+            2
+          ],
+          "fixture": 10009
+        },
+        {
+          "differing_slots": [
+            1,
+            2,
+            3
+          ],
+          "fixture": 10010
+        },
+        {
+          "differing_slots": [
+            2
+          ],
+          "fixture": 10011
+        },
+        {
+          "differing_slots": [
+            0
+          ],
+          "fixture": 10012
+        },
+        {
+          "differing_slots": [
+            4
+          ],
+          "fixture": 10013
+        },
+        {
+          "differing_slots": [
+            0,
+            3
+          ],
+          "fixture": 10014
+        },
+        {
+          "differing_slots": [
+            0,
+            2,
+            3
+          ],
+          "fixture": 10015
+        },
+        {
+          "differing_slots": [
+            2,
+            4
+          ],
+          "fixture": 10016
+        },
+        {
+          "differing_slots": [
+            1,
+            2
+          ],
+          "fixture": 10017
+        },
+        {
+          "differing_slots": [
+            1,
+            2
+          ],
+          "fixture": 10018
+        },
+        {
+          "differing_slots": [
+            2
+          ],
+          "fixture": 10019
+        },
+        {
+          "differing_slots": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "fixture": 10020
+        },
+        {
+          "differing_slots": [
+            2,
+            4
+          ],
+          "fixture": 10021
+        },
+        {
+          "differing_slots": [
+            1,
+            2,
+            4
+          ],
+          "fixture": 10022
+        },
+        {
+          "differing_slots": [
+            2,
+            3,
+            4
+          ],
+          "fixture": 10023
+        }
+      ],
+      "fixtures_with_differing_style_vectors": 23,
+      "league": "heldout_e",
+      "source_files": [
+        {
+          "path": "tests/leagues/heldout_e/players.csv",
+          "sha256": "5c9f8ea2678f94c4c04de0cf3e6dc023e63dd45fa4a8b6485017e01d1156df2e"
+        },
+        {
+          "path": "tests/leagues/heldout_e/fixtures.csv",
+          "sha256": "9cf5226b7b1c8cc115ec71b4b65775216c035a41e9f9d7fc9a61feb97d973548"
+        },
+        {
+          "path": "tests/leagues/heldout_e/fixture_lineups.csv",
+          "sha256": "352dcd469026142582435d80b771831d471657a81a4e85be95b1b60a2f07db7c"
+        }
+      ],
+      "total_fixtures": 24
+    },
+    {
+      "differing_bowling_slots": 60,
+      "differing_fixtures": [
+        {
+          "differing_slots": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "fixture": 10000
+        },
+        {
+          "differing_slots": [
+            1,
+            2,
+            4
+          ],
+          "fixture": 10001
+        },
+        {
+          "differing_slots": [
+            0,
+            1,
+            4
+          ],
+          "fixture": 10002
+        },
+        {
+          "differing_slots": [
+            0,
+            1
+          ],
+          "fixture": 10003
+        },
+        {
+          "differing_slots": [
+            0,
+            1,
+            3,
+            4
+          ],
+          "fixture": 10004
+        },
+        {
+          "differing_slots": [
+            1,
+            2
+          ],
+          "fixture": 10005
+        },
+        {
+          "differing_slots": [
+            0,
+            2
+          ],
+          "fixture": 10006
+        },
+        {
+          "differing_slots": [
+            2
+          ],
+          "fixture": 10007
+        },
+        {
+          "differing_slots": [
+            0,
+            1,
+            3
+          ],
+          "fixture": 10008
+        },
+        {
+          "differing_slots": [
+            0,
+            4
+          ],
+          "fixture": 10009
+        },
+        {
+          "differing_slots": [
+            0,
+            4
+          ],
+          "fixture": 10010
+        },
+        {
+          "differing_slots": [
+            0,
+            1
+          ],
+          "fixture": 10011
+        },
+        {
+          "differing_slots": [
+            4
+          ],
+          "fixture": 10012
+        },
+        {
+          "differing_slots": [
+            0,
+            2,
+            3,
+            4
+          ],
+          "fixture": 10013
+        },
+        {
+          "differing_slots": [
+            0,
+            2,
+            3
+          ],
+          "fixture": 10014
+        },
+        {
+          "differing_slots": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "fixture": 10015
+        },
+        {
+          "differing_slots": [
+            1,
+            2
+          ],
+          "fixture": 10016
+        },
+        {
+          "differing_slots": [
+            2
+          ],
+          "fixture": 10017
+        },
+        {
+          "differing_slots": [
+            0,
+            3
+          ],
+          "fixture": 10018
+        },
+        {
+          "differing_slots": [
+            0,
+            1,
+            4
+          ],
+          "fixture": 10019
+        },
+        {
+          "differing_slots": [
+            0,
+            2,
+            4
+          ],
+          "fixture": 10020
+        },
+        {
+          "differing_slots": [
+            1,
+            4
+          ],
+          "fixture": 10021
+        },
+        {
+          "differing_slots": [
+            0,
+            2,
+            4
+          ],
+          "fixture": 10022
+        },
+        {
+          "differing_slots": [
+            0,
+            3
+          ],
+          "fixture": 10023
+        }
+      ],
+      "fixtures_with_differing_style_vectors": 24,
+      "league": "heldout_f",
+      "source_files": [
+        {
+          "path": "tests/leagues/heldout_f/players.csv",
+          "sha256": "4e28db735dfba77f1f26d5c69685d6dd4b82e45799f0bfe34b3b88bd686d3dd0"
+        },
+        {
+          "path": "tests/leagues/heldout_f/fixtures.csv",
+          "sha256": "f73315dfe42837e61563c0eb790d02e30ce11c3470bf7063c9f69381893d467a"
+        },
+        {
+          "path": "tests/leagues/heldout_f/fixture_lineups.csv",
+          "sha256": "8aab4135937548ded471a301402debd94803271be19f203efa8a2d1d2b7ad130"
+        }
+      ],
+      "total_fixtures": 24
+    },
+    {
+      "differing_bowling_slots": 53,
+      "differing_fixtures": [
+        {
+          "differing_slots": [
+            2,
+            3
+          ],
+          "fixture": 10000
+        },
+        {
+          "differing_slots": [
+            3,
+            4
+          ],
+          "fixture": 10001
+        },
+        {
+          "differing_slots": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "fixture": 10003
+        },
+        {
+          "differing_slots": [
+            2,
+            4
+          ],
+          "fixture": 10004
+        },
+        {
+          "differing_slots": [
+            2,
+            4
+          ],
+          "fixture": 10005
+        },
+        {
+          "differing_slots": [
+            0,
+            1,
+            3
+          ],
+          "fixture": 10006
+        },
+        {
+          "differing_slots": [
+            1,
+            4
+          ],
+          "fixture": 10007
+        },
+        {
+          "differing_slots": [
+            2,
+            3
+          ],
+          "fixture": 10008
+        },
+        {
+          "differing_slots": [
+            1,
+            2,
+            4
+          ],
+          "fixture": 10009
+        },
+        {
+          "differing_slots": [
+            0
+          ],
+          "fixture": 10010
+        },
+        {
+          "differing_slots": [
+            0,
+            4
+          ],
+          "fixture": 10011
+        },
+        {
+          "differing_slots": [
+            2
+          ],
+          "fixture": 10012
+        },
+        {
+          "differing_slots": [
+            0,
+            1,
+            3
+          ],
+          "fixture": 10013
+        },
+        {
+          "differing_slots": [
+            4
+          ],
+          "fixture": 10014
+        },
+        {
+          "differing_slots": [
+            0,
+            2,
+            4
+          ],
+          "fixture": 10015
+        },
+        {
+          "differing_slots": [
+            1,
+            3,
+            4
+          ],
+          "fixture": 10016
+        },
+        {
+          "differing_slots": [
+            2
+          ],
+          "fixture": 10017
+        },
+        {
+          "differing_slots": [
+            0,
+            3,
+            4
+          ],
+          "fixture": 10018
+        },
+        {
+          "differing_slots": [
+            1,
+            3,
+            4
+          ],
+          "fixture": 10019
+        },
+        {
+          "differing_slots": [
+            0,
+            2,
+            4
+          ],
+          "fixture": 10020
+        },
+        {
+          "differing_slots": [
+            1,
+            2,
+            4
+          ],
+          "fixture": 10021
+        },
+        {
+          "differing_slots": [
+            4
+          ],
+          "fixture": 10022
+        },
+        {
+          "differing_slots": [
+            0,
+            1,
+            4
+          ],
+          "fixture": 10023
+        }
+      ],
+      "fixtures_with_differing_style_vectors": 23,
+      "league": "heldout_g",
+      "source_files": [
+        {
+          "path": "tests/leagues/heldout_g/players.csv",
+          "sha256": "a1f9999c5ebac7abc6f28a6fb613472b37f0358413ad68e5b4e1d7282d593a2f"
+        },
+        {
+          "path": "tests/leagues/heldout_g/fixtures.csv",
+          "sha256": "782a4cf8492d71c5bb04a9706cbc6d19b749d650eee20e58fae957808f3528c6"
+        },
+        {
+          "path": "tests/leagues/heldout_g/fixture_lineups.csv",
+          "sha256": "d00f04442543532fbcd5aa7339ee3bc631b6f759d5426ffce3113cc99d843ff2"
+        }
+      ],
+      "total_fixtures": 24
+    }
+  ],
+  "numpy_version": "2.4.4",
+  "schema_version": 1,
+  "scope": "Exact reviewed card-method differential probe plus static fixture CSV inspection. No forecast, training, simulation, network, or hidden truth probabilities are used.",
+  "source_files": [
+    {
+      "path": "validation/jobs/replication-20260927-fable-r1/task__gZoWu3L/artifacts/app/solution/spec.py",
+      "sha256": "0f4e2503916a38341c7628776307f488ec90bf35231c32a888501fc3d8b5b05e"
+    },
+    {
+      "path": "validation/jobs/replication-20260927-fable-r1/task__gZoWu3L/artifacts/app/solution/simulate.py",
+      "sha256": "566786d11e1613b3cdd8ec8a0d81934090c0f518f972649da18896d24479f180"
+    },
+    {
+      "path": "validation/jobs/replication-20260927-fable-r1/task__gZoWu3L/artifacts/app/engine/model.py",
+      "sha256": "76d73fb1c749b3c6a5c37507eaefbf2f3e60bc892fa48f69f08b535202cd8c93"
+    }
+  ],
+  "totals": {
+    "fixtures": 192,
+    "fixtures_with_differing_style_vectors": 185,
+    "heldout_fixtures_with_differing_style_vectors": 162
+  },
+  "trial": "validation/jobs/replication-20260927-fable-r1/task__gZoWu3L"
+}

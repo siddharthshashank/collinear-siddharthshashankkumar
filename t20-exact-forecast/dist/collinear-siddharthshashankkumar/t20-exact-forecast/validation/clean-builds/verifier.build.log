@@ -1,0 +1,68 @@
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 646B done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/python:3.12-slim@sha256:78387bc3881b8273120a12ebe6c1ab22b018ccc2c9adf565ae1ac9b536e184ea
+#2 DONE 0.0s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [1/7] FROM docker.io/library/python:3.12-slim@sha256:78387bc3881b8273120a12ebe6c1ab22b018ccc2c9adf565ae1ac9b536e184ea
+#4 resolve docker.io/library/python:3.12-slim@sha256:78387bc3881b8273120a12ebe6c1ab22b018ccc2c9adf565ae1ac9b536e184ea 0.0s done
+#4 CACHED
+
+#5 [internal] load build context
+#5 transferring context: 41.50kB done
+#5 DONE 0.0s
+
+#6 [2/7] COPY requirements.lock /tmp/requirements.lock
+#6 DONE 0.0s
+
+#7 [3/7] RUN pip install --no-cache-dir --require-hashes -r /tmp/requirements.lock
+#7 2.156 Collecting numpy==2.4.4 (from -r /tmp/requirements.lock (line 1))
+#7 2.263   Downloading numpy-2.4.4-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (16.6 MB)
+#7 2.833      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 16.6/16.6 MB 31.9 MB/s eta 0:00:00
+#7 3.031 Collecting pandas==3.0.2 (from -r /tmp/requirements.lock (line 74))
+#7 3.068   Downloading pandas-3.0.2-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl (10.9 MB)
+#7 3.374      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.9/10.9 MB 35.6 MB/s eta 0:00:00
+#7 3.478 Collecting python-dateutil==2.9.0.post0 (from -r /tmp/requirements.lock (line 123))
+#7 3.502   Downloading python_dateutil-2.9.0.post0-py2.py3-none-any.whl (229 kB)
+#7 3.633 Collecting scipy==1.17.1 (from -r /tmp/requirements.lock (line 126))
+#7 3.656   Downloading scipy-1.17.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (35.2 MB)
+#7 4.620      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 35.2/35.2 MB 36.6 MB/s eta 0:00:00
+#7 4.761 Collecting six==1.17.0 (from -r /tmp/requirements.lock (line 188))
+#7 4.793   Downloading six-1.17.0-py2.py3-none-any.whl (11 kB)
+#7 4.874 Installing collected packages: six, numpy, scipy, python-dateutil, pandas
+#7 15.69 Successfully installed numpy-2.4.4 pandas-3.0.2 python-dateutil-2.9.0.post0 scipy-1.17.1 six-1.17.0
+#7 15.69 WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+#7 15.84 
+#7 15.84 [notice] A new release of pip is available: 25.0.1 -> 26.2.1
+#7 15.84 [notice] To update, run: pip install --upgrade pip
+#7 DONE 16.3s
+
+#8 [4/7] RUN useradd --create-home --shell /bin/bash runner && mkdir -p /app /work /logs/verifier
+#8 DONE 0.3s
+
+#9 [5/7] COPY . /tests/
+#9 DONE 0.1s
+
+#10 [6/7] RUN chmod -R go-rwx /tests && chmod +x /tests/test.sh
+#10 DONE 0.3s
+
+#11 [7/7] WORKDIR /app
+#11 DONE 0.0s
+
+#12 exporting to image
+#12 exporting layers
+#12 exporting layers 7.8s done
+#12 exporting manifest sha256:746ce09f8c6718e0e63a24a83fcc1a1e1c0ed871eb831b3f1da090753dd7d33b
+#12 exporting manifest sha256:746ce09f8c6718e0e63a24a83fcc1a1e1c0ed871eb831b3f1da090753dd7d33b 0.0s done
+#12 exporting config sha256:1e6d50aa7deb3e3c13d2eed28220543771474571689fb64c97b622941a034429 done
+#12 exporting attestation manifest sha256:185628b8d3bd9895da6f554a377adc225af4915b5c865a0cb9b49df9cb4f9200 done
+#12 exporting manifest list sha256:5e6a468792139d515ccdd2a4443d2888b1aaf97ff5519885b464e7b3621e3e8c done
+#12 naming to docker.io/library/collinear-v011-verifier-verified:latest done
+#12 DONE 7.9s

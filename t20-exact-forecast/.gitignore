@@ -6,3 +6,4 @@ data/
 jobs/*/*/agent/sessions/
 validation/jobs/*/*/agent/sessions/
 submission/
+figures/node_modules/

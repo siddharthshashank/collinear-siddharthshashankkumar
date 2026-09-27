@@ -1,0 +1,60 @@
+{
+  "version": "0.1.1",
+  "historical_version": "0.1.0",
+  "baseline_commit": "3c28a5511713bd69df2d43165e754c3abf86daf3",
+  "scoring_rule_changed": false,
+  "data_engine_oracle_changed": false,
+  "historical_results_relabelled": false,
+  "changed_files": {
+    "task.toml": {
+      "before_sha256": "9e6d585b3658167576175c5e5cb9266d30e835bd34632b6ab16e0a8f3000e56e",
+      "after_sha256": "8002446109426d6812b53810e63f4d0512682514d2f896326f94d77075e3d309",
+      "reason": "Version v0.1.1, accurate Monte Carlo description, explicit Docker-level verifier network policy."
+    },
+    "instruction.md": {
+      "before_sha256": "4f5147d1a43c504fc979190ebac4b0c3b84823b85f1e6e9fc518cd79813e8aad",
+      "after_sha256": "2b66f8ad3c2b3d9b636fe05a2f47d0e4cfe6d400e950b4685ceffbe5d956a442",
+      "reason": "Correct probability precision and state ordinary-file artifact requirement."
+    },
+    "environment/app/docs/handbook.md": {
+      "before_sha256": "3a1f52c9bb18ce425668233282fda0d780bc229bdef7c8eb1ee19d5af52d1caf",
+      "after_sha256": "848a7ff24918e7ad452fb955a4766befdfa7aea122911fd934b8124a9253c64b",
+      "reason": "Disclose designer-informed reference, finite Monte Carlo estimates, and precise output/artifact contract."
+    },
+    "environment/Dockerfile": {
+      "before_sha256": "45c347f3286089df53ee34f226f359763b8709c9f00bbc7271b66a8d17e5bd5a",
+      "after_sha256": "cf432cf4a470f591837e03b5bd6d485d4c885a7f754730a226cafe43f9597321",
+      "reason": "Require cryptographic hashes for the unchanged package versions."
+    },
+    "tests/Dockerfile": {
+      "before_sha256": "4503afa5c6b50f4bf4ea493a5b408add59da04b8d40ed904589cb6015f685bd5",
+      "after_sha256": "96cb303b90865ef664c46a1b3d923676d57b4b0ef95f3176062a68bb3432b75d",
+      "reason": "Require cryptographic hashes for the unchanged package versions."
+    },
+    "environment/requirements.lock": {
+      "before_sha256": "be92435b62aefda97ab48fb6409ef44234c20ae7ff38986a2fea82ff94e5e550",
+      "after_sha256": "f11dbf7d18105e368c5b1613ace618bd316f79905ad6a83b2c44febf5303f95b",
+      "reason": "Lock the full five-package Linux dependency closure and distribution hashes."
+    },
+    "tests/requirements.lock": {
+      "before_sha256": "be92435b62aefda97ab48fb6409ef44234c20ae7ff38986a2fea82ff94e5e550",
+      "after_sha256": "f11dbf7d18105e368c5b1613ace618bd316f79905ad6a83b2c44febf5303f95b",
+      "reason": "Lock the full five-package Linux dependency closure and distribution hashes."
+    },
+    "tests/docker-compose.yaml": {
+      "before_sha256": null,
+      "after_sha256": "1f48d4f0e7267829a77ba3dfa5f6dd5f1c0953c869332dce1ca909dadd610ea9",
+      "reason": "Enforce Docker network_mode none independently of Harbor nftables support."
+    },
+    "tests/grader.py": {
+      "before_sha256": "142bbe023b0355b985a00c50f5004e4fe8c8c371f9460076663b4def84f0b8b4",
+      "after_sha256": "25e14448b4419239458f47e78ef302e6b10e7e9ed656fd56ed0e603c24f52311",
+      "reason": "Reject symlink/special-file leaks; strictly validate fixture identity; immutable repeat comparison; process-group cleanup."
+    },
+    "tests/test.sh": {
+      "before_sha256": "0dea4f9ffbb2925e52de4b063800fe3166b0b1a7512e0ebbc1fa900c23e936a8",
+      "after_sha256": "98b48b4b9fec7fec4874ba63582d8ccbcd7f1fd14fa3c5f2deec431c71990218",
+      "reason": "Prevent stale rewards on retries and report grader startup failures explicitly."
+    }
+  }
+}

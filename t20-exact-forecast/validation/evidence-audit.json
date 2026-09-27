@@ -1,12 +1,19 @@
 {
   "status": "passed",
-  "baseline_commit": "3c28a5511713bd69df2d43165e754c3abf86daf3",
-  "runtime_files_unchanged": 118,
+  "runtime_version": "0.1.1",
+  "historical_baseline_commit": "3c28a5511713bd69df2d43165e754c3abf86daf3",
+  "runtime_files_checked": 119,
+  "runtime_files_unchanged": 109,
+  "runtime_files_revised": 9,
+  "runtime_files_added": 1,
   "task_directories": 1,
   "historical_model_jobs": 19,
   "graded_model_jobs_including_excluded_starter": 16,
   "included_model_submissions": 15,
-  "local_document_links_checked": 130,
+  "local_document_links_checked": 507,
+  "heading_links_checked": 45,
+  "historical_evidence_files_preserved": 484,
+  "architecture_figures_checked": 7,
   "evidence_note": "Known literal true redaction restored only in memory; rounded regrets checked within 0.002 ratio tolerance.",
   "trials": [
     {

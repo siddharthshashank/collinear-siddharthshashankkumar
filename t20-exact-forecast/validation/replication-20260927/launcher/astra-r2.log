@@ -1,0 +1,30 @@
+  1/1 Artifact_Quality: 1.000 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 0:51:07 0:00:00
+adhoc • codex • gpt-6-astra
+┏━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━┓
+┃ Trials ┃ Exceptio… ┃ Artifact… ┃ Constrai… ┃ Function… ┃ Overall ┃ Robustne… ┃
+┡━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━┩
+│      1 │         0 │     1.000 │     1.000 │     1.000 │   1.000 │     1.000 │
+└────────┴───────────┴───────────┴───────────┴───────────┴─────────┴───────────┘
+
+┏━━━━━━━━┳━━━━━━━┓
+┃ Reward ┃ Count ┃
+┡━━━━━━━━╇━━━━━━━┩
+│ 1.0    │     1 │
+│ 1.0    │     1 │
+│ 1.0    │     1 │
+│ 1.0    │     1 │
+│ 1.0    │     1 │
+└────────┴───────┘
+
+Job Info
+Total runtime: 51m 7s
+Results written to 
+/Users/siddharthshashank/Documents/Interview/collinear-siddharthshashankkumar/t2
+0-exact-forecast/validation/jobs/replication-20260927-astra-r2/result.json
+Inspect results by running `harbor view 
+/Users/siddharthshashank/Documents/Interview/collinear-siddharthshashankkumar/t2
+0-exact-forecast/validation/jobs`
+Share results by running `harbor upload 
+/Users/siddharthshashank/Documents/Interview/collinear-siddharthshashankkumar/t2
+0-exact-forecast/validation/jobs/replication-20260927-astra-r2`
+

@@ -1,0 +1,29 @@
+{
+  "source_job": "2026-09-23__20-04-36",
+  "kind": "artifact_regrade_not_model_trial",
+  "raw_evidence_changed": false,
+  "restorations": [
+    {
+      "path": "t20-exact-forecast__MteQG7J/artifacts/app/engine/model.py",
+      "before_sha256": "5bc9835d2ccc6cdfbdb53a13247b575d3413dea8557d3d4aca0c13006f0ea7ef",
+      "after_sha256": "76d73fb1c749b3c6a5c37507eaefbf2f3e60bc892fa48f69f08b535202cd8c93"
+    },
+    {
+      "path": "t20-exact-forecast__MteQG7J/lock.json",
+      "before_sha256": "b0b6fe2c38026d85824349d3fd363f1364303a4e3181b5006fb6ea5abaf265ff",
+      "after_sha256": "50b07df5ac546d78c534e000ee138546013849280d6e457a2c70a2fc10706b7b"
+    },
+    {
+      "path": "t20-exact-forecast__MteQG7J/result.json",
+      "before_sha256": "155d99c3e5f233d64f9bfac8a3194a1a88bedb4e3a33ede34b5a5510e0cdbaf1",
+      "after_sha256": "f02e0ae0fe297affb46fb03412a1cbceb568688da077303856e0df24d589d830"
+    },
+    {
+      "path": "t20-exact-forecast__MteQG7J/verifier/details.json",
+      "before_sha256": "1b0f846d0a2bc6fa86f084eca4aaabc9a34f8ec854610db7de72b1e72d8293d2",
+      "after_sha256": "5b6546333dfc7fb50eca2212e27ac7a6e4512aea79f5e857fecd6e712cf064d8"
+    }
+  ],
+  "exit_code": 0,
+  "task_version": "0.1.1"
+}

@@ -1,0 +1,63 @@
+{
+    "id": "0949191e-5d22-43c5-9d3a-a64fe443943d",
+    "started_at": "2026-09-27T04:01:42.019779",
+    "updated_at": "2026-09-27T04:42:38.359251",
+    "finished_at": "2026-09-27T04:42:38.359251",
+    "n_total_trials": 1,
+    "stats": {
+        "n_completed_trials": 1,
+        "n_errored_trials": 0,
+        "n_running_trials": 0,
+        "n_pending_trials": 0,
+        "n_cancelled_trials": 0,
+        "n_retries": 0,
+        "evals": {
+            "codex__gpt-6-astra__adhoc": {
+                "n_trials": 1,
+                "n_errors": 0,
+                "metrics": [
+                    {
+                        "artifact_quality": 1.0,
+                        "constraint_satisfaction": 1.0,
+                        "functional_correctness": 1.0,
+                        "overall": 1.0,
+                        "robustness": 1.0
+                    }
+                ],
+                "pass_at_k": {},
+                "reward_stats": {
+                    "functional_correctness": {
+                        "1.0": [
+                            "task__yKvhvAB"
+                        ]
+                    },
+                    "robustness": {
+                        "1.0": [
+                            "task__yKvhvAB"
+                        ]
+                    },
+                    "constraint_satisfaction": {
+                        "1.0": [
+                            "task__yKvhvAB"
+                        ]
+                    },
+                    "artifact_quality": {
+                        "1.0": [
+                            "task__yKvhvAB"
+                        ]
+                    },
+                    "overall": {
+                        "1.0": [
+                            "task__yKvhvAB"
+                        ]
+                    }
+                },
+                "exception_stats": {}
+            }
+        },
+        "n_input_tokens": 1272047,
+        "n_cache_tokens": 1221888,
+        "n_output_tokens": 20526,
+        "cost_usd": 2.7497779999999987
+    }
+}

@@ -10,19 +10,20 @@ everything it needs from the league folder it is given.
 
     python solution/forecast.py --league <folder> --out <file.csv>
 
-The output file has two columns, `fixture` and `p_home`, with one row per fixture in `<folder>/fixtures.csv`.
+The output file has two columns, `fixture` and `p_home`, with exactly one row per fixture in `<folder>/fixtures.csv`, no extra or duplicate fixture IDs, and finite probabilities in [0, 1]. Row order does not matter.
 
 ## How a forecast is graded
 
-The league is simulated, so the true probability that the home side wins each fixture is known exactly. Your forecast is graded against
-that number. No match is played and no result is used, so luck has no part in the grade.
+The league is simulated, so the task author can estimate each fixture's home-win probability using the hidden state. The stored estimates use
+100,000 simulations per batting order. They have Monte Carlo error, but are fixed before grading: no new match result is sampled to score your program.
 
 For a fixture with true probability `p` and forecast `q`, the penalty is `p*ln(p/q) + (1-p)*ln((1-p)/(1-q))`. It is zero when `q = p` and
 grows quickly when a forecast is confident and wrong. Forecasts are clipped to [0.002, 0.998]. Your regret on a league is the
 average penalty over its fixtures.
 
-Your regret is compared with that of a reference forecaster. The reference uses only the files you have, the engine you have, and standard
-statistical practice. It plays each fixture 4,000 times. Your program is run on this league and on seven leagues you have not seen. You pass
+Your regret is compared with that of a reference forecaster. At runtime the reference reads the same public files and engine you have. Its design
+uses prior scales informed by the generating spreads; it is therefore a designer-informed benchmark, not a claim of equal prior information.
+It simulates each fixture 4,000 times per batting order. Your program is run on this league and on seven leagues you have not seen. You pass
 if your regret, summed over all eight leagues, is at most 10 percent above the reference's sum, and the same holds for the seven
 unseen leagues on their own. Simulation noise in your own forecasts counts against you, so play each fixture enough times.
 
@@ -80,7 +81,7 @@ The fixtures are played at the start of the next season. Skills are as they stan
 
 ## Rules for your program
 
-* Everything it needs must be under `solution/`. The entry point is `solution/forecast.py`. It may import `engine`, which the grader
+* Everything it needs must be under `solution/` as ordinary files and directories, with no symbolic links or special files. The entry point is `solution/forecast.py`. It may import `engine`, which the grader
   supplies unchanged, and `numpy`, `pandas`, `scipy` and the Python standard library. Do not change anything under `engine/`.
 * It must give the same output every time it is run on the same folder. Fix your random seeds.
 * It has 12 minutes per league on two CPU cores and must not use the network.

@@ -1,0 +1,113 @@
+{
+  "status": "passed",
+  "scope": "settled_fixed_budget_batch",
+  "audited_at_utc": "2026-09-27T11:23:24.329280+00:00",
+  "runtime_version": "0.1.1",
+  "historical_baseline_commit": "3c28a5511713bd69df2d43165e754c3abf86daf3",
+  "runtime_files_checked": 119,
+  "runtime_files_unchanged": 109,
+  "runtime_files_revised": 9,
+  "runtime_files_added": 1,
+  "task_digest": "sha256:fa2f9f25281666c9829e355bbc598a36feb81f44049fb1ef38a4de573435cb0a",
+  "digest_correction": {
+    "planned_historical_task_digest": "sha256:a2fd25c5b1ddc00864363e47c9a7bacde3afed776896dbff9fe11938948a016a",
+    "snapshot_task_digest": "sha256:fa2f9f25281666c9829e355bbc598a36feb81f44049fb1ef38a4de573435cb0a",
+    "binding_sha256": "db9e8df161cd97d6a49b6b35f8f345467a10fa607ceec461e4bb8a075f104b43",
+    "runtime_files_matching_frozen_contract": 119,
+    "note": "Original plan digest retained. The executed snapshot differs only in reviewer README.md; both package digests reconstruct from the recorded hashes. The 119 runtime files match the frozen contract."
+  },
+  "runtime_freeze_commit": "e83f9972f310c8e66f1ea916eb5c75db70f9b5bf",
+  "plan_sha256": "1450dd1f3bb3ade54a84e8597449d05d4b5050e58f9a93cbc3f07e010d5992f8",
+  "planned_trials": 8,
+  "attempts_checked": 8,
+  "status_counts": {
+    "completed": 8
+  },
+  "clean_model_outcomes": {
+    "forecast_quality_failure": 3,
+    "pass": 5
+  },
+  "package_checked": true,
+  "budget_outcomes": {},
+  "settled_trials": 8,
+  "all_slots_settled": true,
+  "all_slots_normally_completed": true,
+  "warnings": [],
+  "checks": [
+    {
+      "attempt_id": "replication-20260927-gpt55-r1",
+      "status": "completed",
+      "classification": "forecast_quality_failure",
+      "artifact_graded": true,
+      "rounding_ambiguous_verdict_groups": []
+    },
+    {
+      "attempt_id": "replication-20260927-gpt55-r2",
+      "status": "completed",
+      "classification": "pass",
+      "artifact_graded": true,
+      "rounding_ambiguous_verdict_groups": []
+    },
+    {
+      "attempt_id": "replication-20260927-astra-r1",
+      "status": "completed",
+      "classification": "pass",
+      "artifact_graded": true,
+      "rounding_ambiguous_verdict_groups": []
+    },
+    {
+      "attempt_id": "replication-20260927-astra-r2",
+      "status": "completed",
+      "classification": "pass",
+      "artifact_graded": true,
+      "rounding_ambiguous_verdict_groups": []
+    },
+    {
+      "attempt_id": "replication-20260927-fable-r1",
+      "status": "completed",
+      "classification": "pass",
+      "artifact_graded": true,
+      "rounding_ambiguous_verdict_groups": []
+    },
+    {
+      "attempt_id": "replication-20260927-fable-r2",
+      "status": "completed",
+      "classification": "pass",
+      "artifact_graded": true,
+      "rounding_ambiguous_verdict_groups": []
+    },
+    {
+      "attempt_id": "replication-20260927-opus-r1",
+      "status": "completed",
+      "classification": "forecast_quality_failure",
+      "artifact_graded": true,
+      "rounding_ambiguous_verdict_groups": []
+    },
+    {
+      "attempt_id": "replication-20260927-opus-r2",
+      "status": "completed",
+      "classification": "forecast_quality_failure",
+      "artifact_graded": true,
+      "rounding_ambiguous_verdict_groups": []
+    }
+  ],
+  "publication_checks": {
+    "batch_files_compared": 19,
+    "excluded_file": "audit.json",
+    "plot_helper_sha256": "2622e0252f5bf58fdce428e1fbfc3bb816bd0c33b947e633337fb9afbdbb3eda",
+    "matchup_helper_sha256": "c946497704e441efa46b3e697448fc166cf86b1f012235bc5dbe7b3688b2bc94",
+    "matchup_probe_cases": 12,
+    "results_sha256": "c876dd793fb427aa6c5a5e585bb2caa4504501f4f78cfe15156ed4c0aefc9dc1",
+    "svg_sha256": "edec8984fdeaea60dc37a69a4cc980922e2f951e97c95a442ce04b1b725d6664",
+    "svg_canvas": [
+      1600,
+      1153
+    ],
+    "png_sha256": "79e78bd69db24b779d008f3eb1aecd146b6097f5baec16f476cdf32120457e27",
+    "png_canvas": [
+      3200,
+      2306
+    ],
+    "svg_regenerated_exactly": true
+  }
+}

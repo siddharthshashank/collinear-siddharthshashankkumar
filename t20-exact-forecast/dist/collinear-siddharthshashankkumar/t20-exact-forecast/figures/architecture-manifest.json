@@ -1,0 +1,18 @@
+{
+  "figures": [
+    "system_overview",
+    "calibration_pipeline",
+    "task_build_and_packaging",
+    "harbor_runtime",
+    "grading_rule",
+    "research_ladder",
+    "decision_path"
+  ],
+  "canvas": [
+    1600,
+    960
+  ],
+  "source": "src/architecture.py",
+  "runtime_changed": true,
+  "runtime_scope": "Verifier hardening in submission v0.1.1; historical model trials remain v0.1.0. Forecasting rule, data, engine and oracle are unchanged."
+}

@@ -10,9 +10,17 @@ The setting is a simulated Twenty20 cricket league. The agent gets three seasons
 
 ![From calibration and task packaging to Harbor execution and evidence](figures/system_overview.png)
 
-*Architecture drawing by Rutvikk Kharod, used with permission; see [provenance](PROVENANCE.md).*
+*Redrawn with Codex assistance from the repository and the earlier architecture by Rutvikk Kharod; [editable sources](figures/README.md) and [provenance](PROVENANCE.md).*
 
-## What the runs show
+## Current version and historical results
+
+The submitted package is **v0.1.1**. A deeper audit found artifact-boundary defects that documentation alone could not fix. This version rejects symbolic links and unsafe forecast files, validates complete fixture coverage and repeatability by fixture ID, cleans up child processes, and clears stale rewards before grading. The verifier runs with Docker networking disabled.
+
+The prompt now describes Monte Carlo precision and the reference's designer-informed priors accurately. The same five Python distributions are pinned by version and distribution hash. Data, engine, oracle and numerical scoring remain unchanged. The fresh **v0.1.1** oracle passes all components. The first current-version **GPT-5.5-high** attempt fails forecast quality at **1.230×** total / **1.246×** held-out reference regret, while passing artifact and constraint checks, with no infrastructure exception. [VALIDATION.md](VALIDATION.md) contains those results and the archived-program replay.
+
+A separate [eight-trial replication](REPLICATION_REPORT.md) is complete. With two high-effort native-harness attempts each, passes were **GPT-5.5 1/2, Opus 4.7 0/2, GPT-6-astra 2/2 and Fable 5.1 2/2**. All sessions finished normally with no retries. These current-version observations stay separate from the historical table below; they demonstrate a GPT-5.5 solution as well as failures.
+
+[REPLICATION_REPORT.md](REPLICATION_REPORT.md) tracks the subsequent predeclared v0.1.1 batch across both model pairs. Its slot and attempt records keep passes, task failures and operational problems distinguishable. The earlier v0.1.1 attempt above is not pooled into that batch; the table below is the original **v0.1.0** series.
 
 | Model and harness | Graded submissions | Passes | Total regret / reference |
 |---|---:|---:|---:|
@@ -21,11 +29,11 @@ The setting is a simulated Twenty20 cricket league. The agent gets three seasons
 | Claude Fable 5.1 · Claude Code · high effort, supplementary | 3 | 2 | 1.008–1.104 |
 | GPT-6-astra · Codex · high effort, supplementary | 2 | 2 | 1.054–1.072 |
 
-The pass limit is **1.10×** the reference's regret, applied to all eight worlds and separately to the seven held-out worlds. A complete pass also requires valid output and the constraint checks. The limit was fixed before model trials.
+The pass limit is **1.10×** the reference's regret, applied to all eight worlds and separately to the seven held-out worlds. A complete pass also requires valid output and the constraint checks. The limit was committed before the archived evaluation series; the repository does not independently verify the chronology of earlier prototype work.
 
 The ten required-model submissions all missed the recorded rule. GPT-5.5's 1.109 result is borderline given uncertainty in the reference; a different GPT-5.5 session hit an account limit after writing its program. Excluding that interrupted session leaves 0/4 GPT-5.5 passes. The report accounts for four other excluded jobs, including one where the verifier graded the unchanged starter. These are not counted as substantive model failures.
 
-For the first six submissions, inspection and one-constant interventions support a specific diagnosis: the programs gave short player histories too much weight, and their checks did not catch it. The interventions cover one world; they do not show that one edit would pass the full task. [Read the evidence and limitations](RUN_REPORT.md).
+For the first six submissions, interventions support weak shrinkage as a contributor to error on one held-out world. Several agents had performed real predictive checks: GPT-5.5 run 2 beat a coin flip on 90 historical matches, while runs 4 and 6 compared modeling choices. The failure was more specific than skipped verification: those checks did not resolve the prior choices that hurt the final forecasts. [Read the transcript-based analysis](RUN_REPORT.md#7-failure-analysis).
 
 ## Run the packaged task
 
@@ -60,15 +68,13 @@ make submission
 
 `make data` is only for regenerating the synthetic data; it is not a prerequisite for reviewing or running this submission. Its cache does not track every input, so a changed simulator needs an intentional fresh data build. Rebuilding the original calibration additionally needs the untracked Cricsheet archive, whose download hash was not recorded.
 
-## Read further
+## Continue the review
 
-| Document | Purpose |
-|---|---|
-| [Design](DESIGN_DOCUMENT.md) | Task idea, economic relevance, design choices and long-horizon difficulty |
-| [Run report](RUN_REPORT.md) | Rules, trial identities, failure analysis, fairness audit and known verifier weaknesses |
-| [Validation](VALIDATION.md) | Fresh checks and evidence added during this documentation revision |
-| [Provenance](PROVENANCE.md) | Original work, data, licenses, drawings and AI assistance |
-| [Decision record](DECISIONS.md) | Historical alternatives and tradeoffs |
-| [Implementation notes](NOTES.md) | Detailed working notes; not the current submission checklist |
+1. [Decisions](DECISIONS.md): the reasoning, alternatives and evidence behind the design.
+2. [Run report](RUN_REPORT.md): historical trials, failure analysis and current-version boundaries.
+3. [Replication](REPLICATION_REPORT.md): the fixed plan, attempt records and results of the separate current-version batch.
+4. [Validation](VALIDATION.md): controls, verifier checks and the earlier v0.1.1 model attempt.
 
-The canonical assignment is reproduced in [ASSIGNMENT_BRIEF.md](ASSIGNMENT_BRIEF.md). Current Markdown documentation takes precedence over the earlier `docs/DESIGN.pdf`, which is retained as a historical design artifact.
+[Assumptions](ASSUMPTIONS.md) and [engineering notes](NOTES.md) support the reasoning. [Design](DESIGN_DOCUMENT.md) explains the architecture and economic relevance; [figure sources](figures/README.md) make the diagrams editable; [provenance](PROVENANCE.md) identifies external work and assistance.
+
+The full assignment is reproduced in [ASSIGNMENT_BRIEF.md](ASSIGNMENT_BRIEF.md), including the conflicting model names and my explicit interpretation. Current Markdown documentation takes precedence over the earlier `docs/DESIGN.pdf`, which is retained as a historical design artifact.

@@ -1,0 +1,130 @@
+{
+    "id": "625984f8-094a-40a1-806c-6b359e7d57db",
+    "task_name": "collinear-siddharthshashankkumar/t20-exact-forecast",
+    "trial_name": "t20-exact-forecast__6biVa9d",
+    "trial_uri": "file:///Users/siddharthshashank/Documents/Interview/collinear-siddharthshashankkumar/t20-exact-forecast/validation/jobs/revision-replay-gpt55/t20-exact-forecast__6biVa9d",
+    "task_id": {
+        "path": "/Users/siddharthshashank/Documents/Interview/collinear-siddharthshashankkumar/t20-exact-forecast/dist/collinear-siddharthshashankkumar/t20-exact-forecast"
+    },
+    "source": null,
+    "task_checksum": "09da1db2e8359d26899413fd9e25f8affdfd3067dd35a5307fb8d155b8618e6b",
+    "config": {
+        "task": {
+            "path": "/Users/siddharthshashank/Documents/Interview/collinear-siddharthshashankkumar/t20-exact-forecast/dist/collinear-siddharthshashankkumar/t20-exact-forecast",
+            "git_url": null,
+            "git_commit_id": null,
+            "name": null,
+            "ref": null,
+            "overwrite": false,
+            "download_dir": null,
+            "source": null
+        },
+        "trial_name": "t20-exact-forecast__6biVa9d",
+        "trials_dir": "/Users/siddharthshashank/Documents/Interview/collinear-siddharthshashankkumar/t20-exact-forecast/validation/jobs/revision-replay-gpt55",
+        "install_only": false,
+        "timeout_multiplier": 1.0,
+        "agent_timeout_multiplier": null,
+        "verifier_timeout_multiplier": null,
+        "agent_setup_timeout_multiplier": null,
+        "environment_build_timeout_multiplier": null,
+        "agent": {
+            "name": "codex",
+            "import_path": null,
+            "model_name": "openai/gpt-5.5",
+            "n_concurrent": null,
+            "concurrency_group": null,
+            "skills": [],
+            "override_timeout_sec": null,
+            "override_setup_timeout_sec": null,
+            "max_timeout_sec": null,
+            "resume_trajectory": false,
+            "load_trajectory": null,
+            "extra_allowed_hosts": [],
+            "kwargs": {
+                "reasoning_effort": "high"
+            },
+            "env": {
+                "CODEX_FORCE_AUTH_JSON": "****"
+            },
+            "mcp_servers": []
+        },
+        "user_agent": null,
+        "environment": {
+            "type": "docker",
+            "import_path": null,
+            "force_build": false,
+            "delete": true,
+            "cpu_enforcement_policy": "auto",
+            "memory_enforcement_policy": "auto",
+            "override_cpus": null,
+            "override_memory_mb": null,
+            "override_storage_mb": null,
+            "override_gpus": null,
+            "override_tpu": null,
+            "mounts": null,
+            "extra_docker_compose": [],
+            "kwargs": {},
+            "extra_allowed_hosts": []
+        },
+        "verifier": {
+            "override_timeout_sec": null,
+            "max_timeout_sec": null,
+            "disable": false
+        },
+        "artifacts": [],
+        "extra_instruction_paths": [],
+        "extra_instructions": [],
+        "job_id": "f220c89e-d08d-4749-b456-9b42d8fbc3bd",
+        "source_trial": {
+            "action": "regrade",
+            "type": "local",
+            "trial_id": "52005cbc-94bf-425b-aa22-d508fefdff1b",
+            "path": "/private/var/folders/80/39ty5kvj6dqfqd4ksgg9dsmw0000gn/T/collinear-regrade-fjrvpqps/2026-09-23__20-04-36/t20-exact-forecast__MteQG7J"
+        }
+    },
+    "agent_info": {
+        "name": "codex",
+        "version": "0.156.1",
+        "model_info": {
+            "name": "gpt-5.5",
+            "provider": "openai"
+        }
+    },
+    "agent_result": {
+        "n_input_tokens": 800291,
+        "n_cache_tokens": 754944,
+        "n_output_tokens": 16059,
+        "cost_usd": 1.0859770000000002,
+        "model_usage": {
+            "openai/gpt-5.5": {
+                "n_input_tokens": 800291,
+                "n_cache_tokens": 754944,
+                "n_output_tokens": 16059,
+                "cost_usd": 1.0859770000000002
+            }
+        },
+        "rollout_details": null,
+        "metadata": null
+    },
+    "verifier_result": {
+        "rewards": {
+            "functional_correctness": 0.0,
+            "robustness": 0.0,
+            "constraint_satisfaction": 1.0,
+            "artifact_quality": 1.0,
+            "overall": 0.0
+        }
+    },
+    "verifier_environment_mode": "separate",
+    "exception_info": null,
+    "started_at": "2026-09-27T08:01:39.317630Z",
+    "finished_at": "2026-09-27T08:22:40.091677Z",
+    "environment_setup": null,
+    "agent_setup": null,
+    "agent_execution": null,
+    "verifier": {
+        "started_at": "2026-09-27T08:01:39.446570Z",
+        "finished_at": "2026-09-27T08:22:40.091583Z"
+    },
+    "step_results": null
+}

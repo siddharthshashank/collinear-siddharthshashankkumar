@@ -1,0 +1,63 @@
+{
+    "id": "9fe9bbdf-6d93-424c-9ee1-f4015ce73e56",
+    "started_at": "2026-09-27T05:54:34.691976",
+    "updated_at": "2026-09-27T06:17:21.068168",
+    "finished_at": "2026-09-27T06:17:21.068168",
+    "n_total_trials": 1,
+    "stats": {
+        "n_completed_trials": 1,
+        "n_errored_trials": 0,
+        "n_running_trials": 0,
+        "n_pending_trials": 0,
+        "n_cancelled_trials": 0,
+        "n_retries": 0,
+        "evals": {
+            "claude-code__claude-opus-4-7__adhoc": {
+                "n_trials": 1,
+                "n_errors": 0,
+                "metrics": [
+                    {
+                        "artifact_quality": 1.0,
+                        "constraint_satisfaction": 1.0,
+                        "functional_correctness": 0.0,
+                        "overall": 0.0,
+                        "robustness": 0.0
+                    }
+                ],
+                "pass_at_k": {},
+                "reward_stats": {
+                    "functional_correctness": {
+                        "0.0": [
+                            "task__GQqqirW"
+                        ]
+                    },
+                    "robustness": {
+                        "0.0": [
+                            "task__GQqqirW"
+                        ]
+                    },
+                    "constraint_satisfaction": {
+                        "1.0": [
+                            "task__GQqqirW"
+                        ]
+                    },
+                    "artifact_quality": {
+                        "1.0": [
+                            "task__GQqqirW"
+                        ]
+                    },
+                    "overall": {
+                        "0.0": [
+                            "task__GQqqirW"
+                        ]
+                    }
+                },
+                "exception_stats": {}
+            }
+        },
+        "n_input_tokens": 2365901,
+        "n_cache_tokens": 2251592,
+        "n_output_tokens": 62171,
+        "cost_usd": 3.822981000000001
+    }
+}

@@ -1,0 +1,14 @@
+{
+  "version": "0.1.1",
+  "commit": "e83f9972f310c8e66f1ea916eb5c75db70f9b5bf",
+  "commit_url": "https://github.com/siddharthshashank/collinear-siddharthshashankkumar/commit/e83f9972f310c8e66f1ea916eb5c75db70f9b5bf",
+  "fresh_target_job": "revision-gpt55-high",
+  "model": "openai/gpt-5.5",
+  "agent": "codex",
+  "reasoning_effort": "high",
+  "numeric_rule_changed": false,
+  "data_engine_oracle_changed": false,
+  "precommitment": "Runtime committed after controls began and before the fresh target trial. All outcomes are retained; no threshold tuning follows this trial.",
+  "task_digest": "sha256:a2fd25c5b1ddc00864363e47c9a7bacde3afed776896dbff9fe11938948a016a",
+  "task_digest_note": "Supplemental binding captured from current Harbor job lockfiles during validation. The linked Git commit, made before the fresh trial, is the runtime precommitment."
+}

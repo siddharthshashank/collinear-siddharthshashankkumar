@@ -1,6 +1,7 @@
-"""Focused behavioral checks of the frozen grader; no container-isolation claim."""
+"""Focused behavioral checks of the current grader; no container-isolation claim."""
 import importlib.util
 import io
+import hashlib
 import json
 import tempfile
 import unittest
@@ -8,7 +9,7 @@ from pathlib import Path
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
-spec = importlib.util.spec_from_file_location("frozen_grader", ROOT / "harbor/tests/grader.py")
+spec = importlib.util.spec_from_file_location("task_grader", ROOT / "harbor/tests/grader.py")
 grader = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(grader)
 
@@ -135,8 +136,8 @@ if __name__ == "__main__":
     result = unittest.TextTestRunner(stream=stream, verbosity=2).run(unittest.defaultTestLoader.loadTestsFromTestCase(VerifierContract))
     output = stream.getvalue()
     print(output, end="")
-    summary = {"status":"passed" if result.wasSuccessful() else "failed","tests":result.testsRun,"failures":len(result.failures),"errors":len(result.errors),
-               "scope":"Frozen grader behavior on tiny synthetic fixtures. Does not test network, privilege isolation, process cleanup or the simulator.",
+    summary = {"grader_sha256": hashlib.sha256((ROOT / "harbor/tests/grader.py").read_bytes()).hexdigest(), "status":"passed" if result.wasSuccessful() else "failed","tests":result.testsRun,"failures":len(result.failures),"errors":len(result.errors),
+               "scope":"Current grader behavior on tiny synthetic fixtures. Does not test network, privilege isolation, process cleanup or the simulator; separate hardening tests cover specific regressions.",
                "output":output}
     (ROOT / "validation/verifier-contract.json").write_text(json.dumps(summary,indent=2)+"\n")
     raise SystemExit(0 if result.wasSuccessful() else 1)

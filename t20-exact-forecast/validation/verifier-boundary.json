@@ -1,0 +1,83 @@
+{
+  "status": "both_demonstrated_false_passes_rejected_after_fix",
+  "date": "2026-09-27",
+  "scope": "Disposable Docker root/runner boundary with two synthetic fixtures per world. No model run, Harbor artifact transfer, real private truth or network access.",
+  "container": {
+    "image": "t20-tests-amd64:latest",
+    "image_id_prefix": "9413d0bcbd8b",
+    "platform": "linux/amd64",
+    "network": "none",
+    "root_source_mount": "read-only"
+  },
+  "probe_source": "dev/probe_verifier_boundary.py",
+  "baseline_source": "harbor/tests/grader.py from the evaluated v0.1.0 snapshot; SHA-256 verified below",
+  "before": {
+    "probe": "synthetic_private_truth_boundary",
+    "grader_sha256": "142bbe023b0355b985a00c50f5004e4fe8c8c371f9460076663b4def84f0b8b4",
+    "cases": [
+      {
+        "route": "artifact_symlink",
+        "direct_private_read_denied": true,
+        "private_truth_materialized_in_submission": true,
+        "reward": {
+          "functional_correctness": 1.0,
+          "robustness": 1.0,
+          "constraint_satisfaction": 1.0,
+          "artifact_quality": 1.0,
+          "overall": 1.0
+        },
+        "submission_error": null,
+        "visible_problem": null
+      },
+      {
+        "route": "output_symlink",
+        "direct_private_read_denied": true,
+        "private_truth_materialized_in_submission": false,
+        "reward": {
+          "functional_correctness": 1.0,
+          "robustness": 1.0,
+          "constraint_satisfaction": 1.0,
+          "artifact_quality": 1.0,
+          "overall": 1.0
+        },
+        "submission_error": null,
+        "visible_problem": null
+      }
+    ]
+  },
+  "after": {
+    "probe": "synthetic_private_truth_boundary",
+    "grader_sha256": "25e14448b4419239458f47e78ef302e6b10e7e9ed656fd56ed0e603c24f52311",
+    "cases": [
+      {
+        "route": "artifact_symlink",
+        "direct_private_read_denied": true,
+        "private_truth_materialized_in_submission": false,
+        "reward": {
+          "functional_correctness": 0.0,
+          "robustness": 0.0,
+          "constraint_satisfaction": 0.6667,
+          "artifact_quality": 0.0,
+          "overall": 0.0
+        },
+        "submission_error": "artifact contains a link or special file: private",
+        "visible_problem": "artifact contains a link or special file: private"
+      },
+      {
+        "route": "output_symlink",
+        "direct_private_read_denied": true,
+        "private_truth_materialized_in_submission": false,
+        "reward": {
+          "functional_correctness": 0.0,
+          "robustness": 0.0,
+          "constraint_satisfaction": 0.6667,
+          "artifact_quality": 0.0,
+          "overall": 0.0
+        },
+        "submission_error": null,
+        "visible_problem": "could not read the forecast file: [Errno 40] Too many levels of symbolic links: 'visible.csv'"
+      }
+    ]
+  },
+  "interpretation": "The runner could not directly read the synthetic private files in either version. The old privileged grader copied or read through candidate symlinks and awarded a false full pass. The current grader rejects both routes. This targeted probe is not a complete sandbox security audit."
+}

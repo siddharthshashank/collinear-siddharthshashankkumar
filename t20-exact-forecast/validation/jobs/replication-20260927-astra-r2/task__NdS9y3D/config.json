@@ -1,0 +1,19 @@
+{
+    "task": {
+        "path": "/private/tmp/collinear-replication-20260927/task"
+    },
+    "trial_name": "task__NdS9y3D",
+    "trials_dir": "/Users/siddharthshashank/Documents/Interview/collinear-siddharthshashankkumar/t20-exact-forecast/validation/jobs/replication-20260927-astra-r2",
+    "agent": {
+        "name": "codex",
+        "model_name": "openai/gpt-6-astra",
+        "kwargs": {
+            "reasoning_effort": "high",
+            "version": "0.157.1"
+        },
+        "env": {
+            "CODEX_AUTH_JSON_PATH": "/Use****son"
+        }
+    },
+    "job_id": "17fe4121-5ee0-49e8-8ad6-5a11fdd55418"
+}

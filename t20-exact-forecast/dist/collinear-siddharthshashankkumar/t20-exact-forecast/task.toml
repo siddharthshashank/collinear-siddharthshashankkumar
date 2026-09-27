@@ -5,8 +5,8 @@ artifacts = ["/app/solution", "/app/engine"]
 
 [task]
 name = "collinear-siddharthshashankkumar/t20-exact-forecast"
-version = "0.1.0"
-description = "Forecast match win probabilities in a synthetic T20 league from ball-by-ball history. Forecasts are graded by their exact expected log loss against the true probabilities, on the visible league and on leagues the agent never sees."
+version = "0.1.1"
+description = "Forecast match win probabilities in a synthetic T20 league from ball-by-ball history. Forecasts are graded by expected log loss against stored Monte Carlo probability estimates, on the visible league and seven held-out leagues."
 keywords = ["probabilistic forecasting", "statistical inference", "shrinkage", "simulation", "proper scoring rules"]
 
 [[task.authors]]
@@ -21,13 +21,16 @@ category = "data_science"
 tags = ["python", "forecasting", "statistics", "sports-analytics", "simulation"]
 expert_time_estimate_min = 480.0
 junior_time_estimate_min = 1500.0
+verifier_network_policy = "Docker Compose network_mode: none; Harbor public baseline avoids its unsupported nftables policy switch on some Docker Desktop kernels."
 
 [verifier]
 timeout_sec = 10800.0
 environment_mode = "separate"
 
 [verifier.environment]
-# the grader makes no network calls; "no-network" is left undeclared because Docker Desktop on macOS rejects that mode
+# Actual isolation is enforced by tests/docker-compose.yaml (network_mode: none).
+# Harbor 0.23's no-network controller requires kernel features absent on the tested Docker Desktop VM.
+network_mode = "public"
 build_timeout_sec = 900.0
 cpus = 2
 memory_mb = 4096

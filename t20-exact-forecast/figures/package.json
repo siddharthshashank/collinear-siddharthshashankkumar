@@ -1,0 +1,7 @@
+{
+  "name": "t20-architecture-figures",
+  "private": true,
+  "description": "Reviewer diagram rendering only; not a task runtime dependency",
+  "scripts": {"render": "node src/render.cjs"},
+  "dependencies": {"sharp": "0.35.4"}
+}

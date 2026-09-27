@@ -1,0 +1,135 @@
+{
+    "id": "eb8cfb5b-82cf-4bcb-81c2-f3fb85bbda51",
+    "task_name": "collinear-siddharthshashankkumar/t20-exact-forecast",
+    "trial_name": "task__gZoWu3L",
+    "trial_uri": "file:///Users/siddharthshashank/Documents/Interview/collinear-siddharthshashankkumar/t20-exact-forecast/validation/jobs/replication-20260927-fable-r1/task__gZoWu3L",
+    "task_id": {
+        "path": "/private/tmp/collinear-replication-20260927/task"
+    },
+    "source": null,
+    "task_checksum": "b6edaeec63ca6e3e4a473fb496372bccdd371e593eb5e0e62f8887016f410741",
+    "config": {
+        "task": {
+            "path": "/private/tmp/collinear-replication-20260927/task",
+            "git_url": null,
+            "git_commit_id": null,
+            "name": null,
+            "ref": null,
+            "overwrite": false,
+            "download_dir": null,
+            "source": null
+        },
+        "trial_name": "task__gZoWu3L",
+        "trials_dir": "/Users/siddharthshashank/Documents/Interview/collinear-siddharthshashankkumar/t20-exact-forecast/validation/jobs/replication-20260927-fable-r1",
+        "install_only": false,
+        "timeout_multiplier": 1.0,
+        "agent_timeout_multiplier": null,
+        "verifier_timeout_multiplier": null,
+        "agent_setup_timeout_multiplier": null,
+        "environment_build_timeout_multiplier": null,
+        "agent": {
+            "name": "claude-code",
+            "import_path": null,
+            "model_name": "anthropic/claude-fable-5-1",
+            "n_concurrent": null,
+            "concurrency_group": null,
+            "skills": [],
+            "override_timeout_sec": null,
+            "override_setup_timeout_sec": null,
+            "max_timeout_sec": null,
+            "resume_trajectory": false,
+            "load_trajectory": null,
+            "extra_allowed_hosts": [],
+            "kwargs": {
+                "reasoning_effort": "high",
+                "version": "2.1.274"
+            },
+            "env": {
+                "CLAUDE_CODE_OAUTH_TOKEN": "${CLAUDE_CODE_OAUTH_TOKEN}"
+            },
+            "mcp_servers": []
+        },
+        "user_agent": null,
+        "environment": {
+            "type": "docker",
+            "import_path": null,
+            "force_build": false,
+            "delete": true,
+            "cpu_enforcement_policy": "auto",
+            "memory_enforcement_policy": "auto",
+            "override_cpus": null,
+            "override_memory_mb": null,
+            "override_storage_mb": null,
+            "override_gpus": null,
+            "override_tpu": null,
+            "mounts": null,
+            "extra_docker_compose": [],
+            "kwargs": {},
+            "extra_allowed_hosts": []
+        },
+        "verifier": {
+            "override_timeout_sec": null,
+            "max_timeout_sec": null,
+            "disable": false
+        },
+        "artifacts": [],
+        "extra_instruction_paths": [],
+        "extra_instructions": [],
+        "job_id": "7eadc046-d610-4877-914e-0426a7c23a92",
+        "source_trial": null
+    },
+    "agent_info": {
+        "name": "claude-code",
+        "version": "2.1.274",
+        "model_info": {
+            "name": "claude-fable-5-1",
+            "provider": "anthropic"
+        }
+    },
+    "agent_result": {
+        "n_input_tokens": 7790735,
+        "n_cache_tokens": 7628964,
+        "n_output_tokens": 103630,
+        "cost_usd": 10.304541000000004,
+        "model_usage": {
+            "claude-fable-5-1": {
+                "n_input_tokens": 7790735,
+                "n_cache_tokens": 7628964,
+                "n_output_tokens": 103630,
+                "cost_usd": 9.105973500000001
+            }
+        },
+        "rollout_details": null,
+        "metadata": null
+    },
+    "verifier_result": {
+        "rewards": {
+            "functional_correctness": 1.0,
+            "robustness": 1.0,
+            "constraint_satisfaction": 1.0,
+            "artifact_quality": 1.0,
+            "overall": 1.0
+        }
+    },
+    "verifier_environment_mode": "separate",
+    "exception_info": null,
+    "started_at": "2026-09-27T09:01:42.097933Z",
+    "finished_at": "2026-09-27T10:56:42.026134Z",
+    "environment_setup": {
+        "started_at": "2026-09-27T09:01:42.236370Z",
+        "finished_at": "2026-09-27T09:01:46.461844Z"
+    },
+    "agent_setup": {
+        "started_at": "2026-09-27T09:01:46.461919Z",
+        "finished_at": "2026-09-27T09:03:19.436308Z"
+    },
+    "agent_execution": {
+        "started_at": "2026-09-27T09:03:19.436944Z",
+        "finished_at": "2026-09-27T10:27:21.130902Z"
+    },
+    "verifier": {
+        "started_at": "2026-09-27T10:27:26.381754Z",
+        "finished_at": "2026-09-27T10:56:42.026070Z"
+    },
+    "step_results": null
+}

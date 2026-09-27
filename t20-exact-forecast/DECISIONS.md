@@ -2,9 +2,9 @@
 
 **Siddharth Shashank Kumar · t20-exact-forecast**
 
-The hardest part of this assignment was choosing a failure worth measuring. A task that defeats an agent because something is missing tells me little. I wanted a task where the program could run successfully and still reveal a mistake in the agent's judgment.
+I wanted to distinguish a working program from a justified forecast. A submission can parse every file, use the correct simulator and produce a valid answer while still trusting noisy player estimates too much. That is the failure I designed this task to investigate.
 
-This is a retrospective account of the decisions recorded in the repository, not a claim that every sentence was written before the experiments. I distinguish measured results from design judgments and later interpretations. The pass rule has a separate, verifiable history: it was committed before the first model pilot in commit `99b2d9f`.
+This is a retrospective account of the decisions recorded in the repository, not a claim that every sentence was written before the experiments. I distinguish measured results from design judgments and later interpretations. The pass rule has a verifiable boundary for the shipped evidence: commit `99b2d9f` precedes the archived evaluation series. The older notes describe an earlier prototype and pilots in another repository; this commit alone does not verify that earlier chronology.
 
 Read [the run report](RUN_REPORT.md) for trial identities and [the assumptions](ASSUMPTIONS.md) for what remains untested.
 
@@ -18,7 +18,7 @@ Read [the run report](RUN_REPORT.md) for trial identities and [the assumptions](
 | Source of difficulty | Undocumented rules or domain trivia | A public mechanism with unknown quantities |
 | Evaluation | A lucky match result deciding the grade | Expected loss against stored probability estimates |
 | Pass rule | One unusually noisy world deciding everything | Pooled regret, plus a held-out-only check |
-| Failure analysis | Explaining a score without testing the explanation | Read the programs, then change one setting |
+| Failure analysis | Treating every failure as missing validation | Inspect which checks were run, then intervene on the fitted priors |
 | Reporting | Improving the story after seeing the results | Keep the rule, report the passes and qualify the misses |
 
 ## 1. I changed the problem, rather than making the first one larger
@@ -31,7 +31,7 @@ I chose forecasting because a mistake in the strength of an estimate can survive
 
 **Tradeoff.** I gave up a cleaner software-correctness specification and took on calibration, statistical uncertainty and a harder fairness argument.
 
-**Evidence boundary.** The earlier candidates are described in the historical notes; their trial records are not shipped here. The submission's model-failure claim rests on the forecasting jobs, not those earlier accounts.
+**Evidence boundary.** These earlier candidates are described in the [original decision record](https://github.com/siddharthshashank/collinear-siddharthshashankkumar/blob/3c28a55/t20-exact-forecast/DECISIONS.md). Their trial records are not shipped here. I retain that account as background, not independent evidence that either task was too easy.
 
 ## 2. I used a simulated cricket league to make the answer measurable
 
@@ -57,7 +57,7 @@ That makes the difficulty more specific: can the agent estimate quantities from 
 
 **Cost.** The engine gives the solver a useful testing tool. A capable agent can generate its own leagues, and the passing programs used that opportunity. I accept that: a fair route to a solution should be available.
 
-**What I learned later.** Providing a testing route is not enough. One failed program generated validation worlds using the same loose priors as its estimator. Its check was internally consistent but did not challenge the assumption that mattered.
+**What the runs exposed.** Providing a testing route is not enough. Opus run 3 generated its own validation worlds and inferred a reference score from the handbook's rough coin-flip comparison. GPT-5.5 runs 2, 4 and 6 instead tested forecasts against past match outcomes. Those are different limitations: a synthetic test can assume the distribution it needs to investigate, while a legitimate historical backtest can be too noisy or too weak a comparison to establish the required forecast quality.
 
 **Evidence.** The packaged handbook and engine; [failure analysis](RUN_REPORT.md#7-failure-analysis).
 
@@ -109,15 +109,15 @@ I then added a second application of the rule on the seven held-out worlds alone
 
 **Evidence.** [Research design figure](figures/research_ladder.png), `dev/bar_analysis.py`, [bar.log](bar.log), and the two-rule checks in [validation](VALIDATION.md).
 
-## 8. I fixed the 10% tolerance before seeing the model scores
+## 8. I kept the committed 10% tolerance for the archived trials
 
-Ten percent was a design choice informed by the development comparisons. It left room above the reference while remaining below the nearby weak methods in the pooled analysis. Committing it first made later outcomes interpretable.
+Ten percent was a design choice informed by the development comparisons, rather than a uniquely optimal statistical cutoff. The rounded records in `bar.log` put the pooled no-shrinkage comparison at about 1.27 times the reference. A 1.10 limit left some room above the reference while still rejecting that comparison. Commit `99b2d9f`, dated 23 September at 18:59 CDT, precedes the first archived model job at 19:48 that day. The historical notes describe earlier work elsewhere; I cannot use this commit to certify that all task-development decisions preceded every earlier experiment.
 
 When GPT-5.5 reached 1.109 times reference regret, moving the limit to 1.12 would have changed that verdict. I kept the original rule.
 
-The review then exposed a distinction I had underemphasized: preserving a rule does not make a near-threshold result a strong measurement. The development estimate of reference variability is roughly 1.1%; a ratio near 1.10 needs caution. I now report the recorded failure and the uncertainty together.
+The review exposed a distinction I had underemphasized: preserving a rule does not make a near-threshold result a strong measurement. The often-quoted 1.14% pooled variability is an approximation computed from rounded per-world standard deviations, assuming zero covariance. The reference simulations reused seeds across worlds, and the log does not retain the repeat vectors needed to measure their covariance. I therefore cannot treat 1.14%, or the earlier 1.08–1.12 caution range, as measured uncertainty bounds. The two near misses remain weak evidence of separation; clear misses elsewhere carry the failure claim.
 
-**Next version.** Average the reference across more simulations or seeds and calibrate the new threshold before new pilots. I would not apply that revision retroactively.
+**Next measurement change.** Retain the full per-world, per-repeat score matrix, vary simulation streams explicitly, and measure the pooled score directly before choosing a new reference or threshold. I would not apply a new denominator retroactively.
 
 **Evidence.** `harbor/bar.json`, commit `99b2d9f`, [run report, Section 2](RUN_REPORT.md#2-the-rule-behind-every-verdict).
 
@@ -129,7 +129,7 @@ The 10% tolerance gives some room around the reference, but I have not measured 
 
 **Alternative.** Use a reference that estimates its own prior scales. That would make the fairness argument cleaner.
 
-**Why retain this version.** Changing the denominator after the recorded trials would create a different experiment. I preserve the evaluated version and disclose the limitation, including the handbook's understated description of the reference.
+**Why retain this denominator.** Changing it after the recorded trials would create a different forecasting experiment. I keep the original reference and threshold while disclosing the limitation, including the original handbook's understated description of the reference. Verifier hardening is versioned separately; it does not make the reference fairer.
 
 **What I would change first.** A learned-scale reference, followed by a fresh bar analysis and new trials. This takes priority over making the task harder.
 
@@ -139,9 +139,9 @@ A score is only useful if the surrounding system works. The oracle shows that a 
 
 The first oracle run caught a shell assignment error that a syntax check had missed. The reference was never installed, so the verifier graded the starter. I retained that failed run and its successful replacement instead of treating the first result as a task failure.
 
-I also separated the verifier from the agent environment and used an unprivileged runner for submitted code. This reduces answer leakage in the intended container setup.
+I separated the verifier from the agent environment and intended to run submitted code as an unprivileged user. That design reduces exposure, but intent is not enough: the later review found a path through symlinked submission files that needed an explicit adversarial check.
 
-**Cost and limit.** Isolation adds packaging complexity. The frozen implementation still has network and process-cleanup weaknesses; the LLM task review did not establish that it was secure against every hostile submission.
+**Cost and limit.** Isolation adds packaging complexity. The original verifier has network, artifact-boundary and process-cleanup weaknesses; the LLM task review did not establish security. Verifier hardening is tracked as a new version with its own controls and replay evidence, rather than quietly credited to the original trials.
 
 **Evidence.** [Controls](RUN_REPORT.md#4-positive-and-negative-controls), [runtime design](figures/harbor_runtime.png), and [known verifier weaknesses](RUN_REPORT.md#10-verifier-design-and-failure-interpretation).
 
@@ -149,11 +149,11 @@ I also separated the verifier from the agent environment and used an unprivilege
 
 The weak-method comparisons gave the failed forecasts a recognizable pattern. That was useful for deciding where to inspect, but not enough to establish a cause.
 
-I read the first six programs and changed one prior or hedge setting at a time on held-out world c. Their original outputs first reproduced the archived scores. The interventions then moved scores in the direction predicted by the diagnosis.
+The recorded analysis changed one prior or hedge setting at a time in the first six programs on held-out world c. Their original outputs first reproduced the archived scores. The interventions moved scores in the direction predicted by the diagnosis. Reading the transcripts adds an important correction: all three GPT-5.5 programs had attempted chronological predictive checks, and run 6 also compared recency and probability-hedge settings. It would be inaccurate to describe them as doing no accuracy validation.
 
 For example, raising Opus run 1's common ridge penalty from 1 to 25 reduced its world-c ratio from 2.70 to 1.36. Halving GPT-5.5 run 6's prior standard deviations, retaining its hedge, moved 1.42 to 0.91.
 
-**What I can conclude.** Those choices materially affected those programs on that world.
+**What I can conclude.** Those prior choices materially affected those programs on that world. Their own validation did not reveal enough evidence to correct them before submission. For GPT-5.5 run 2, beating a coin flip on 90 past matches was a useful check, but it did not establish performance within 10% of a stronger reference on unseen worlds.
 
 **What I cannot conclude.** One edit would make every program pass all eight worlds, or that all ten failures have the same proven cause. Runs 7–10 have resemblance evidence only.
 
@@ -173,11 +173,11 @@ I also distinguish a graded submission from an uninterrupted session. GPT-5.5 ru
 
 ## 13. I revised the claims before changing the experiment
 
-The independent review identified attribution errors, overstated precision, an unmeasured reference advantage and verifier weaknesses. Some findings could be fixed in documentation and development tooling. Others would change what the models were evaluated on.
+The independent review identified attribution errors, overstated precision, an unmeasured reference advantage and verifier weaknesses. The first documentation revisions preserved the evaluated runtime. The deeper audit then found that documentation alone was insufficient for the artifact boundary.
 
-I corrected the claims and kept the evaluated runtime unchanged. That preserves a useful distinction: “the report is more accurate” is not the same as “the benchmark is now stronger”.
+I separate those responsibilities now: preserve the original v0.1.0 jobs as observations, identify the verifier hardening as v0.1.1, and validate the new version with its own controls, an archived-program replay and a fresh model attempt. The v0.1.1 oracle passes, the replay preserves its original score, and the new GPT-5.5-high artifact misses both forecast gates while meeting the interface and constraint checks. That fresh agent also performed predictive backtests; I retain the same distinction between observed failure and an unproven explanation of its cause. A replay checks an existing artifact under the revised verifier; it is not a new model attempt. Historical results should never be relabeled as fresh v0.1.1 trials.
 
-This revision brings the decision record into the submitted task and redraws the figures from the actual architecture. It does not add a new model experiment or strengthen an old result by changing its description.
+The same discipline applies to the explanation. Correcting the account of the GPT programs' validation makes the report more accurate; it does not strengthen their recorded failure margins.
 
 **Evidence.** [Review responses](RUN_REPORT.md#13-independent-review), [runtime hashes and checks](VALIDATION.md), and [figure provenance](PROVENANCE.md#drawings-and-independent-review).
 
@@ -185,4 +185,4 @@ This revision brings the decision record into the submitted task and redraws the
 
 I would spend the next iteration on the measurement before increasing difficulty: learn the reference priors from data, quantify its variation, audit the stored probabilities with independent random streams, and harden verifier isolation. Then I would run a human baseline and new model trials under a new committed rule.
 
-The important result for me is narrower than “these models cannot forecast”. Several programs implemented the mechanism correctly but did not test how much their estimates should be trusted. The task makes that distinction visible, while the limitations show where I still need better evidence.
+The result I can defend is narrower than “these models cannot forecast”. Several programs implemented the mechanism and attempted sensible checks, yet retained prior choices that hurt their forecasts on the evaluated worlds. The task makes the gap between running a test and obtaining decisive evidence visible. The same standard applies to my own reference, threshold and verifier.

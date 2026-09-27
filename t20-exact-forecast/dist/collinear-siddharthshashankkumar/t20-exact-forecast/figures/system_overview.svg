@@ -1,60 +1,62 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1600" height="960" viewBox="0 0 1600 960" role="img" aria-labelledby="title desc">
-<title id="title">One task. Two execution environments.</title><desc id="desc">Real data inform the simulation; public inputs reach the agent; scoring evidence stays with the verifier.</desc>
+<title id="title">From synthetic history to a scored forecast.</title><desc id="desc">Cricsheet aggregates and explicit design assumptions inform a simulator that generates eight synthetic worlds. One world's public files are visible during agent development; seven more are held out until grading. The submitted forecaster receives each world's public-schema files and returns a forecast CSV. Separately stored probability estimates and reference regrets reach the trusted grader, which validates forecasts and writes reward and detail files. Private scoring data do not enter the submitted program.</desc>
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#708497"/></marker></defs>
 <rect width="1600" height="960" fill="#F7F9FC"/>
 <text x="64" y="43" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="700" fill="#16766F" text-anchor="start" letter-spacing="1.8">COLLINEAR TAKE-HOME  /  ARCHITECTURE 01</text>
-<text x="64" y="100" font-family="Arial, Helvetica, sans-serif" font-size="43" font-weight="700" fill="#172A3A" text-anchor="start" letter-spacing="0">One task. Two execution environments.</text>
-<text x="64" y="138" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="400" fill="#516477" text-anchor="start" letter-spacing="0">Real data inform the simulation; public inputs reach the agent; scoring evidence stays with the verifier.</text>
+<text x="64" y="100" font-family="Arial, Helvetica, sans-serif" font-size="43" font-weight="700" fill="#172A3A" text-anchor="start" letter-spacing="0">From synthetic history to a scored forecast.</text>
+<text x="64" y="138" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="400" fill="#516477" text-anchor="start" letter-spacing="0">The program receives league files. The trusted grader also receives private scoring data.</text>
 <path d="M64 166 L1536 166" fill="none" stroke="#CFD9E2" stroke-width="1.5"/>
 <path d="M64 902 L1536 902" fill="none" stroke="#CFD9E2" stroke-width="1.5"/>
-<text x="64" y="931" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="400" fill="#516477" text-anchor="start" letter-spacing="0">t20-exact-forecast  ·  evaluated runtime v0.1.0</text>
+<text x="64" y="931" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="400" fill="#516477" text-anchor="start" letter-spacing="0">submission v0.1.1  ·  historical trials v0.1.0</text>
 <text x="1536" y="931" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="400" fill="#516477" text-anchor="end" letter-spacing="0">Design rationale and evidence in DECISIONS.md</text>
-<rect x="64" y="214" width="344" height="175" rx="14" fill="white" stroke="#CFD9E2" stroke-width="1.4"/>
-<rect x="64" y="232" width="4" height="139" rx="2" fill="#16766F" stroke="#16766F" stroke-width="1.4"/>
-<text x="88" y="246" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="700" fill="#16766F" text-anchor="start" letter-spacing="1">01 / CALIBRATE</text>
-<text x="88" y="282" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="700" fill="#172A3A" text-anchor="start" letter-spacing="0">Ground the scenario</text>
-<text x="88" y="317" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400" fill="#516477" text-anchor="start" letter-spacing="0">Cricsheet IPL aggregates</text>
-<text x="88" y="344" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400" fill="#516477" text-anchor="start" letter-spacing="0">Measured + chosen constants</text>
-<path d="M408 300 L432 300" fill="none" stroke="#708497" stroke-width="2.2" stroke-linejoin="round" marker-end="url(#arrow)"/>
-<rect x="440" y="214" width="344" height="175" rx="14" fill="white" stroke="#CFD9E2" stroke-width="1.4"/>
-<rect x="440" y="232" width="4" height="139" rx="2" fill="#16766F" stroke="#16766F" stroke-width="1.4"/>
-<text x="464" y="246" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="700" fill="#16766F" text-anchor="start" letter-spacing="1">02 / GENERATE</text>
-<text x="464" y="282" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="700" fill="#172A3A" text-anchor="start" letter-spacing="0">Create eight worlds</text>
-<text x="464" y="317" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400" fill="#516477" text-anchor="start" letter-spacing="0">Invented players and teams</text>
-<text x="464" y="344" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400" fill="#516477" text-anchor="start" letter-spacing="0">History + future fixtures</text>
-<path d="M784 300 L808 300" fill="none" stroke="#708497" stroke-width="2.2" stroke-linejoin="round" marker-end="url(#arrow)"/>
-<rect x="816" y="214" width="344" height="175" rx="14" fill="white" stroke="#CFD9E2" stroke-width="1.4"/>
-<rect x="816" y="232" width="4" height="139" rx="2" fill="#516477" stroke="#516477" stroke-width="1.4"/>
-<text x="840" y="246" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="700" fill="#516477" text-anchor="start" letter-spacing="1">03 / PACKAGE</text>
-<text x="840" y="282" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="700" fill="#172A3A" text-anchor="start" letter-spacing="0">Assemble one task</text>
-<text x="840" y="317" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400" fill="#516477" text-anchor="start" letter-spacing="0">Public and private contexts</text>
-<text x="840" y="344" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400" fill="#516477" text-anchor="start" letter-spacing="0">Oracle + reviewer evidence</text>
-<path d="M1160 300 L1184 300" fill="none" stroke="#708497" stroke-width="2.2" stroke-linejoin="round" marker-end="url(#arrow)"/>
-<rect x="1192" y="214" width="344" height="175" rx="14" fill="white" stroke="#CFD9E2" stroke-width="1.4"/>
-<rect x="1192" y="232" width="4" height="139" rx="2" fill="#A36916" stroke="#A36916" stroke-width="1.4"/>
-<text x="1216" y="246" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="700" fill="#A36916" text-anchor="start" letter-spacing="1">04 / EVALUATE</text>
-<text x="1216" y="282" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="700" fill="#172A3A" text-anchor="start" letter-spacing="0">Run in Harbor</text>
-<text x="1216" y="317" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400" fill="#516477" text-anchor="start" letter-spacing="0">Native agent harness</text>
-<text x="1216" y="344" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400" fill="#516477" text-anchor="start" letter-spacing="0">Separate programmatic grader</text>
-<text x="64" y="446" font-family="Arial, Helvetica, sans-serif" font-size="14" font-weight="700" fill="#516477" text-anchor="start" letter-spacing="1">VISIBILITY IS A DESIGN CHOICE</text>
-<rect x="64" y="470" width="708" height="304" rx="18" fill="#EDF4FC" stroke="#EDF4FC" stroke-width="1.4"/>
-<text x="88" y="504" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="700" fill="#2164A6" text-anchor="start" letter-spacing="1.1">AGENT-VISIBLE / environment/app</text>
-<rect x="88" y="530" width="660" height="204" rx="14" fill="white" stroke="#CFD9E2" stroke-width="1.4"/>
-<rect x="88" y="548" width="4" height="168" rx="2" fill="#2164A6" stroke="#2164A6" stroke-width="1.4"/>
-<text x="112" y="562" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="700" fill="#2164A6" text-anchor="start" letter-spacing="1">INPUTS → DURABLE DELIVERABLE</text>
-<text x="112" y="598" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="700" fill="#172A3A" text-anchor="start" letter-spacing="0">Learn from the public history</text>
-<text x="112" y="633" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="400" fill="#516477" text-anchor="start" letter-spacing="0">7 CSVs · handbook · public engine · starter</text>
-<text x="112" y="660" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="400" fill="#516477" text-anchor="start" letter-spacing="0">Agent writes solution/forecast.py and supporting files</text>
-<text x="112" y="687" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="400" fill="#516477" text-anchor="start" letter-spacing="0">The program must work on unseen league folders</text>
-<rect x="828" y="470" width="708" height="304" rx="18" fill="#F3EFF8" stroke="#F3EFF8" stroke-width="1.4"/>
-<text x="852" y="504" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="700" fill="#735395" text-anchor="start" letter-spacing="1.1">VERIFIER-ONLY / tests</text>
-<rect x="852" y="530" width="660" height="204" rx="14" fill="white" stroke="#CFD9E2" stroke-width="1.4"/>
-<rect x="852" y="548" width="4" height="168" rx="2" fill="#735395" stroke="#735395" stroke-width="1.4"/>
-<text x="876" y="562" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="700" fill="#735395" text-anchor="start" letter-spacing="1">PRIVATE EVIDENCE → REWARD</text>
-<text x="876" y="598" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="700" fill="#172A3A" text-anchor="start" letter-spacing="0">Score the submitted program</text>
-<text x="876" y="633" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="400" fill="#516477" text-anchor="start" letter-spacing="0">8 worlds · stored probabilities · reference regrets</text>
-<text x="876" y="660" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="400" fill="#516477" text-anchor="start" letter-spacing="0">Pristine engine · output, timing and repeat checks</text>
-<text x="876" y="687" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="400" fill="#516477" text-anchor="start" letter-spacing="0">reward.json + per-world details + retained job records</text>
-<text x="64" y="832" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="700" fill="#172A3A" text-anchor="start" letter-spacing="0">Why this split?</text>
-<text x="230" y="832" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="400" fill="#516477" text-anchor="start" letter-spacing="0">Test inference from the supplied evidence while keeping evaluation data out of the agent image.</text>
+<rect x="64" y="214" width="430" height="172" rx="14" fill="white" stroke="#CFD9E2" stroke-width="1.4"/>
+<rect x="64" y="232" width="4" height="136" rx="2" fill="#16766F" stroke="#16766F" stroke-width="1.4"/>
+<text x="86" y="246" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="700" fill="#16766F" text-anchor="start" letter-spacing="0">Authoring inputs</text>
+<text x="86" y="285" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700" fill="#172A3A" text-anchor="start" letter-spacing="0">Calibrated simulator</text>
+<text x="86" y="324" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="400" fill="#516477" text-anchor="start" letter-spacing="0">Cricsheet aggregates</text>
+<text x="86" y="356" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="400" fill="#516477" text-anchor="start" letter-spacing="0">Explicit design assumptions</text>
+<rect x="588" y="214" width="430" height="172" rx="14" fill="white" stroke="#CFD9E2" stroke-width="1.4"/>
+<rect x="588" y="232" width="4" height="136" rx="2" fill="#16766F" stroke="#16766F" stroke-width="1.4"/>
+<text x="610" y="246" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="700" fill="#16766F" text-anchor="start" letter-spacing="0">Offline generation</text>
+<text x="610" y="285" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700" fill="#172A3A" text-anchor="start" letter-spacing="0">Eight synthetic worlds</text>
+<text x="610" y="324" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="400" fill="#516477" text-anchor="start" letter-spacing="0">Invented teams and players</text>
+<text x="610" y="356" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="400" fill="#516477" text-anchor="start" letter-spacing="0">Public history + hidden state</text>
+<rect x="1112" y="214" width="424" height="172" rx="14" fill="white" stroke="#CFD9E2" stroke-width="1.4"/>
+<rect x="1112" y="232" width="4" height="136" rx="2" fill="#735395" stroke="#735395" stroke-width="1.4"/>
+<text x="1134" y="246" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="700" fill="#735395" text-anchor="start" letter-spacing="0">Verifier only</text>
+<text x="1134" y="285" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700" fill="#172A3A" text-anchor="start" letter-spacing="0">Stored scoring data</text>
+<text x="1134" y="324" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="400" fill="#516477" text-anchor="start" letter-spacing="0">Probability estimates</text>
+<text x="1134" y="356" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="400" fill="#516477" text-anchor="start" letter-spacing="0">Reference regrets</text>
+<path d="M494 300 L580 300" fill="none" stroke="#708497" stroke-width="2.2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M1018 300 L1104 300" fill="none" stroke="#708497" stroke-width="2.2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M803 386 L803 430 L279 430 L279 478" fill="none" stroke="#708497" stroke-width="2.2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M1324 386 L1324 478" fill="none" stroke="#708497" stroke-width="2.2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="64" y="486" width="430" height="232" rx="14" fill="white" stroke="#CFD9E2" stroke-width="1.4"/>
+<rect x="64" y="504" width="4" height="196" rx="2" fill="#2164A6" stroke="#2164A6" stroke-width="1.4"/>
+<text x="86" y="518" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="700" fill="#2164A6" text-anchor="start" letter-spacing="0">Public file schema</text>
+<text x="86" y="557" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700" fill="#172A3A" text-anchor="start" letter-spacing="0">League folders</text>
+<text x="86" y="596" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="400" fill="#516477" text-anchor="start" letter-spacing="0">1 visible during development</text>
+<text x="86" y="628" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="400" fill="#516477" text-anchor="start" letter-spacing="0">7 held out until grading</text>
+<text x="86" y="660" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="400" fill="#516477" text-anchor="start" letter-spacing="0">Engine + handbook supplied</text>
+<rect x="588" y="486" width="430" height="232" rx="14" fill="white" stroke="#CFD9E2" stroke-width="1.4"/>
+<rect x="588" y="504" width="4" height="196" rx="2" fill="#2164A6" stroke="#2164A6" stroke-width="1.4"/>
+<text x="610" y="518" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="700" fill="#2164A6" text-anchor="start" letter-spacing="0">Agent-written artifact</text>
+<text x="610" y="557" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700" fill="#172A3A" text-anchor="start" letter-spacing="0">solution/forecast.py</text>
+<text x="610" y="596" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="400" fill="#516477" text-anchor="start" letter-spacing="0">Learn on the visible league</text>
+<text x="610" y="628" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="400" fill="#516477" text-anchor="start" letter-spacing="0">Run on each league folder</text>
+<text x="610" y="660" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="400" fill="#516477" text-anchor="start" letter-spacing="0">Return one forecast CSV</text>
+<rect x="1112" y="486" width="424" height="232" rx="14" fill="white" stroke="#CFD9E2" stroke-width="1.4"/>
+<rect x="1112" y="504" width="4" height="196" rx="2" fill="#735395" stroke="#735395" stroke-width="1.4"/>
+<text x="1134" y="518" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="700" fill="#735395" text-anchor="start" letter-spacing="0">Trusted grader</text>
+<text x="1134" y="557" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700" fill="#172A3A" text-anchor="start" letter-spacing="0">Validate and score</text>
+<text x="1134" y="596" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="400" fill="#516477" text-anchor="start" letter-spacing="0">Compare forecasts to truth</text>
+<text x="1134" y="628" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="400" fill="#516477" text-anchor="start" letter-spacing="0">Apply both accuracy gates</text>
+<text x="1134" y="660" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="400" fill="#516477" text-anchor="start" letter-spacing="0">Write reward + details</text>
+<path d="M494 606 L580 606" fill="none" stroke="#708497" stroke-width="2.2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="541" y="586" font-family="Arial, Helvetica, sans-serif" font-size="23" font-weight="400" fill="#516477" text-anchor="middle" letter-spacing="0">files</text>
+<path d="M1018 606 L1104 606" fill="none" stroke="#708497" stroke-width="2.2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="1065" y="586" font-family="Arial, Helvetica, sans-serif" font-size="23" font-weight="400" fill="#516477" text-anchor="middle" letter-spacing="0">CSV</text>
+<rect x="64" y="778" width="1472" height="91" rx="12" fill="#EDF4FC" stroke="#CFD9E2" stroke-width="1.4"/>
+<text x="88" y="812" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="700" fill="#172A3A" text-anchor="start" letter-spacing="0">The access boundary</text>
+<text x="88" y="851" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="400" fill="#516477" text-anchor="start" letter-spacing="0">League folders reach the runner. Stored probabilities and reference scores reach only the grader.</text>
 </svg>

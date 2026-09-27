@@ -48,9 +48,9 @@ The historical notes also identify a useful boundary problem: `History.played` i
 
 The comparison methods gave the raw score meaning. The bar analysis then tested whether a per-world threshold could tolerate reference noise while still separating weaker methods.
 
-It could not do both consistently in the observed development worlds. That led to pooling. The resulting 10% tolerance was committed before the model pilots.
+It could not do both consistently in the observed development worlds. That led to pooling. The resulting 10% tolerance was committed before the archived evaluation series. The historical notes mention earlier experiments in another repository; that earlier chronology is not independently established by this checkout.
 
-The later review changed the interpretation of near misses, not the recorded threshold. Repeatable grading against a stored denominator is different from a denominator with no estimation uncertainty.
+The later review changed the interpretation of near misses, not the recorded threshold. Repeatable grading against a stored denominator is different from a denominator with no estimation uncertainty. In particular, `bar.log` retains marginal per-world variability but not the repeat matrix needed to measure pooled covariance. The 1.14% calculation assumes independence even though the simulations share seeds across worlds; it should not be used as a measured error bar.
 
 **Evidence:** [bar.log](bar.log), [decision 7](DECISIONS.md#7-i-abandoned-a-per-world-threshold-after-checking-its-noise), [run report](RUN_REPORT.md#2-the-rule-behind-every-verdict).
 
@@ -68,22 +68,24 @@ Fresh executions during the documentation work reproduced those controls: oracle
 
 A forecast's nearest comparison method is a useful clue. I did not treat it as a causal explanation.
 
-The recorded follow-up inspected the first six programs and reran them with one prior or hedge setting changed. Reproducing the unedited score first made the edited result interpretable. The direction of the change supported overconfident estimation as a contributor to those failures.
+The recorded follow-up inspected the first six programs and reran them with one prior or hedge setting changed. Reproducing the unedited score first made the edited result interpretable. The direction of the change supported overly weak shrinkage as a contributor to those failures.
 
-The scope matters: one world, six programs. Extending that claim to all worlds or all ten runs would require more experiments.
+The deeper transcript review corrected an overly simple explanation. GPT-5.5 runs 2, 4 and 6 did perform historical predictive checks. Run 2 beat the coin flip on 90 held-out matches; run 4 compared rolling forecasts before and after adding form; run 6 compared recency and output hedges. Opus run 3 tested synthetic worlds but inferred a reference score from a rough aggregate hint. These are substantive checks with different limitations, not a common story of skipped verification.
+
+The narrower conclusion is that the checks did not establish the required forecast quality or eliminate the harmful prior choices before submission. The interventions cover one world and six programs. Extending that causal claim to all worlds or all ten runs would require more experiments.
 
 **Evidence:** [ablations.log](ablations.log), `dev/ablate_pilots.py`, [failure analysis](RUN_REPORT.md#7-failure-analysis).
 
 ## 8. Preserve the experiment while improving the handoff
 
-The documentation revision adds an evidence audit, focused verifier checks and a one-task archive. Runtime hashes distinguish a clearer explanation from an altered task.
+The documentation revisions added an evidence audit, focused verifier checks and a one-task archive. Runtime hashes distinguish a clearer explanation from an altered task. The later artifact-boundary finding also required verifier hardening, so that change is identified as v0.1.1, with fresh controls and archived-program replays recorded separately from the original v0.1.0 model jobs.
 
-The current architecture figures are editable SVGs generated from a common source. They distinguish data flow from visibility, show the oracle as an alternative control route, and label the actual network-policy limitation. These details prevent a polished figure from overstating what the implementation enforces.
+The current architecture figures are editable SVGs generated from a common source. They distinguish data flow from visibility, show the oracle as an alternative control route, and label the actual network enforcement. These details prevent a polished figure from overstating what the implementation enforces.
 
 **Evidence:** [validation](VALIDATION.md), [figure sources and reproduction](figures/README.md).
 
 ## Checks I still owe the task
 
-I would next test independent simulation streams, a learned-prior reference, stricter verifier isolation and more intervention worlds. I would also run a human baseline. Those checks address the most consequential assumptions; adding another attractive diagram or another aggregate match would not substitute for them.
+I would next retain and analyze complete simulation-repeat matrices, test independent streams, evaluate a learned-prior reference and extend the interventions to more worlds. I would also run a human baseline. Verifier isolation needs adversarial tests alongside positive and negative controls. Those checks address the most consequential assumptions; another diagram or aggregate match would not substitute for them.
 
 The [assumption register](ASSUMPTIONS.md) makes those open questions explicit.

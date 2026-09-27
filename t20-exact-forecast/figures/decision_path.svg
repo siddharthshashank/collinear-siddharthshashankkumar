@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1600" height="960" viewBox="0 0 1600 960" role="img" aria-labelledby="title desc">
-<title id="title">The task choice was an experiment too.</title><desc id="desc">I compared what each candidate would measure, how I could verify it, and whether its difficulty was substantive.</desc>
+<title id="title">The task choice was an experiment too.</title><desc id="desc">Three task ideas are compared. Earlier backtest-audit attempts were set aside after reported model repairs; ingest under faults was rejected by design judgment without a pilot. Forecasting was selected because a mechanically correct program can still over-trust uneven histories, providing a measurable statistical failure mode. The accepted cost is a more difficult fairness argument and Monte Carlo uncertainty. Separate trial records for the earlier ideas are not included.</desc>
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#708497"/></marker></defs>
 <rect width="1600" height="960" fill="#F7F9FC"/>
 <text x="64" y="43" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="700" fill="#16766F" text-anchor="start" letter-spacing="1.8">COLLINEAR TAKE-HOME  /  ARCHITECTURE 07</text>
@@ -7,7 +7,7 @@
 <text x="64" y="138" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="400" fill="#516477" text-anchor="start" letter-spacing="0">I compared what each candidate would measure, how I could verify it, and whether its difficulty was substantive.</text>
 <path d="M64 166 L1536 166" fill="none" stroke="#CFD9E2" stroke-width="1.5"/>
 <path d="M64 902 L1536 902" fill="none" stroke="#CFD9E2" stroke-width="1.5"/>
-<text x="64" y="931" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="400" fill="#516477" text-anchor="start" letter-spacing="0">t20-exact-forecast  ·  evaluated runtime v0.1.0</text>
+<text x="64" y="931" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="400" fill="#516477" text-anchor="start" letter-spacing="0">submission v0.1.1  ·  historical trials v0.1.0</text>
 <text x="1536" y="931" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="400" fill="#516477" text-anchor="end" letter-spacing="0">Design rationale and evidence in DECISIONS.md</text>
 <rect x="64" y="229" width="444" height="241" rx="14" fill="white" stroke="#CFD9E2" stroke-width="1.4"/>
 <rect x="64" y="247" width="4" height="205" rx="2" fill="#516477" stroke="#516477" stroke-width="1.4"/>

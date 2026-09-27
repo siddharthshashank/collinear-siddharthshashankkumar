@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1600" height="960" viewBox="0 0 1600 960" role="img" aria-labelledby="title desc">
-<title id="title">Calibrate the setting; expose the assumptions.</title><desc id="desc">Keep observations, design choices and validation separate so a good fit is not mistaken for independent evidence.</desc>
+<title id="title">Calibrate the setting; expose the assumptions.</title><desc id="desc">The calibration pipeline reconstructs match state from 1,243 IPL matches and 295,557 deliveries, measures repeatable aggregate structure, and exports calibration constants. Measured profiles and variation are distinguished from chosen or tuned transfer rates, form drift and simplified rules. Agreement with a tuning target is calibration, not independent validation.</desc>
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#708497"/></marker></defs>
 <rect width="1600" height="960" fill="#F7F9FC"/>
 <text x="64" y="43" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="700" fill="#16766F" text-anchor="start" letter-spacing="1.8">COLLINEAR TAKE-HOME  /  ARCHITECTURE 02</text>
@@ -7,7 +7,7 @@
 <text x="64" y="138" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="400" fill="#516477" text-anchor="start" letter-spacing="0">Keep observations, design choices and validation separate so a good fit is not mistaken for independent evidence.</text>
 <path d="M64 166 L1536 166" fill="none" stroke="#CFD9E2" stroke-width="1.5"/>
 <path d="M64 902 L1536 902" fill="none" stroke="#CFD9E2" stroke-width="1.5"/>
-<text x="64" y="931" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="400" fill="#516477" text-anchor="start" letter-spacing="0">t20-exact-forecast  ·  evaluated runtime v0.1.0</text>
+<text x="64" y="931" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="400" fill="#516477" text-anchor="start" letter-spacing="0">submission v0.1.1  ·  historical trials v0.1.0</text>
 <text x="1536" y="931" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="400" fill="#516477" text-anchor="end" letter-spacing="0">Design rationale and evidence in DECISIONS.md</text>
 <rect x="64" y="214" width="344" height="206" rx="14" fill="white" stroke="#CFD9E2" stroke-width="1.4"/>
 <rect x="64" y="232" width="4" height="170" rx="2" fill="#16766F" stroke="#16766F" stroke-width="1.4"/>
@@ -46,7 +46,7 @@
 <text x="88" y="601" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="400" fill="#516477" text-anchor="start" letter-spacing="0">Derived from the archive and the recorded analysis.</text>
 <text x="88" y="642" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="400" fill="#516477" text-anchor="start" letter-spacing="0">Source: league/calibration.json</text>
 <rect x="828" y="477" width="708" height="243" rx="18" fill="#FFF6E5" stroke="#FFF6E5" stroke-width="1.4"/>
-<text x="852" y="511" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="700" fill="#A36916" text-anchor="start" letter-spacing="1.1">EXPLICIT DESIGN CHOICES</text>
+<text x="852" y="511" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="700" fill="#895610" text-anchor="start" letter-spacing="1.1">EXPLICIT DESIGN CHOICES</text>
 <text x="852" y="552" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="700" fill="#172A3A" text-anchor="start" letter-spacing="0">Transfers, form drift and simplified rules</text>
 <text x="852" y="601" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="400" fill="#516477" text-anchor="start" letter-spacing="0">Chosen or tuned; not all are independently estimated.</text>
 <text x="852" y="642" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="400" fill="#516477" text-anchor="start" letter-spacing="0">Source: Design in league/calibration.py</text>

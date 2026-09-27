@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1600" height="960" viewBox="0 0 1600 960" role="img" aria-labelledby="title desc">
-<title id="title">Choose the rule before reading model results.</title><desc id="desc">Development experiments informed the threshold; later trials and interventions test the result under that fixed rule.</desc>
+<title id="title">Choose the rule before reading model results.</title><desc id="desc">Development comparisons on separate worlds informed a pooled-regret rule and a held-out-only gate. A ten percent tolerance was committed before the archived model trials. Later oracle and no-op controls, model trials and interventions were evaluated under that rule. The decision to pool addressed observed per-world reference variation of up to 5.8 percent, but uncertainty still limits interpretation near the threshold.</desc>
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#708497"/></marker></defs>
 <rect width="1600" height="960" fill="#F7F9FC"/>
 <text x="64" y="43" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="700" fill="#16766F" text-anchor="start" letter-spacing="1.8">COLLINEAR TAKE-HOME  /  ARCHITECTURE 06</text>
@@ -7,7 +7,7 @@
 <text x="64" y="138" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="400" fill="#516477" text-anchor="start" letter-spacing="0">Development experiments informed the threshold; later trials and interventions test the result under that fixed rule.</text>
 <path d="M64 166 L1536 166" fill="none" stroke="#CFD9E2" stroke-width="1.5"/>
 <path d="M64 902 L1536 902" fill="none" stroke="#CFD9E2" stroke-width="1.5"/>
-<text x="64" y="931" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="400" fill="#516477" text-anchor="start" letter-spacing="0">t20-exact-forecast  ·  evaluated runtime v0.1.0</text>
+<text x="64" y="931" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="400" fill="#516477" text-anchor="start" letter-spacing="0">submission v0.1.1  ·  historical trials v0.1.0</text>
 <text x="1536" y="931" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="400" fill="#516477" text-anchor="end" letter-spacing="0">Design rationale and evidence in DECISIONS.md</text>
 <rect x="64" y="234" width="444" height="222" rx="14" fill="white" stroke="#CFD9E2" stroke-width="1.4"/>
 <rect x="64" y="252" width="4" height="186" rx="2" fill="#16766F" stroke="#16766F" stroke-width="1.4"/>
@@ -18,12 +18,12 @@
 <text x="88" y="391" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="400" fill="#516477" text-anchor="start" letter-spacing="0">Measure score variation</text>
 <path d="M508 345 L570 345" fill="none" stroke="#708497" stroke-width="2.2" stroke-linejoin="round" marker-end="url(#arrow)"/>
 <rect x="578" y="234" width="444" height="222" rx="14" fill="white" stroke="#CFD9E2" stroke-width="1.4"/>
-<rect x="578" y="252" width="4" height="186" rx="2" fill="#A36916" stroke="#A36916" stroke-width="1.4"/>
-<text x="602" y="266" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="700" fill="#A36916" text-anchor="start" letter-spacing="1">02 / COMMITMENT</text>
+<rect x="578" y="252" width="4" height="186" rx="2" fill="#895610" stroke="#895610" stroke-width="1.4"/>
+<text x="602" y="266" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="700" fill="#895610" text-anchor="start" letter-spacing="1">02 / COMMITMENT</text>
 <text x="602" y="302" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="700" fill="#172A3A" text-anchor="start" letter-spacing="0">Fix the evaluation rule</text>
 <text x="602" y="337" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="400" fill="#516477" text-anchor="start" letter-spacing="0">Pool regret across worlds</text>
 <text x="602" y="364" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="400" fill="#516477" text-anchor="start" letter-spacing="0">Add the held-out-only gate</text>
-<text x="602" y="391" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="400" fill="#516477" text-anchor="start" letter-spacing="0">Commit 10% tolerance before pilots</text>
+<text x="602" y="391" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="400" fill="#516477" text-anchor="start" letter-spacing="0">Commit 10% before archived trials</text>
 <path d="M1022 345 L1084 345" fill="none" stroke="#708497" stroke-width="2.2" stroke-linejoin="round" marker-end="url(#arrow)"/>
 <rect x="1092" y="234" width="444" height="222" rx="14" fill="white" stroke="#CFD9E2" stroke-width="1.4"/>
 <rect x="1092" y="252" width="4" height="186" rx="2" fill="#735395" stroke="#735395" stroke-width="1.4"/>

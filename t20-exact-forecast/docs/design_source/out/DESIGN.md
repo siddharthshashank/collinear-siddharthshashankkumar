@@ -1,3 +1,5 @@
+> Historical generated copy. Use the [source Markdown](../DESIGN.md) for working architecture-plate links; those point to current replacement SVGs while the captions remain historical. The [historical PDF](../../DESIGN.pdf) retains the original drawings. The [current design document](../../../DESIGN_DOCUMENT.md) describes the submitted architecture and qualifies the claims preserved below.
+
 # Grading forecasts against the exact truth
 
 Design document for a hard-but-fair Harbor task. t20-exact-forecast. Siddharth Shashank Kumar. September 2026.

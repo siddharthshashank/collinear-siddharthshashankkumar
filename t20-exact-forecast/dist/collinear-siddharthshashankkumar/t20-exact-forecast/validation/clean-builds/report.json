@@ -1,0 +1,84 @@
+{
+  "status": "passed",
+  "date": "2026-09-27",
+  "scope": "Both packaged Dockerfiles built with --no-cache on the existing Apple-silicon host, targeting linux/amd64. Application layers were rebuilt and dependencies downloaded again with --require-hashes. The digest-pinned base was already present. This is not a second-machine or empty-Docker-cache claim.",
+  "docker": {
+    "version": "29.2.1",
+    "desktop": "Docker Desktop 4.63.0 (220185)",
+    "server_architecture": "arm64",
+    "server_os": "linux",
+    "kernel_version": "6.12.72-linuxkit"
+  },
+  "base": {
+    "declared_reference": "python:3.12-slim@sha256:78387bc3881b8273120a12ebe6c1ab22b018ccc2c9adf565ae1ac9b536e184ea",
+    "id": "sha256:2fe5997d249a808b8eeea52c58a1dbffbba28754dc11699ef5c029f2d818ce79",
+    "repo_digests": [
+      "python@sha256:78387bc3881b8273120a12ebe6c1ab22b018ccc2c9adf565ae1ac9b536e184ea"
+    ],
+    "os": "linux",
+    "architecture": "amd64"
+  },
+  "runtime_unchanged": true,
+  "working_directory": "t20-exact-forecast",
+  "builds": [
+    {
+      "role": "agent",
+      "tag": "collinear-v011-agent-verified",
+      "command": "docker build --no-cache --platform linux/amd64 --progress plain --tag collinear-v011-agent-verified --file dist/collinear-siddharthshashankkumar/t20-exact-forecast/environment/Dockerfile dist/collinear-siddharthshashankkumar/t20-exact-forecast/environment",
+      "exit_code": 0,
+      "log": "agent.build.log",
+      "image": {
+        "id": "sha256:b16a9ad9d25ab434419ce2928dd32aace0e1c7a19eab1e813f33799a946854ee",
+        "os": "linux",
+        "architecture": "amd64",
+        "created": "2026-09-27T08:24:07.041675584Z"
+      },
+      "freeze_command": "docker run --rm --network none --platform linux/amd64 collinear-v011-agent-verified python -m pip freeze --all",
+      "freeze_exit_code": 0,
+      "freeze_file": "agent.pip-freeze.txt",
+      "context_sha256": "c0dffccb67c26dd28fe6333334948f363cad04c306133b97b541e825cbb5b978",
+      "context_file_count": 16,
+      "dockerfile_sha256": "cf432cf4a470f591837e03b5bd6d485d4c885a7f754730a226cafe43f9597321",
+      "requirements_lock_sha256": "f11dbf7d18105e368c5b1613ace618bd316f79905ad6a83b2c44febf5303f95b",
+      "log_sha256": "91242bfb0be04e99e68a87c2304d308fbffb87c0ae255c8545161e9ce88a45ec",
+      "log_bytes": 3640
+    },
+    {
+      "role": "verifier",
+      "tag": "collinear-v011-verifier-verified",
+      "command": "docker build --no-cache --platform linux/amd64 --progress plain --tag collinear-v011-verifier-verified --file dist/collinear-siddharthshashankkumar/t20-exact-forecast/tests/Dockerfile dist/collinear-siddharthshashankkumar/t20-exact-forecast/tests",
+      "exit_code": 0,
+      "log": "verifier.build.log",
+      "image": {
+        "id": "sha256:746ce09f8c6718e0e63a24a83fcc1a1e1c0ed871eb831b3f1da090753dd7d33b",
+        "os": "linux",
+        "architecture": "amd64",
+        "created": "2026-09-27T08:24:44.095432754Z"
+      },
+      "freeze_command": "docker run --rm --network none --platform linux/amd64 collinear-v011-verifier-verified python -m pip freeze --all",
+      "freeze_exit_code": 0,
+      "freeze_file": "verifier.pip-freeze.txt",
+      "context_sha256": "0a1e94b699ec0a8562394ea69fb1798f33a12dcedd7c090d96f87d43c1531e2a",
+      "context_file_count": 98,
+      "dockerfile_sha256": "96cb303b90865ef664c46a1b3d923676d57b4b0ef95f3176062a68bb3432b75d",
+      "requirements_lock_sha256": "f11dbf7d18105e368c5b1613ace618bd316f79905ad6a83b2c44febf5303f95b",
+      "log_sha256": "b6f0cfe3663e2c87eb36d7961992dc617e2faa03b75370c49f1255213792e21f",
+      "log_bytes": 3935
+    }
+  ],
+  "package_versions": {
+    "numpy": "2.4.4",
+    "pandas": "3.0.2",
+    "pip": "25.0.1",
+    "python-dateutil": "2.9.0.post0",
+    "scipy": "1.17.1",
+    "six": "1.17.0"
+  },
+  "network_note": "Builds required registry/package-index access. Both installed-package checks used --network none.",
+  "limitations": [
+    "Model harnesses are installed separately at trial time and are outside these Dockerfile builds.",
+    "Reproducible dependency selection does not imply that image metadata/build timestamps produce identical image IDs.",
+    "The host's Docker base-image cache was retained; --no-cache rebuilt Dockerfile application layers without removing any existing images."
+  ],
+  "context_hash_method": "SHA-256 of compact JSON mapping sorted context-relative file paths to file-content SHA-256 hashes; build contexts were not edited during these builds."
+}

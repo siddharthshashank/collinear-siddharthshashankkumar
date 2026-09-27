@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1600" height="960" viewBox="0 0 1600 960" role="img" aria-labelledby="title desc">
-<title id="title">A forecast must pass both accuracy gates.</title><desc id="desc">Expected logarithmic regret is computed against fixed Monte Carlo probability estimates; lower is better.</desc>
+<title id="title">A forecast must pass both accuracy gates.</title><desc id="desc">For each fixture the verifier computes Bernoulli logarithmic regret from a stored probability estimate and a submitted forecast clipped to 0.002 through 0.998, then averages by world. Functional correctness requires the sum across all eight worlds to be at most 1.10 times the reference sum. Robustness applies the same limit to the seven held-out worlds. Overall reward is functional correctness times one half robustness plus one quarter constraint satisfaction plus one quarter artifact quality. Artifact quality is the fraction of worlds with valid forecasts. Only an overall reward of one is a complete pass.</desc>
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#708497"/></marker></defs>
 <rect width="1600" height="960" fill="#F7F9FC"/>
 <text x="64" y="43" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="700" fill="#16766F" text-anchor="start" letter-spacing="1.8">COLLINEAR TAKE-HOME  /  ARCHITECTURE 05</text>
@@ -7,7 +7,7 @@
 <text x="64" y="138" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="400" fill="#516477" text-anchor="start" letter-spacing="0">Expected logarithmic regret is computed against fixed Monte Carlo probability estimates; lower is better.</text>
 <path d="M64 166 L1536 166" fill="none" stroke="#CFD9E2" stroke-width="1.5"/>
 <path d="M64 902 L1536 902" fill="none" stroke="#CFD9E2" stroke-width="1.5"/>
-<text x="64" y="931" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="400" fill="#516477" text-anchor="start" letter-spacing="0">t20-exact-forecast  ·  evaluated runtime v0.1.0</text>
+<text x="64" y="931" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="400" fill="#516477" text-anchor="start" letter-spacing="0">submission v0.1.1  ·  historical trials v0.1.0</text>
 <text x="1536" y="931" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="400" fill="#516477" text-anchor="end" letter-spacing="0">Design rationale and evidence in DECISIONS.md</text>
 <rect x="64" y="210" width="1472" height="170" rx="18" fill="#F1F4F7" stroke="#F1F4F7" stroke-width="1.4"/>
 <text x="88" y="244" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="700" fill="#516477" text-anchor="start" letter-spacing="1.1">01 / SCORE EACH FIXTURE, THEN AVERAGE WITHIN EACH WORLD</text>
@@ -16,20 +16,20 @@
 <path d="M800 380 L800 410 L417 410 L417 440" fill="none" stroke="#708497" stroke-width="2.2" stroke-linejoin="round" marker-end="url(#arrow)"/>
 <path d="M800 410 L1183 410 L1183 440" fill="none" stroke="#708497" stroke-width="2.2" stroke-linejoin="round" marker-end="url(#arrow)"/>
 <rect x="64" y="450" width="706" height="170" rx="14" fill="white" stroke="#CFD9E2" stroke-width="1.4"/>
-<rect x="64" y="468" width="4" height="134" rx="2" fill="#A36916" stroke="#A36916" stroke-width="1.4"/>
-<text x="88" y="482" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="700" fill="#A36916" text-anchor="start" letter-spacing="1">02A / FUNCTIONAL CORRECTNESS · F</text>
+<rect x="64" y="468" width="4" height="134" rx="2" fill="#895610" stroke="#895610" stroke-width="1.4"/>
+<text x="88" y="482" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="700" fill="#895610" text-anchor="start" letter-spacing="1">02A / FUNCTIONAL CORRECTNESS · F</text>
 <text x="88" y="518" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="700" fill="#172A3A" text-anchor="start" letter-spacing="0">All eight worlds</text>
 <text x="88" y="553" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="400" fill="#516477" text-anchor="start" letter-spacing="0">Sum of candidate regret ≤ 1.10 × reference sum</text>
 <text x="88" y="580" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="400" fill="#516477" text-anchor="start" letter-spacing="0">The visible world is included.</text>
 <rect x="830" y="450" width="706" height="170" rx="14" fill="white" stroke="#CFD9E2" stroke-width="1.4"/>
-<rect x="830" y="468" width="4" height="134" rx="2" fill="#A36916" stroke="#A36916" stroke-width="1.4"/>
-<text x="854" y="482" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="700" fill="#A36916" text-anchor="start" letter-spacing="1">02B / ROBUSTNESS · R</text>
+<rect x="830" y="468" width="4" height="134" rx="2" fill="#895610" stroke="#895610" stroke-width="1.4"/>
+<text x="854" y="482" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="700" fill="#895610" text-anchor="start" letter-spacing="1">02B / ROBUSTNESS · R</text>
 <text x="854" y="518" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="700" fill="#172A3A" text-anchor="start" letter-spacing="0">Seven held-out worlds</text>
 <text x="854" y="553" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="400" fill="#516477" text-anchor="start" letter-spacing="0">Same limit, computed without the visible world</text>
 <text x="854" y="580" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="400" fill="#516477" text-anchor="start" letter-spacing="0">Visible-world tuning cannot carry a weak method.</text>
 <rect x="64" y="678" width="1472" height="180" rx="18" fill="#EAF5F2" stroke="#EAF5F2" stroke-width="1.4"/>
 <text x="88" y="712" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="700" fill="#16766F" text-anchor="start" letter-spacing="1.1">03 / COMBINE WITH CONSTRAINTS AND ARTIFACT QUALITY</text>
 <text x="88" y="760" font-family="Arial, Helvetica, sans-serif" font-size="35" font-weight="700" fill="#172A3A" text-anchor="start" letter-spacing="0">overall = F × (0.50 R + 0.25 C + 0.25 A)</text>
-<text x="88" y="809" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="400" fill="#516477" text-anchor="start" letter-spacing="0">C: engine, repeatability, runtime   |   A: valid forecast share</text>
+<text x="88" y="809" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="400" fill="#516477" text-anchor="start" letter-spacing="0">C: engine, repeatability, runtime   |   A: fraction of worlds with valid output</text>
 <text x="1512" y="839" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" fill="#16766F" text-anchor="end" letter-spacing="0">Solved only when overall = 1.0</text>
 </svg>

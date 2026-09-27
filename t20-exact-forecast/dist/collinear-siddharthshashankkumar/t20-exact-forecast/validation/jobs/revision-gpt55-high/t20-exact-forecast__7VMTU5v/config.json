@@ -1,0 +1,18 @@
+{
+    "task": {
+        "path": "dist/collinear-siddharthshashankkumar/t20-exact-forecast"
+    },
+    "trial_name": "t20-exact-forecast__7VMTU5v",
+    "trials_dir": "/Users/siddharthshashank/Documents/Interview/collinear-siddharthshashankkumar/t20-exact-forecast/validation/jobs/revision-gpt55-high",
+    "agent": {
+        "name": "codex",
+        "model_name": "openai/gpt-5.5",
+        "kwargs": {
+            "reasoning_effort": "high"
+        },
+        "env": {
+            "CODEX_AUTH_JSON_PATH": "/Use****son"
+        }
+    },
+    "job_id": "33400e63-1efb-4474-aade-6c2bad888a99"
+}

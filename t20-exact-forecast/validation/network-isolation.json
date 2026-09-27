@@ -1,0 +1,32 @@
+{
+  "checked_at_utc": "2026-09-27T08:02:36.755994+00:00",
+  "status": "passed",
+  "method": "Docker inspect of running Harbor verifier containers; only network/resource fields retained",
+  "harbor_version": "0.23.0",
+  "harbor_nftables_support_on_this_host": false,
+  "enforcement": "tests/docker-compose.yaml network_mode: none",
+  "containers": [
+    {
+      "container": "t20-exact-forecast__6biva9d__verifier__trial-main-1",
+      "network_mode": "none",
+      "nano_cpus": 2000000000,
+      "memory_bytes": 4294967296
+    },
+    {
+      "container": "t20-exact-forecast__mnawuqf__verifier__trial-main-1",
+      "network_mode": "none",
+      "nano_cpus": 2000000000,
+      "memory_bytes": 4294967296
+    },
+    {
+      "job": "revision-gpt55-high",
+      "container": "t20-exact-forecast__7vmtu5v__verifier__trial-main-1",
+      "container_id": "42d21174c1a3",
+      "network_mode": "none",
+      "nano_cpus": 2000000000,
+      "memory_bytes": 4294967296,
+      "checked_on": "2026-09-27",
+      "inspection_note": "Fresh model trial verifier inspected while grading."
+    }
+  ]
+}

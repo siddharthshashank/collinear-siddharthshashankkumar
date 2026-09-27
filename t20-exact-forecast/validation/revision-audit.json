@@ -1,0 +1,81 @@
+{
+  "status": "passed",
+  "runtime_version": "0.1.1",
+  "historical_baseline_commit": "3c28a5511713bd69df2d43165e754c3abf86daf3",
+  "runtime_files_checked": 119,
+  "runtime_files_unchanged": 109,
+  "runtime_files_revised": 9,
+  "runtime_files_added": 1,
+  "runtime_freeze_commit": "e83f9972f310c8e66f1ea916eb5c75db70f9b5bf",
+  "harbor_task_digest": "sha256:a2fd25c5b1ddc00864363e47c9a7bacde3afed776896dbff9fe11938948a016a",
+  "current_evidence_files_preserved": 82,
+  "contract_tests": 11,
+  "hardening_tests": 13,
+  "oracle": {
+    "functional_correctness": 1.0,
+    "robustness": 1.0,
+    "constraint_satisfaction": 1.0,
+    "artifact_quality": 1.0,
+    "overall": 1.0
+  },
+  "nop": {
+    "functional_correctness": 0.0,
+    "robustness": 0.0,
+    "constraint_satisfaction": 1.0,
+    "artifact_quality": 1.0,
+    "overall": 0.0
+  },
+  "clean_builds": {
+    "status": "passed",
+    "roles": [
+      "agent",
+      "verifier"
+    ],
+    "package_versions": {
+      "numpy": "2.4.4",
+      "pandas": "3.0.2",
+      "pip": "25.0.1",
+      "python-dateutil": "2.9.0.post0",
+      "scipy": "1.17.1",
+      "six": "1.17.0"
+    },
+    "scope": "Both packaged Dockerfiles built with --no-cache on the existing Apple-silicon host, targeting linux/amd64. Application layers were rebuilt and dependencies downloaded again with --require-hashes. The digest-pinned base was already present. This is not a second-machine or empty-Docker-cache claim."
+  },
+  "historical_replay": {
+    "kind": "artifact_regrade_not_model_trial",
+    "reward": {
+      "functional_correctness": 0.0,
+      "robustness": 0.0,
+      "constraint_satisfaction": 1.0,
+      "artifact_quality": 1.0,
+      "overall": 0.0
+    },
+    "ratios": {
+      "all_leagues": 1.575,
+      "held_out_leagues": 1.613,
+      "coin_flip_for_comparison": 1.891
+    },
+    "recorded_reward_and_ratios_preserved": true
+  },
+  "fresh_target": {
+    "job": "revision-gpt55-high",
+    "kind": "fresh_model_trial",
+    "reward": {
+      "functional_correctness": 0.0,
+      "robustness": 0.0,
+      "constraint_satisfaction": 1.0,
+      "artifact_quality": 1.0,
+      "overall": 0.0
+    },
+    "ratios": {
+      "all_leagues": 1.23,
+      "held_out_leagues": 1.246,
+      "coin_flip_for_comparison": 1.891
+    },
+    "forecast_quality_failure": true,
+    "rounding_ambiguous_verdict_groups": [],
+    "model": "openai/gpt-5.5",
+    "harness": "codex",
+    "reasoning_effort": "high"
+  }
+}

@@ -13,5 +13,6 @@
     960
   ],
   "source": "src/architecture.py",
-  "runtime_changed": false
+  "runtime_changed": true,
+  "runtime_scope": "Verifier hardening in submission v0.1.1; historical model trials remain v0.1.0. Forecasting rule, data, engine and oracle are unchanged."
 }

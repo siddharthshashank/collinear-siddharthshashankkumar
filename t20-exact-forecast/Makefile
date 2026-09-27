@@ -5,7 +5,7 @@ T = dist/collinear-siddharthshashankkumar/t20-exact-forecast
 
 .PHONY: venv data bar package validate audit submission
 venv:          ## one-time: a local environment with the pinned libraries
-	$(PYTHON) -m venv .venv && .venv/bin/pip install -q -r harbor/requirements.lock
+	$(PYTHON) -m venv .venv && .venv/bin/pip install -q --require-hashes -r harbor/requirements.lock
 data:          ## leagues, exact truth, reference regret, careless tiers (about 25 minutes at the default from Saturday's test)
 	$(PY) dev/make_task_data.py --copies $(COPIES)
 bar:           ## what the pass bar has to absorb
@@ -17,5 +17,7 @@ package:
 audit:
 	$(PY) dev/audit_submission.py
 	$(PY) dev/test_verifier_contract.py
+	$(PY) dev/test_verifier_hardening.py
+	$(PY) dev/audit_revision.py
 submission: package audit
 	$(PY) dev/build_submission.py

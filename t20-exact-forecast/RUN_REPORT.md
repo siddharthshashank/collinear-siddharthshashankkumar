@@ -4,9 +4,11 @@
 
 This report separates three things: what the task checks, what the recorded trials show, and what remains uncertain. The [full assignment](ASSIGNMENT_BRIEF.md) names GPT-5.5-high / Opus 4.7 in the goal and explicit run requirement, but GPT-6-astra-high / Fable 5.1 in the target-outcome paragraph. I treat the repeated goal/run requirement as primary and report the other pair separately. That is an interpretation; this version does not establish a clean failure under the stricter newer-pair reading. [DECISIONS.md](DECISIONS.md) and [ASSUMPTIONS.md](ASSUMPTIONS.md) explain the approach and remaining uncertainty.
 
-The evaluated prompt, engine, data, oracle and verifier are preserved. Reviewer documentation and packaging have been revised. Fresh validation is recorded separately in [VALIDATION.md](VALIDATION.md).
+The current submission is **v0.1.1**. It hardens the verifier, clarifies the agent-facing contract, and locks the existing dependency versions. The engine, data, oracle, reference regrets and scoring rule are unchanged. The original **v0.1.0** evaluation and review are labeled separately below. Current controls and the artifact replay are recorded in [VALIDATION.md](VALIDATION.md); the fresh model attempt has its own subsection in Section 5.
 
 ## 1. Result at a glance
+
+**Current v0.1.1:** the oracle passes all five components, no-op fails overall, and one fresh GPT-5.5-high attempt fails forecast quality with **1.230×** total and **1.246×** held-out regret. Its constraints and artifact scores are **1.0**, with no infrastructure exception. [Current trial analysis](#fresh-v011-trial) and [validation records](VALIDATION.md) document this separate result.
 
 The original oracle passed every reward component at **1.0**, and the no-op starter scored **0.0 overall**. All ten archived submissions from the required models missed the forecasting rule: five Opus 4.7 and five GPT-5.5 submissions, using their native harnesses with high reasoning effort.
 
@@ -45,15 +47,15 @@ The verifier averages regret over each world's fixtures, then sums the world ave
 
 Only **overall = 1.0** counts as solved. A missing or failed submission can still receive partial component credit; it cannot satisfy the full success rule.
 
-The rule in `harbor/bar.json` was committed before the first pilot, job `2026-09-23__19-48-37`. The original commit is titled “Harbor metadata, pass bar, lock file, instruction”. The documentation revision does not change it.
+The rule in `harbor/bar.json` is present in commit `99b2d9f` (23 September, 18:59 CDT), before the first archived model job, `2026-09-23__19-48-37`. The older development notes describe a separate prototype and an earlier September 19 freeze/pilot sequence in another repository. This checkout establishes the ordering for the shipped evaluation series; it does not independently verify the earlier sequence.
 
 ### What “exact” means here
 
 The grader evaluates expected loss against **stored probability estimates**, not a newly sampled match outcome. Those estimates come from 100,000 simulated matches per batting order. Scoring is repeatable, but the underlying probabilities are Monte Carlo estimates.
 
-The reference forecast is also simulated, at 4,000 copies per batting order. Development resimulations in `bar.log` imply about **1.14%** relative variation in pooled reference regret. That makes ratios around 1.08–1.12 a useful caution band around the 1.10 threshold, not a formal confidence interval for each trial.
+The reference forecast is also simulated, at 4,000 copies per batting order. The previously reported **1.14%** pooled variability is an independence approximation, not a directly measured pooled standard deviation. It is reconstructed as `sqrt(sum((r_i * s_i)^2)) / sum(r_i)` from rounded per-world reference regrets `r_i` and relative standard deviations `s_i` in `bar.log`. That calculation omits cross-world covariance. The code reuses simulation seeds and fixture IDs across worlds, and the raw repeat vectors were not retained, so their covariance cannot be recovered from this log.
 
-GPT-5.5 run 6 at 1.109 and supplementary Fable run F2 at 1.104 fall in that band. Their fixed-rule verdicts remain recorded as failures; neither is strong evidence of a clear statistical separation from the pass threshold. The submission's target-model failure claim does not depend on them.
+The earlier 1.08–1.12 caution range should therefore not be treated as an established uncertainty interval. GPT-5.5 run 6 at 1.109 and supplementary Fable run F2 at 1.104 are small fixed-rule misses; without a direct uncertainty analysis, neither supports a clean separation from the 1.10 threshold. The failure claim rests on the much larger misses elsewhere. A stronger audit would retain the full repeat matrix and measure pooled variation directly under explicit simulation streams.
 
 ## 3. Environment and reproducibility boundaries
 
@@ -69,12 +71,12 @@ GPT-5.5 run 6 at 1.109 and supplementary Fable run F2 at 1.104 fall in that band
 | Session budgets | Agent: 10,800 seconds; verifier: 10,800 seconds |
 | Program budget | 720 seconds per world |
 | Model configuration | Native Codex or Claude Code harness; `reasoning_effort=high` in trial configs |
-| Network | Agent environment explicitly public for harness installation and API access; verifier network mode omitted, so no network isolation is claimed |
+| Network, v0.1.1 | Agent environment public for harness setup/API access; verifier Docker Compose service uses `network_mode: none` |
 | Program network rule | Handbook prohibits network use; the forecasting task needs no external data |
 
-The base image and three direct dependencies are pinned. Transitive Python dependencies are not fully locked or hash-pinned, and model harness installations may change between reruns. These are limits on byte-for-byte reproducibility. The committed data avoid having to regenerate the original calibration to run the task.
+The Python base image is pinned by digest. In v0.1.1, all five packages in the Linux numerical dependency closure are version- and hash-locked: NumPy, pandas, SciPy, python-dateutil 2.9.0.post0 and six 1.17.0. These match the previously used versions. Native model-harness installers are still separate provider tooling; their versions are recorded in each trial rather than presented as immutable task dependencies.
 
-The verifier makes no intended network calls. That is distinct from preventing submitted code from doing so. The original report attributed the omitted isolation setting to Docker Desktop compatibility; this revision does not treat that historical explanation as a verified platform-wide limitation.
+The original verifier omitted a network policy. For v0.1.1, Docker Compose disables the verifier container's network directly. Harbor 0.23's nftables capability probe returns false on the tested Docker Desktop kernel, so the Harbor baseline remains explicitly public with a metadata explanation; the service's actual network is `none`. [Container inspection evidence](validation/network-isolation.json) confirms the configuration of inspected Harbor verifier containers, including the fresh model trial. This is a tested host-specific workaround, not a claim that all Docker Desktop installations lack Harbor network-policy support. See Harbor's [network policy](https://docs.harborframework.com/core-concepts/tasks/network-policies) and [separate verifier](https://docs.harborframework.com/core-concepts/tasks/separate-verifier) documentation for the distinction between environment configuration and phase policy.
 
 Original jobs used the author's subscriptions. Provider access is required to repeat model trials. Oracle and no-op checks need Docker but no model credentials. Harbor's optional `check` command is an LLM-based review and does require model access.
 
@@ -97,7 +99,7 @@ Fresh oracle and no-op results are separate from these original gates; see [VALI
 
 ## 5. Required-model trials
 
-All trials below follow the committed rule, using the same task and high reasoning effort.
+These are the original v0.1.0 trials under the committed rule, with high reasoning effort recorded in their native-harness configurations. They are historical model attempts, not fresh v0.1.1 trials.
 
 | Run | Model | Job | Total / reference | Held-out / reference | Nearest comparison | Session |
 |---|---|---|---:|---:|---|---|
@@ -116,6 +118,16 @@ All ten received 1.0 for artifact quality and constraints. Their overall failure
 
 “Nearest comparison” is a diagnostic resemblance measured from forecasts. It is not, by itself, proof of why a program failed.
 
+### Fresh v0.1.1 trial
+
+The revised runtime was committed before a new GPT-5.5-high attempt through the native Codex harness. It completed on 27 September in **32 minutes 4 seconds** and received **overall 0.0**: total regret **1.230×** and held-out regret **1.246×**, against the unchanged **1.10×** limit. Constraint satisfaction and artifact quality were both **1.0**. There was no infrastructure exception; all eight initial world runs finished in **75–87 seconds**, well within the 720-second limit. The [reward](validation/jobs/revision-gpt55-high/t20-exact-forecast__7VMTU5v/verifier/reward.json), [per-world details](validation/jobs/revision-gpt55-high/t20-exact-forecast__7VMTU5v/verifier/details.json) and [trial result](validation/jobs/revision-gpt55-high/t20-exact-forecast__7VMTU5v/result.json) preserve the evidence. This is a new model attempt, separate from both the historical series and the replay of run 2.
+
+This agent fitted a regularized ball-level likelihood and used the public simulator for fixture probabilities. It predicted 90 later matches in each of two forward season splits. The initial outcome log losses were **0.684862** and **0.680139**, compared with **0.693147** for a coin flip. It then added match-day effects, tested role/style baselines, and removed those baselines after slightly worse sampled validation. The final visible-world execution took **73.443 seconds** in its own check. It verified the 24 fixture IDs, finite in-range probabilities, syntax and ordinary-file deliverable.
+
+Those are meaningful checks. They do not directly establish performance against stored probability estimates or the stronger reference on unseen leagues. The delivered program retains fixed prior scales, recency weighting and future-effect assumptions; the transcript shows no prior-scale search or uncertainty analysis. These are possible sources of error, not a demonstrated causal diagnosis of this new artifact. No intervention on it has been run. Its final response claims implementation and interface verification, not that it passed a hidden verifier.
+
+Evidence: [transcript](validation/jobs/revision-gpt55-high/t20-exact-forecast__7VMTU5v/agent/codex.txt), lines 45, 51, 54, 63–64, 71, 76, 86 and 96–97; [delivered program](validation/jobs/revision-gpt55-high/t20-exact-forecast__7VMTU5v/artifacts/app/solution/forecast.py), especially the prior settings, optimization and simulation sections. The small outcome-loss differences are observations from two noisy historical splits; they are not significance claims.
+
 ## 6. Supplementary trials and exclusions
 
 These trials address the newer pair named in the brief's target-outcome paragraph. They are reported separately from the repeated goal/run requirement. Their passes and one borderline miss do not establish a clean newer-pair failure.
@@ -128,7 +140,7 @@ These trials address the newer pair named in the brief's target-outcome paragrap
 | A1 | GPT-6-astra | [2026-09-24__19-42-59](jobs/2026-09-24__19-42-59/) | 1.054 | 1.047 | 46 min | Pass |
 | A2 | GPT-6-astra | [2026-09-24__23-05-34](jobs/2026-09-24__23-05-34/) | 1.072 | 1.061 | 45 min | Pass |
 
-The passing programs estimated prior scales from data and used checks intended to challenge their estimates. Fable passed 2/3 and GPT-6-astra 2/2 completed trials. These small samples support solvability; they do not establish a broad comparison between model generations.
+Fable passed 2/3 and GPT-6-astra 2/2 completed trials. These independently written programs support solvability through the agent interface. This is not a matched-compute comparison between model generations: the newer-pair sessions lasted roughly 45–157 minutes, versus 13–26 minutes for the goal-line pair, within the same nominal three-hour limit. Harnesses, model behavior and compute consumed are intertwined. The small samples do not isolate a general model-generation effect.
 
 Four jobs are excluded from substantive pass-rate claims:
 
@@ -143,11 +155,32 @@ There are **19 original model jobs: 15 included graded submissions, one excluded
 
 ## 7. Failure analysis
 
-The strongest diagnosis combines reading the programs with an intervention. The first six programs used the documented match mechanism but set prior scales that allowed too much variation in player estimates. The historical analysis places their shrinkage penalties roughly 3–44 times below the relevant quality penalty.
+The strongest supported finding is **harmful prior choices that the programs' validation did not resolve before submission**. That is more precise than saying the agents skipped accuracy checks. Transcript review shows that several failed programs performed genuine predictive validation and used it to change their implementations.
 
-Four of the six checked execution, determinism or output shape. Run 5 also checked symmetry and range. Run 3 generated its own validation leagues, but used the same loose priors that its estimator assumed. That check supported the assumption instead of testing whether the supplied history justified it.
+### What the first six programs actually checked
 
-The interventions changed one setting at a time and reran each program on **held-out world c**. The original forecasts reproduced the archived world scores before edits were applied.
+| Run | Observed checks | What those checks did not establish | Evidence |
+|---|---|---|---|
+| Opus 1 | Tried ridge values 0.1, 0.5, 1, 2 and 5; printed fitted parameter norms | Parameter shrinkage alone is not held-out forecast quality | [Trajectory](jobs/2026-09-23__19-48-37/t20-exact-forecast__c9h8h85/agent/trajectory.json), step 16 |
+| GPT-5.5 2 | Trained on 180 matches, predicted the next 90, and compared log loss with a coin flip | Beating a weak baseline on one realized season does not establish proximity to the reference | [Transcript](jobs/2026-09-23__20-04-36/t20-exact-forecast__MteQG7J/agent/codex.txt), completed commands at lines 50 and 55 |
+| Opus 3 | Generated known-state synthetic leagues, tested drift and recovery, and checked repeatability | Its chosen synthetic distributions and inferred reference score did not validate against the actual hidden evaluation worlds | [Trajectory](jobs/2026-09-23__20-29-40/t20-exact-forecast__3xxkPgb/agent/trajectory.json), steps 23–34 |
+| GPT-5.5 4 | Ran two rolling season holdouts, then compared them again after adding player-season form | Small gains on realized winners did not establish that its prior strengths were appropriate for the forecast criterion | [Trajectory](jobs/2026-09-23__20-54-41/t20-exact-forecast__4E7U8Nh/agent/trajectory.json), steps 15–19 |
+| Opus 5 | Tested repeatability, weaker regularization, neutral-skill behavior and range | Inspecting changed forecasts or symmetry is not a predictive comparison | [Trajectory](jobs/2026-09-23__21-13-35/t20-exact-forecast__JJfpdQx/agent/trajectory.json), steps 16–20 |
+| GPT-5.5 6 | Backtested two seasons, compared recency settings and swept a probability hedge | These checks detected overdispersion, but the chosen correction did not settle the underlying prior-scale problem | [Trajectory](jobs/2026-09-23__21-34-46/t20-exact-forecast__n37qg89/agent/trajectory.json), steps 14–25 |
+
+The Opus 3 final report called its synthetic results approximately 0.67 and 0.64 times an *estimated* reference. It derived that yardstick from the handbook's rough aggregate coin-flip comparison. The real reference was not available to the agent, and that aggregate hint does not determine reference regret on a self-generated world. This is a specific unsupported validation conclusion, not evidence that synthetic testing itself is unsound.
+
+### A representative failure: GPT-5.5 run 2
+
+This program used the public ball mechanism, fitted latent effects and simulated fixtures. Its final artifact was valid, repeatable and within the measured runtime and engine constraints. The missed criterion was forecast quality: **1.575×** reference regret overall and **1.613×** on held-out worlds, against a **1.10×** limit.
+
+The agent did more than a smoke test. It withheld season 2, trained on seasons 0–1, and evaluated 90 historical matches. Its mean log loss was **0.6863946**, compared with **0.6931472** for the coin flip. That small improvement was real in the test it ran. It was also a weaker proposition than the submission required: beating a coin flip on realized outcomes does not establish being close to a stronger reference against stored probabilities. The agent explicitly described this as a noisy sanity check, so it would be unfair to claim it confused the two scoring targets. The trajectory does not show a comparative prior-scale search for this program. It ended the session with a useful directional check, but without stronger evidence about the assumption that the later intervention showed to be costly.
+
+The later intervention makes the diagnosis more concrete. On held-out world c, multiplying this program's prior standard deviations by 0.33 reduced its regret ratio from **2.55 to 1.57**. This supports weak shrinkage as a contributor to that artifact's error. It does not prove that the agent could have selected that multiplier from the public data, or that the edit would pass the full task.
+
+### Interventions and their limits
+
+The historical analysis found prior scales that allowed too much variation in fitted player effects, with shrinkage penalties roughly 3–44 times below the relevant generating-scale quality penalty. The interventions changed one setting at a time and reran each program on **held-out world c**. The unedited forecasts first reproduced the archived world scores.
 
 | Program | As submitted / reference | Intervention | After / reference |
 |---|---:|---|---:|
@@ -160,9 +193,9 @@ The interventions changed one setting at a time and reran each program on **held
 | GPT-5.5 run 6 | 1.42 | Deepen output hedge to 0.75 | 1.13 |
 | GPT-5.5 run 6 | 1.42 | Prior standard deviations × 0.5; keep hedge | 0.91 |
 
-Evidence: [ablations.log](ablations.log), `dev/ablate_pilots.py`, and the submitted programs in the jobs above. The reviewer repeated these interventions independently, as recorded in Section 13.
+Evidence: [ablations.log](ablations.log), `dev/ablate_pilots.py`, and the submitted programs in the jobs above. The historical reviewer repeated these interventions independently, as recorded in Section 13.
 
-The results support **overconfident estimation combined with ineffective validation** as a failure mode in those six programs. They do not establish that one edit would pass the whole task, and they are not new model trials. Runs 7–10 have resemblance evidence but no equivalent intervention here.
+The result supports a causal effect of those settings on these programs on this world. It does not establish that one edit would pass every world, that no other defects mattered, or that all ten failures shared the same cause. Runs 7–10 have forecast-resemblance evidence but no equivalent intervention here. The ablations are diagnostic reruns using reviewer knowledge, not new model trials.
 
 ## 8. Reproduction commands
 
@@ -179,7 +212,7 @@ harbor run -p ./dist/collinear-siddharthshashankkumar/t20-exact-forecast -a clau
 harbor view ./jobs
 ```
 
-Run either target model to satisfy the brief's model choice; both are shown for reproducibility. Credentials must be configured through the chosen harness/provider. No live target-model trial was added by the documentation revision; the original evidence is included unchanged.
+Run either target model to satisfy the brief's model choice; both are shown for reproducibility. Credentials must be configured through the chosen harness/provider. Original trial evidence is included unchanged; the current revision’s fresh trial is identified separately in [VALIDATION.md](VALIDATION.md).
 
 ### From the submission zip
 
@@ -224,33 +257,35 @@ Data generation and reference calculations are done once. Grading reuses the sto
 
 ## 10. Verifier design and failure interpretation
 
-The agent sees public history, code and documentation. The separate verifier image contains all eight worlds, the stored probabilities, reference regrets, comparison forecasts and the grading rule. It copies the submitted solution, checks original engine files against their hashes, then runs the program next to a pristine engine.
+The agent receives public history, code and the handbook. The separate verifier receives the submission and a copy of the engine, plus its own eight league folders, stored probabilities, reference regrets and comparison forecasts. Only the privileged grader reads the private scoring files.
 
-Inside the intended image, the grader runs as root and launches candidate code as `runner`; `/tests` is unreadable to that user. Each initial world run has a 720-second timeout. The visible world is run again for repeatability. Valid forecasts are scored programmatically. No LLM decides the reward or judges the trajectory.
+The deeper audit found two ways the original grader could cross that boundary: dereferencing a submitted symlink while copying the solution, and following an output CSV symlink while reading a forecast. In disposable offline containers with synthetic truth, both routes earned a false full pass despite the runner being unable to read the private file directly. That made a code change necessary.
 
-`tests/test.sh` writes a zero reward if the grader fails to produce one. The grader also records exceptions in `details.json`. **Always inspect the error information before interpreting a zero as model failure.** A zero fallback prevents an accidental pass but does not distinguish infrastructure failure by itself.
+The v0.1.1 verifier now:
 
-The baseline and comparison results show that several plausible shortcuts fail. They do not prove that every shallow or adversarial strategy is rejected. In particular:
+- Rejects symbolic links and special files before staging a solution; the privileged copy never dereferences candidate links.
+- Opens output files through directory descriptors without following links, then checks exactly one finite probability per required fixture, without duplicates or extra IDs.
+- Keeps the original forecast values in memory, requires a successful repeat process, and compares probabilities by fixture identity. Reordered equivalent rows pass; overwriting both CSVs cannot hide a changed answer.
+- Runs candidate code as `runner` with supplementary groups cleared, beside the pristine engine. Added engine files fail the integrity check, except generated bytecode.
+- Stops the process group after completion or timeout, and runs the verifier container without network access.
+- Clears old reward files on entry. A grader startup failure produces zero reward and an explicit error rather than reusing a prior pass.
 
-- The verifier's network isolation is not explicitly configured.
-- Privilege separation relies on the intended root-run image; a non-root local invocation does not provide the same boundary.
-- Timeout handling does not explicitly clean up a whole descendant process group.
-- The runtime component can credit a missing or quickly failing program as “in time”; functional and artifact checks still prevent a full pass.
-- Repeatability compares probability arrays in row order on the visible world, rather than aligning fixture IDs across all worlds.
-- Extra output rows can be ignored after reindexing, and added engine files are not rejected by the original-file hash check.
+The formula and two regret gates are unchanged. No language model decides the reward or judges the trajectory. [VALIDATION.md](VALIDATION.md) links the 24 behavioral checks, before/after boundary probes, current Harbor controls and archived-program replay. Eight applicable regression tests fail on the old grader and pass on the new one, including a false rejection of equivalent row ordering.
 
-These are disclosed weaknesses of the frozen verifier, not claims that the documented target-model failures exploited them.
+A zero still needs interpretation. Inspect `details.json`: `submission_error` identifies an invalid delivered artifact; per-world problems identify failed execution or malformed output; `grader_error` signals a verifier exception. Infrastructure failure is not model-failure evidence.
+
+There are remaining boundaries to the assurance. Repeatability is tested on the visible world only. Process-group cleanup does not contain a deliberately detached process without stronger PID/cgroup supervision. The Docker probe tests the grader's file boundary, not every possible Harbor transfer or operating-system attack. A non-root local invocation does not reproduce the private-file privilege boundary. The runtime component can still credit a missing or quickly failing program as “in time”; forecast validity and functional correctness prevent a full pass. These limits do not invalidate the targeted fixes, but they prevent a claim of a complete hostile-code sandbox audit.
 
 ## 11. Fairness audit
 
 | Question | Assessment |
 |---|---|
-| Are the task contract and scoring rule available? | The prompt and handbook state the schemas, formula, tolerances, runtime, determinism and engine constraints. The wording overstates probability exactness and understates the reference's design advantage. |
-| Can the task be solved through the agent's interface? | Yes: the oracle and four supplementary submissions pass. This supports solvability, not equal information at design time. |
+| Are the task contract and scoring rule available? | The prompt and handbook state the schemas, formula, tolerances, runtime, determinism and engine constraints. The original wording overstated precision and understated the reference advantage; v0.1.1 corrects both without revealing private parameters. |
+| Can the task be solved through the agent's interface? | On v0.1.0, the oracle and four supplementary submissions pass. The v0.1.1 oracle also passes; its fresh model attempt is tracked in VALIDATION.md. These support solvability, not equal information at design time. |
 | Does the reference have an advantage? | Yes. It reads public inputs at runtime, but its base prior scales were chosen with knowledge of the generating spreads. The size of that advantage is not directly measured. |
-| Do near-threshold failures count as strong evidence? | No. The fixed-rule verdict is retained, but the two borderline failures are flagged. Clear failures elsewhere satisfy the target-model evidence requirement. |
+| Do near-threshold failures count as strong evidence? | No. The fixed-rule verdict is retained, but the two borderline failures are flagged. Clear v0.1.0 failures support the historical target-model evidence; the revised contract has a separate fresh attempt in VALIDATION.md. |
 | Were infrastructure failures separated? | The first oracle error and four excluded model jobs are listed separately. GPT run 8 is counted with an interruption flag and an exclusion sensitivity count. |
-| Was the rule adjusted after model trials? | No scoring or runtime change is made in this documentation revision; the historical pre-pilot rule remains. |
+| Was the rule adjusted after model trials? | The numeric scoring rule is unchanged. Verifier/contract changes are versioned as v0.1.1 and frozen before its fresh model attempt. |
 | Does AI-assisted design introduce possible bias? | Possibly. Cross-family passes and same-family failures provide context, but do not rule out design bias. Assistance is disclosed. |
 | Is a human completion time measured? | No. Metadata contains an estimate; no human baseline was run. |
 
@@ -260,9 +295,9 @@ The original `jobs/` tree contains 23 job directories: nineteen model jobs, two 
 
 A historical Harbor redaction replaced the literal token `true` with `[REDACTED]` in some records. That makes some archived JSON invalid and changes `store_true` in two programs. The audit and ablation tools restore that known literal in memory and leave raw evidence untouched. This restoration is documented; it is not permission to infer unknown redacted values.
 
-The current audit checks trial configurations, reward fields, rounded regret summaries and artifact presence. It does not rerun every model or establish the complete correctness of every archived transcript. Fresh control runs and verifier-contract checks are recorded in [VALIDATION.md](VALIDATION.md).
+The current audit checks trial configurations, reward fields, rounded regret summaries and artifact presence. It does not rerun every model or establish the complete correctness of every archived transcript. Current controls, targeted verifier regressions and the versioned runtime changes are recorded in [VALIDATION.md](VALIDATION.md).
 
-Open work includes an independent-stream truth audit, a reference with learned prior scales, interventions on more worlds and programs, investigation of the visible-world performance pattern, a human baseline, and verifier hardening.
+Open work includes an independent-stream truth audit, a reference with learned prior scales, interventions on more worlds and programs, investigation of the visible-world performance pattern, a human baseline, and stronger adversarial process isolation.
 
 ## 13. Independent review
 
@@ -279,9 +314,9 @@ The repository records a review by Rutvikk Kharod on 26 September 2026 at revisi
 | Partial package acceptance | Packaging revision checks all required worlds and inputs before replacing the assembled task |
 | Last-season comparison | Validation uses zero-weight seasons and selects the weakest scale; baseline limitation retained |
 | `History.played` | Documented field remains empty; raw historical line-ups are in `lineups.csv` |
-| Verifier isolation and timeout weaknesses | Still present in the evaluated runtime; disclosed in Section 10 |
+| Verifier isolation and timeout weaknesses | Present in the historical runtime. v0.1.1 repairs demonstrated artifact/output-link and repeatability bypasses and adds process-group cleanup; residual limits remain in Section 10 |
 | Data cache ignores some inputs | Still present; fresh regeneration after source changes must be deliberate |
 | Calibration counting issues | Wicket/dismissal and no-result treatment affect realism; no recalibration is included |
 | Missing development tests | This revision adds focused verifier-contract and submission-evidence checks; it is not a full simulator test suite |
 
-Fixes that alter the task or verdicts need a newly evaluated version. The documentation revision preserves the existing experiment and makes its strengths and limitations easier to inspect.
+The original experiment remains inspectable. v0.1.1 is a separate revision with its own controls and model evidence; historical results are not silently promoted to results on the revised contract.

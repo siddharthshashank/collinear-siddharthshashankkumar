@@ -4,7 +4,7 @@
 
 Siddharth Shashank Kumar · September 2026
 
-Task: `collinear-siddharthshashankkumar/t20-exact-forecast`
+Task: `collinear-siddharthshashankkumar/t20-exact-forecast` · current package **v0.1.1**
 
 ## The idea
 
@@ -38,7 +38,7 @@ python solution/forecast.py --league <folder> --out <file.csv>
 
 The CSV must contain `fixture` and `p_home`, with a finite probability between zero and one for every fixture. The submission can include supporting files under `solution/`. It may import the unchanged engine, NumPy, pandas, SciPy and the standard library.
 
-The handbook requires repeatable output, no network use, and at most 720 seconds per league on two CPU cores. The verifier tests repeatability on the visible league only. Network use is prohibited by the prompt but is not blocked by the frozen verifier configuration; this is a real enforcement limitation.
+The handbook requires repeatable output, no network use, and at most 720 seconds per league on two CPU cores. The verifier checks one finite probability for every fixture, rejects duplicate or extra fixture IDs, and aligns the visible-world repeat by fixture ID. The repeat is one behavioral check, not a proof of determinism on every possible input. In v0.1.1, the separate verifier container has networking disabled.
 
 ## Why this work matters
 
@@ -117,23 +117,27 @@ The verifier writes five fields to `/logs/verifier/reward.json`:
 
 Only `overall = 1.0` counts as solved. A failed forecast cannot earn an overall pass through clean formatting.
 
-The scoring rule was committed before the first model pilot. Development comparisons informed it: pooled regret was more stable than a separate threshold for each world. The coin-flip starter, team ratings, unshrunk player estimates and raw head-to-head method all miss the chosen threshold. The “last season only” comparison also misses, but its validation bug limits what can be inferred from that particular baseline.
+The scoring rule was committed before the archived evaluation series. Earlier prototype work is described in the historical notes, but its chronology is not independently established by this checkout. Development comparisons informed it: pooled regret was more stable than a separate threshold for each world. The coin-flip starter, team ratings, unshrunk player estimates and raw head-to-head method all miss the chosen threshold. The “last season only” comparison also misses, but its validation bug limits what can be inferred from that particular baseline.
 
-## Separation and known weaknesses
+## Verifier boundaries and the v0.1.1 revision
 
-Harbor runs the agent and verifier in separate containers. The agent image contains the public files only. Harbor transfers the submitted solution and engine copy; the grader hashes the engine against a pristine copy, then runs the submission beside the pristine engine.
+Harbor runs the agent and verifier separately. The agent image contains public files only. Harbor transfers the submitted solution and engine copy; the grader checks the engine inventory and hashes, then runs the submission beside a pristine engine as the unprivileged `runner` user.
 
 ![Public inputs, submitted artifacts and the private verifier](figures/harbor_runtime.png)
 
-In the intended container, submitted code runs as the unprivileged `runner` user and cannot read the private truth files under `/tests`. The grader also checks output validity, timing and repeatability. This is useful isolation, but it is not a proof against adversarial code.
+The deeper audit found that this architecture alone did not protect every boundary. The original verifier could follow a submitted symbolic link during privileged file handling. A private-output link could also redirect a privileged read. These are implementation defects, even if none of the recorded model programs exploited them.
 
-The independent review identified weaknesses in process cleanup after timeout, privilege handling outside the intended root-run container, and undeclared verifier network isolation. The output checks also do not reject every extra-row or fixture-order trick. These limitations remain in the evaluated version and are described in the [run report](RUN_REPORT.md).
+Version 0.1.1 checks submitted files without following links, rejects unsafe output files, and applies the full output contract to both initial and repeat forecasts. Process-group cleanup prevents a timed-out child from simply continuing under the original group. The entrypoint clears stale reward files before grading, so an earlier success cannot survive an unsuccessful new run. These changes have targeted regression checks; [Validation](VALIDATION.md) records which container controls and replays have completed.
 
-The historical linter passed 11 checks. It was a language-model review of the task package, not a trajectory judge and not an exhaustive verifier security audit. Programmatic grading determines all task rewards.
+The verifier's Compose service sets `network_mode: none`. Docker inspection confirmed that effective mode on the test host. Harbor's metadata uses its compatible public-network baseline because the local kernel lacks the nftables support its alternative network setup expects; the separate verifier Compose file supplies the actual isolation. This is distinct from the agent environment, which needs provider access for its model harness.
+
+The Python dependency set is fully pinned and hash-locked for the task image: NumPy, pandas, SciPy, python-dateutil and six, at the same versions used by the validation environment. The prompt and handbook now say that stored probabilities are estimates and that the reference's base priors use design knowledge. No new reference, dataset, engine or numerical pass threshold is introduced.
+
+The historical 11-criterion Harbor review was an LLM review of the task package, not a security test or trajectory judge. Programmatic grading determines the reward. The stronger implementation and targeted tests address the demonstrated defects; they are not a claim to have proved security against every possible adversarial program.
 
 ## What happened in the required model trials
 
-Five Claude Opus 4.7 trials used Claude Code, and five GPT-5.5 trials used Codex. The job configurations record high reasoning effort. All ten produced valid forecasts but failed the stored forecasting rule.
+The original **v0.1.0** series contains five Claude Opus 4.7 trials in Claude Code and five GPT-5.5 trials in Codex. The job configurations record high reasoning effort. All ten produced valid forecasts but failed the stored forecasting rule. These counts remain historical; [Validation](VALIDATION.md) identifies current v0.1.1 controls, replays and fresh model evaluation.
 
 | Evidence | Result | Interpretation |
 |---|---|---|
@@ -141,15 +145,17 @@ Five Claude Opus 4.7 trials used Claude Code, and five GPT-5.5 trials used Codex
 | No-op starter | Overall 0.0; valid output and constraints 1.0 | A well-formed 0.5 forecast is insufficient |
 | Opus 4.7 | 0/5 passes; regret ratios 1.364–1.703 | Clear misses on these trials |
 | GPT-5.5 | 0/5 passes; ratios 1.109–1.575 | One borderline result and one interrupted session are flagged |
-| Supplementary models | Fable 5.1: 2/3; GPT-6-astra: 2/2 | Evidence that other agents can solve this version |
+| Supplementary models | Fable 5.1: 2/3; GPT-6-astra: 2/2 | Independently written solutions to v0.1.0 |
 
-The full brief names GPT-5.5-high / Opus 4.7 in its goal and explicit run requirement, and the newer pair in its target-outcome paragraph. I prioritize the repeated goal/run requirement and report the newer pair separately. If the newer-pair outcome is mandatory, this version does not establish a clean failure. That ambiguity is not resolved by relabeling a borderline miss.
+The full brief names GPT-5.5-high / Opus 4.7 in its goal and explicit run requirement, and the newer pair in its target-outcome paragraph. I prioritize the repeated goal/run requirement and report the newer pair separately. If the newer-pair outcome is mandatory, the historical series does not establish a clean failure. That ambiguity is not resolved by relabeling a borderline miss.
 
 The [run report](RUN_REPORT.md) gives every trial identity and the excluded jobs. GPT-5.5 run 2 is a useful starting point: **1.575×** total regret and **1.613×** held-out regret, with all validity and constraint checks satisfied. This is a substantive forecasting miss, well away from the threshold.
 
 ## Failure analysis: a working program can still trust noise
 
-Inspection of the first six programs found weak shrinkage: their prior scales allowed player estimates to move too far on limited evidence. Their checks largely established execution, determinism, range or symmetry. One generated its own validation worlds with the same loose priors, so its test reinforced the assumption it needed to question.
+The first six programs retained prior choices that allowed player estimates to move too far on limited evidence. Their transcripts show different validation strategies. GPT-5.5 runs 2, 4 and 6 backtested historical seasons; runs 4 and 6 compared modeling choices. Opus run 3 generated synthetic leagues, but inferred a reference score from a rough aggregate hint rather than measuring the actual reference. Opus runs 1 and 5 inspected the effect of regularization without a comparable predictive selection test.
+
+For example, GPT-5.5 run 2 obtained log loss 0.6864 against 0.6931 for a coin flip on 90 withheld matches. It correctly described the exercise as a noisy sanity check. Beating that baseline did not establish performance within 10% of the stronger reference on unseen worlds. The failure story is inadequate evidence for the final modeling choice, not a blanket absence of testing.
 
 One-constant interventions on held-out world c support this diagnosis. For example:
 
@@ -161,32 +167,32 @@ One-constant interventions on held-out world c support this diagnosis. For examp
 
 These are diagnostic experiments using reviewer knowledge, not revised model submissions. They show that shrinkage choices materially affected the score on this world. They do not prove that the edits would pass all eight worlds. The diagnosis for runs 7–10 relies on forecast resemblance rather than the same intervention evidence.
 
-The lesson I take from these runs is specific: an agent can implement the mechanism correctly while failing to test how strongly its estimates should be trusted.
+The lesson I take from these runs is specific: a working implementation and a sensible validation attempt can still leave an important modeling choice unresolved. The intervention adds evidence about that choice; it does not erase the useful work the agents did.
 
 ## Fairness and limits of the conclusion
 
-The prompt supplies schemas, the mechanism, the scoring formula and the constraints. The oracle passes, and independently written model submissions also pass. Those are meaningful solvability checks.
+The prompt supplies schemas, the mechanism, the scoring formula and the constraints. The historical oracle and four independently written model submissions passed v0.1.0. Those are meaningful solvability checks for that version. Current v0.1.1 checks are recorded separately because the revised disclosures could affect how an agent approaches the problem.
 
 There are also limits that deserve equal visibility:
 
-- **Designer-informed reference.** Its base prior scales use knowledge unavailable to the agent. The frozen handbook understates that advantage. A data-estimated reference would be a cleaner next version.
-- **Borderline verdicts.** Development resimulations put pooled reference-regret variation at roughly 1.1% of its mean. GPT-5.5's 1.109 and Fable's 1.104 results are too close to the 1.10 threshold for strong pass/fail conclusions beyond the fixed rule. This rough band is a sensitivity guide, not a calibrated confidence interval for each aggregate.
+- **Designer-informed reference.** Its base prior scales use knowledge unavailable to the agent. The original handbook understated that advantage; v0.1.1 discloses it. Disclosure does not measure or remove it. A data-estimated reference would be a cleaner future standard.
+- **Unmeasured pooled uncertainty.** The historical 1.14% figure combines rounded per-world variances assuming zero covariance. The reference reuses seeds across worlds, and the raw repeat vectors were not retained. It is not a measured pooled standard deviation. GPT-5.5's 1.109 and Fable's 1.104 fixed-rule misses therefore remain weak evidence of statistical separation from 1.10.
 - **Finite probability estimates.** Stored truth has Monte Carlo error, with some shared random streams across worlds. An independent-stream precision audit remains open.
-- **Small samples.** Five trials per required model do not establish that a model always fails. The counts describe these recorded runs.
+- **Small, unmatched samples.** Five trials per required model do not establish that a model always fails. The newer-pair sessions also consumed more time, so these results are not a matched-compute comparison between generations.
 - **Limited causal analysis.** Interventions cover six programs on one world. They do not establish a universal failure mechanism.
-- **Verifier weaknesses.** The evaluated verifier is useful but not fully hardened against hostile submissions.
+- **Revision boundary.** The original verifier had demonstrated artifact-handling weaknesses. Its historical rewards are retained, while v0.1.1 fixes and validation are documented separately. An old-program replay is a regression check, not a fresh model attempt.
 - **No human baseline.** The estimated expert completion time in the metadata is a design estimate, not an observed human trial.
-- **Reproducibility boundaries.** The primary packages and base image are pinned; transitive Python dependencies and historical harness installers are not fully locked. The original calibration archive hash is missing.
+- **Reproducibility boundaries.** The current task image has a pinned base and hash-locked Python dependency set. Historical model harness installers were not fully locked, and the original calibration archive hash is missing. Running the committed task does not require reconstructing that archive.
 
 AI assistance was used to build and edit the task, as disclosed in [provenance](PROVENANCE.md). Cross-family passes are useful evidence of solvability, but they do not rule out every possible design bias.
 
 ## What I would improve next
 
-I would first replace the designer-informed prior scales with a reference that estimates them from data, then measure the new reference's variability on fresh development worlds. I would also harden verifier isolation, align repeatability checks by fixture identity, and audit truth precision with independent random streams.
+The verifier fixes address concrete implementation failures first. For the next measurement revision, I would replace the designer-informed priors with data-estimated scales, retain a full matrix of simulation repeats, and measure pooled variability on fresh development worlds. I would also audit truth precision with independent streams and run a human baseline.
 
 Those changes would create a new evaluated version. They should receive new oracle and negative-control checks and fresh model trials, rather than inherit the current results.
 
-For this documentation revision, the scoring rule and all 118 runnable task files remain unchanged. Packaging now includes the report and evidence, and the reviewer-facing documents distinguish observations, interpretations and open work. [VALIDATION.md](VALIDATION.md) records the checks.
+The current runtime has 119 files: 109 historical files unchanged, nine revised and one new Compose file. The data, engine, oracle and scoring inputs retain their original hashes. [The revision manifest](validation/runtime-revision.json) records the boundary, and [Validation](VALIDATION.md) records the checks. A fresh GPT-5.5-high attempt under the corrected handbook now provides separate v0.1.1 evidence: **1.230×** total and **1.246×** held-out reference regret, with valid artifacts and satisfied constraints. Historical failures are not silently assigned to this version.
 
 ## Reproduce and inspect
 
@@ -200,7 +206,7 @@ The linked subgoals are inspection, estimation, hypothesis testing and delivery 
 | `league/` | Simulation, hidden-world generation and public file I/O |
 | `forecasters/` | Reference and comparison methods |
 | `scoring/` | Expected-loss calculations |
-| `harbor/` | Frozen prompt, metadata, environment, oracle and grader templates |
+| `harbor/` | Versioned prompt, metadata, environment, oracle and grader templates |
 | `task_src/`, `task_data/` | Public starter/handbook and committed league data |
 | `package_task.py` | Assemble the runnable task and reviewer material |
 | `jobs/` | Original trial records, including exclusions |

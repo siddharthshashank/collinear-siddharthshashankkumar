@@ -1,0 +1,17 @@
+{
+    "job_name": "revision-replay-gpt55",
+    "jobs_dir": "/Users/siddharthshashank/Documents/Interview/collinear-siddharthshashankkumar/t20-exact-forecast/validation/jobs",
+    "tasks": [
+        {
+            "path": "/Users/siddharthshashank/Documents/Interview/collinear-siddharthshashankkumar/t20-exact-forecast/dist/collinear-siddharthshashankkumar/t20-exact-forecast"
+        }
+    ],
+    "source_jobs": [
+        {
+            "action": "regrade",
+            "type": "local",
+            "job_id": "419f70d5-fe6b-408f-8376-d83a1786bf64",
+            "path": "/private/var/folders/80/39ty5kvj6dqfqd4ksgg9dsmw0000gn/T/collinear-regrade-fjrvpqps/2026-09-23__20-04-36"
+        }
+    ]
+}

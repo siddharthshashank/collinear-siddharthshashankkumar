@@ -14,16 +14,25 @@ COLORS = {
     "build": ("#16766F", "#EAF5F2"),
     "public": ("#2164A6", "#EDF4FC"),
     "private": ("#735395", "#F3EFF8"),
-    "check": ("#A36916", "#FFF6E5"),
+    "check": ("#895610", "#FFF6E5"),
     "neutral": ("#516477", "#F1F4F7"),
 }
 NAMES = ["system_overview", "calibration_pipeline", "task_build_and_packaging", "harbor_runtime", "grading_rule", "research_ladder", "decision_path"]
+DESCRIPTIONS = {
+    1: "Cricsheet aggregates and explicit design assumptions inform a simulator that generates eight synthetic worlds. One world's public files are visible during agent development; seven more are held out until grading. The submitted forecaster receives each world's public-schema files and returns a forecast CSV. Separately stored probability estimates and reference regrets reach the trusted grader, which validates forecasts and writes reward and detail files. Private scoring data do not enter the submitted program.",
+    2: "The calibration pipeline reconstructs match state from 1,243 IPL matches and 295,557 deliveries, measures repeatable aggregate structure, and exports calibration constants. Measured profiles and variation are distinguished from chosen or tuned transfer rates, form drift and simplified rules. Agreement with a tuning target is calibration, not independent validation.",
+    3: "The packaging script combines Harbor templates, public engine and starter files, eight worlds, and reviewer documents into one task directory. The environment build context contains only the visible world and public tools. The tests context contains all worlds and private scoring data. The oracle and reviewer evidence are outside both build contexts.",
+    4: "Harbor copies solution and engine artifacts from the agent container into a separate verifier with network disabled. The privileged grader rejects symlinked artifacts before preparing the submitted solution, a pristine engine and eight public-schema league folders. The submitted program runs as user runner and returns CSV forecasts. Those forecasts return to the privileged grader, which alone reads root-only private truth and reference scores. It checks validity, timing, regret, engine integrity and repeatability aligned by fixture identity, then writes reward.json and details.json. No private-score arrow enters the runner. This shows the hardened v0.1.1 submission; historical model trials used v0.1.0.",
+    5: "For each fixture the verifier computes Bernoulli logarithmic regret from a stored probability estimate and a submitted forecast clipped to 0.002 through 0.998, then averages by world. Functional correctness requires the sum across all eight worlds to be at most 1.10 times the reference sum. Robustness applies the same limit to the seven held-out worlds. Overall reward is functional correctness times one half robustness plus one quarter constraint satisfaction plus one quarter artifact quality. Artifact quality is the fraction of worlds with valid forecasts. Only an overall reward of one is a complete pass.",
+    6: "Development comparisons on separate worlds informed a pooled-regret rule and a held-out-only gate. A ten percent tolerance was committed before the archived model trials. Later oracle and no-op controls, model trials and interventions were evaluated under that rule. The decision to pool addressed observed per-world reference variation of up to 5.8 percent, but uncertainty still limits interpretation near the threshold.",
+    7: "Three task ideas are compared. Earlier backtest-audit attempts were set aside after reported model repairs; ingest under faults was rejected by design judgment without a pilot. Forecasting was selected because a mechanically correct program can still over-trust uneven histories, providing a measurable statistical failure mode. The accepted cost is a more difficult fairness argument and Monte Carlo uncertainty. Separate trial records for the earlier ideas are not included.",
+}
 
 class Figure:
     def __init__(self, number, title, subtitle):
         self.items = [
             f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" role="img" aria-labelledby="title desc">',
-            f'<title id="title">{escape(title)}</title><desc id="desc">{escape(subtitle)}</desc>',
+            f'<title id="title">{escape(title)}</title><desc id="desc">{escape(DESCRIPTIONS[number])}</desc>',
             '<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#708497"/></marker></defs>',
             f'<rect width="{W}" height="{H}" fill="{BG}"/>'
         ]
@@ -32,7 +41,7 @@ class Figure:
         self.text(64, 138, subtitle, 21, MUTED)
         self.line(64, 166, 1536, 166)
         self.line(64, 902, 1536, 902)
-        self.text(64, 931, "t20-exact-forecast  ·  evaluated runtime v0.1.0", 15, MUTED)
+        self.text(64, 931, "submission v0.1.1  ·  historical trials v0.1.0", 15, MUTED)
         self.text(1536, 931, "Design rationale and evidence in DECISIONS.md", 15, MUTED, anchor="end")
 
     def text(self, x, y, value, size=20, fill=INK, weight=400, anchor="start", tracking=0):
@@ -69,33 +78,44 @@ class Figure:
         self.text(88, y+29, title, 17, "#895610", 700)
         self.text(88, y+56, body, 18, MUTED)
 
+    def node(self, x, y, w, h, label, title, lines=(), role="neutral"):
+        """Larger labels for the two diagrams embedded as architectural overviews."""
+        edge, _ = COLORS[role]
+        self.rect(x, y, w, h)
+        self.rect(x, y+18, 4, h-36, edge, edge, 2)
+        self.text(x+22, y+32, label, 21, edge, 700)
+        self.text(x+22, y+71, title, 28, INK, 700)
+        for i, line in enumerate(lines):
+            self.text(x+22, y+110+i*32, line, 24, MUTED)
+
     def save(self, name):
         (OUT / f"{name}.svg").write_text("\n".join(self.items + ["</svg>"]))
 
 def overview():
-    f=Figure(1,"One task. Two execution environments.","Real data inform the simulation; public inputs reach the agent; scoring evidence stays with the verifier.")
-    xs=[64,440,816,1192]
-    data=[
-        ("01 / CALIBRATE","Ground the scenario",["Cricsheet IPL aggregates","Measured + chosen constants"],"build"),
-        ("02 / GENERATE","Create eight worlds",["Invented players and teams","History + future fixtures"],"build"),
-        ("03 / PACKAGE","Assemble one task",["Public and private contexts","Oracle + reviewer evidence"],"neutral"),
-        ("04 / EVALUATE","Run in Harbor",["Native agent harness","Separate programmatic grader"],"check")]
-    for i,(step,title,lines,role) in enumerate(data):
-        f.card(xs[i],214,344,175,step,title,lines,role,18)
-        if i<3:f.arrow([(xs[i]+344,300),(xs[i+1]-8,300)])
-    f.text(64,446,"VISIBILITY IS A DESIGN CHOICE",14,MUTED,700,tracking=1)
-    f.panel(64,470,708,304,"AGENT-VISIBLE / environment/app", "public")
-    f.card(88,530,660,204,"Inputs → durable deliverable","Learn from the public history",[
-        "7 CSVs · handbook · public engine · starter",
-        "Agent writes solution/forecast.py and supporting files",
-        "The program must work on unseen league folders"],"public",20)
-    f.panel(828,470,708,304,"VERIFIER-ONLY / tests", "private")
-    f.card(852,530,660,204,"Private evidence → reward","Score the submitted program",[
-        "8 worlds · stored probabilities · reference regrets",
-        "Pristine engine · output, timing and repeat checks",
-        "reward.json + per-world details + retained job records"],"private",20)
-    f.text(64,832,"Why this split?",21,INK,700)
-    f.text(230,832,"Test inference from the supplied evidence while keeping evaluation data out of the agent image.",20,MUTED)
+    f=Figure(1,"From synthetic history to a scored forecast.","The program receives league files. The trusted grader also receives private scoring data.")
+    f.node(64,214,430,172,"Authoring inputs","Calibrated simulator",[
+        "Cricsheet aggregates","Explicit design assumptions"],"build")
+    f.node(588,214,430,172,"Offline generation","Eight synthetic worlds",[
+        "Invented teams and players","Public history + hidden state"],"build")
+    f.node(1112,214,424,172,"Verifier only","Stored scoring data",[
+        "Probability estimates","Reference regrets"],"private")
+    f.arrow([(494,300),(580,300)])
+    f.arrow([(1018,300),(1104,300)])
+    f.arrow([(803,386),(803,430),(279,430),(279,478)])
+    f.arrow([(1324,386),(1324,478)])
+    f.node(64,486,430,232,"Public file schema","League folders",[
+        "1 visible during development","7 held out until grading","Engine + handbook supplied"],"public")
+    f.node(588,486,430,232,"Agent-written artifact","solution/forecast.py",[
+        "Learn on the visible league","Run on each league folder","Return one forecast CSV"],"public")
+    f.node(1112,486,424,232,"Trusted grader","Validate and score",[
+        "Compare forecasts to truth","Apply both accuracy gates","Write reward + details"],"private")
+    f.arrow([(494,606),(580,606)])
+    f.text(541,586,"files",23,MUTED,anchor="middle")
+    f.arrow([(1018,606),(1104,606)])
+    f.text(1065,586,"CSV",23,MUTED,anchor="middle")
+    f.rect(64,778,1472,91,"#EDF4FC","#CFD9E2",12)
+    f.text(88,812,"The access boundary",25,INK,700)
+    f.text(88,851,"League folders reach the runner. Stored probabilities and reference scores reach only the grader.",24,MUTED)
     f.save("system_overview")
 
 def calibration():
@@ -124,7 +144,7 @@ def packaging():
     f.panel(64,222,400,520,"SOURCE MATERIAL","build")
     f.text(88,306,"harbor/",25,INK,700);f.text(88,340,"Prompt, metadata, grader, oracle",19,MUTED)
     f.text(88,397,"task_src/ + league/",25,INK,700);f.text(88,431,"Starter, handbook, public engine",19,MUTED)
-    f.text(88,488,"task_data/",25,INK,700);f.text(88,522,"Eight public worlds + private scores",19,MUTED)
+    f.text(88,488,"task_data/",25,INK,700);f.text(88,522,"One visible + seven held-out worlds",19,MUTED)
     f.text(88,579,"Documents + jobs + figures",25,INK,700);f.text(88,613,"Rationale, evidence and provenance",19,MUTED)
     f.card(516,395,270,176,"Build step","package_task.py",["Check required inputs","Preserve runtime hashes"],"neutral",18)
     f.arrow([(464,480),(508,480)]);f.arrow([(786,480),(830,480)])
@@ -140,24 +160,37 @@ def packaging():
     f.save("task_build_and_packaging")
 
 def runtime():
-    f=Figure(4,"A submitted program crosses the boundary.","The agent produces an artifact; the trusted grader prepares a clean run and evaluates its forecasts.")
-    f.panel(64,211,584,561,"AGENT CONTAINER / public network for harness + API","public")
-    f.card(88,271,536,177,"Public inputs","Read, inspect and iterate",["Visible league · public engine · handbook","3-hour session budget"],"public",20)
-    f.arrow([(356,448),(356,482)])
-    f.card(88,493,536,177,"Artifact","solution/forecast.py",["Supports arbitrary --league and --out paths","Only solution/ and engine/ are transferred"],"public",19)
-    f.text(88,729,"Oracle run: solve.sh installs the reference instead.",18,MUTED)
-    f.panel(840,211,696,561,"VERIFIER CONTAINER / network mode not declared","private")
-    f.card(864,271,314,153,"Root-only /tests","Private score data",["Probabilities + reference"],"private",18)
-    f.card(1200,271,312,153,"Trusted process","grader.py",["Prepare pristine engine"],"private",18)
-    f.arrow([(1178,348),(1192,348)])
-    f.arrow([(1356,424),(1356,474)])
-    f.card(864,484,648,135,"Unprivileged runner in the intended image","Execute on eight league folders",["720 s per world · visible world repeated"],"public",19)
-    f.arrow([(648,552),(856,552)])
-    f.text(744,500,"Harbor copies",16,MUTED,anchor="middle")
-    f.text(744,524,"the artifacts",16,MUTED,anchor="middle")
-    f.arrow([(1188,619),(1188,648)])
-    f.rect(864,659,648,81);f.text(888,692,"Check integrity, validity and regret",24,INK,700);f.text(888,721,"Write reward.json and details.json",19,MUTED)
-    f.note(795,"A boundary, not a security guarantee","No-network is a program rule, not enforced isolation here. Privilege and timeout limitations remain in RUN_REPORT.md.")
+    f=Figure(4,"Forecasts return to the privileged grader.","Public-schema inputs go to the runner; private scoring inputs stay on the grader's side.")
+    f.panel(64,214,392,572,"","public")
+    f.text(88,251,"AGENT · PUBLIC NETWORK",21,COLORS["public"][0],700)
+    f.panel(512,214,1024,572,"","private")
+    f.text(536,251,"SEPARATE VERIFIER · NO NETWORK",21,COLORS["private"][0],700)
+    f.node(88,283,344,177,"Public inputs","Inspect and iterate",[
+        "Visible league","Engine + handbook"],"public")
+    f.arrow([(260,460),(260,518)])
+    f.node(88,526,344,177,"Submitted artifacts","forecast.py",[
+        "solution/ + engine/","copied by Harbor"],"public")
+    f.text(88,742,"3-hour session · API access",21,MUTED)
+    f.text(88,773,"Oracle: installs the reference",21,MUTED)
+    f.node(536,286,466,173,"Artifact checks + setup","Validate and prepare",[
+        "Reject symlinked artifacts","Pristine engine + league inputs"],"public")
+    f.arrow([(456,614),(486,614),(486,372),(528,372)])
+    f.arrow([(769,459),(769,493)])
+    f.node(536,501,466,206,"Unprivileged submitted program","Run as user runner",[
+        "8 worlds · 720 s per world","Visible world run twice","CSV with fixture + p_home"],"public")
+    f.node(1072,286,440,173,"Root-only /tests","Private score data",[
+        "Probability estimates","Reference regrets"],"private")
+    f.arrow([(1292,459),(1292,493)])
+    f.node(1072,501,440,206,"Privileged grader","Score returned CSVs",[
+        "Validity, timing and regret","Engine-integrity check","Fixture-aligned repeat check"],"private")
+    f.arrow([(1002,606),(1064,606)])
+    f.text(1037,586,"CSV",23,MUTED,anchor="middle")
+    f.arrow([(1292,707),(1292,729)])
+    f.rect(1072,737,440,43)
+    f.text(1292,766,"reward.json + details.json",24,INK,700,anchor="middle")
+    f.rect(64,808,1472,74,"#FFF6E5","#F0D5A7",12)
+    f.text(88,838,"Separate the versions when reading the evidence",23,"#895610",700)
+    f.text(88,868,"This is the hardened v0.1.1 verifier. Archived model trials used v0.1.0; the forecasting rule is unchanged.",23,MUTED)
     f.save("harbor_runtime")
 
 def grading():
@@ -171,7 +204,7 @@ def grading():
     f.card(830,450,706,170,"02B / Robustness · R","Seven held-out worlds",["Same limit, computed without the visible world","Visible-world tuning cannot carry a weak method."],"check",20)
     f.panel(64,678,1472,180,"03 / COMBINE WITH CONSTRAINTS AND ARTIFACT QUALITY","build")
     f.text(88,760,"overall = F × (0.50 R + 0.25 C + 0.25 A)",35,INK,700)
-    f.text(88,809,"C: engine, repeatability, runtime   |   A: valid forecast share",21,MUTED)
+    f.text(88,809,"C: engine, repeatability, runtime   |   A: fraction of worlds with valid output",21,MUTED)
     f.text(1512,839,"Solved only when overall = 1.0",20,"#16766F",700,anchor="end")
     f.save("grading_rule")
 
@@ -180,7 +213,7 @@ def research():
     xs=[64,578,1092]
     cards=[
       ("01 / DEVELOPMENT","Compare candidate methods",["Reference + simpler alternatives","Separate development worlds","Measure score variation"],"build"),
-      ("02 / COMMITMENT","Fix the evaluation rule",["Pool regret across worlds","Add the held-out-only gate","Commit 10% tolerance before pilots"],"check"),
+      ("02 / COMMITMENT","Fix the evaluation rule",["Pool regret across worlds","Add the held-out-only gate","Commit 10% before archived trials"],"check"),
       ("03 / OBSERVATION","Evaluate and diagnose",["Oracle + no-op controls","Native-harness model trials","Read programs; test interventions"],"private")]
     for i,(step,title,lines,role) in enumerate(cards):
         f.card(xs[i],234,444,222,step,title,lines,role,21)
@@ -211,5 +244,5 @@ def decisions():
 
 if __name__ == "__main__":
     for build in (overview,calibration,packaging,runtime,grading,research,decisions): build()
-    (OUT / "architecture-manifest.json").write_text(json.dumps({"figures":NAMES,"canvas":[W,H],"source":"src/architecture.py","runtime_changed":False},indent=2)+"\n")
+    (OUT / "architecture-manifest.json").write_text(json.dumps({"figures":NAMES,"canvas":[W,H],"source":"src/architecture.py","runtime_changed":True,"runtime_scope":"Verifier hardening in submission v0.1.1; historical model trials remain v0.1.0. Forecasting rule, data, engine and oracle are unchanged."},indent=2)+"\n")
     print(f"Wrote {len(NAMES)} editable SVG diagrams.")

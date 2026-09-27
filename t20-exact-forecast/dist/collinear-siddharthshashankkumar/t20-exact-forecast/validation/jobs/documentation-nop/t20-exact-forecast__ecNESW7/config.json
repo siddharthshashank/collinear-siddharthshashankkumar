@@ -1,0 +1,11 @@
+{
+    "task": {
+        "path": "dist/collinear-siddharthshashankkumar/t20-exact-forecast"
+    },
+    "trial_name": "t20-exact-forecast__ecNESW7",
+    "trials_dir": "/Users/siddharthshashank/Documents/Interview/collinear-siddharthshashankkumar/t20-exact-forecast/validation/jobs/documentation-nop",
+    "agent": {
+        "name": "nop"
+    },
+    "job_id": "55f7b00c-5111-4f9e-a4be-35eaf570985c"
+}

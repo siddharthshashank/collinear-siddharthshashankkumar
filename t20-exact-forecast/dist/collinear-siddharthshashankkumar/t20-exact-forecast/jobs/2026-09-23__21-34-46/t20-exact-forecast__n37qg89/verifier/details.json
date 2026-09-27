@@ -1,0 +1,74 @@
+{
+ "bar": {
+  "relative_tolerance": 0.1,
+  "absolute_tolerance": 0.0,
+  "clip": 0.002,
+  "rule": "total regret over the graded leagues at most the reference's total times 1.10",
+  "status": "Pre-registered. See DECISIONS.md. Fixed before any model pilot."
+ },
+ "leagues": {
+  "heldout_a": {
+   "seconds": 52,
+   "regret": 0.01743,
+   "reference_regret": 0.016681,
+   "times_reference": 1.045,
+   "most_like": "no shrinkage"
+  },
+  "heldout_b": {
+   "seconds": 51,
+   "regret": 0.00772,
+   "reference_regret": 0.007466,
+   "times_reference": 1.034,
+   "most_like": "reference"
+  },
+  "heldout_c": {
+   "seconds": 52,
+   "regret": 0.01048,
+   "reference_regret": 0.007394,
+   "times_reference": 1.417,
+   "most_like": "reference"
+  },
+  "heldout_d": {
+   "seconds": 54,
+   "regret": 0.00894,
+   "reference_regret": 0.006084,
+   "times_reference": 1.47,
+   "most_like": "reference"
+  },
+  "heldout_e": {
+   "seconds": 55,
+   "regret": 0.00924,
+   "reference_regret": 0.009477,
+   "times_reference": 0.975,
+   "most_like": "reference"
+  },
+  "heldout_f": {
+   "seconds": 53,
+   "regret": 0.01615,
+   "reference_regret": 0.013189,
+   "times_reference": 1.225,
+   "most_like": "reference"
+  },
+  "heldout_g": {
+   "seconds": 55,
+   "regret": 0.00741,
+   "reference_regret": 0.008954,
+   "times_reference": 0.827,
+   "most_like": "reference"
+  },
+  "visible": {
+   "seconds": 54,
+   "regret": 0.0091,
+   "reference_regret": 0.008709,
+   "times_reference": 1.045,
+   "most_like": "reference"
+  }
+ },
+ "total_regret_as_a_multiple_of_the_reference": {
+  "all_leagues": 1.109,
+  "held_out_leagues": 1.117,
+  "coin_flip_for_comparison": 1.891
+ },
+ "engine_untouched": [REDACTED],
+ "deterministic": [REDACTED]
+}

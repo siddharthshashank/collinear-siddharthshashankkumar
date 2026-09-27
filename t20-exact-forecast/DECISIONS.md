@@ -1,3 +1,5 @@
+> Historical development record. The current README, RUN_REPORT.md and ASSIGNMENT_BRIEF.md govern this submission; older brief interpretations and broad claims below are retained as history.
+
 # Why I built it this way
 
 Decision record for `t20-exact-forecast`. Siddharth Shashank Kumar.

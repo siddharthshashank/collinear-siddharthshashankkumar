@@ -1,0 +1,8 @@
+{
+    "task": {
+        "path": "dist/collinear-siddharthshashankkumar/t20-exact-forecast"
+    },
+    "trial_name": "t20-exact-forecast__GozzCrT",
+    "trials_dir": "validation/jobs/documentation-oracle",
+    "job_id": "ae02b56b-af7e-4982-94d4-6cf56e729efb"
+}

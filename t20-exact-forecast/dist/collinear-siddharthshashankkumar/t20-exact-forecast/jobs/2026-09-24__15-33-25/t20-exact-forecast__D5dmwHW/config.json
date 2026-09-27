@@ -1,0 +1,20 @@
+{
+    "task": {
+        "path": "dist/collinear-siddharthshashankkumar/t20-exact-forecast"
+    },
+    "trial_name": "t20-exact-forecast__D5dmwHW",
+    "trials_dir": "jobs/2026-09-24__15-33-25",
+    "agent": {
+        "name": "claude-code",
+        "model_name": "anthropic/claude-fable-5-1",
+        "kwargs": {
+            "version": "2.1.274",
+            "reasoning_effort": "high"
+        },
+        "env": {
+            "CLAUDE_FORCE_OAUTH": "****",
+            "CLAUDE_CODE_OAUTH_TOKEN": "${CLAUDE_CODE_OAUTH_TOKEN}"
+        }
+    },
+    "job_id": "24735842-2c93-4361-a807-ec03a8349e2e"
+}

@@ -1,0 +1,12 @@
+{
+    "task": {
+        "path": "/var/folders/80/39ty5kvj6dqfqd4ksgg9dsmw0000gn/T/harbor-check-y1trwc4g/check-t20-exact-forecast"
+    },
+    "trial_name": "check-t20-exact-forecast__3yp4mqZ",
+    "trials_dir": "jobs/2026-09-24__12-21-19",
+    "agent": {
+        "name": "claude-code",
+        "model_name": "claude-sonnet-4-6"
+    },
+    "job_id": "32e0abf8-65a7-42c2-88d6-fcbd963c5368"
+}

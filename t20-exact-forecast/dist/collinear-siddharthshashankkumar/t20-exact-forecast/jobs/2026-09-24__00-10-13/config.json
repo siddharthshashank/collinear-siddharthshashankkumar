@@ -1,0 +1,19 @@
+{
+    "agents": [
+        {
+            "name": "codex",
+            "model_name": "openai/gpt-5.5",
+            "kwargs": {
+                "reasoning_effort": "high"
+            },
+            "env": {
+                "CODEX_FORCE_AUTH_JSON": "****"
+            }
+        }
+    ],
+    "tasks": [
+        {
+            "path": "dist/collinear-siddharthshashankkumar/t20-exact-forecast"
+        }
+    ]
+}

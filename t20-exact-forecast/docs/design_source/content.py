@@ -17,7 +17,7 @@ BLOCKS = [
     ("bullets", ["**Measured.** Summed over the eight graded worlds, every careless approach has at least 1.50 times the regret of a reference built from ordinary "
                  "regularised statistics, and a coin flip has 1.89 times. The reference passes the task's own gate at exactly 1.000 times its stored regret.",
                  "**Measured, and it changed the design.** A bar analysis on eight worlds that are never graded showed that my first pass rule, a bar on every world, "
-                 "was unsound. Simulation noise reached 5.9 percent of the reference's regret on one world, and on one world in eight a coin flip beat the reference. "
+                 "was unsound. Simulation noise reached 5.8 percent of the reference's regret on one world, and on one world in eight a coin flip beat the reference. "
                  "The rule became a bar on the total over eight worlds (Section 5.16).",
                  "**Measured on the task.** With the rule committed before any model ran, Claude Opus 4.7 under Claude Code and GPT-5.5 under Codex, both at high "
                  "reasoning effort, each ran five times. All ten failed, at 1.11 to 1.70 times the reference's regret, nine of them with the fingerprint of a forecaster "
@@ -35,7 +35,7 @@ BLOCKS = [
           "pseudocode, small prototypes and focused experiments should be used only where they help explain or validate a decision. I have followed that literally. "
           "Every prototype below exists because a decision depended on a number I could not get any other way. The rubric lines and where this document answers each:"),
     ("table", ["Rubric line", "Points", "Where this document answers it"],
-     [["Harbor compliance and reproducibility", "20", "Sections 5.17 to 5.22, 7 and 8.4. Pinned images by digest, locked libraries, shipped data, both gates passed, the oracle at exactly 1.000, 22 of 22 linter checks."],
+     [["Harbor compliance and reproducibility", "20", "Sections 5.17 to 5.22, 7 and 8.4. Pinned images by digest, locked libraries, shipped data, both gates passed, the oracle at exactly 1.000, 11 of 11 linter checks."],
       ["Fairness and solvability", "20", "Sections 5.18, 5.19, 5.23 and 8.1. Public structure, hidden values, a reference that uses only the agent's files, a rule committed first."],
       ["Verifier quality", "20", "Sections 5.7, 5.20 and 5.21. Exact grading against known truth, held-out worlds, a separate container, an unprivileged runner, no judge."],
       ["Long-horizon difficulty", "15", "Section 5.24 and 8.3. Estimation, validation, simulation and generalisation are coupled, and an early wrong choice surfaces only in the final number."],
@@ -111,7 +111,7 @@ BLOCKS = [
     ("p", "The repository is a pipeline with a public and a private side, and I present it in the order it runs. For each part I say what I am trying to do, how it "
           "works, what its check was, what the check caught, and the principle I take from it. Three figures sit in the text where they belong, and seven larger plates at "
           "the end of the document draw the whole system, the calibration pipeline, the task build, the Harbor runtime, the grading rule, the research behind the bar, and "
-          "the pilot results; they are generated from the repository by scripts under `figures/`, so they change when the code does."),
+          "the pilot results. Six of them were drawn by Rutvikk Kharod from this repository at commit c768e58 and are used with his permission; the results chart is mine."),
     ("figure", "pipeline", "Figure 2. From the real archive to a league I own. The forecaster and the truth engine use the same match engine and differ only in the skills they give it."),
 
     ("h2", "5.1 The scorer. Regret against the exact truth"),
@@ -393,7 +393,7 @@ BLOCKS = [
           "seasons hurts less. Team-level modelling is poor because team identity is deliberately unstable. Fitting raw pair effects is disastrous because those "
           "interactions capture noise. The richer tiers move the reference by about one percent, which means the task is not secretly won by discovering one obscure "
           "mechanism; the dominant gains come from understandable decisions, using the public model, estimating players rather than teams, pooling across seasons, and "
-          "regularising noisy parameters. Summed over the eight graded worlds the careless tiers sit at 1.50, 1.58, 1.89, 3.23 and 4.00 times the reference's total."),
+          "regularising noisy parameters. Summed over the eight graded worlds the careless tiers sit at 1.50, 1.59, 1.89, 3.23 and 4.01 times the reference's total."),
     ("p", "One limitation deserves to be explicit here rather than in a footnote. The prior table was chosen with knowledge of the true synthetic population scales. "
           "The reference therefore begins with unusually good regularisation scales that an external model is not handed. The chronological validation of the global "
           "multiplier is the only part an agent can reproduce. I use the reference as a strong, transparent benchmark whose score I can reproduce exactly, not as evidence "
@@ -431,17 +431,22 @@ BLOCKS = [
           "Separation: the tolerance must remain small enough that the deliberately careless tiers still fail. The bar analysis measures both on eight worlds, seeds 1001 to "
           "1008, that are never graded, so that even the threshold has its own holdout discipline."),
     ("table", ["World", "Reference regret", "Simulation noise", "No shrinkage", "Last season only", "Coin flip"],
-     [["1001", "0.0147", "2.5%", "1.07", "1.42", "1.19"], ["1002", "0.0052", "2.6%", "1.31", "3.44", "3.74"], ["1003", "0.0066", "3.9%", "1.16", "1.71", "2.80"],
-      ["1004", "0.0062", "5.9%", "1.38", "2.01", "1.42"], ["1005", "0.0071", "1.8%", "2.15", "1.95", "1.79"], ["1006", "0.0107", "2.8%", "1.36", "1.81", "2.33"],
-      ["1007", "0.0065", "4.9%", "1.06", "2.56", "0.94"], ["1008", "0.0098", "1.2%", "1.19", "1.68", "1.91"],
-      ["**Total over the eight**", "**0.0668**", "**1.1%**", "**1.30**", "**1.93**", "**1.90**"]], [0.26, 0.17, 0.17, 0.14, 0.14, 0.12]),
+     [["1001", "0.0146", "2.8%", "1.08", "1.43", "1.20"],
+      ["1002", "0.0052", "2.6%", "1.27", "3.38", "3.71"],
+      ["1003", "0.0067", "3.2%", "1.15", "1.69", "2.76"],
+      ["1004", "0.0061", "5.8%", "1.37", "2.04", "1.43"],
+      ["1005", "0.0069", "1.7%", "1.90", "1.90", "1.84"],
+      ["1006", "0.0106", "2.8%", "1.35", "1.80", "2.34"],
+      ["1007", "0.0065", "4.8%", "1.06", "2.52", "0.94"],
+      ["1008", "0.0097", "1.3%", "1.21", "1.68", "1.94"],
+      ["**Total over the eight**", "**0.0663**", "**1.1%**", "**1.27**", "**1.92**", "**1.91**"]], [0.26, 0.17, 0.17, 0.14, 0.14, 0.12]),
     ("p", "The last three columns are regret as a multiple of the reference's. My first rule, a tolerance applied on every world, fails twice over. On one world the "
-          "reference's own re-simulation noise reaches 5.9 percent, so a conservative three-noise tolerance would be about 18 percent; but the nearest careless tier sits "
-          "only 6 to 7 percent above the reference on two worlds. No number can do both. And on world 1007 the coin flip has lower regret than the reference, so a per-world "
+          "reference's own re-simulation noise reaches 5.8 percent, so a conservative three-noise tolerance would be about 17 percent; but the nearest careless tier sits "
+          "only 6 and 8 percent above the reference on two worlds. No number can do both. And on world 1007 the coin flip has lower regret than the reference, so a per-world "
           "rule would pass the do-nothing starter on that world. The problem is not solved by a cleverer percentage; the per-world formulation itself is wrong."),
     ("p", "So I changed the statistic. Regret is summed across the eight graded worlds and one tolerance is applied to the total, and the same condition must hold on the "
           "seven held-out worlds alone. The worlds are independent, so the relative noise of the sum falls roughly as one over the square root of the number of worlds, "
-          "about 1.1 percent for eight. In the sum the unshrunk tier is at 1.30 times the reference, last-season-only at 1.93 and the coin flip at 1.90. A tolerance of ten "
+          "about 1.1 percent for eight. In the sum the unshrunk tier is at 1.27 times the reference, last-season-only at 1.92 and the coin flip at 1.91. A tolerance of ten "
           "percent is about nine times the noise of the combined score and about a third of the way to the nearest careless tier. It has a noise justification and a "
           "behavioural justification. It was written into a small data file that both the grader and the handbook read, and committed before any model ran on this task. "
           "If I ran several candidates, saw one score 13 percent above the reference and then decided the tolerance should be 15, the benchmark would no longer be "
@@ -570,7 +575,10 @@ BLOCKS = [
     ("p", "GPT-5.5's third run, run 6, missed the bar by 0.9 points on all eight worlds and by 1.7 on the held-out seven. Its forecasts resemble the reference on seven worlds, so "
           "it regularised properly and lost on something smaller. A tolerance of 1.12 would have passed it. I report that sensitivity rather than act on it: the rule was "
           "fixed before the run, and a bar that moves after a score is seen is not a bar. The margin is of the same order as the reference's own advantage, which is why "
-          "Section 5.13 states that limitation as plainly as it does."),
+          "Section 5.13 states that limitation as plainly as it does. The independent review added the point I had missed: the bar is 1.10 times one simulation of the "
+          "reference, whose summed regret moves by about 1.1 percent under re-simulation, so a verdict within about two standard deviations of the bar, a ratio between "
+          "roughly 1.08 and 1.12, is indeterminate as a measurement. Run 6's miss of 0.82 percent would flip about one time in four under a fresh simulation of the "
+          "reference; its failure rests on Section 6.3, not on the margin."),
     ("h2", "6.2 What the programs did, and how they checked themselves"),
     ("p", "I read the six programs from the first round and the closing message of each session. All six fit the documented ball model by penalised likelihood with the "
           "exact gradient, build a skill book, and simulate on the shipped engine. The architecture is right in every one. What differs is the prior scale, and every one "
@@ -621,7 +629,7 @@ BLOCKS = [
       ["A1", "GPT-6-astra", "1.054", "1.047", "46 min", "pass"],
       ["A2", "GPT-6-astra", "1.072", "1.061", "45 min", "pass"]], [0.06, 0.20, 0.13, 0.13, 0.12, 0.36]),
     ("p", "Two further GPT-6-astra runs are excluded and recorded: one ended at my account's usage limit at five minutes, before a program existed, and one had a complete "
-          "program when I stopped the loop during its verification. A fourth Fable run was stopped at its start. So the newer pair passed four of five completed runs, Fable "
+          "program when I stopped the loop during its verification. Two Fable runs were stopped at their start, one of them found missing from my list by the independent review. F2's miss at 1.104 sits inside the reference's noise band and would flip about 37 percent of the time under a fresh simulation of the reference, so it is not a clear failure; the rule's verdict is recorded as written. So the newer pair passed four of five completed runs, Fable "
           "2 of 3 and GPT-6-astra 2 of 2, against 0 of 10 for the pair one generation older. Every one of the five forecasts resembles the reference on all eight worlds; none "
           "carries the unshrunk fingerprint."),
     ("p", "Their closing messages, which are in the job records, describe what the failed programs never did. Both Fable programs estimated every prior scale from the league by "
@@ -644,6 +652,14 @@ BLOCKS = [
           "sentences, failed five times, so the passes are not family affinity. What it does not establish is a task that fails the newest generation. If that is the pair "
           "the brief means, the levers are in Section 10, and each needs a fresh bar analysis and a fresh committed rule before any pilot."),
 
+    ("h2", "6.5 Independent review"),
+    ("p", "Rutvikk Kharod reviewed the repository on 26 September 2026: he recomputed every graded verdict from the job files, verified the task freeze by git diff, recomputed the "
+          "pooled bar statistics from the committed bar log (1.14 percent noise; careless tiers at 1.27, 1.92 and 1.91 times the reference on the development worlds), and reran all "
+          "eight one-constant ablations independently on Windows under the task's pinned libraries, where every ratio reproduced to the reported precision. Four findings required "
+          "action and were taken: the six architecture drawings are his and are now attributed; the two near-miss verdicts are inside the reference's noise and are reported as such; "
+          "the reference's advantage was described as measured when it was only stated; and the reviewer-facing map, the linter count (11 criteria, not 22) and the job list each had "
+          "an error. Nothing in the frozen task changed; the defects he found in the task itself are listed in Section 9 and the run report and are deferred to the next version."),
+
     ("h1", "7. Experiment log"),
     ("table", ["Experiment", "Question", "Result", "Decision"],
      [["Pilots of Architecture A at 8, 24 and 48 scripts", "Does a documented rule at scale defeat the top tier?", "Opus 4.7 and GPT-5.5 scored 1.000 every time", "Keep A as a fallback. Stop scaling it."],
@@ -656,10 +672,10 @@ BLOCKS = [
       ["State-response ablation", "Does situational batting fix totals and chases?", "Spread rose 25.4 to 30.3; chase rate rose, against the literature's claim", "Keep the response. Add a wear constant."],
       ["Re-validation after raising wear", "Does the raised constant hit the archive's chase rate?", "Chasers win 0.510 against 0.509; mean 189.2; spread 35.0", "Chase rate settled; spread of totals stays a limitation. A stale table corrected."],
       ["Ladder on three worlds", "Is the bar placeable?", "Reference 0.57 to 0.63; closest careless tier at 1.14 times", "I also concluded the reference was stable, which was wrong."],
-      ["Bar analysis on eight fresh worlds", "What must the tolerance absorb?", "Noise up to 5.9 percent per world; coin flip beats the reference on 1 of 8; totals clean", "Bar moved to the total over eight worlds at 1.10. Committed before any pilot."],
+      ["Bar analysis on eight fresh worlds", "What must the tolerance absorb?", "Noise up to 5.8 percent per world; coin flip beats the reference on 1 of 8; totals clean", "Bar moved to the total over eight worlds at 1.10. Committed before any pilot."],
       ["Calibration rebuilt from raw data", "Can the constants be reproduced?", "Every block within 0.0007 of an earlier build; seed 101 reproduces that build's world byte for byte with its constants", "The pipeline is reproducible. The generated world is sensitive to the fourth decimal."],
       ["Gates on the packaged task", "Does the public path meet its own bar?", "Oracle 1.000 on every key at exactly 1.000 times the reference; starter 0.000 overall", "The task is solvable from the agent's files."],
-      ["Harbor's task linter on the packaged task", "Does the package meet Harbor's own checks?", "22 of 22 pass; one comment typo in the engine noted", "Left as is: changing the engine after the pilots would change the task."],
+      ["Harbor's task linter on the packaged task", "Does the package meet Harbor's own checks?", "11 of 11 pass (the linter is a language-model review); one comment typo in the engine noted", "Left as is: changing the engine after the pilots would change the task."],
       ["Pilots, five trials per model", "Does a named model fail under the committed rule?", "Opus 4.7 0 of 5 (1.53, 1.57, 1.40, 1.36, 1.70); GPT-5.5 0 of 5 (1.58, 1.55, 1.11, 1.36, 1.41)", "Both named models fail, for the cause the ladder predicted."],
       ["Pilots of the newer pair on the frozen task", "Does the next generation clear the same rule?", "Fable 5.1 2 of 3 (1.027, 1.104, 1.008); GPT-6-astra 2 of 2 (1.054, 1.072); every forecast resembles the reference", "The bar sits between the generations. The passing programs learned their prior scales from the data."],
       ["One-constant ablations of the six first-round programs on held-out world c", "Is the fingerprint the cause?", "Every program moved as predicted on one constant: 2.70 to 1.36, 2.55 to 1.57, 2.17 to 1.64, 2.29 to 1.60, 2.10 to 1.27; the near miss beat the reference at 0.91 once its priors were halved", "The cause is confirmed by intervention. The near miss was a hedged wrong answer."]],
@@ -678,7 +694,7 @@ BLOCKS = [
       ["A double round robin of three seasons, a quarter of players transferring, a fresh eleven each match", "Fixed rosters; 109 matches of history", "With 109 matches nobody beat the coin flip. Transfers make team identity weak so a player model keeps information a team model loses (5.5, 5.10)."],
       ["The toss winner always chases; five bowlers in fixed rotation", "A captain's decision policy", "Either alternative puts a hidden decision-maker in the world that the agent would have to model too (5.9)."],
       ["Eight graded worlds, one visible and seven held out", "The visible world only", "A method tuned to seed 101 must also work on seven worlds it never saw (5.15)."],
-      ["A bar on the total regret over eight worlds, at 1.10 times the reference, applied again to the held-out seven", "A bar on every world; or an absolute regret target", "Per world, noise reaches 5.9 percent and the coin flip beats the reference on one world in eight. Summed, noise is 1.1 percent and the careless tiers sit at 1.30 or worse (5.16)."],
+      ["A bar on the total regret over eight worlds, at 1.10 times the reference, applied again to the held-out seven", "A bar on every world; or an absolute regret target", "Per world, noise reaches 5.8 percent and the coin flip beats the reference on one world in eight. Summed, noise is 1.1 percent and the careless tiers sit at 1.27 or worse (5.16)."],
       ["Commit the rule before any pilot and never move it", "Set the tolerance after seeing the scores", "A bar that moves after a score is seen is not a bar. The near miss at 1.109 stays a failure (5.16, 6.1)."],
       ["Anchor the bar on a reference that uses only the agent's files, loaded through the agent's reader", "A reference with access to the generator", "The oracle then proves solvability rather than assuming it (5.13, 5.19)."],
       ["Disclose the structure of everything hidden and both traps; withhold every magnitude", "Hide the model class; or disclose the spreads", "Unknown quantities are allowed. Unknown rules are not (5.18)."],
@@ -723,10 +739,10 @@ BLOCKS = [
       ["The engine", "Over shapes; wicket and pressure responses; identical sides at 0.507; home lift at ten times gives 0.656", "Pass"],
       ["The world generator and file writer", "Seed 101 with an earlier build's constants, compared row for row and byte for byte", "Identical history and identical files"],
       ["League realism", "Six aggregates of three simulated leagues against the archive", "Mean 189.2 against 188.5; chasers 0.510 against 0.509; wickets 5.83 against 5.9; run rate by over 0.977; spread of totals 35.0 against 37.4 (5.12)"],
-      ["The ladder", "Ordering of the tiers on the visible world and summed over eight", "Careless tiers at 1.50 to 4.00 times the reference; richer tiers within one percent"],
+      ["The ladder", "Ordering of the tiers on the visible world and summed over eight", "Careless tiers at 1.50 to 4.01 times the reference; richer tiers within one percent"],
       ["The bar", "Noise and separation on eight worlds that are never graded", "Per-world rule rejected; sum rule at 1.10 adopted and committed first"],
       ["The task data", "Truth precision; the reference fitted from the reloaded public files", "Truth error a quarter of one percent of the reference's regret"],
-      ["The package", "Starter and oracle graded outside Harbor; both Harbor gates; Harbor's own linter", "Starter 0.000, oracle 1.000 at exactly 1.000 times the reference; 22 of 22 linter checks pass"],
+      ["The package", "Starter and oracle graded outside Harbor; both Harbor gates; Harbor's own linter", "Starter 0.000, oracle 1.000 at exactly 1.000 times the reference; 11 of 11 linter checks pass"],
       ["The pilots", "Ten runs; fingerprints; six programs read; one-constant ablations", "0 of 5 and 0 of 5; the cause confirmed by intervention (6)"]],
      [0.22, 0.42, 0.36]),
     ("h1", "9. Limitations"),
@@ -741,13 +757,18 @@ BLOCKS = [
                  "The engine has no fielding, no partnerships and no ball-to-ball memory beyond the scoreboard. The toss winner always chases and bowlers rotate in a fixed pattern. None of this affects grading, since the truth is computed under the same rules, but it bounds what the world claims about real cricket.",
                  "Docker Desktop on macOS rejects the no-network mode for the verifier, so it is left undeclared. The verifier makes no network calls. The pilots ran on one platform; the oracle was also checked on linux/amd64 and matched the stored reference to the last printed digit.",
                  "The brief names two model pairs. The pair its goal line names fails 10 of 10; the pair its opening section names passes 4 of 5 completed runs. If the brief means the newer pair, the task as calibrated is not hard enough for it, and Section 10 lists the levers; each needs a fresh committed rule.",
-                 "The newer-pair sample is five completed runs. Two GPT-6-astra runs and one Fable run were excluded for harness reasons, a usage limit and my stopping the loop, and all three are recorded.",
+                 "The newer-pair sample is five completed runs. Two GPT-6-astra runs and two Fable runs were excluded for harness reasons, a usage limit and my stopping the loop, and all four are recorded.",
                  "In every newer-pair run the visible world was the worst or second-worst world. The cause was not ablated.",
+                 "The bar is 1.10 times one simulation of the reference, whose noise is about 1.1 percent, so verdicts between roughly 1.08 and 1.12 are indeterminate as measurements; two runs, 1.104 and 1.109, fall there (independent review, F-03).",
+                 "The reference's advantage over an outside solver is stated, not measured; the ablations measure the cost of the models' own priors, not the reference's gain. The handbook shipped to agents calls the reference 'standard statistical practice', which understates it; correcting the handbook changes the frozen task and is deferred to the next version (F-04).",
+                 "Two defects found by the independent review stand in the frozen task: the last-season-only tier validates its shrinkage on seasons of zero weight and always picks the weakest scale, which affects only that tier's description (F-05); and the agent-facing reader documents a `played` field of past line-ups that it always leaves empty, though `lineups.csv` carries the data (F-11). Both go to the next version, with the verifier and build hardening the review listed (F-07 to F-13) and three calibration fidelity items (F-15 to F-17).",
                  "Harbor's log redaction replaces the literal `true` in each job's `details.json` with a placeholder, so those files need a one-word substitution before they parse; the reward files are untouched. The summaries in the run report were produced that way and say so."]),
 
     ("h1", "10. What comes next"),
     ("table", ["Step", "What it produces", "Status"],
      [["Ablations of runs 7 to 10, and on a second graded world", "The same confirmation for the four later runs, and a check that the size of the effect holds on a world with more to predict", "Open; the method and script are in place"],
+      ["A bar without the reference's noise in it", "The denominator from the reference averaged over several simulation seeds, or at more copies, and the tolerance calibrated against a second, independently built reference-quality method", "Open; raised by the independent review"],
+      ["The defects the review found in the task", "The last-season-only tier's scale selection, the empty `played` field, the handbook's description of the reference, the verifier and build hardening, and three calibration fidelity items", "Open; a new version with a fresh committed rule"],
       ["More trials per model", "A narrower interval on the pass rate than 0 of 5 gives", "Five per model done"],
       ["A reference that learns each skill's spread from the world", "Removes the reference's advantage; needs a fresh bar analysis and a fresh committed rule before any pilot", "Measured earlier at six to seven percent lower regret. Not adopted under the current rule."],
       ["An off-season circuit with its own hidden scoring level", "A second source of evidence per player, and a league-equivalence problem an agent must solve", "Designed. On real data, a player's internationals in the year before an IPL season add five to six points of explained variance."],
@@ -788,7 +809,7 @@ BLOCKS = [
           "reproducible research; Shafranovich (2005) for CSV. Every citation was checked against library records this week; the full list with volumes and pages is in NOTES.md."),
 
     ("h1", "Plates"),
-    ("p", "Seven drawings of the system as it is, generated from the repository by the scripts under `figures/`. Each is a vector drawing; zoom in for the labels."),
+    ("p", "Seven drawings of the system as it is. Six of them were drawn by Rutvikk Kharod from this repository at commit c768e58 and are used with his permission; the pilot figure is mine. Each is a vector drawing; zoom in for the labels."),
     ("plate", "system", "Plate 0. The system", "Two columns and five rows. The left column is what the agent sees, the right what only the generator and the verifier hold; the rows are build, data, package, run and evidence. Every arrow carries the name of the script or step that moves the data."),
     ("plate", "architecture", "Plate 1. The project in six lanes", "Six lanes from the real archive to the documents. Blue nodes are what the agent sees, red what only the generator and the verifier hold. Every arrow is a data flow; the dashed ones are the oracle's install and the validation loop."),
     ("plate", "system_overview", "Plate 2. The whole system, as drawn from the repository", "Five zones: calibration from the real archive, the synthetic world that holds the hidden state, the task build and packaging, the Harbor runtime with its separate agent and verifier containers, and the research evidence behind the pass bar."),

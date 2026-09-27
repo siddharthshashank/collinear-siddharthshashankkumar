@@ -124,9 +124,9 @@ The one fact that matters most for reading it: the pass rule was committed befor
 
 **What I decided first.** A tolerance on every world separately.
 
-**What changed my mind.** I ran the reference on eight development worlds that are never graded, re-simulating it four times to measure its own noise, and fitting the two nearest careless methods to measure separation. Noise reached 5.9 percent on one world; the careless "no shrinkage" method was only 6 to 7 percent above the reference on two; on one world a coin flip beat the reference. No single tolerance could absorb the noise and exclude the careless methods.
+**What changed my mind.** I ran the reference on eight development worlds that are never graded, re-simulating it four times to measure its own noise, and fitting the two nearest careless methods to measure separation. Noise reached 5.8 percent on one world; the careless "no shrinkage" method was only 6 and 8 percent above the reference on two; on one world a coin flip beat the reference. No single tolerance could absorb the noise and exclude the careless methods.
 
-**What I decided instead.** Add the world regrets before applying the tolerance, and apply the same rule to the seven held-out worlds on their own. Summed, the noise is about 1.1 percent (the spread of the four re-simulated repeats summed across the eight worlds) and the careless methods sit at 1.30, 1.93 and 1.90 times the reference.[^8]
+**What I decided instead.** Add the world regrets before applying the tolerance, and apply the same rule to the seven held-out worlds on their own. Summed, the noise is about 1.1 percent (the spread of the four re-simulated repeats summed across the eight worlds; 1.14 percent when recomputed from `bar.log` by the independent review) and the careless methods sit at 1.27, 1.92 and 1.91 times the reference.[^8]
 
 **What it cost.** A method can be weak on one world and still pass. The second application of the rule stops a strong visible world from carrying a weak method, and Fable's second run showed it working in reverse: a pass on the seven unseen worlds, a fail on all eight because of the one it could see.
 
@@ -136,7 +136,9 @@ The one fact that matters most for reading it: the pass rule was committed befor
 
 **Why ten.** About nine times the summed noise, a third of the way to the nearest careless method. A choice, tied to two measured numbers.
 
-**Why commit first.** A bar chosen in sight of the scores is not a bar. `harbor/bar.json` was committed before the first pilot job, the handbook's numbers are filled from it at packaging, and it has not changed through a near miss at 1.109, a nearer one at 1.104, and the newer pair's passes.[^9] A tolerance of 1.12 would have passed the first near miss; I report that and do not act on it.
+**Why commit first.** A bar chosen in sight of the scores is not a bar. `harbor/bar.json` was committed before the first pilot job, the handbook's numbers are filled from it at packaging, and it has not changed through a near miss at 1.109, a nearer one at 1.104, and the newer pair's passes.
+
+**What I did not see until the review.** The bar is 1.10 times one simulation of the reference, and that simulation has about 1.1 percent noise. So a verdict within roughly 1.08 to 1.12 is indeterminate as a measurement, and the two near misses are exactly there. The verdicts stand as written; the documents now say what they can and cannot support, and the next version's bar should average the reference over several seeds.[^9] A tolerance of 1.12 would have passed the first near miss; I report that and do not act on it.
 
 **Stands.**
 
@@ -146,7 +148,7 @@ The one fact that matters most for reading it: the pass rule was committed befor
 
 **What else I could have done.** A reference that learns its spreads from the data. I built one in an earlier round and it scored six to seven percent lower regret than the hand-set reference[^10], and I did not adopt it, because adopting it needs a fresh bar analysis and a fresh committed rule before any pilot, and the ten pilots had already run under the current one.
 
-**What it cost.** The tolerance softens the advantage; it does not remove it. The ablations put its worth at about half of a careless program's excess error. The passing programs removed it themselves by learning the spreads, which is the strongest reason to make that the next reference.
+**What it cost.** The tolerance softens the advantage; it does not remove it. I have not measured it directly; the ablations measure the cost of the models' own priors, not the reference's gain. The passing programs, which learned their spreads from data, scored 1.008 to 1.072, which is indirect evidence that the advantage is small, and the strongest reason to make a learned-spreads reference the next version's anchor. The handbook shipped to agents describes the reference only as "standard statistical practice"; that understates the advantage, and correcting it is a change to the frozen task, deferred to the next version.
 
 **Stands, with the limitation recorded.**
 
@@ -160,7 +162,7 @@ The one fact that matters most for reading it: the pass rule was committed befor
 
 ## D16. A separate verifier, an unprivileged runner, a pristine engine
 
-**Why.** The reward has to be earned by forecasting. The truth lives in a container the agent never sees; the program runs as a user that cannot read the private files; it runs beside a pristine engine while the agent's engine is only hashed. Harbor's linter passed all 22 checks, including the anti-cheating ones.[^12]
+**Why.** The reward has to be earned by forecasting. The truth lives in a container the agent never sees; the program runs as a user that cannot read the private files; it runs beside a pristine engine while the agent's engine is only hashed. Harbor's linter passed all 11 of its checks, including the anti-cheating ones; it is a language-model review, not a test suite.[^12]
 
 **What it cost.** A laptop run of the grader has no such boundary, which is the intended difference between a local check and the real gate.
 
@@ -182,7 +184,7 @@ The one fact that matters most for reading it: the pass rule was committed befor
 
 **What happened.** GPT-5.5's third run missed by 0.9 points on all eight worlds and 1.7 on the held-out seven. A tolerance of 1.12 would have passed it.
 
-**Why it stays a failure.** The rule was fixed first. The ablations later showed the near miss was too-loose priors compensated by softening every output toward 0.5, not correct regularisation.
+**Why it stays a failure.** The rule was fixed first. The ablations later showed the near miss was too-loose priors compensated by softening every output toward 0.5, not correct regularisation. As a measurement the verdict is indeterminate, since 1.109 sits inside the reference's noise band; the failure rests on the ablation, not on the margin.
 
 **Stands.**
 
@@ -212,7 +214,7 @@ The one fact that matters most for reading it: the pass rule was committed befor
 
 ## D23. Stop the loop after four of its six runs
 
-**Why.** Three completed Fable runs and two completed GPT-6-astra runs already answered the question; the last two would have refined a rate I do not need to be precise. The two interrupted runs are recorded as excluded with their reasons, not as failures.
+**Why.** Three completed Fable runs and two completed GPT-6-astra runs already answered the question; the last two would have refined a rate I do not need to be precise. The interrupted runs, including one cancelled 72 seconds in when I restarted the loop, are recorded as excluded with their reasons, not as failures.
 
 **Recorded.**
 
@@ -222,6 +224,14 @@ The one fact that matters most for reading it: the pass rule was committed befor
 - **Harbor's redaction.** Harbor redacts the value of every environment variable passed on the command line, and one value was the word `true`, so every `true` in the archived artifacts became `[REDACTED]`. The summaries and the ablation script restore it in memory; the archived files are untouched; the restored programs reproduce the verifier's numbers exactly.
 - **The engine's comment typo.** Found by the linter, left in place: any change to the engine's bytes makes the shipped task differ from the one the pilots saw.
 - **The validation table.** An earlier version carried numbers from before the wear constant was raised. My own rerun found and replaced them; the small remaining gap in the spread of totals stays visible.
+
+## D25. Answer the independent review in the record, and change nothing in the task
+
+**What happened.** Rutvikk Kharod reviewed the repository on 26 September 2026, reran the ablations on another platform, and reported twenty-four findings. Every headline number held. Four findings required action: the six architecture drawings in `figures/` are his, drawn from this repository at `c768e58`, and my documents had said they were generated by repository scripts; the two near-miss verdicts sit inside the reference's simulation noise; my fairness audit called the reference's advantage "measured" when it was only stated; and the reviewer-facing map, the linter count and the job list each had an error.
+
+**What I decided.** Correct every document and development script, attribute the drawings with his permission, and change nothing in the frozen task. The defects he found in the task itself, listed in RUN_REPORT.md Section 13, are disclosed now and fixed in the next version, because a task that changes after its pilots is a different task.
+
+**Stands.**
 
 ---
 

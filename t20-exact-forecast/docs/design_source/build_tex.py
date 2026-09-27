@@ -57,10 +57,10 @@ PANELS = {"pilot_results": [("pilot_a", "All ten runs and the ladder tiers, pool
 
 
 def esc(text):
-    text = text.replace("\\", r"\textbackslash{}")
+    text = text.replace("\\", "\x00")                       # protect backslashes before the braces are escaped (review finding F-23)
     for a, b in [("&", r"\&"), ("%", r"\%"), ("$", r"\$"), ("#", r"\#"), ("_", r"\_"), ("{", r"\{"), ("}", r"\}"), ("~", r"\textasciitilde{}"), ("^", r"\textasciicircum{}")]:
         text = text.replace(a, b)
-    return text.replace('"', "''")
+    return text.replace("\x00", r"\textbackslash{}").replace('"', "''")
 
 
 def rich(text):
@@ -143,7 +143,7 @@ def body():
             if block[1].startswith("**Sources.**"):
                 continue                                     # the paper carries a reference list instead
             if block[1].startswith("Seven drawings of the system"):
-                out.append("Eight drawings of the system, each cut along its own zones into parts that read at text size. They are generated from the repository by the scripts under \\texttt{figures/}, so they change when the code does.\n")
+                out.append("Eight drawings of the system, each cut along its own zones into parts that read at text size. Six of them (the system overview, the calibration pipeline, task build and packaging, the Harbor runtime, the grading rule and the research ladder) were drawn by Rutvikk Kharod from this repository at commit c768e58 and are used with his permission; the results chart, the pilot panels and the grid diagram are mine, drawn by the scripts under \\texttt{figures/src/}.\n")
                 continue
             out.append(rich(block[1]) + "\n")
         elif kind == "bullets":

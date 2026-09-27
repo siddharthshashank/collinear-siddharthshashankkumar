@@ -2,7 +2,7 @@
 
 A Harbor task in which an AI agent forecasts match win probabilities for a simulated Twenty20 cricket league and is graded against the exact truth.
 
-Status: complete and frozen. Task, verifier, oracle, gates, linter, eighteen model jobs and the documents, as of 25 September 2026. No changes to the task after the first pilot.
+Status: complete and frozen. Task, verifier, oracle, gates, linter, nineteen model jobs and the documents, as of 25 September 2026; independently reviewed on 26 September (see RUN_REPORT.md, Section 13). No changes to the task after the first pilot.
 
 ![The whole system: calibration from real data, the synthetic world, task build and packaging, the Harbor runtime, and the evidence](figures/system_overview.png)
 
@@ -23,7 +23,7 @@ The hard part is not writing the code. It is deciding how much of a player's sho
 
 ![Every completed run, by model, as a multiple of the reference's regret](figures/model_results.png)
 
-The pass bar is 1.10 times a reference forecaster built from ordinary statistics. The pair the brief's goal line names failed ten times out of ten, all for the same reason: they took players' short histories at face value and had no check that could see it; changing that one number in each program moved it most of the way to the reference. The next generation passed four of five completed runs by doing exactly what the failures skipped. So the bar sits between the two generations. Three further runs were cut short for account or operator reasons and are recorded as excluded, not as failures. Every number in this table is in a job folder under `jobs/`; the ids are in RUN_REPORT.md, and every claim in DESIGN_DOCUMENT.md carries a pointer to its evidence.
+The pass bar is 1.10 times a reference forecaster built from ordinary statistics. The pair the brief's goal line names failed ten times out of ten, all for the same reason: they took players' short histories at face value and had no check that could see it; changing that one number in each program moved it most of the way to the reference. The next generation passed four of five completed runs by doing exactly what the failures skipped. So the bar sits between the two generations. Four further runs were cut short for account or operator reasons and are recorded as excluded, not as failures. Two verdicts, 1.104 and 1.109, sit inside the reference's own simulation noise; the rule's verdicts stand as written, but as measurements those two are indeterminate (RUN_REPORT.md, Section 2). Every number in this table is in a job folder under `jobs/`; the ids are in RUN_REPORT.md, and every claim in DESIGN_DOCUMENT.md carries a pointer to its evidence.
 
 ## Where to read
 
@@ -35,8 +35,8 @@ The pass bar is 1.10 times a reference forecaster built from ordinary statistics
 | [PROVENANCE.md](PROVENANCE.md) | What is new, what is borrowed, the data licence, and the use of AI assistance. |
 | [NOTES.md](NOTES.md) | Notes on every file in the pipeline: what it does, how it works, what it was checked against, and what the checks caught. The full-length working notes are in `docs/NOTES_FULL.md`. |
 | `docs/DESIGN.pdf` | The extended version of the design document, with derivations and all seven drawings. |
-| `figures/` | The drawings used in the documents. |
-| `jobs/` | Every Harbor job: the two gates, the linter, the sixteen graded model jobs with rewards, per-world details, agent logs and submitted programs, and the two jobs I stopped, with their agent logs. |
+| `figures/` | The drawings used in the documents. Six architecture drawings are by Rutvikk Kharod, drawn from this repository at commit `c768e58` and used with his permission; the results chart and the grid diagram are mine, with their scripts under `figures/src/`. |
+| `jobs/` | Every Harbor job: the two gates, the linter, the sixteen graded model jobs with rewards, per-world details, agent logs and submitted programs, and the three stopped jobs with their agent logs. |
 
 ## Layout
 
@@ -57,7 +57,7 @@ The pass bar is 1.10 times a reference forecaster built from ordinary statistics
     make package
     harbor run -p dist/collinear-siddharthshashankkumar/t20-exact-forecast -a oracle     # expect 1.000
     harbor run -p dist/collinear-siddharthshashankkumar/t20-exact-forecast -a nop        # expect 0.000
-    harbor check dist/collinear-siddharthshashankkumar/t20-exact-forecast              # 22 of 22
+    harbor check dist/collinear-siddharthshashankkumar/t20-exact-forecast              # 11 of 11
     harbor run -p dist/collinear-siddharthshashankkumar/t20-exact-forecast -a claude-code -m anthropic/claude-opus-4-7 --ak reasoning_effort=high
     harbor run -p dist/collinear-siddharthshashankkumar/t20-exact-forecast -a codex -m openai/gpt-5.5 --ak reasoning_effort=high
 

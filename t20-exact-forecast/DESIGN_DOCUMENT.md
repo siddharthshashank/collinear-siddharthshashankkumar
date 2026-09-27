@@ -26,7 +26,7 @@
 13. [If I had another month](#13-if-i-had-another-month)
 14. [How to run it](#14-how-to-run-it)
 
-Evidence: every factual claim carries a numbered footnote naming the file, job or calculation behind it; the footnotes and an index by kind of claim are at the end.
+Evidence: every factual claim carries a numbered footnote naming the file, job or calculation behind it; the footnotes and an index by kind of claim are at the end. Figures: the six architecture drawings are by Rutvikk Kharod, drawn from this repository at commit `c768e58` and used with his permission; the results chart is mine. The repository was independently reviewed on 26 September 2026; what the review found and what changed is in RUN_REPORT.md, Section 13.
 
 ## Summary
 
@@ -107,6 +107,8 @@ Suppose a new batter has faced forty balls and scored at a rate that would make 
 ## 5. Building a world that behaves like cricket
 
 ![The calibration pipeline: from the Cricsheet archive through the fits to one constants file, with the validation loop back to the design constants](figures/calibration_pipeline.png)
+
+*Drawing by Rutvikk Kharod, from this repository at commit `c768e58`, used with permission.*
 
 ### How does real data become a simulator?
 
@@ -193,19 +195,23 @@ A raw regret number means nothing on its own, and worlds differ in how much ther
 
 ![The research ladder: the reference and five careless tiers on the left, the bar analysis on worlds that are never graded, and the pass bar as committed on the right](figures/research_ladder.png)
 
+*Drawing by Rutvikk Kharod, from this repository at commit `c768e58`, used with permission.*
+
 ### Why a ladder of careless methods?
 
-To know what the pass mark means, I built five methods a hurried analyst might use alongside the reference: a coin flip, team ratings, player estimates without shrinkage, last season only, and a raw head-to-head table. On the eight graded worlds their total regret is 1.89, 3.23, 1.58, 1.50 and 4.00 times the reference's.[^18] The pass bar is 1.10. So a pass means the agent did something none of the shortcuts do, and a failure can be attributed: for every forecast the grader reports which rung it most resembles. That attribution is what let me diagnose the failures later without guessing.
+To know what the pass mark means, I built five methods a hurried analyst might use alongside the reference: a coin flip, team ratings, player estimates without shrinkage, last season only, and a raw head-to-head table. On the eight graded worlds their total regret is 1.89, 3.23, 1.59, 1.50 and 4.01 times the reference's.[^18] The pass bar is 1.10. So a pass means the agent did something none of the shortcuts do, and a failure can be attributed: for every forecast the grader reports which rung it most resembles. That attribution is what let me diagnose the failures later without guessing.
 
 ### Why sum over eight worlds instead of judging each?
 
-Because I tried the per-world rule first, on eight development worlds that are never graded, and it was unsound. I fitted the reference once and re-simulated it four times to measure its own noise, and I fitted the two nearest careless methods to measure how far they sit from it. On one world the reference's noise was 5.9 percent of its regret. On two others the "no shrinkage" method was only 6 to 7 percent worse than the reference. And on one world a coin flip beat the reference, because there was almost nothing to predict that year. No single tolerance could absorb the noise and exclude the careless methods on every world. Summed across eight worlds, the noise falls to about 1.1 percent and the careless methods sit at 1.30 times the reference or worse. So the rule is on the sum.[^19]
+Because I tried the per-world rule first, on eight development worlds that are never graded, and it was unsound. I fitted the reference once and re-simulated it four times to measure its own noise, and I fitted the two nearest careless methods to measure how far they sit from it. On one world the reference's noise was 5.8 percent of its regret. On two others the "no shrinkage" method was only 6 and 8 percent worse than the reference. And on one world a coin flip beat the reference, because there was almost nothing to predict that year. No single tolerance could absorb the noise and exclude the careless methods on every world. Summed across eight worlds, the noise falls to about 1.1 percent and the careless methods sit at 1.27 times the reference or worse. So the rule is on the sum.[^19]
 
 ### Why 10 percent?
 
-About nine times the summed noise, and a third of the way to the nearest careless method. It is a choice, and it is tied to two measured numbers rather than picked to taste.
+About nine times the summed noise, and a third of the way to the nearest careless method. It is a choice, and it is tied to two measured numbers rather than picked to taste. One consequence I did not state until the independent review pointed it out: because the bar is 1.10 times a single simulation of the reference, a verdict within about two standard deviations of it, a ratio between roughly 1.08 and 1.12, is indeterminate as a measurement. The rule's verdict is still recorded as written.
 
 ![The pass rule and the reward: one rule applied to all eight worlds and again to the seven held out, the constraint checks, the artifact check, and how the keys combine](figures/grading_rule.png)
+
+*Drawing by Rutvikk Kharod, from this repository at commit `c768e58`, used with permission.*
 
 ### Why apply the rule twice?
 
@@ -228,17 +234,23 @@ The truth is an estimate from 200,000 played matches per fixture, with an error 
 
 ![The whole system: calibration from the real archive, the synthetic world, task build and packaging, the Harbor runtime with its two containers, and the evidence](figures/system_overview.png)
 
+*Drawing by Rutvikk Kharod, from this repository at commit `c768e58`, used with permission.*
+
 ### How does it all fit together?
 
 Left to right in the drawing: real data becomes constants; constants plus one random seed become a league, whose public history goes to the agent and whose hidden state goes to the truth engine; eight such leagues, their truths and the reference's regrets are built and packaged into one Harbor task; Harbor runs the agent in one container and the grader in another; and every run leaves a record from which these documents are built.
 
 ![Task build and packaging: eight worlds become one Harbor task directory with a public side and a private side](figures/task_build_and_packaging.png)
 
+*Drawing by Rutvikk Kharod, from this repository at commit `c768e58`, used with permission.*
+
 ### Why one packaged directory?
 
 Harbor runs a task from one directory: an instruction, a `task.toml`, an image for the agent, an image for the verifier, and a solution that proves the task solvable. The packager assembles that directory from the source trees, so the agent's side and the verifier's side cannot drift apart, and the same engine is copied to both.
 
 ![The Harbor runtime: the agent container with public inputs only, and the separate verifier container with the private truth, the pristine engine and the grader](figures/harbor_runtime.png)
+
+*Drawing by Rutvikk Kharod, from this repository at commit `c768e58`, used with permission.*
 
 ### Why two containers?
 
@@ -250,7 +262,7 @@ The verifier runs the agent's program as a separate unprivileged user, and the p
 
 ### How do I know the grader itself works?
 
-Three ways, and one of them caught a real bug. A solution that installs the reference forecaster must pass: it scores 1.000 on every key, at exactly 1.000 times the stored reference regret, which is what "solvable from the agent's files" means here.[^23] The do-nothing starter must fail: it scores 0 on the forecasting keys and 1 on the validity and constraint keys, as it should.[^24] And Harbor's own task linter, which checks the instruction, the tests, the anti-cheating measures, the pinned dependencies and more, passed all 22 checks.[^25] The bug: my first oracle run scored 0.000, because a shell script had spaces around an assignment and the reference was never installed, so the grader graded the starter. A syntax check had passed that script; only running the gate caught it.[^26] I kept both runs in the record so that an infrastructure error can never be mistaken for a model result, and so that the reader can see the gate doing its job.
+Three ways, and one of them caught a real bug. A solution that installs the reference forecaster must pass: it scores 1.000 on every key, at exactly 1.000 times the stored reference regret, which is what "solvable from the agent's files" means here.[^23] The do-nothing starter must fail: it scores 0 on the forecasting keys and 1 on the validity and constraint keys, as it should.[^24] And Harbor's own task linter, which checks the instruction, the tests, the anti-cheating measures, the pinned dependencies and more, passed all 11 of its checks; the linter is itself a language-model review, not a deterministic test suite.[^25] The bug: my first oracle run scored 0.000, because a shell script had spaces around an assignment and the reference was never installed, so the grader graded the starter. A syntax check had passed that script; only running the gate caught it.[^26] I kept both runs in the record so that an infrastructure error can never be mistaken for a model result, and so that the reader can see the gate doing its job.
 
 ### Does this prove the task cannot be gamed?
 
@@ -286,7 +298,7 @@ Five runs each of Claude Opus 4.7 under Claude Code and GPT-5.5 under Codex, at 
 | 9 | Opus 4.7 | 1.703 | 1.661 | no shrinkage, all 8 | 23 min |
 | 10 | GPT-5.5 | 1.409 | 1.398 | no shrinkage, all 8 | 26 min |
 
-Opus 4.7 passed 0 of 5. GPT-5.5 passed 0 of 5, or 0 of 4 if the interrupted run is excluded; I count it and flag it, since its program was complete and graded. Every run produced a valid, deterministic forecast inside its limits, so every verdict is about forecast quality and nothing else. H1's prediction held: nine of ten forecasts most resemble the "no shrinkage" rung.[^28]
+Opus 4.7 passed 0 of 5. GPT-5.5 passed 0 of 5, or 0 of 4 if the interrupted run is excluded; I count it and flag it, since its program was complete and graded. Every run produced a valid, deterministic forecast inside its limits, so every verdict is about forecast quality and nothing else. Run 6, at 1.109, sits inside the reference's own simulation noise: a fresh simulation of the reference would flip that verdict about one time in four, so its failure rests on what its program did, below, and not on the margin. H1's prediction held: nine of ten forecasts most resemble the "no shrinkage" rung.[^28]
 
 ### What went wrong
 
@@ -323,7 +335,7 @@ Having measured the previous generation, I ran the newer one on the same frozen 
 | A1 | GPT-6-astra | 1.054 | 1.047 | 46 min | pass |
 | A2 | GPT-6-astra | 1.072 | 1.061 | 45 min | pass |
 
-Three further runs were excluded and their records kept: a GPT-6-astra run cut off by my account's usage limit at five minutes, before it wrote a program; a GPT-6-astra run with a complete program that I stopped during its verification; and a Fable run stopped at its start. Four of five completed runs passed, and every one of the five forecasts most resembles the reference on every world.[^31]
+Four further runs were excluded and their records kept: a GPT-6-astra run cut off by my account's usage limit at five minutes, before it wrote a program; a GPT-6-astra run with a complete program that I stopped during its verification; a Fable run stopped at its start; and a Fable run cancelled 72 seconds in when I restarted the loop, which the independent review found missing from my list. Four of five completed runs passed, and every one of the five forecasts most resembles the reference on every world. F2's miss at 1.104 is inside the reference's noise band: a fresh simulation of the reference would flip it about 37 percent of the time, so it is not a clear failure, and the rule's verdict is recorded as written.[^31]
 
 ### What did they do that the failures did not?
 
@@ -350,7 +362,7 @@ I built this task with the help of an AI assistant from the same family as Claud
 
 ### What the small numbers can and cannot say
 
-Zero of five is consistent with a true pass rate as high as about 45 percent; four of five with anything from about 30 to 99 percent.[^34] What the numbers do say, without doubt, is that under an identical rule two models failed every time and their successors passed almost every time, and that the diagnosis of the failures survived being tested by intervention.
+Zero of five is consistent with a true pass rate as high as about 45 percent; four of five with anything from about 30 to 99 percent.[^34] What the numbers do say, without doubt, is that under an identical rule two models failed every time and their successors passed almost every time, and that the diagnosis of the failures survived being tested by intervention, twice: once by me, and once by an independent reviewer on another platform. The two verdicts nearest the bar, 1.104 and 1.109, are indeterminate as measurements; every other verdict is far from it.
 
 
 ## 11. Is it fair, and is it original?
@@ -361,7 +373,7 @@ Everything the grader checks is written in the handbook. The reference uses only
 
 ### The advantage I should own
 
-The reference's prior scales were set by me, knowing the true spreads. The reference sees only public files when it runs, but its design knows something an outside solver is not handed. The 10 percent tolerance softens that; it does not remove it. The ablations put its worth at about half of a careless program's excess error, and the passing programs removed it on their own by estimating the scales from data, which is the strongest argument for making the next version's reference do the same.
+The reference's prior scales were set by me, knowing the true spreads. The reference sees only public files when it runs, but its design knows something an outside solver is not handed. The 10 percent tolerance softens that; it does not remove it. I have not measured the advantage directly: the ablations measure how much the models' own priors cost them, not what the reference gains from knowing the spreads. The indirect evidence is that the passing programs estimated their scales from data and scored 1.008 to 1.072, so the advantage is small for a competent estimator. The handbook shipped to agents describes the reference only as "standard statistical practice", which understates this; correcting it changes the frozen task, so it is deferred to the next version and disclosed here. Making the next version's reference learn its scales from data is the strongest fix.
 
 ### Original?
 
@@ -381,6 +393,8 @@ A working statistician would, in an afternoon, by the same route the newer model
 - The truth is a precise estimate, not a closed-form number, and the random streams behind it are shared across worlds by fixture number, so the eight worlds' small truth errors are not fully independent.
 - The verifier makes no network calls, but its no-network mode is not declared, because Docker Desktop on macOS rejects it.
 - A comment typo in the engine, found by the linter, was left in place: changing the engine after the pilots would change the task.
+- The bar is 1.10 times one simulation of the reference, whose noise is about 1.1 percent, so verdicts between roughly 1.08 and 1.12 are indeterminate as measurements; two runs, 1.104 and 1.109, fall there.
+- Two defects found by the independent review stand in the frozen task: the "last season only" ladder tier validates its shrinkage on seasons of zero weight and so always picks the weakest scale, which affects only that tier's description; and the agent-facing reader documents a `played` field of past line-ups that it always leaves empty, though `lineups.csv` carries the data. Both go to the next version. The full list is in RUN_REPORT.md, Section 13.
 - The pilots of the two earlier architectures are described from my records; their job folders are in my earlier repository, not in this one.
 - The task does not fail the newest generation. Whether that counts as a limitation depends on which pair the brief means.
 
@@ -389,7 +403,7 @@ A working statistician would, in an afternoon, by the same route the newer model
 
 1. Anchor the pass bar on a reference that learns its spreads from the data, which is what the passing programs built. Fresh bar analysis, fresh committed rule, fresh pilots.
 2. If the goal is a task the newest generation fails: shorten the history toward the point where the careful method still separates from the careless ones, or add an off-season circuit whose records are noisier and see whether agents know to discount it. Re-derive the bar; never change difficulty under an existing rule.
-3. Repeat the truth calculations with independent random streams to confirm that the borderline verdicts, 1.104 and 1.109, are stable.
+3. Take the noise out of the bar: set the denominator from the reference averaged over several simulation seeds, or at more copies, and calibrate the tolerance against a second, independently built reference-quality method as well as against the careless tiers. Repeat the truth calculations with independent random streams.
 4. Extend the interventions to a second world and to the four programs only read by resemblance, and investigate why the newer pair does worst on the visible world.
 5. Run a human baseline.
 6. Record the hash of the Cricsheet archive at download time, so the calibration is reproducible byte for byte from outside.
@@ -405,12 +419,12 @@ make data                      # eight worlds and their truths, about 25 minutes
 make package                   # the Harbor task directory under dist/
 harbor run -p dist/collinear-siddharthshashankkumar/t20-exact-forecast -a oracle     # expect 1.000
 harbor run -p dist/collinear-siddharthshashankkumar/t20-exact-forecast -a nop        # expect 0.000
-harbor check dist/collinear-siddharthshashankkumar/t20-exact-forecast              # 22 of 22
+harbor check dist/collinear-siddharthshashankkumar/t20-exact-forecast              # 11 of 11
 harbor run -p dist/collinear-siddharthshashankkumar/t20-exact-forecast -a claude-code -m anthropic/claude-opus-4-7 --ak reasoning_effort=high
 harbor run -p dist/collinear-siddharthshashankkumar/t20-exact-forecast -a codex -m openai/gpt-5.5 --ak reasoning_effort=high
 ```
 
-Every job is under `jobs/`: the sixteen graded model jobs with their reward, per-world details, agent log and submitted program, and the two I stopped with their agent logs. Full commands, versions, resource limits and the ablation log are in [RUN_REPORT.md](RUN_REPORT.md).
+Every job is under `jobs/`: the sixteen graded model jobs with their reward, per-world details, agent log and submitted program, and the three stopped jobs with their agent logs. Full commands, versions, resource limits and the ablation log are in [RUN_REPORT.md](RUN_REPORT.md).
 
 
 ## Evidence index
@@ -453,20 +467,20 @@ Every factual claim above carries a pointer. This table says where each kind of 
 [^15]: `harbor/tests/grader.py`: the determinism rerun, the 720-second limit and the engine hash; `harbor/task.toml` for the container resources
 [^16]: `dev/make_task_data.py` and `league/world.py`, TruthEngine; `task_data/private/*/truth.csv`
 [^17]: `forecasters/ladder.py`, the reference; `dev/make_task_data.py`, which reloads the public folder before fitting
-[^18]: `task_data/private/*/tiers.csv` and `reference.json`; summed in `build.log`
+[^18]: ratios of the summed regrets in `task_data/private/*/reference.json`; also in `build.log` at four decimals, which rounds two of them differently
 [^19]: `bar.log`, the output of `dev/bar_analysis.py` on seeds 1001 to 1008; NOTES.md, the bar analysis section
 [^20]: `harbor/bar.json`; the git log, where the commit "Harbor metadata, pass bar, lock file, instruction" precedes job `2026-09-23__19-48-37`
 [^21]: NOTES.md, the task-data section: standard error 0.0011 at 200,000 copies
 [^22]: `harbor/tests/grader.py`, functions `untouched` and `run_forecaster`; `harbor/tests/Dockerfile`
 [^23]: job `2026-09-23__19-38-27`, `reward.json` and `details.json`
 [^24]: job `2026-09-23__19-33-46`
-[^25]: job `2026-09-24__12-21-19`, `check_report.json`
+[^25]: job `2026-09-24__12-21-19`, `check_report.json`, eleven criteria
 [^26]: job `2026-09-23__19-33-12`, score 0.000; `harbor/solution/solve.sh` in the git history before and after the fix
 [^27]: `constraint_satisfaction` is 1.0 in every graded job's `verifier/reward.json`
 [^28]: the `most_like` field per world in each run's `details.json`; the ten job ids are in RUN_REPORT.md
 [^29]: the six programs under `jobs/*/artifacts/app/solution/`; run 3's closing message in `jobs/2026-09-23__20-29-40/*/agent/claude-code.txt`
 [^30]: `ablations.log`, produced by `dev/ablate_pilots.py`; the "as submitted" rows match each run's `details.json` for held-out world c
-[^31]: jobs `2026-09-24__15-33-25`, `20-28-49`, `23-50-11`, `19-42-59`, `23-05-34`; the excluded jobs `2026-09-24__17-35-36`, `2026-09-25__01-34-12`, `2026-09-25__01-51-10`
+[^31]: jobs `2026-09-24__15-33-25`, `20-28-49`, `23-50-11`, `19-42-59`, `23-05-34`; the excluded jobs `2026-09-24__17-35-36`, `2026-09-24__19-41-42`, `2026-09-25__01-34-12`, `2026-09-25__01-51-10`
 [^32]: the closing messages in each newer-pair job's `agent/claude-code.txt` or `agent/codex.txt`
 [^33]: job `2026-09-24__20-28-49`, `details.json`, the visible world entry
 [^34]: exact binomial intervals: one-sided 95 percent for 0 of 5, two-sided 95 percent for 4 of 5

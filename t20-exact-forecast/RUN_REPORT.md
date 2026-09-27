@@ -6,7 +6,7 @@
 
 ## 1. The short version
 
-The task passed its own two gates and Harbor's linter. The two models the brief's goal line names, Claude Opus 4.7 and GPT-5.5, failed it in all ten runs. The next generation, Claude Fable 5.1 and GPT-6-astra, passed four of five completed runs, with one narrow Fable miss that passed the held-out rule and failed the all-worlds rule by 0.4 points. The pass rule was committed before any of the eighteen model jobs and has not changed.
+The task passed its own two gates and Harbor's linter. The two models the brief's goal line names, Claude Opus 4.7 and GPT-5.5, failed it in all ten runs. The next generation, Claude Fable 5.1 and GPT-6-astra, passed four of five completed runs, with one narrow Fable miss that passed the held-out rule and failed the all-worlds rule by 0.4 points. The pass rule was committed before any of the nineteen model jobs and has not changed. Two verdicts sit inside the reference's own simulation noise and are indeterminate as measurements (Section 2).
 
 ---
 
@@ -30,6 +30,8 @@ Regret is averaged over the fixtures of each world. The program passes the forec
 | `overall` | `functional_correctness × (0.5 × robustness + 0.25 × constraint_satisfaction + 0.25 × artifact_quality)` |
 
 Only `overall = 1.0` counts as solved. The rule file is `harbor/bar.json` (relative tolerance 0.10, absolute tolerance 0, clip 0.002). It was committed before the first pilot: the commit "Harbor metadata, pass bar, lock file, instruction" precedes job `2026-09-23__19-48-37` in the git log.
+
+**Uncertainty of a verdict near the bar.** The reference's stored regret is one simulation of the reference forecaster at 4,000 copies per batting order, and re-simulating it moves its summed regret by about 1.1 percent (one standard deviation; recomputed from `bar.log` as 1.14 percent by the independent review). The bar is 1.10 times that one simulation. A verdict within about two standard deviations of the bar, a ratio between roughly 1.08 and 1.12, is therefore indeterminate as a measurement even though the rule's verdict is recorded as written. Two runs fall in that band. Run 6 of GPT-5.5 at 1.109 misses by 0.82 percent of the reference sum; under a normal approximation with the stored reference at its expected value, a fresh simulation of the reference would flip that verdict about 24 percent of the time. Fable's F2 at 1.104 misses by 0.36 percent and would flip about 37 percent of the time. Run 6's failure rests on the ablation evidence in Section 7, not on the margin; F2 is not a clear failure. This point was raised by the independent review (Section 13, F-03).
 
 ---
 
@@ -58,9 +60,9 @@ Only `overall = 1.0` counts as solved. The rule file is `harbor/bar.json` (relat
 
 The first oracle attempt, `2026-09-23__19-33-12`, scored 0.000 because `solve.sh` had spaces around a shell assignment, so the oracle was never installed and the verifier graded the starter. That is a packaging error on my side, fixed and rerun; it is kept in the record so that an infrastructure error is never mistaken for a model result. The oracle passes at exactly 1.000 times the stored reference regret, which is what "solvable from the agent's files" means here.
 
-Harbor's task linter, `harbor check`, passed all 22 checks, job `2026-09-24__12-21-19`. It noted one typo in a comment in the engine, left as is because changing the engine after the pilots would change the task.
+Harbor's task linter, `harbor check`, passed all 11 of its checks, job `2026-09-24__12-21-19`. The linter is itself a language-model review (Claude Sonnet 4.6, about half a dollar of tokens), not a deterministic test suite. It noted one typo in a comment in the engine, left as is because changing the engine after the pilots would change the task.
 
-On the eight graded worlds, the careless methods on the ladder total 1.50 (last season only), 1.58 (no shrinkage), 1.89 (coin flip), 3.23 (team ratings) and 4.00 (raw head-to-head) times the reference's regret, against the bar of 1.10.
+On the eight graded worlds, the careless methods on the ladder total 1.50 (last season only), 1.59 (no shrinkage), 1.89 (coin flip), 3.23 (team ratings) and 4.01 (raw head-to-head) times the reference's regret, against the bar of 1.10; ratios of the summed regrets in `task_data/private/*/reference.json`.
 
 ---
 
@@ -81,7 +83,7 @@ All runs after the rule was committed, alternating between the two models.
 | 9 | Claude Opus 4.7 | `2026-09-24__00-23-00` | 1.703 | 1.661 | no shrinkage, all 8 | 23 min |
 | 10 | GPT-5.5 | `2026-09-24__00-45-36` | 1.409 | 1.398 | no shrinkage, all 8 | 26 min |
 
-Opus 4.7 0 of 5. GPT-5.5 0 of 5, or 0 of 4 excluding run 8; I count it and flag it because its program was complete and graded. Every run produced a complete, valid, deterministic forecast, left the engine untouched and finished well inside its limits, so every failure is about forecast quality. Run 6 missed by 0.9 points on all eight worlds and 1.7 on the held-out seven; a 1.12 bar would have passed it, and the 1.10 bar stands.
+Opus 4.7 0 of 5. GPT-5.5 0 of 5, or 0 of 4 excluding run 8; I count it and flag it because its program was complete and graded. Every run produced a complete, valid, deterministic forecast, left the engine untouched and finished well inside its limits, so every failure is about forecast quality. Run 6 missed by 0.9 points on all eight worlds and 1.7 on the held-out seven; a 1.12 bar would have passed it, the 1.10 bar stands, and the verdict is inside the reference's noise band (Section 2).
 
 ---
 
@@ -104,8 +106,9 @@ Excluded, with their records kept:
 | `2026-09-24__17-35-36` | GPT-6-astra | My account's usage limit at 5 minutes, before a program existed; the starter was graded |
 | `2026-09-25__01-34-12` | GPT-6-astra | Program complete; I stopped the loop during its verification |
 | `2026-09-25__01-51-10` | Claude Fable 5.1 | Stopped at its start |
+| `2026-09-24__19-41-42` | Claude Fable 5.1 | Cancelled 72 seconds in, before any work, when I restarted the loop; found unreported by the independent review |
 
-Fable 5.1 2 of 3 completed runs, GPT-6-astra 2 of 2. All five forecasts most resemble the reference on every world. Their closing messages, in the agent logs, describe prior scales estimated from the league by marginal likelihood, simulation that averages over the uncertainty in the estimates, and validation against leagues they generated from the handbook's description (Fable) or a held-out slice of the real league (GPT-6-astra). In all five the visible world was the worst or second-worst world; F2's miss is entirely the visible world, 1.191 there against 1.093 elsewhere.
+Fable 5.1 2 of 3 completed runs, GPT-6-astra 2 of 2. F2's miss at 1.104 is inside the reference's noise band and is indeterminate as a measurement (Section 2). All five forecasts most resemble the reference on every world. Their closing messages, in the agent logs, describe prior scales estimated from the league by marginal likelihood, simulation that averages over the uncertainty in the estimates, and validation against leagues they generated from the handbook's description (Fable) or a held-out slice of the real league (GPT-6-astra). In all five the visible world was the worst or second-worst world; F2's miss is entirely the visible world, 1.191 there against 1.093 elsewhere.
 
 ---
 
@@ -170,7 +173,7 @@ A shallow solution cannot pass it. The starter scores zero. Team ratings, last s
 | Question | Answer |
 |---|---|
 | Is everything the grader checks stated to the agent? | Yes: the score, the clip, the tolerance, both applications of the rule, the time limit, the determinism check and the engine check are in the handbook, whose numbers are filled from `bar.json` at packaging |
-| Can the reference see anything the agent cannot? | At run time, no: it is fitted from the same seven files through the same reader. Its prior scales were set by me knowing the true spreads; this advantage is stated and measured (Section 7) |
+| Can the reference see anything the agent cannot? | At run time, no: it is fitted from the same seven files through the same reader. Its prior scales were set by me knowing the true spreads. That advantage is stated to judges here and in the design document; it has not been measured directly, and the handbook shipped to agents describes the reference only as "standard statistical practice", which understates it. Indirect evidence that the advantage is small for a competent estimator: the newer pair estimated their priors from data and scored 1.008 to 1.072 |
 | Is the task solvable through the agent's interface? | Yes: the oracle installs the reference forecaster as a submission and scores 1.000 on every key |
 | Did any run fail for an infrastructure reason? | No: every graded run produced a valid, deterministic forecast inside its limits; the one packaging error in the record is the first oracle attempt, kept and labelled |
 | Were the models run as intended? | Native harnesses, high reasoning effort, three-hour sessions, the same frozen task for all four models |
@@ -180,6 +183,25 @@ A shallow solution cannot pass it. The starter scores zero. Team ratings, last s
 
 ## 12. Evidence integrity
 
-Every graded job under `jobs/` holds its reward, per-world details, agent log, config and the submitted program; the two jobs I stopped (`2026-09-25__01-34-12`, which has its complete program, and `2026-09-25__01-51-10`) hold their agent logs and config only. Harbor redacts the value of every environment variable passed on the command line, and one such value was the word `true`, so every literal `true` in the archived files reads `[REDACTED]`; that breaks `details.json` parsing and `action="store_true"` in two archived programs. The summaries and the ablation script restore the token in memory and leave the archived files untouched; the restored programs reproduce the verifier's numbers to the last digit.
+Every graded job under `jobs/` holds its reward, per-world details, agent log, config and the submitted program; the three stopped jobs (`2026-09-25__01-34-12`, which has its complete program, `2026-09-25__01-51-10`, and `2026-09-24__19-41-42`) hold their agent logs and config only. Harbor redacts the value of every environment variable passed on the command line, and one such value was the word `true`, so every literal `true` in the archived files reads `[REDACTED]`; that breaks `details.json` parsing and `action="store_true"` in two archived programs. The summaries and the ablation script restore the token in memory and leave the archived files untouched; the restored programs reproduce the verifier's numbers to the last digit.
 
-Still open: repeating the truth calculations with independent random streams to confirm that borderline verdicts are stable; extending the interventions to a second world and to runs 7 to 10; and investigating why the newer pair does worst on the visible world.
+Still open: repeating the truth calculations with independent random streams; extending the interventions to a second world and to runs 7 to 10; and investigating why the newer pair does worst on the visible world.
+
+## 13. Independent review, and what was done about it
+
+Rutvikk Kharod reviewed the repository at revision `9da6375` on 26 September 2026: he recomputed every graded verdict from the job files, verified the task freeze by `git diff`, recomputed the pooled bar statistics from `bar.log`, and reran all eight one-constant ablations independently on Windows under the task's pinned libraries, where every ratio reproduced to the reported precision. His findings, and what I did with each, follow. Nothing below changes the frozen task; the items that would are recorded here and deferred to the next version.
+
+| Finding | What it is | Action |
+|---|---|---|
+| F-01, provenance of six drawings | The six architecture drawings in `figures/` were drawn by him from this repository at `c768e58`; my documents said they were generated by repository scripts, which was false | Attributed to him, with permission, in every document and in `PROVENANCE.md`; the false sentence removed |
+| F-03, verdicts inside the reference's noise | The bar is 1.10 times one simulation of the reference, whose noise is about 1.1 percent; 1.104 and 1.109 sit inside that band | Stated in Section 2 and wherever those runs are discussed; F2 no longer presented as a clear failure |
+| F-04, the reference's advantage | Stated to judges but described to agents as "standard statistical practice"; my fairness audit called it "measured" when it was not | The audit corrected (Section 11); the handbook wording is a change to the frozen task and is deferred to the next version, disclosed here |
+| F-18, F-19, F-20 | `START_HERE.md` described the zip's layout, not the repository's; the linter count was 22 (each of 11 criteria appears twice in the report); one cancelled job was missing from the exclusions | All three corrected |
+| F-06, line endings | No `.gitattributes`; a Windows checkout with `autocrlf` gets CRLF shell scripts and the oracle would not run | `.gitattributes` added pinning LF for scripts, Dockerfiles and Python |
+| F-21, regenerability | The ablation script read programs from a folder outside the repository and symlinked the engine; the bar script prints per-world figures, not the pooled ones | The ablation script now reads from `jobs/` and copies the engine; the pooled statistics are derived from `bar.log` as stated in Section 2 |
+| F-23, LaTeX escaping | A latent escape-ordering bug in the design-document builder | Fixed |
+| F-05, the "last season only" tier | Its shrinkage selection validates on seasons with zero weight, so it always picks the weakest scale; no verdict depends on it | Next version; the tier is described accordingly |
+| F-11, `History.played` | The agent-facing reader documents a field of past line-ups but always leaves it empty; `lineups.csv` carries the data | Next version; disclosed to any future agent in the handbook |
+| F-07 to F-10, F-12, F-13 | Verifier network not declared; timeout does not reap child processes; a missing program counts as in time; the privilege drop fails open if the grader is not root; the packager accepts partial builds; the data cache ignores its inputs | Next version |
+| F-15 to F-17 | Typical-wickets baseline counts run-outs the engine never produces; four rare dismissal kinds counted as bowler wickets; no-result matches counted as chase losses in one target | Next version; realism only, since truth and forecasters share the engine |
+| F-24 | No automated tests for the development code | Next version |

@@ -206,6 +206,8 @@ The file reader and writer define the one public representation through which ev
 
 Two details matter. The outcome column is read back as text, because the dot ball is written as the label zero and pandas would otherwise parse it as the number zero while leaving W as text in the same column. And the line-ups carry both a batting slot and a bowling slot as data, so the batting order and the five-bowler rotation are reconstructed from what is stored rather than inferred from row order. The check is byte-level: the seed-101 world, saved to a scratch folder, is identical in all eight files to the folder produced by the earlier build, so the whole chain from raw archive to task folder has been reproduced. The bug caught was a loader whose final return line was missing, so it built everything and handed back nothing; the first call exposed it, which is why end-to-end tests that use the public interface matter more than inspecting intermediate variables.
 
+**Found by the independent review (F-11).** `load_league` never reads `lineups.csv` back into `History.played`, so that field, documented as the fixtures of every past match, is always empty on the agent's side. The data is in `lineups.csv` and every piloted program read it from there. Fixed in the next version; disclosed to any future agent in the handbook.
+
 ## 12. Validation against the archive: `dev/validate_world.py`
 
 ### Three leagues against the real numbers
@@ -246,11 +248,13 @@ The ball-model forecasters fit the engine's own structure backwards. The public 
 
 ### The ordering
 
-The ordering matters more than any fourth decimal. The careful player model clearly beats the naive baselines. Removing shrinkage hurts. Discarding older seasons hurts less. Team-level modelling is poor because team identity is deliberately unstable. Fitting raw pair effects is disastrous because those interactions capture noise. The richer tiers move the reference by about one percent, which means the task is not secretly won by discovering one obscure mechanism; the dominant gains come from understandable decisions, using the public model, estimating players rather than teams, pooling across seasons, and regularising noisy parameters. Summed over the eight graded worlds the careless tiers sit at 1.50, 1.58, 1.89, 3.23 and 4.00 times the reference's total.
+The ordering matters more than any fourth decimal. The careful player model clearly beats the naive baselines. Removing shrinkage hurts. Discarding older seasons hurts less. Team-level modelling is poor because team identity is deliberately unstable. Fitting raw pair effects is disastrous because those interactions capture noise. The richer tiers move the reference by about one percent, which means the task is not secretly won by discovering one obscure mechanism; the dominant gains come from understandable decisions, using the public model, estimating players rather than teams, pooling across seasons, and regularising noisy parameters. Summed over the eight graded worlds the careless tiers sit at 1.50, 1.59, 1.89, 3.23 and 4.01 times the reference's total.
 
 ### The limitation
 
 One limitation deserves to be explicit here rather than in a footnote. The prior table was chosen with knowledge of the true synthetic population scales. The reference therefore begins with unusually good regularisation scales that an external model is not handed. The chronological validation of the global multiplier is the only part an agent can reproduce. I use the reference as a strong, transparent benchmark whose score I can reproduce exactly, not as evidence that every competent agent should reproduce its methodology. The tolerance in the pass rule softens this advantage; it does not remove it.
+
+**Found by the independent review (26 September 2026, F-05).** The "last season only" tier selects its shrinkage scale by validating on the earlier seasons, whose weights are zero for this tier, so every candidate scale gets the same score and the first, the weakest, is chosen. The tier is therefore "last season with the weakest shrinkage", not "last season, shrinkage validated". No verdict depends on it; it is one of the careless tiers used for attribution and for bracketing the tolerance, and it is described accordingly. Fixed in the next version.
 
 ## 14. Running the ladder: `dev/run_ladder.py`
 
@@ -280,21 +284,21 @@ I did not want to invent the tolerance after seeing external model results. I wa
 
 | World | Reference regret | Simulation noise | No shrinkage | Last season only | Coin flip |
 |---|---|---|---|---|---|
-| 1001 | 0.0147 | 2.5% | 1.07 | 1.42 | 1.19 |
-| 1002 | 0.0052 | 2.6% | 1.31 | 3.44 | 3.74 |
-| 1003 | 0.0066 | 3.9% | 1.16 | 1.71 | 2.80 |
-| 1004 | 0.0062 | 5.9% | 1.38 | 2.01 | 1.42 |
-| 1005 | 0.0071 | 1.8% | 2.15 | 1.95 | 1.79 |
-| 1006 | 0.0107 | 2.8% | 1.36 | 1.81 | 2.33 |
-| 1007 | 0.0065 | 4.9% | 1.06 | 2.56 | 0.94 |
-| 1008 | 0.0098 | 1.2% | 1.19 | 1.68 | 1.91 |
-| **Total over the eight** | **0.0668** | **1.1%** | **1.30** | **1.93** | **1.90** |
+| 1001 | 0.0146 | 2.8% | 1.08 | 1.43 | 1.20 |
+| 1002 | 0.0052 | 2.6% | 1.27 | 3.38 | 3.71 |
+| 1003 | 0.0067 | 3.2% | 1.15 | 1.69 | 2.76 |
+| 1004 | 0.0061 | 5.8% | 1.37 | 2.04 | 1.43 |
+| 1005 | 0.0069 | 1.7% | 1.90 | 1.90 | 1.84 |
+| 1006 | 0.0106 | 2.8% | 1.35 | 1.80 | 2.34 |
+| 1007 | 0.0065 | 4.8% | 1.06 | 2.52 | 0.94 |
+| 1008 | 0.0097 | 1.3% | 1.21 | 1.68 | 1.94 |
+| **Total over the eight** | **0.0663** | **1.1%** | **1.27** | **1.92** | **1.91** |
 
-The last three columns are regret as a multiple of the reference's. My first rule, a tolerance applied on every world, fails twice over. On one world the reference's own re-simulation noise reaches 5.9 percent, so a conservative three-noise tolerance would be about 18 percent; but the nearest careless tier sits only 6 to 7 percent above the reference on two worlds. No number can do both. And on world 1007 the coin flip has lower regret than the reference, so a per-world rule would pass the do-nothing starter on that world. The problem is not solved by a cleverer percentage; the per-world formulation itself is wrong.
+The last three columns are regret as a multiple of the reference's. My first rule, a tolerance applied on every world, fails twice over. On one world the reference's own re-simulation noise reaches 5.8 percent, so a conservative three-noise tolerance would be about 17 percent; but the nearest careless tier sits only 6 and 8 percent above the reference on two worlds. No number can do both. And on world 1007 the coin flip has lower regret than the reference, so a per-world rule would pass the do-nothing starter on that world. The problem is not solved by a cleverer percentage; the per-world formulation itself is wrong.
 
 ### The rule
 
-So I changed the statistic. Regret is summed across the eight graded worlds and one tolerance is applied to the total, and the same condition must hold on the seven held-out worlds alone. The worlds are independent, so the relative noise of the sum falls roughly as one over the square root of the number of worlds, about 1.1 percent for eight. In the sum the unshrunk tier is at 1.30 times the reference, last-season-only at 1.93 and the coin flip at 1.90. A tolerance of ten percent is about nine times the noise of the combined score and about a third of the way to the nearest careless tier. It has a noise justification and a behavioural justification. It was written into a small data file that both the grader and the handbook read, and committed before any model ran on this task. If I ran several candidates, saw one score 13 percent above the reference and then decided the tolerance should be 15, the benchmark would no longer be independently evaluating that model; fixing the rule first is the whole point.
+So I changed the statistic. Regret is summed across the eight graded worlds and one tolerance is applied to the total, and the same condition must hold on the seven held-out worlds alone. The worlds are independent, so the relative noise of the sum falls roughly as one over the square root of the number of worlds, about 1.1 percent for eight. In the sum the unshrunk tier is at 1.27 times the reference, last-season-only at 1.92 and the coin flip at 1.91. A tolerance of ten percent is about nine times the noise of the combined score and about a third of the way to the nearest careless tier. It has a noise justification and a behavioural justification. It was written into a small data file that both the grader and the handbook read, and committed before any model ran on this task. If I ran several candidates, saw one score 13 percent above the reference and then decided the tolerance should be 15, the benchmark would no longer be independently evaluating that model; fixing the rule first is the whole point.
 
 ## 17. The Harbor contract: `harbor/task.toml`, `harbor/bar.json`, `harbor/requirements.lock`, `harbor/instruction.md`
 
